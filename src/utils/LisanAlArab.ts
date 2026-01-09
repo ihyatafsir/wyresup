@@ -132,3 +132,81 @@ export const TERMINOLOGY = Object.entries(LISAN_AL_ARAB).map(([key, value]) => (
     key,
     ...value,
 }));
+
+/**
+ * Error Diagnostic Terminology (تَشْخِيص الأَخْطَاء)
+ * Using Lisan al-Arab roots for debugging
+ */
+export const LISAN_DIAGNOSTICS = {
+    // Connection Issues
+    manaa: {
+        word: 'مَانِع',
+        root: 'منع',
+        meaning: 'That which prevents or obstructs',
+        diagnosis: 'Network barrier, firewall, blocked port',
+    },
+    fusul: {
+        word: 'فُصُول',
+        root: 'فصل',
+        meaning: 'Separation, disconnection',
+        diagnosis: 'Peer dropped, connection lost',
+    },
+    inqitaa: {
+        word: 'اِنْقِطَاع',
+        root: 'قطع',
+        meaning: 'Cutting off, interruption',
+        diagnosis: 'Stream interrupted, timeout',
+    },
+
+    // Security Issues
+    thaqbFail: {
+        word: 'ثَقْب مُنِع',
+        root: 'ثقب',
+        meaning: 'Puncture blocked/denied',
+        diagnosis: 'Replay attack detected - key already used',
+    },
+    takhaluq: {
+        word: 'تَخَلُّق',
+        root: 'خلق',
+        meaning: 'Fabrication, forgery',
+        diagnosis: 'Signature verification failed, forged message',
+    },
+
+    // Protocol Issues
+    khataaWisal: {
+        word: 'خَطَأ وِصَال',
+        root: 'وصل',
+        meaning: 'Connection error',
+        diagnosis: 'Handshake failed, protocol mismatch',
+    },
+    tadakhul: {
+        word: 'تَدَاخُل',
+        root: 'دخل',
+        meaning: 'Interference, collision',
+        diagnosis: 'Packet collision, sequence conflict',
+    },
+
+    // Data Issues
+    fasad: {
+        word: 'فَسَاد',
+        root: 'فسد',
+        meaning: 'Corruption, decay',
+        diagnosis: 'Data corruption, checksum mismatch',
+    },
+    nuqsan: {
+        word: 'نُقْصَان',
+        root: 'نقص',
+        meaning: 'Deficiency, missing part',
+        diagnosis: 'Incomplete packet, missing data',
+    },
+};
+
+/**
+ * Get human-readable diagnosis from Lisan terminology
+ */
+export function diagnose(type: keyof typeof LISAN_DIAGNOSTICS, detail?: string): string {
+    const diag = LISAN_DIAGNOSTICS[type];
+    const base = `[${diag.word}] ${diag.diagnosis}`;
+    return detail ? `${base}: ${detail}` : base;
+}
+

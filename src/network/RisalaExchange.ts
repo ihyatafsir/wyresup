@@ -22,6 +22,7 @@
 
 import * as Miftah from './MiftahEncryption';
 import * as Barq from './BarqProtocol';
+import * as Sawt from './SawtVoice';
 import { getTransport } from './NaqlTransport';
 import { WyreSUpIdentity } from '../utils/Identity';
 import { Message, Peer } from '../messaging/types';
@@ -138,6 +139,97 @@ export async function istiqbalRisala(
 }
 
 /**
+ * إِرْسَال صَوْت (Irsal Sawt) - Send voice message
+ * Voice carries the جَرْسُ (unique tone) of the sender
+ */
+export async function irsalSawt(
+    identity: WyreSUpIdentity,
+    recipientId: string,
+    audioData: Uint8Array
+): Promise<Risala | null> {
+    console.log(`[RISALA] إِرْسَال صَوْت → ${recipientId}`);
+
+    // Use Sawt helper for encryption
+    const sawtMsg = await Sawt.irsalSawt(identity, recipientId, audioData);
+    if (!sawtMsg) {
+        console.error('[RISALA] Voice encryption failed');
+        return null;
+    }
+
+    const risala: Risala = {
+        id: sawtMsg.id,
+        type: RisalaType.SAWT,
+        senderId: identity.fullId,
+        recipientId,
+        timestamp: Date.now(),
+        content: sawtMsg.audioData,
+        encryptedWith: 0, // Handled in Sawt layer
+    };
+
+    // Add to conversation
+    addToConversation(recipientId, risala);
+
+    // Create and send via Barq
+    const packet = await Barq.createDataPacket(recipientId, serializeRisala(risala));
+    if (packet) {
+        console.log(`[RISALA] ✓ Voice sent (${sawtMsg.duration.toFixed(1)}s)`);
+    }
+
+    return risala;
+}
+
+/**
+ * اِسْتِمَاع (Istima') - Receive voice message
+ * From سمع - to hear, understanding the جَرْس (tone) of the sender
+ */
+export async function istiqbalSawt(
+    risala: Risala
+): Promise<{ audio: Uint8Array; waveform: number[] } | null> {
+    if (risala.type !== RisalaType.SAWT) {
+        console.error('[RISALA] Not a voice message');
+        return null;
+    }
+
+    console.log(`[RISALA] اِسْتِمَاع ← ${risala.senderId}`);
+
+    // Decrypt via Sawt
+    const decryptedAudio = await Sawt.istima(risala.senderId, risala.content);
+    if (!decryptedAudio) {
+        console.error('[RISALA] Voice decryption failed (replay?)');
+        return null;
+    }
+
+    // Generate waveform for UI
+    const waveform = generateSimpleWaveform(decryptedAudio);
+
+    console.log(`[RISALA] ✓ Voice received (${decryptedAudio.length} bytes)`);
+
+    return { audio: decryptedAudio, waveform };
+}
+
+/**
+ * Generate simple waveform for voice message display
+ */
+function generateSimpleWaveform(audioData: Uint8Array, bars: number = 30): number[] {
+    const waveform: number[] = [];
+    const samplesPerBar = Math.floor(audioData.length / bars);
+
+    for (let i = 0; i < bars; i++) {
+        let sum = 0;
+        const start = i * samplesPerBar;
+        const end = Math.min(start + samplesPerBar, audioData.length);
+
+        for (let j = start; j < end; j++) {
+            sum += Math.abs(audioData[j] - 128);
+        }
+
+        waveform.push(sum / (end - start) / 128);
+    }
+
+    return waveform;
+}
+
+/**
  * Add message to conversation (the قَطِيع - flock)
  */
 function addToConversation(peerId: string, risala: Risala): void {
@@ -165,15 +257,15 @@ function addToConversation(peerId: string, risala: Risala): void {
  * Get conversation with peer
  */
 export function getConversation(peerId: string): Qatia | undefined {
-return conversations.get(peerId);
+    return conversations.get(peerId);
 }
 
 /**
  * Get all conversations
  */
 export function getAllConversations(): Qatia[] {
-return Array.from(conversations.values())
-    .sort((a, b) => b.lastActivity - a.lastActivity);
+    return Array.from(conversations.values())
+        .sort((a, b) => b.lastActivity - a.lastActivity);
 }
 
 /**

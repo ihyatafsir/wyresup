@@ -13,7 +13,8 @@ import * as Nabd from '../network/NabdTiming';
 import * as Sayl from '../network/SaylFlow';
 import * as Miftah from '../network/MiftahEncryption';
 import * as FiveGLite from '../network/FiveGLite';
-import { generateIdentity, WyreSUpIdentity } from '../utils/Identity';
+import { createIdentity, WyreSUpIdentity } from '../utils/Identity';
+import * as ed from '@noble/ed25519';
 
 // Test configuration
 const TEST_MESSAGES = [
@@ -74,11 +75,9 @@ async function testMiftahEncryption(): Promise<TestResult[]> {
     console.log('\n[TEST] مِفْتَاح (Miftah) Encryption');
     const results: TestResult[] = [];
 
-    // Generate test keys
-    const alicePrivate = new Uint8Array(32);
-    crypto.getRandomValues(alicePrivate);
-    const bobPublic = new Uint8Array(32);
-    crypto.getRandomValues(bobPublic);
+    // Generate test keys using noble/ed25519 (works in React Native)
+    const alicePrivate = ed.utils.randomPrivateKey();
+    const bobPublic = ed.utils.randomPrivateKey(); // Just need random bytes for test
 
     // Test 1: Basic encryption/decryption
     const t1Start = Date.now();
@@ -141,10 +140,9 @@ async function testBarqProtocol(): Promise<TestResult[]> {
     console.log('\n[TEST] بَرْق (Barq) Protocol');
     const results: TestResult[] = [];
 
-    const alicePrivate = new Uint8Array(32);
-    crypto.getRandomValues(alicePrivate);
-    const bobPublic = new Uint8Array(32);
-    crypto.getRandomValues(bobPublic);
+    // Generate test keys using noble/ed25519
+    const alicePrivate = ed.utils.randomPrivateKey();
+    const bobPublic = ed.utils.randomPrivateKey();
 
     // Test 1: 0-RTT Connection
     const t1Start = Date.now();
@@ -272,8 +270,8 @@ async function testEndToEnd(): Promise<TestResult[]> {
     const t1Start = Date.now();
     try {
         // Generate identities for Alice and Bob
-        const alice = await generateIdentity('alice');
-        const bob = await generateIdentity('bob');
+        const alice = await createIdentity('alice');
+        const bob = await createIdentity('bob');
 
         console.log(`  Alice: ${alice.fullId}`);
         console.log(`  Bob: ${bob.fullId}`);

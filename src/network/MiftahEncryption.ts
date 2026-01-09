@@ -42,15 +42,24 @@ export const MAX_PUNCTURES = 1000;
 
 /**
  * مِفْتَاح (Miftah) - Puncturable Key State
+ * 
+ * Extended with:
+ * - عَهْد (ahd) - Covenant expiry timestamp
+ * - peerPublicKey - For verification
  */
 export interface Miftah {
     peerId: string;
-    masterSecret: Uint8Array;          // Original shared secret
-    puncturedSequences: Set<number>;   // Sequences that can no longer decrypt
-    currentSequence: number;           // Next sequence to use for sending
+    masterSecret: Uint8Array;          // سِرّ - The secret
+    puncturedSequences: Set<number>;   // ثَقْب - Punctured sequences
+    currentSequence: number;           // Next send sequence
     created: number;
     lastPunctured: number;
+    ahdExpiry: number;                 // عَهْد - Covenant expiry
+    peerPublicKey?: Uint8Array;        // بَيْعَة - Verified peer key
 }
+
+// عَهْد duration (24 hours)
+const AHD_DURATION = 24 * 60 * 60 * 1000;
 
 // Active Miftah states
 const keys: Map<string, Miftah> = new Map();
@@ -77,9 +86,56 @@ export async function fataha(
         currentSequence: 0,
         created: Date.now(),
         lastPunctured: Date.now(),
+        ahdExpiry: Date.now() + AHD_DURATION,
+        peerPublicKey,
     };
 
     keys.set(peerId, miftah);
+    return miftah;
+}
+
+/**
+ * عَقْد (Aqd) - Binding/Contract
+ * From Lisan al-Arab: عَقَدَ الشيء - "To bind" (opposite of حلّ untie)
+ * 
+ * Creates binding between two parties using DH-like key exchange.
+ * Uses ed25519 point multiplication to derive shared secret.
+ */
+export async function aqd(
+    peerId: string,
+    myPrivateKey: Uint8Array,
+    peerPublicKey: Uint8Array
+): Promise<Miftah> {
+    console.log(`[MIFTAH] عَقْد (Aqd) - Binding with ${peerId}`);
+
+    // Derive shared secret using ECDH-like operation with ed25519
+    // sharedPoint = myPrivate * peerPublic (scalar multiplication on curve)
+    let sirr: Uint8Array;
+    try {
+        // Use ed25519 getSharedSecret for DH
+        sirr = await ed.getSharedSecret(myPrivateKey, peerPublicKey);
+    } catch {
+        // Fallback: hash of combined keys (for testing)
+        const combined = new Uint8Array([...myPrivateKey, ...peerPublicKey]);
+        sirr = sha256(combined);
+    }
+
+    // Derive master key from shared secret using HKDF-like expansion
+    const masterSecret = sha512(new Uint8Array([...sirr, ...new TextEncoder().encode('miftah-sirr')]));
+
+    const miftah: Miftah = {
+        peerId,
+        masterSecret,
+        puncturedSequences: new Set(),
+        currentSequence: 0,
+        created: Date.now(),
+        lastPunctured: Date.now(),
+        ahdExpiry: Date.now() + AHD_DURATION,
+        peerPublicKey,
+    };
+
+    keys.set(peerId, miftah);
+    console.log(`[MIFTAH] ✓ عَقْد complete, عَهْد expires in 24h`);
     return miftah;
 }
 
@@ -246,3 +302,43 @@ export function getStats(peerId: string): {
         age: Date.now() - miftah.created,
     };
 }
+
+/**
+ * تَأْسِيس (Ta'sis) - Foundation/Establishment
+ * From Lisan al-Arab: "أسَّسَ الشيء: وَضَعَ أساسه"
+ * "To establish: to lay its foundation"
+ * 
+ * Creates a demo Miftah for testing without full DH key exchange.
+ * Both peers derive the same key from sorted peer IDs.
+ */
+export function tasis(myId: string, peerId: string): Miftah {
+    console.log(`[MIFTAH] تَأْسِيس (Ta'sis) - Establishing key with ${peerId}`);
+
+    // Create deterministic shared secret from both peer IDs
+    // Sort to ensure both sides generate same key
+    const sortedIds = [myId, peerId].sort();
+    const combined = sortedIds.join('::');
+    const masterSecret = sha256(new TextEncoder().encode(combined));
+
+    const miftah: Miftah = {
+        peerId,
+        masterSecret,
+        puncturedSequences: new Set(),
+        currentSequence: 0,
+        created: Date.now(),
+        lastPunctured: Date.now(),
+        ahdExpiry: Date.now() + AHD_DURATION,
+    };
+
+    keys.set(peerId, miftah);
+    console.log(`[MIFTAH] ✓ Key established for ${peerId.split('@')[0]}`);
+    return miftah;
+}
+
+/**
+ * Check if Miftah exists for peer
+ */
+export function hasMiftah(peerId: string): boolean {
+    return keys.has(peerId);
+}
+

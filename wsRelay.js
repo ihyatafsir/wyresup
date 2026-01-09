@@ -106,6 +106,51 @@ wss.on('connection', (ws, req) => {
                     }));
                     break;
 
+                // عَقْد (Aqd) - Key Exchange Messages
+                case 'KEY_OFFER':
+                    // تَعَارُف (Ta'aruf) - Introduction phase
+                    console.log(`[KEY] عَقْد offer: ${peerId} → ${msg.to}`);
+                    const offerTarget = peers.get(msg.to);
+                    if (offerTarget && offerTarget.ws.readyState === WebSocket.OPEN) {
+                        offerTarget.ws.send(JSON.stringify({
+                            type: 'KEY_OFFER',
+                            from: peerId,
+                            publicKey: msg.publicKey,
+                            nonce: msg.nonce,
+                            timestamp: Date.now()
+                        }));
+                    }
+                    break;
+
+                case 'KEY_ACCEPT':
+                    // عَقْد (Aqd) - Binding phase
+                    console.log(`[KEY] عَقْد accept: ${peerId} ← ${msg.to}`);
+                    const acceptTarget = peers.get(msg.to);
+                    if (acceptTarget && acceptTarget.ws.readyState === WebSocket.OPEN) {
+                        acceptTarget.ws.send(JSON.stringify({
+                            type: 'KEY_ACCEPT',
+                            from: peerId,
+                            publicKey: msg.publicKey,
+                            nonce: msg.nonce,
+                            timestamp: Date.now()
+                        }));
+                    }
+                    break;
+
+                case 'KEY_CONFIRM':
+                    // عَهْد (Ahd) - Covenant confirmed
+                    console.log(`[KEY] عَهْد confirmed: ${peerId} ⟷ ${msg.to}`);
+                    const confirmTarget = peers.get(msg.to);
+                    if (confirmTarget && confirmTarget.ws.readyState === WebSocket.OPEN) {
+                        confirmTarget.ws.send(JSON.stringify({
+                            type: 'KEY_CONFIRM',
+                            from: peerId,
+                            signature: msg.signature,
+                            timestamp: Date.now()
+                        }));
+                    }
+                    break;
+
                 default:
                     console.log(`[UNKNOWN] Type: ${msg.type}`);
             }

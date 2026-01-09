@@ -14,9 +14,18 @@ import {
     Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getUnifiedProtocol, DarajaPriority } from '../network/UnifiedProtocolManager';
+import * as Miftah from '../network/MiftahEncryption';
+import { LISAN_DIAGNOSTICS } from '../utils/LisanAlArab';
 
 // WebSocket relay server (host from emulator perspective)
 const WS_RELAY_URL = 'ws://10.0.2.2:5190';
+
+// Encryption modes
+const ENCRYPTION_MODE = {
+    NONE: 'plaintext',
+    ZBAT: 'zbat_encrypted',
+};
 
 interface PeerInfo {
     id: string;
@@ -47,8 +56,10 @@ export default function P2PConnectionScreen() {
     const [peers, setPeers] = useState<PeerInfo[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
     const [messageInput, setMessageInput] = useState('');
+    const [encryptionEnabled, setEncryptionEnabled] = useState(true);
     const wsRef = useRef<WebSocket | null>(null);
     const messagesEndRef = useRef<ScrollView | null>(null);
+    const protocolRef = useRef(getUnifiedProtocol());
 
     // Load identity and connect on mount
     useEffect(() => {
@@ -125,6 +136,12 @@ export default function P2PConnectionScreen() {
                         status: 'online',
                         lastSeen: Date.now()
                     })));
+                    // تَأْسِيس (Ta'sis) - Establish Miftah keys for all existing peers
+                    msg.peers.forEach((peerId: string) => {
+                        if (myId && !Miftah.hasMiftah(peerId)) {
+                            Miftah.tasis(myId, peerId);
+                        }
+                    });
                 }
                 break;
 
@@ -140,11 +157,15 @@ export default function P2PConnectionScreen() {
                     }
                     return prev;
                 });
+                // تَأْسِيس (Ta'sis) - Establish Miftah key for E2E encryption
+                if (myId && !Miftah.hasMiftah(msg.peerId)) {
+                    Miftah.tasis(myId, msg.peerId);
+                }
                 // Add system message
                 addMessage({
                     id: `sys-${Date.now()}`,
                     from: 'system',
-                    content: `🟢 ${msg.peerId.split('@')[0]} joined`,
+                    content: `🟢 ${msg.peerId.split('@')[0]} joined (🔐 encrypted)`,
                     timestamp: Date.now(),
                     isMine: false
                 });
@@ -164,13 +185,7 @@ export default function P2PConnectionScreen() {
 
             case 'MSG':
                 console.log(`[P2P] Message from ${msg.from}: ${msg.content}`);
-                addMessage({
-                    id: `msg-${Date.now()}`,
-                    from: msg.from,
-                    content: msg.content,
-                    timestamp: msg.timestamp,
-                    isMine: false
-                });
+                handleIncomingMessage(msg);
                 break;
 
             case 'PEERS':
@@ -185,6 +200,47 @@ export default function P2PConnectionScreen() {
 
     const addMessage = (msg: Message) => {
         setMessages(prev => [...prev, msg]);
+    };
+
+    /**
+     * Handle incoming message with possible decryption
+     * ZBAT format: [ZBAT:sequence]base64_encrypted_data
+     */
+    const handleIncomingMessage = async (msg: any) => {
+        let displayContent = msg.content;
+        let wasDecrypted = false;
+
+        // Check if message is ZBAT encrypted
+        if (msg.content && msg.content.startsWith('[ZBAT:')) {
+            const match = msg.content.match(/^\[ZBAT:(\d+)\](.+)$/);
+            if (match) {
+                const [, sequenceStr, encryptedData] = match;
+                console.log(`[P2P] كَشْف (Kashf) - Attempting decrypt seq=${sequenceStr}`);
+
+                try {
+                    const decrypted = await Miftah.fakk(msg.from, encryptedData);
+                    if (decrypted) {
+                        displayContent = `🔓 ${decrypted}`;
+                        wasDecrypted = true;
+                        console.log(`[P2P] ✓ Decrypted: "${decrypted.slice(0, 30)}..."`);
+                    } else {
+                        displayContent = `⚠️ [Decrypt failed - possible replay]`;
+                        console.warn('[P2P] Decryption failed (replay attack or no key)');
+                    }
+                } catch (e) {
+                    displayContent = `⚠️ [Decrypt error]`;
+                    console.error('[P2P] Decryption error:', e);
+                }
+            }
+        }
+
+        addMessage({
+            id: `msg-${Date.now()}`,
+            from: msg.from,
+            content: displayContent,
+            timestamp: msg.timestamp || Date.now(),
+            isMine: false
+        });
     };
 
     const discoverNAT = async () => {
@@ -209,24 +265,43 @@ export default function P2PConnectionScreen() {
         }
     };
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
         if (!messageInput.trim() || !wsRef.current || !wsConnected) {
             return;
         }
 
         const content = messageInput.trim();
+        let encryptedContent = content;
+        let wasEncrypted = false;
 
-        // Send to all peers (broadcast)
+        // Encrypt with Miftah if enabled
+        if (encryptionEnabled && peers.length > 0) {
+            try {
+                // For broadcast, encrypt for each peer (simplified: use first peer)
+                const targetPeer = peers[0].id;
+                const result = await Miftah.tashfir(targetPeer, content);
+                if (result) {
+                    encryptedContent = `[ZBAT:${result.sequence}]${result.encrypted}`;
+                    wasEncrypted = true;
+                    console.log(`[P2P] تَشْفِير (Tashfir) seq=${result.sequence}`);
+                }
+            } catch (e) {
+                console.warn('[P2P] Encryption failed, sending plaintext');
+            }
+        }
+
+        // Send via relay (encrypted or plaintext)
         wsRef.current.send(JSON.stringify({
             type: 'MSG',
-            content
+            content: encryptedContent,
+            encrypted: wasEncrypted,
         }));
 
-        // Add to local messages
+        // Add to local messages (show original)
         addMessage({
             id: `msg-${Date.now()}`,
             from: myId,
-            content,
+            content: wasEncrypted ? `🔐 ${content}` : content,
             timestamp: Date.now(),
             isMine: true
         });
