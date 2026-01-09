@@ -210,3 +210,53 @@ export function diagnose(type: keyof typeof LISAN_DIAGNOSTICS, detail?: string):
     return detail ? `${base}: ${detail}` : base;
 }
 
+/**
+ * ═══════════════════════════════════════════════════════════════
+ * DISCOVERY TERMINOLOGY (كَشْف)
+ * From Lisan al-Arab research on meeting/gathering
+ * ═══════════════════════════════════════════════════════════════
+ */
+export const LISAN_DISCOVERY = {
+    istitlaa: {
+        arabic: 'اِسْتِطْلاع',
+        english: 'Reconnaissance',
+        meaning: 'To seek to know or uncover',
+        use: 'Getting public IP address',
+    },
+    mawId: {
+        arabic: 'مَوْعِد',
+        english: 'Rendezvous',
+        meaning: 'الميعادُ: وقت الوعد وموضعه - Appointed time and place',
+        use: 'Deterministic meeting point from IP hash',
+    },
+    manara: {
+        arabic: 'مَنارة',
+        english: 'Lighthouse',
+        meaning: 'موضع النُّور - Place of light',
+        use: 'Beacon broadcast for peer discovery',
+    },
+    hudur: {
+        arabic: 'حُضُور',
+        english: 'Presence',
+        meaning: 'المكان المحضور - The attended place',
+        use: 'HTTP presence registration fallback',
+    },
+    liqa: {
+        arabic: 'لِقَاء',
+        english: 'Meeting',
+        meaning: 'لَقِيَ فلاناً - To meet someone',
+        use: 'Connection established with peer',
+    },
+    waqf: {
+        arabic: 'وَقْف',
+        english: 'Stop',
+        meaning: 'To cease',
+        use: 'Stop discovery service',
+    },
+    multaqa: {
+        arabic: 'مُلْتَقى',
+        english: 'Junction',
+        meaning: 'ملتقى الجلدة - Meeting point',
+        use: 'Where multiple discovery methods converge',
+    },
+};
