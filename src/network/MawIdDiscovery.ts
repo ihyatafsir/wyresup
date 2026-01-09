@@ -18,10 +18,13 @@ const BEACON_INTERVAL = 30000; // 30 seconds
 const PRESENCE_TTL = 60000; // 60 seconds
 
 // Manara servers for HTTP fallback (when UDP not available)
-const MANARA_SERVERS = [
-    'https://manara.wyrenet.workers.dev',
-    // Add more edge servers for redundancy
-];
+// In dev: Use local manaraServer.js (10.0.2.2 = host from Android emulator)
+// In prod: Use Cloudflare Workers
+const IS_DEV = __DEV__ ?? true;
+const MANARA_SERVERS = IS_DEV
+    ? ['http://10.0.2.2:5191']  // Local test server
+    : ['https://manara.wyrenet.workers.dev'];
+
 
 export interface Peer {
     peerId: string;
