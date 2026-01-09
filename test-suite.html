@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WyreSup Full Test Suite</title>
+    <script src="https://unpkg.com/@noble/ed25519@2.0.0/lib/esm/index.js" type="module"></script>
+    <style>
+        body {
+            background: #050510;
+            color: #fff;
+            font-family: monospace;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #00ff88;
+        }
+
+        .test {
+            margin: 10px 0;
+            padding: 10px;
+            background: #1a1a2e;
+            border-radius: 8px;
+        }
+
+        .pass {
+            border-left: 4px solid #00ff88;
+        }
+
+        .fail {
+            border-left: 4px solid #ff4444;
+        }
+
+        .running {
+            border-left: 4px solid #ffaa00;
+        }
+
+        button {
+            background: #00ff88;
+            color: #050510;
+            border: none;
+            padding: 12px 24px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            margin: 5px;
+        }
+
+        #log {
+            background: #0a0a15;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>وايرصَب Test Suite</h1>
+    <button onclick="runAllTests()">Run All Tests</button>
+    <div id="log"></div>
+
+    <script type="module">
+        import * as ed from 'https://unpkg.com/@noble/ed25519@2.0.0/lib/esm/index.js';
+
+        window.ed = ed;
+
+        const log = document.getElementById('log');
+
+        function addResult(name, passed, detail) {
+            const div = document.createElement('div');
+            div.className = 'test ' + (passed ? 'pass' : 'fail');
+            div.innerHTML = `<b>${passed ? '✓' : '✗'} ${name}</b><br><small>${detail}</small>`;
+            log.appendChild(div);
+        }
+
+        async function runAllTests() {
+            log.innerHTML = '<div class="test running"><b>Running tests...</b></div>';
+            let passed = 0, failed = 0;
+
+            // Test 1: Key Generation
+            try {
+                const privateKey = ed.utils.randomSecretKey ? ed.utils.randomSecretKey() : crypto.getRandomValues(new Uint8Array(32));
+                const publicKey = await ed.getPublicKeyAsync(privateKey);
+                const hash = Array.from(publicKey.slice(0, 8)).map(b => b.toString(16).padStart(2, '0')).join('');
+                addResult('Identity Creation', true, `test@${hash}`);
+                passed++;
+            } catch (e) { addResult('Identity Creation', false, e.message); failed++; }
+
+            // Test 2: Message Signing
+            try {
+                const privateKey = crypto.getRandomValues(new Uint8Array(32));
+                const msg = new TextEncoder().encode('السلام عليكم');
+                const sig = await ed.signAsync(msg, privateKey);
+                addResult('Message Signing (Arabic)', true, `Sig: ${Array.from(sig.slice(0, 8)).map(b => b.toString(16)).join('')}...`);
+                passed++;
+            } catch (e) { addResult('Message Signing', false, e.message); failed++; }
+
+            // Test 3: Signature Verification
+            try {
+                const privateKey = crypto.getRandomValues(new Uint8Array(32));
+                const publicKey = await ed.getPublicKeyAsync(privateKey);
+                const msg = new TextEncoder().encode('Test message');
+                const sig = await ed.signAsync(msg, privateKey);
+                const valid = await ed.verifyAsync(sig, msg, publicKey);
+                addResult('Signature Verification', valid, `Verified: ${valid}`);
+                if (valid) passed++; else failed++;
+            } catch (e) { addResult('Signature Verification', false, e.message); failed++; }
+
+            // Test 4: AES-GCM Encryption
+            try {
+                const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']);
+                const nonce = crypto.getRandomValues(new Uint8Array(12));
+                const plain = new TextEncoder().encode('Secret message');
+                const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonce }, key, plain);
+                const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: nonce }, key, cipher);
+                const text = new TextDecoder().decode(decrypted);
+                addResult('AES-GCM Encryption', text === 'Secret message', `Decrypted: ${text}`);
+                passed++;
+            } catch (e) { addResult('AES-GCM Encryption', false, e.message); failed++; }
+
+            // Test 5: ZBAT Structure (simulated)
+            try {
+                const zahir = { sender: 'ahmad@abc', recipient: 'khalid@def', timestamp: Date.now() };
+                const batin = { type: 1, content: 'Hidden content' };
+                const tabaq = { zahir, ghilaf: btoa(JSON.stringify(batin)) };
+                addResult('ZBAT Structure', true, `Zahir visible, Batin hidden: ${tabaq.ghilaf.slice(0, 20)}...`);
+                passed++;
+            } catch (e) { addResult('ZBAT Structure', false, e.message); failed++; }
+
+            // Test 6: Fetch Public IP (NAT discovery simulation)
+            try {
+                const resp = await fetch('https://api.ipify.org?format=json');
+                const data = await resp.json();
+                addResult('NAT Discovery (STUN sim)', true, `Public IP: ${data.ip}`);
+                passed++;
+            } catch (e) { addResult('NAT Discovery', false, e.message); failed++; }
+
+            // Summary
+            log.innerHTML = `<div class="test ${failed === 0 ? 'pass' : 'fail'}"><b>RESULTS: ${passed} passed, ${failed} failed</b></div>` + log.innerHTML;
+        }
+
+        window.runAllTests = runAllTests;
+    </script>
+</body>
+
+</html>

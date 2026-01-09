@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WyreSup P2P Web Client</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      background: #050510; 
+      color: #fff; 
+      font-family: system-ui; 
+      padding: 20px;
+      min-height: 100vh;
+    }
+    h1 { color: #00ff88; margin-bottom: 10px; }
+    .subtitle { color: #666; margin-bottom: 20px; }
+    .card {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .label { color: #888; font-size: 12px; margin-bottom: 4px; }
+    .value { color: #00ff88; font-size: 18px; font-family: monospace; }
+    input {
+      background: #0a0a15;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      padding: 12px;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    button {
+      background: #00ff88;
+      color: #050510;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover { background: #00cc70; }
+    .log {
+      background: #0a0a15;
+      border-radius: 8px;
+      padding: 12px;
+      height: 200px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .log-entry { margin-bottom: 4px; }
+    .log-sent { color: #00ff88; }
+    .log-received { color: #ffaa00; }
+    .log-error { color: #ff4444; }
+    .status { 
+      display: inline-block; 
+      width: 10px; 
+      height: 10px; 
+      border-radius: 50%; 
+      margin-right: 8px;
+    }
+    .status-connected { background: #00ff88; }
+    .status-disconnected { background: #ff4444; }
+  </style>
+</head>
+<body>
+  <h1>وايرصَب P2P</h1>
+  <p class="subtitle">Web Test Client</p>
+  
+  <div class="card">
+    <div class="label">Status</div>
+    <div style="display: flex; align-items: center;">
+      <span class="status" id="status"></span>
+      <span id="statusText">Connecting via WebSocket...</span>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="label">Your Identity</div>
+    <div class="value" id="myId">webclient@test</div>
+  </div>
+  
+  <div class="card">
+    <div class="label">Send Message</div>
+    <input type="text" id="message" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+  
+  <div class="card">
+    <div class="label">Log</div>
+    <div class="log" id="log"></div>
+  </div>
+
+  <script>
+    const log = document.getElementById('log');
+    const status = document.getElementById('status');
+    const statusText = document.getElementById('statusText');
+    
+    let ws = null;
+    
+    function addLog(msg, type) {
+      const entry = document.createElement('div');
+      entry.className = 'log-entry log-' + type;
+      entry.textContent = new Date().toLocaleTimeString() + ' ' + msg;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+    
+    function connect() {
+      // Since we can't do UDP from browser, we'll use fetch to poll
+      // This is a demo - real implementation would use WebSocket
+      
+      status.className = 'status status-connected';
+      statusText.textContent = 'Ready (Demo Mode)';
+      addLog('Connected in demo mode', 'received');
+      addLog('UDP server running at 46.140.121.18:5188', 'received');
+      addLog('Your phone app can connect to the real UDP server!', 'received');
+    }
+    
+    function sendMessage() {
+      const msg = document.getElementById('message').value;
+      if (!msg) return;
+      
+      addLog('Sent: ' + msg, 'sent');
+      document.getElementById('message').value = '';
+      
+      // Simulate echo
+      setTimeout(() => {
+        addLog('Echo: ' + msg, 'received');
+      }, 500);
+    }
+    
+    // Connect on load
+    connect();
+    
+    // Enable enter key
+    document.getElementById('message').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+</body>
+</html>
