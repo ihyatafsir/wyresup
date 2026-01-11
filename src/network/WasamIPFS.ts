@@ -37,6 +37,7 @@ export interface IPFSPeer {
     cid?: string;  // IPFS Content ID
     timestamp: number;
     sameCarrier: boolean;
+    mudtadeef?: { ip: string; port: number };  // TCP relay hint
 }
 
 // State
@@ -46,6 +47,31 @@ let myPublicKey: string = '';
 let myCID: string = '';
 let discoveredPeers: Map<string, IPFSPeer> = new Map();
 let discoveryInterval: NodeJS.Timeout | null = null;
+// مُسْتَضِيف (Mudtadeef) - Host relay info for link embedding
+let myMudtadeef: { ip: string; port: number } | null = null;
+
+/**
+ * Set Mudtadeef host info (called when hosting starts)
+ */
+export function setMudtadeefHost(ip: string, port: number): void {
+    console.log(`[مُسْتَضِيف] Setting host hint: ${ip}:${port}`);
+    myMudtadeef = { ip, port };
+}
+
+/**
+ * Clear Mudtadeef host info (called when hosting stops)
+ */
+export function clearMudtadeefHost(): void {
+    console.log('[مُسْتَضِيف] Clearing host hint');
+    myMudtadeef = null;
+}
+
+/**
+ * Check if currently hosting
+ */
+export function getMudtadeefHost(): { ip: string; port: number } | null {
+    return myMudtadeef;
+}
 
 /**
  * وَسْم (Wasam) - Calculate carrier brand
@@ -134,6 +160,18 @@ export async function tafattush(brand: string): Promise<IPFSPeer[]> {
 }
 
 /**
+ * تَرْمِيز (Tarmiz) - Encode data to base64url
+ * From Lisan: "ترميز - Encoding/symbolizing"
+ */
+function toBase64url(str: string): string {
+    const base64 = btoa(str);
+    return base64
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+}
+
+/**
  * Generate shareable IPFS-style link
  * Contains carrier brand for topology awareness
  */
@@ -145,10 +183,9 @@ export function generateIPFSLink(peerId: string, publicKey: string, brand: strin
         t: Date.now(),
     };
 
-    const encoded = Buffer.from(JSON.stringify(data)).toString('base64url');
+    const encoded = toBase64url(JSON.stringify(data));
 
     // IPFS-style link with brand in path
-    // wyrenet.eth would resolve via ENS → IPFS
     return `ipfs://wyrenet/${brand}/${encoded}`;
 }
 
@@ -156,42 +193,85 @@ export function generateIPFSLink(peerId: string, publicKey: string, brand: strin
  * Generate HTTP-accessible link (works in browsers)
  */
 export function generateHTTPLink(peerId: string, publicKey: string, brand: string): string {
-    const data = {
+    const data: any = {
         p: peerId,
         k: publicKey.slice(0, 32),
         w: brand,
         t: Date.now(),
     };
 
-    const encoded = Buffer.from(JSON.stringify(data)).toString('base64url');
+    // Include Mudtadeef hint if hosting
+    if (myMudtadeef) {
+        data.m = `${myMudtadeef.ip}:${myMudtadeef.port}`;
+    }
+
+    const encoded = toBase64url(JSON.stringify(data));
 
     // Use IPFS gateway with wasam path
     return `https://ipfs.io/ipns/wyrenet/${brand}#${encoded}`;
 }
 
 /**
- * Parse peer from IPFS link
+ * فَكّ (Fakk) - Parse peer from IPFS link
+ * From Lisan: "فَكّ العقدة - Untying the knot"
+ * 
+ * Fixed for React Native: Manual base64url → base64 conversion
  */
 export function parseIPFSLink(link: string): IPFSPeer | null {
     try {
+        console.log('[فَكّ] Parsing link:', link.substring(0, 50) + '...');
+
         // Extract brand and data from various link formats
-        let brand: string;
-        let encoded: string;
+        let brand: string = '';
+        let encoded: string = '';
 
         if (link.includes('ipfs://')) {
             const parts = link.replace('ipfs://wyrenet/', '').split('/');
-            brand = parts[0];
-            encoded = parts[1];
+            brand = parts[0] || '';
+            encoded = parts[1] || '';
         } else if (link.includes('#')) {
             const match = link.match(/\/([a-f0-9]{4})#(.+)$/);
-            if (!match) return null;
+            if (!match) {
+                console.log('[فَكّ] HTTP format regex failed');
+                return null;
+            }
             brand = match[1];
             encoded = match[2];
         } else {
+            console.log('[فَكّ] Unknown link format');
             return null;
         }
 
-        const data = JSON.parse(Buffer.from(encoded, 'base64url').toString());
+        if (!encoded || !brand) {
+            console.log('[فَكّ] Missing brand or encoded data');
+            return null;
+        }
+
+        // تَحْوِيل (Tahwil) - Convert base64url to standard base64
+        let base64 = encoded
+            .replace(/-/g, '+')
+            .replace(/_/g, '/');
+
+        // Add padding if needed
+        while (base64.length % 4) {
+            base64 += '=';
+        }
+
+        // Decode using atob (available in React Native)
+        const jsonStr = atob(base64);
+        const data = JSON.parse(jsonStr);
+
+        console.log('[فَكّ] Parsed peer:', data.p);
+
+        // Parse Mudtadeef hint if present
+        let mudtadeefHint: { ip: string; port: number } | undefined;
+        if (data.m) {
+            const [ip, portStr] = data.m.split(':');
+            if (ip && portStr) {
+                mudtadeefHint = { ip, port: parseInt(portStr, 10) };
+                console.log(`[فَكّ] Mudtadeef hint found: ${ip}:${portStr}`);
+            }
+        }
 
         return {
             peerId: data.p,
@@ -199,8 +279,10 @@ export function parseIPFSLink(link: string): IPFSPeer | null {
             wasam: brand,
             timestamp: data.t || Date.now(),
             sameCarrier: brand === myWasam,
+            mudtadeef: mudtadeefHint,
         };
-    } catch {
+    } catch (e) {
+        console.log('[فَكّ] Parse error:', e);
         return null;
     }
 }
@@ -337,6 +419,10 @@ export const WasamIPFS = {
     generateIPFSLink,
     generateHTTPLink,
     parseIPFSLink,
+    // Mudtadeef host management
+    setMudtadeefHost,
+    clearMudtadeefHost,
+    getMudtadeefHost,
 };
 
 export default WasamIPFS;

@@ -1,6 +1,10 @@
 /**
- * P2P Connection Screen with WebSocket Relay
- * Enables real messaging between peers via the WASIT relay
+ * P2P Connection Screen with مُلْتَقى (Multaqa) Hybrid Discovery
+ * Supports both WebSocket relay AND serverless link-based P2P
+ * 
+ * From Lisan al-Arab:
+ * - مُلْتَقى (Multaqa): "ملتقى الجلدة - Meeting/Junction point"
+ * - بَدْر (Badr): "إظهار البدر - Full moon visibility" (share link)
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -12,11 +16,18 @@ import {
     ScrollView,
     StyleSheet,
     Alert,
+    Clipboard,
+    Share,
+    Modal,
+    Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUnifiedProtocol, DarajaPriority } from '../network/UnifiedProtocolManager';
 import * as Miftah from '../network/MiftahEncryption';
-import { LISAN_DIAGNOSTICS } from '../utils/LisanAlArab';
+import { LISAN_DIAGNOSTICS, LISAN_DISCOVERY } from '../utils/LisanAlArab';
+import { WasamIPFS } from '../network/WasamIPFS';
+import { mudtadeefServer } from '../network/MudtadeefServer';
+import { muttasilClient } from '../network/MuttasilClient';
 
 // WebSocket relay server (host from emulator perspective)
 const WS_RELAY_URL = 'ws://10.0.2.2:5190';
@@ -57,6 +68,17 @@ export default function P2PConnectionScreen() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [messageInput, setMessageInput] = useState('');
     const [encryptionEnabled, setEncryptionEnabled] = useState(true);
+    // وَسْم (Wasam) - Carrier brand for serverless discovery
+    const [myWasam, setMyWasam] = useState<string>('');
+    const [myLink, setMyLink] = useState<string>('');
+    const [myPublicKey, setMyPublicKey] = useState<string>('');
+    // حِوَار (Hiwar) - Dialog state for Android modal
+    const [showAddPeerModal, setShowAddPeerModal] = useState(false);
+    const [peerLinkInput, setPeerLinkInput] = useState('');
+    // مُسْتَضِيف (Mudtadeef) - Host Mode state
+    const [isHosting, setIsHosting] = useState(false);
+    const [hostInfo, setHostInfo] = useState<{ ip: string; port: number } | null>(null);
+    const [tcpConnected, setTcpConnected] = useState(false);
     const wsRef = useRef<WebSocket | null>(null);
     const messagesEndRef = useRef<ScrollView | null>(null);
     const protocolRef = useRef(getUnifiedProtocol());
@@ -66,6 +88,7 @@ export default function P2PConnectionScreen() {
         loadIdentityAndConnect();
         return () => {
             wsRef.current?.close();
+            WasamIPFS.waqfIntishar(); // Stop serverless discovery
         };
     }, []);
 
@@ -75,12 +98,34 @@ export default function P2PConnectionScreen() {
             if (storedId) {
                 const identity = JSON.parse(storedId);
                 setMyId(identity.fullId);
+                setMyPublicKey(identity.publicKey || '');
                 connectToRelay(identity.fullId);
+
+                // بَادِرَة (Badira) - Initialize serverless discovery
+                await initServerlessDiscovery(identity.fullId, identity.publicKey || '');
             }
         } catch (e) {
             console.error('[P2P] Failed to load identity:', e);
         }
         discoverNAT();
+    };
+
+    /**
+     * بَادِرَة (Badira) - Initialize serverless discovery
+     * From Lisan: "First initiative/move"
+     */
+    const initServerlessDiscovery = async (peerId: string, publicKey: string) => {
+        console.log('[بَادِرَة] Initializing serverless discovery...');
+        try {
+            await WasamIPFS.badIntishar(peerId, publicKey);
+            const wasam = WasamIPFS.getMyWasam();
+            const link = WasamIPFS.getMyLink();
+            setMyWasam(wasam);
+            setMyLink(link);
+            console.log(`[بَادِرَة] وَسْم: ${wasam}, Link ready`);
+        } catch (e) {
+            console.error('[بَادِرَة] Serverless init failed:', e);
+        }
     };
 
     const connectToRelay = (identity: string) => {
@@ -266,7 +311,11 @@ export default function P2PConnectionScreen() {
     };
 
     const sendMessage = async () => {
-        if (!messageInput.trim() || !wsRef.current || !wsConnected) {
+        const canSend = wsConnected || tcpConnected;
+        if (!messageInput.trim() || !canSend) {
+            if (!canSend) {
+                Alert.alert('Not Connected', 'Neither TCP nor WebSocket connected');
+            }
             return;
         }
 
@@ -290,18 +339,31 @@ export default function P2PConnectionScreen() {
             }
         }
 
-        // Send via relay (encrypted or plaintext)
-        wsRef.current.send(JSON.stringify({
-            type: 'MSG',
-            content: encryptedContent,
-            encrypted: wasEncrypted,
-        }));
+        // مُلْتَقى (Multaqa) - Route via appropriate transport
+        if (isHosting) {
+            // Host mode: send directly to connected clients
+            mudtadeefServer.sendToClients(encryptedContent, wasEncrypted);
+            console.log('[P2P] Sent via Host (مُسْتَضِيف)');
+        } else if (tcpConnected) {
+            // Client mode: send via Muttasil TCP client
+            muttasilClient.sendMessage(encryptedContent, wasEncrypted);
+            console.log('[P2P] Sent via TCP (مُتَّصِل)');
+        } else if (wsConnected && wsRef.current) {
+            // Send via WebSocket relay
+            wsRef.current.send(JSON.stringify({
+                type: 'MSG',
+                content: encryptedContent,
+                encrypted: wasEncrypted,
+            }));
+            console.log('[P2P] Sent via WebSocket');
+        }
 
         // Add to local messages (show original)
+        const transportIcon = tcpConnected ? '🔌' : '🌐';
         addMessage({
             id: `msg-${Date.now()}`,
             from: myId,
-            content: wasEncrypted ? `🔐 ${content}` : content,
+            content: wasEncrypted ? `🔐${transportIcon} ${content}` : `${transportIcon} ${content}`,
             timestamp: Date.now(),
             isMine: true
         });
@@ -344,29 +406,307 @@ export default function P2PConnectionScreen() {
         );
     };
 
+    /**
+     * مُسْتَضِيف (Mudtadeef) - Toggle Host Mode
+     * Start/stop the embedded relay server
+     */
+    const toggleHostMode = async () => {
+        if (isHosting) {
+            // Stop hosting
+            mudtadeefServer.stopHosting();
+            WasamIPFS.clearMudtadeefHost();  // Clear hint from links
+            setMyLink(WasamIPFS.getMyLink());  // Regenerate link
+            setIsHosting(false);
+            setHostInfo(null);
+            addMessage({
+                id: `sys-${Date.now()}`,
+                from: 'system',
+                content: '🔌 Host mode stopped',
+                timestamp: Date.now(),
+                isMine: false
+            });
+        } else {
+            // Start hosting
+            try {
+                // Set up host callbacks for peer management
+                mudtadeefServer.setOnPeerJoin((peerId: string) => {
+                    setPeers(prev => {
+                        if (!prev.find(p => p.id === peerId)) {
+                            return [...prev, { id: peerId, status: 'online' as const, lastSeen: Date.now() }];
+                        }
+                        return prev;
+                    });
+                });
+
+                mudtadeefServer.setOnPeerLeave((peerId: string) => {
+                    setPeers(prev => prev.filter(p => p.id !== peerId));
+                });
+
+                mudtadeefServer.setOnMessage((from: string, content: string, encrypted: boolean) => {
+                    addMessage({
+                        id: `msg-${Date.now()}`,
+                        from,
+                        content: encrypted ? `🔐 ${content}` : content,
+                        timestamp: Date.now(),
+                        isMine: false
+                    });
+                });
+
+                const info = await mudtadeefServer.startHosting(5189);
+                WasamIPFS.setMudtadeefHost(info.ip, info.port);  // Add hint to links
+                setMyLink(WasamIPFS.getMyLink());  // Regenerate link with hint
+                setIsHosting(true);
+                setHostInfo(info);
+                addMessage({
+                    id: `sys-${Date.now()}`,
+                    from: 'system',
+                    content: `📡 Hosting at ${info.ip}:${info.port} - share your link!`,
+                    timestamp: Date.now(),
+                    isMine: false
+                });
+            } catch (error) {
+                Alert.alert('Host Error', 'Failed to start host mode');
+            }
+        }
+    };
+
+    /**
+     * Connect to a peer's hosted relay
+     */
+    const connectToHost = async (host: string, port: number) => {
+        try {
+            muttasilClient.setOnConnected(() => {
+                setTcpConnected(true);
+                addMessage({
+                    id: `sys-${Date.now()}`,
+                    from: 'system',
+                    content: `✅ Connected to ${host}:${port}`,
+                    timestamp: Date.now(),
+                    isMine: false
+                });
+            });
+
+            muttasilClient.setOnMessage((from, content, encrypted) => {
+                addMessage({
+                    id: `msg-${Date.now()}`,
+                    from,
+                    content: encrypted ? `🔐 ${content}` : content,
+                    timestamp: Date.now(),
+                    isMine: false
+                });
+            });
+
+            muttasilClient.setOnDisconnected(() => {
+                setTcpConnected(false);
+                addMessage({
+                    id: `sys-${Date.now()}`,
+                    from: 'system',
+                    content: '❌ Disconnected from host',
+                    timestamp: Date.now(),
+                    isMine: false
+                });
+            });
+
+            await muttasilClient.connect(host, port, myId, myPublicKey);
+        } catch (error) {
+            Alert.alert('Connection Error', `Failed to connect to ${host}:${port}`);
+        }
+    };
+
+    /**
+     * بَدْر (Badr) - Share my discovery link
+     * From Lisan: "إظهار البدر - Showing the full moon" (full visibility)
+     */
+    const badrShareLink = async () => {
+        if (!myLink) {
+            Alert.alert('Not Ready', 'Discovery link not generated yet');
+            return;
+        }
+
+        try {
+            // Copy to clipboard
+            Clipboard.setString(myLink);
+
+            // Also offer native share
+            await Share.share({
+                message: `Connect with me on WyreSup:\n${myLink}`,
+                title: 'WyreSup P2P Link',
+            });
+
+            addMessage({
+                id: `sys-${Date.now()}`,
+                from: 'system',
+                content: `📤 Link copied! Share it with peers to connect.`,
+                timestamp: Date.now(),
+                isMine: false
+            });
+        } catch (e) {
+            // User cancelled share, but clipboard copy succeeded
+            Alert.alert('Copied!', 'Link copied to clipboard');
+        }
+    };
+
+    /**
+     * مُلْتَقى (Multaqa) - Add peer from shared link
+     * From Lisan: "ملتقى الجلدة - Junction/Meeting point"
+     * 
+     * Note: Uses Modal on Android (Alert.prompt is iOS-only)
+     */
+    const addPeerFromLink = () => {
+        // Android uses Modal, iOS can use Alert.prompt
+        if (Platform.OS === 'android') {
+            setPeerLinkInput('');
+            setShowAddPeerModal(true);
+        } else {
+            // iOS - use native prompt
+            Alert.prompt(
+                'Add Peer (مُلْتَقى)',
+                'Paste the peer\'s WyreSup link:',
+                [
+                    { text: 'Cancel', style: 'cancel' },
+                    { text: 'Connect', onPress: (link) => processAddPeer(link || '') }
+                ],
+                'plain-text'
+            );
+        }
+    };
+
+    /**
+     * تَوْصِيل (Tawsil) - Process peer connection from link
+     * From Lisan: "توصيل الشيء - Connecting things together"
+     */
+    const processAddPeer = async (link: string) => {
+        if (!link.trim()) return;
+
+        const peer = WasamIPFS.parseIPFSLink(link.trim());
+        if (!peer) {
+            Alert.alert('Invalid Link', 'Could not parse peer link');
+            return;
+        }
+
+        // Add to WasamIPFS discovery
+        WasamIPFS.addPeer(peer);
+
+        // تَأْسِيس (Ta'sis) - Establish encryption key
+        if (myId && !Miftah.hasMiftah(peer.peerId)) {
+            Miftah.tasis(myId, peer.peerId);
+        }
+
+        // Check for Mudtadeef hint - auto-connect via TCP!
+        if (peer.mudtadeef) {
+            addMessage({
+                id: `sys-${Date.now()}`,
+                from: 'system',
+                content: `🔗 ${peer.peerId.split('@')[0]} is hosting - connecting via TCP...`,
+                timestamp: Date.now(),
+                isMine: false
+            });
+
+            // Auto-connect to host's TCP relay
+            try {
+                await connectToHost(peer.mudtadeef.ip, peer.mudtadeef.port);
+            } catch (e) {
+                console.error('[مُلْتَقى] TCP auto-connect failed:', e);
+                // Still add peer for potential WebSocket fallback
+            }
+        } else {
+            // No Mudtadeef hint - add to peer list for WebSocket relay
+            setPeers(prev => {
+                if (!prev.find(p => p.id === peer.peerId)) {
+                    return [...prev, {
+                        id: peer.peerId,
+                        status: 'online' as const,
+                        lastSeen: Date.now()
+                    }];
+                }
+                return prev;
+            });
+
+            const carrierMatch = peer.sameCarrier ? '✅ Same carrier' : '🌐 Different network';
+            addMessage({
+                id: `sys-${Date.now()}`,
+                from: 'system',
+                content: `🔗 Added ${peer.peerId.split('@')[0]} (${carrierMatch}) 🔐`,
+                timestamp: Date.now(),
+                isMine: false
+            });
+        }
+    };
+
     return (
         <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
                 <Text style={styles.title}>P2P اِتِّصَال</Text>
                 <View style={styles.statusRow}>
+                    {/* WebSocket status */}
                     <View style={[
                         styles.wsStatusDot,
                         wsConnected ? styles.connected : styles.disconnected
                     ]} />
                     <Text style={styles.subtitle}>
-                        {wsConnected ? 'Connected to Relay' : 'Disconnected'}
+                        WS: {wsConnected ? '✓' : '✗'}
+                    </Text>
+                    {/* TCP status */}
+                    <View style={[
+                        styles.wsStatusDot,
+                        tcpConnected ? styles.tcpConnected : styles.disconnected,
+                        { marginLeft: 12 }
+                    ]} />
+                    <Text style={styles.subtitle}>
+                        TCP: {tcpConnected ? '✓' : '✗'}
                     </Text>
                 </View>
             </View>
 
-            {/* My Info */}
+            {/* My Info & Serverless Discovery */}
             <View style={styles.myInfoCard}>
-                <Text style={styles.myIdLabel}>My ID:</Text>
-                <Text style={styles.myId}>{myId.split('@')[0] || 'Loading...'}</Text>
-                {myIP && (
-                    <Text style={styles.myIPText}>{myIP.publicIP}:{myIP.publicPort}</Text>
-                )}
+                <View style={styles.myInfoRow}>
+                    <Text style={styles.myIdLabel}>My ID:</Text>
+                    <Text style={styles.myId}>{myId.split('@')[0] || 'Loading...'}</Text>
+                </View>
+                <View style={styles.myInfoRow}>
+                    {myIP && (
+                        <Text style={styles.myIPText}>{myIP.publicIP}:{myIP.publicPort}</Text>
+                    )}
+                    {myWasam && (
+                        <Text style={styles.wasamBadge}>وَسْم: {myWasam}</Text>
+                    )}
+                </View>
+
+                {/* بَدْر و مُلْتَقى - Share & Add Peer Buttons */}
+                <View style={styles.discoveryButtons}>
+                    <TouchableOpacity
+                        style={styles.shareButton}
+                        onPress={badrShareLink}
+                        disabled={!myLink}
+                    >
+                        <Text style={styles.shareButtonText}>📤 Share Link</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.addPeerButton}
+                        onPress={addPeerFromLink}
+                    >
+                        <Text style={styles.addPeerButtonText}>📥 Add Peer</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* مُسْتَضِيف - Host Mode Section */}
+                <View style={styles.hostSection}>
+                    <TouchableOpacity
+                        style={[styles.hostButton, isHosting && styles.hostButtonActive]}
+                        onPress={toggleHostMode}
+                    >
+                        <Text style={styles.hostButtonText}>
+                            {isHosting ? '🔴 Stop Hosting' : '📡 Host Mode'}
+                        </Text>
+                    </TouchableOpacity>
+                    {hostInfo && (
+                        <Text style={styles.hostInfo}>
+                            {hostInfo.ip}:{hostInfo.port}
+                        </Text>
+                    )}
+                </View>
             </View>
 
             {/* Online Peers */}
@@ -443,13 +783,54 @@ export default function P2PConnectionScreen() {
                     returnKeyType="send"
                 />
                 <TouchableOpacity
-                    style={[styles.sendButton, !wsConnected && styles.sendDisabled]}
+                    style={[styles.sendButton, !(wsConnected || tcpConnected) && styles.sendDisabled]}
                     onPress={sendMessage}
-                    disabled={!wsConnected}
+                    disabled={!(wsConnected || tcpConnected)}
                 >
                     <Text style={styles.sendButtonText}>Send</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* حِوَار (Hiwar) - Add Peer Modal for Android */}
+            <Modal
+                visible={showAddPeerModal}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setShowAddPeerModal(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Add Peer (مُلْتَقى)</Text>
+                        <Text style={styles.modalSubtitle}>Paste the peer's WyreSup link:</Text>
+                        <TextInput
+                            style={styles.modalInput}
+                            placeholder="wyresup://..."
+                            placeholderTextColor="#666"
+                            value={peerLinkInput}
+                            onChangeText={setPeerLinkInput}
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                        />
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity
+                                style={styles.modalCancelButton}
+                                onPress={() => setShowAddPeerModal(false)}
+                            >
+                                <Text style={styles.modalCancelText}>Cancel</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.modalConnectButton}
+                                onPress={() => {
+                                    processAddPeer(peerLinkInput);
+                                    setShowAddPeerModal(false);
+                                }}
+                            >
+                                <Text style={styles.modalConnectText}>Connect</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -486,6 +867,9 @@ const styles = StyleSheet.create({
     disconnected: {
         backgroundColor: '#ff4444',
     },
+    tcpConnected: {
+        backgroundColor: '#00aaff',
+    },
     subtitle: {
         fontSize: 12,
         color: '#888',
@@ -495,9 +879,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         padding: 12,
         marginBottom: 12,
+    },
+    myInfoRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        flexWrap: 'wrap',
+        marginBottom: 4,
     },
     myIdLabel: {
         color: '#666',
@@ -512,6 +898,71 @@ const styles = StyleSheet.create({
     myIPText: {
         color: '#666',
         fontSize: 11,
+        fontFamily: 'monospace',
+        marginRight: 12,
+    },
+    wasamBadge: {
+        color: '#00aaff',
+        fontSize: 11,
+        fontFamily: 'monospace',
+        backgroundColor: '#00aaff22',
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 8,
+    },
+    discoveryButtons: {
+        flexDirection: 'row',
+        marginTop: 10,
+        gap: 8,
+    },
+    shareButton: {
+        backgroundColor: '#00ff8833',
+        borderRadius: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        flex: 1,
+        alignItems: 'center',
+    },
+    shareButtonText: {
+        color: '#00ff88',
+        fontWeight: '600',
+        fontSize: 13,
+    },
+    addPeerButton: {
+        backgroundColor: '#00aaff33',
+        borderRadius: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        flex: 1,
+        alignItems: 'center',
+    },
+    addPeerButtonText: {
+        color: '#00aaff',
+        fontWeight: '600',
+        fontSize: 13,
+    },
+    hostSection: {
+        marginTop: 10,
+        alignItems: 'center',
+    },
+    hostButton: {
+        backgroundColor: '#ff660033',
+        borderRadius: 16,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+    },
+    hostButtonActive: {
+        backgroundColor: '#ff000044',
+    },
+    hostButtonText: {
+        color: '#ff6600',
+        fontWeight: '700',
+        fontSize: 14,
+    },
+    hostInfo: {
+        color: '#00ff88',
+        fontSize: 12,
+        marginTop: 6,
         fontFamily: 'monospace',
     },
     peersCard: {
@@ -624,5 +1075,65 @@ const styles = StyleSheet.create({
         color: '#050510',
         fontWeight: '700',
         fontSize: 15,
+    },
+    // حِوَار (Hiwar) Modal Styles
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        backgroundColor: '#1a1a2e',
+        borderRadius: 16,
+        padding: 24,
+        width: '85%',
+        borderWidth: 1,
+        borderColor: '#00ff8833',
+    },
+    modalTitle: {
+        color: '#00ff88',
+        fontSize: 20,
+        fontWeight: '700',
+        marginBottom: 8,
+    },
+    modalSubtitle: {
+        color: '#888',
+        fontSize: 14,
+        marginBottom: 16,
+    },
+    modalInput: {
+        backgroundColor: '#0a0a14',
+        borderRadius: 8,
+        padding: 12,
+        color: '#fff',
+        fontSize: 14,
+        borderWidth: 1,
+        borderColor: '#333',
+        marginBottom: 16,
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        gap: 12,
+    },
+    modalCancelButton: {
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+    },
+    modalCancelText: {
+        color: '#888',
+        fontSize: 14,
+    },
+    modalConnectButton: {
+        backgroundColor: '#00ff8833',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 8,
+    },
+    modalConnectText: {
+        color: '#00ff88',
+        fontSize: 14,
+        fontWeight: '600',
     },
 });
