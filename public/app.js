@@ -333,6 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initWebSocket();
   initEventListeners();
   initDtmfAudio();
+  initLisanLexicon();
 });
 
 // --- 1. Identity & Keys (Huwiyya) ---
@@ -1866,6 +1867,7 @@ function initEventListeners() {
   document.getElementById('btn-open-create-space').addEventListener('click', () => openModal('modal-create-space'));
   document.getElementById('btn-add-text-channel').addEventListener('click', () => openModal('modal-create-channel'));
   document.getElementById('btn-add-voice-channel').addEventListener('click', () => openModal('modal-create-channel'));
+  document.getElementById('btn-lisan-modal')?.addEventListener('click', openLisanModal);
   document.getElementById('btn-nagham-modal').addEventListener('click', () => openModal('modal-nagham'));
 
   // Submit Space
@@ -2463,4 +2465,86 @@ function createSyntheticStream(withVideo = true) {
   }
 
   return new MediaStream(tracks);
+}
+
+
+// --- 10. Lisan al-Arab Linguistic Engine Controller (مُعْجَم لِسَان العَرَب) ---
+let lisanLexiconData = [];
+
+async function initLisanLexicon() {
+  try {
+    const res = await fetch("/api/lisan");
+    if (res.ok) {
+      const data = await res.json();
+      lisanLexiconData = Object.entries(data).map(([key, val]) => ({ key, ...val }));
+    }
+  } catch (e) {
+    console.warn("[Lisan] Failed to fetch remote lexicon, using fallback:", e);
+  }
+
+  // Bind Search Input
+  const searchInput = document.getElementById("lisan-search-input");
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      filterLisanLexicon(e.target.value);
+    });
+  }
+
+  // Bind Quick Tags
+  document.querySelectorAll(".lisan-tag-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const query = btn.getAttribute("data-query") || "";
+      if (searchInput) searchInput.value = query;
+      filterLisanLexicon(query);
+    });
+  });
+}
+
+function openLisanModal() {
+  renderLisanLexicon(lisanLexiconData);
+  openModal("modal-lisan-lexicon");
+}
+
+function filterLisanLexicon(query) {
+  if (!query || !query.trim()) {
+    renderLisanLexicon(lisanLexiconData);
+    return;
+  }
+  const q = query.trim().toLowerCase();
+  const filtered = lisanLexiconData.filter(item => {
+    return (item.key && item.key.toLowerCase().includes(q)) ||
+           (item.root && item.root.includes(q)) ||
+           (item.arabicWord && item.arabicWord.includes(q)) ||
+           (item.technicalTerm && item.technicalTerm.toLowerCase().includes(q)) ||
+           (item.classicalDefinition && item.classicalDefinition.toLowerCase().includes(q)) ||
+           (item.mathematicalRole && item.mathematicalRole.toLowerCase().includes(q));
+  });
+  renderLisanLexicon(filtered);
+}
+
+function renderLisanLexicon(items) {
+  const container = document.getElementById("lisan-lexicon-grid");
+  if (!container) return;
+
+  if (!items || items.length === 0) {
+    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px;">No linguistic root matches found in Lisan al-Arab.</div>`;
+    return;
+  }
+
+  container.innerHTML = items.map(item => `
+    <div class="lisan-card-item">
+      <div class="lisan-card-top">
+        <div class="lisan-card-arabic">
+          <span>${item.arabicWord}</span>
+          <span class="lisan-root-badge">جَذْر: ${item.root}</span>
+        </div>
+        <span class="lisan-layer-tag">${item.layer}</span>
+      </div>
+      <div class="lisan-tech-term">${item.technicalTerm}</div>
+      <div class="lisan-quote-box">«${item.classicalDefinition}» <br><small style="color: var(--matrix-green); font-size: 11px;">— لسان العرب، ابن منظور</small></div>
+      <div class="lisan-math-box">
+        <strong>Mathematical & Protocol Mapping:</strong> ${item.mathematicalRole}
+      </div>
+    </div>
+  `).join("");
 }

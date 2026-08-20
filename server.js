@@ -14,6 +14,7 @@ const { WebSocketServer, WebSocket } = require('ws');
 
 const ZbatCrypto = require('./src/mesh/ZbatCrypto');
 const MajlisManager = require('./src/mesh/MajlisManager');
+const LisanEngine = require('./src/mesh/LisanEngine');
 const GossipMesh = require('./src/mesh/GossipMesh');
 const HudurPresence = require('./src/mesh/HudurPresence');
 
@@ -59,6 +60,20 @@ const server = http.createServer((req, res) => {
   }
 
   // --- API Endpoints ---
+  // --- Lisan al-Arab Linguistic Engine API ---
+  if (pathname === '/api/lisan' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(LisanEngine.getLexicon()));
+    return;
+  }
+
+  if (pathname === '/api/lisan/lookup' && req.method === 'GET') {
+    const q = parsedUrl.searchParams.get('q') || '';
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(LisanEngine.lookup(q)));
+    return;
+  }
+
   if (pathname === '/api/spaces' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(majlisManager.getAllSpaces()));
