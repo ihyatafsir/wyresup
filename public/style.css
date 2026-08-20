@@ -1813,12 +1813,17 @@ html, body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.75);
+  background-color: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(4px);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 100;
   padding: 16px;
+}
+
+.modal-overlay.open {
+  display: flex !important;
 }
 
 .modal-card {
@@ -1827,10 +1832,11 @@ html, body {
   border-radius: 14px;
   width: 100%;
   max-width: 480px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.95);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  z-index: 101;
 }
 
 .modal-header {

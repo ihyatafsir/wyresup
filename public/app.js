@@ -467,10 +467,10 @@ function appendMessageToDOM(packet) {
       <button class="msg-action-btn" onclick="sendQuickReaction('🔥')" title="React 🔥">🔥</button>
     </div>
 
-    <div class="msg-avatar">${prefix.substring(0, 2).toUpperCase()}</div>
+    <div class="msg-avatar" onclick="showUserProfileBySenderId('${senderId}')" style="cursor: pointer;" title="View ${prefix}'s profile">${prefix.substring(0, 2).toUpperCase()}</div>
     <div class="msg-content-wrap">
       <div class="msg-meta">
-        <span class="msg-author ${prefix === 'antigravity' ? 'antigravity' : ''}">${prefix}</span>
+        <span class="msg-author ${prefix === 'antigravity' ? 'antigravity' : ''}" onclick="showUserProfileBySenderId('${senderId}')" style="cursor: pointer;" title="View ${prefix}'s profile">${prefix}</span>
         ${isBot ? '<span class="msg-badge">APP</span>' : ''}
         <span class="msg-id">${senderId}</span>
         <span class="msg-badge zbat">🛡️ ZBAT</span>
@@ -558,14 +558,19 @@ function renderMembers() {
     item.className = 'member-item';
     item.title = `Click to view profile / Direct DM with ${peer.prefix}`;
     item.innerHTML = `
-      <div class="member-avatar">
-        ${(peer.prefix || 'P').substring(0, 2).toUpperCase()}
+      <div class="member-avatar-wrap">
+        <div class="member-avatar ${isHadir ? '' : 'offline'}">
+          ${(peer.prefix || 'P').substring(0, 2).toUpperCase()}
+        </div>
         <span class="status-indicator ${isHadir ? 'hadir' : 'ghaib'}"></span>
       </div>
-      <span class="member-name">${peer.prefix || peer.peerId}</span>
-      <span class="member-tag">${peer.latency || 15}ms</span>
+      <div class="member-info">
+        <span class="member-name ${peer.prefix === 'antigravity' ? 'antigravity' : ''}">${peer.prefix || peer.peerId}</span>
+        <span class="member-sub">${peer.latency || 12}ms · ${isHadir ? 'حَاضِر' : 'غَائِب'}</span>
+      </div>
     `;
-    item.onclick = () => {
+    item.onclick = (e) => {
+      e.stopPropagation();
       closeDrawers();
       showUserProfile(peer);
     };
@@ -1420,10 +1425,16 @@ function initEventListeners() {
 
 function openModal(id) {
   const el = document.getElementById(id);
-  if (el) el.classList.add('open');
+  if (el) {
+    el.classList.add('open');
+    el.style.display = 'flex';
+  }
 }
 
 function closeModal(id) {
   const el = document.getElementById(id);
-  if (el) el.classList.remove('open');
+  if (el) {
+    el.classList.remove('open');
+    el.style.display = 'none';
+  }
 }
