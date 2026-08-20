@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080b11" />
+      <stop offset="50%" stop-color="#0d141e" />
+      <stop offset="100%" stop-color="#05070a" />
+    </linearGradient>
+    <linearGradient id="neonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f59b" />
+      <stop offset="100%" stop-color="#00b4d8" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd166" />
+      <stop offset="100%" stop-color="#f77f00" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Shield/Rounded App Tile -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" stroke="rgba(0, 245, 155, 0.3)" stroke-width="6" />
+
+  <!-- Outer Cryptographic Ring -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="rgba(0, 245, 155, 0.15)" stroke-width="4" stroke-dasharray="16 12" />
+  <circle cx="256" cy="256" r="150" fill="none" stroke="rgba(0, 180, 216, 0.2)" stroke-width="2" />
+
+  <!-- Geometric Arabesque Mesh Hexagon Nodes -->
+  <polygon points="256,120 370,186 370,326 256,392 142,326 142,186" fill="rgba(0, 245, 155, 0.04)" stroke="url(#neonGrad)" stroke-width="4" />
+
+  <!-- Glowing Central Shield -->
+  <path d="M256 160 C320 160 330 190 330 250 C330 320 280 350 256 368 C232 350 182 320 182 250 C182 190 192 160 256 160 Z" 
+        fill="rgba(8, 11, 17, 0.85)" stroke="url(#neonGrad)" stroke-width="6" filter="url(#glow)" />
+
+  <!-- Central Lightning Bolt (Barq / WyreSup Emblem) -->
+  <polygon points="266,190 226,260 254,260 242,326 290,250 262,250" fill="url(#goldGrad)" filter="url(#glow)" />
+
+  <!-- Arabic Typography Subtitle: وَايِرْسَب -->
+  <text x="256" y="440" text-anchor="middle" fill="#00f59b" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="28" letter-spacing="4">WYRESUP</text>
+</svg>
