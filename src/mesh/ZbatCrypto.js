@@ -443,6 +443,76 @@ class ZbatCrypto {
   }
 
 
+
+  /**
+   * Al-Sabk (الصَّبْك): Zero-Copy Binary Frame Packer
+   * Header Layout (34 bytes):
+   * [0x00]: Magic 0x57 ('W')
+   * [0x01]: Flags (0x01 = AES-256-GCM, 0x02 = Thaqb)
+   * [0x02..0x05]: Message Index (UInt32BE)
+   * [0x06..0x11]: 12-byte IV
+   * [0x12..0x21]: 16-byte Auth Tag
+   * [0x22..end]: Raw Ciphertext Bytes
+   */
+  static packSabk(ciphertextBuf, ivBuf, tagBuf, messageIndex = 0, flags = 0x01) {
+    const ct = Buffer.isBuffer(ciphertextBuf) ? ciphertextBuf : Buffer.from(ciphertextBuf);
+    const iv = Buffer.isBuffer(ivBuf) ? ivBuf : Buffer.from(ivBuf, "hex");
+    const tag = Buffer.isBuffer(tagBuf) ? tagBuf : Buffer.from(tagBuf, "hex");
+
+    const header = Buffer.alloc(34);
+    header[0] = 0x57; // Magic 'W'
+    header[1] = flags;
+    header.writeUInt32BE(messageIndex, 2);
+    iv.copy(header, 6, 0, 12);
+    tag.copy(header, 18, 0, 16);
+
+    return Buffer.concat([header, ct]);
+  }
+
+  static unpackSabk(packedBuf) {
+    const buf = Buffer.isBuffer(packedBuf) ? packedBuf : Buffer.from(packedBuf);
+    if (buf.length < 34 || buf[0] !== 0x57) {
+      throw new Error("[Al-Sabk Error] Invalid binary frame magic header or truncated packet");
+    }
+
+    const flags = buf[1];
+    const messageIndex = buf.readUInt32BE(2);
+    const iv = buf.subarray(6, 18);
+    const tag = buf.subarray(18, 34);
+    const ciphertext = buf.subarray(34);
+
+    return { flags, messageIndex, iv, tag, ciphertext };
+  }
+
+  /**
+   * Encrypt directly to a single packed binary Al-Sabk Buffer (Zero-Copy)
+   */
+  static encryptSabk(plaintext, sharedKey, messageIndex = 0) {
+    const key = Buffer.isBuffer(sharedKey) ? sharedKey : crypto.createHash("sha256").update(sharedKey).digest();
+    const iv = crypto.randomBytes(12);
+    const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+
+    const ptBuf = Buffer.isBuffer(plaintext) ? plaintext : Buffer.from(typeof plaintext === "string" ? plaintext : JSON.stringify(plaintext), "utf8");
+    const ct = Buffer.concat([cipher.update(ptBuf), cipher.final()]);
+    const tag = cipher.getAuthTag();
+
+    return this.packSabk(ct, iv, tag, messageIndex, 0x01);
+  }
+
+  /**
+   * Decrypt directly from a packed binary Al-Sabk Buffer (Zero-Copy)
+   */
+  static decryptSabk(packedBuf, sharedKey) {
+    const { messageIndex, iv, tag, ciphertext } = this.unpackSabk(packedBuf);
+    const key = Buffer.isBuffer(sharedKey) ? sharedKey : crypto.createHash("sha256").update(sharedKey).digest();
+
+    const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+    decipher.setAuthTag(tag);
+
+    const decryptedBuf = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
+    return { decryptedBuf, messageIndex };
+  }
+
   /**
    * Al-Ikhfa (الإِخْفَاء): Constant-size morphological bucket padding
    * Defeats packet-size metadata fingerprinting by aligning payloads to power-of-2 boundaries.

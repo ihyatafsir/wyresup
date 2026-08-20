@@ -185,6 +185,38 @@ class WyreCrypto {
   }
 
 
+
+  /**
+   * Al-Sabk (الصَّبْك): Client-side Binary Frame Packing for WebCrypto / WebSockets
+   */
+  static packSabk(ivUint8, tagUint8, ctUint8, messageIndex = 0) {
+    const totalLen = 34 + ctUint8.byteLength;
+    const packed = new Uint8Array(totalLen);
+    const view = new DataView(packed.buffer);
+
+    packed[0] = 0x57; // Magic 'W'
+    packed[1] = 0x01; // Flags (AES-256-GCM)
+    view.setUint32(2, messageIndex, false); // Big-Endian
+    packed.set(ivUint8, 6);
+    packed.set(tagUint8, 18);
+    packed.set(ctUint8, 34);
+
+    return packed;
+  }
+
+  static unpackSabk(packedUint8) {
+    if (packedUint8.byteLength < 34 || packedUint8[0] !== 0x57) {
+      throw new Error("[Al-Sabk] Truncated or invalid binary frame");
+    }
+    const view = new DataView(packedUint8.buffer, packedUint8.byteOffset, packedUint8.byteLength);
+    const messageIndex = view.getUint32(2, false);
+    const iv = packedUint8.subarray(6, 18);
+    const tag = packedUint8.subarray(18, 34);
+    const ciphertext = packedUint8.subarray(34);
+
+    return { messageIndex, iv, tag, ciphertext };
+  }
+
   static padPayload(plaintext) {
     const rawStr = typeof plaintext === "string" ? plaintext : JSON.stringify(plaintext);
     const bucketSizes = [256, 1024, 4096, 16384];
