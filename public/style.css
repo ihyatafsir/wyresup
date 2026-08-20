@@ -2812,3 +2812,11 @@ html, body {
   background: #c03537;
   transform: scale(1.02);
 }
+
+/* Miftah E2EE Shield Badge */
+.msg-badge.miftah-badge {
+  background: rgba(0, 245, 155, 0.2);
+  border: 1px solid var(--matrix-green);
+  color: var(--matrix-green);
+  box-shadow: 0 0 8px rgba(0, 245, 155, 0.3);
+}

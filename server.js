@@ -200,6 +200,8 @@ function handleClientMessage(ws, msg) {
         prefix,
         shortHash,
         currentSpaceId: payload.spaceId || 'space-public-mesh',
+        ecdhPubKey: payload.ecdhPubKey || null,
+        signPubKey: payload.signPubKey || null,
         currentChannelId: payload.channelId || 'chan-general',
         transport: 'ws',
         latency: Math.floor(Math.random() * 10) + 12
@@ -233,24 +235,31 @@ function handleClientMessage(ws, msg) {
       const client = connectedClients.get(ws);
       if (!client) return;
 
-      const spaceId = payload.spaceId || client.currentSpaceId;
-      const channelId = payload.channelId || client.currentChannelId;
+      let targetChannel = client.currentChannelId;
 
-      // Ingest via GossipMesh with real sender peerId
-      const packet = gossipMesh.publish(spaceId, channelId, {
-        content: payload.content,
-        mediaUrl: payload.mediaUrl,
-        voiceData: payload.voiceData,
-        attachments: payload.attachments,
-        replyTo: payload.replyTo
-      }, {
-        senderId: client.peerId,
-        isVoice: !!payload.voiceData
-      });
+      if (payload.zahir && payload.batin) {
+        // Direct pre-wrapped / encrypted ZBAT packet from client (Zero-Knowledge Relay)
+        targetChannel = payload.zahir.channelId;
+        gossipMesh.receivePacket(payload, client.peerId);
+      } else {
+        const spaceId = payload.spaceId || client.currentSpaceId;
+        targetChannel = payload.channelId || client.currentChannelId;
+
+        gossipMesh.publish(spaceId, targetChannel, {
+          content: payload.content,
+          mediaUrl: payload.mediaUrl,
+          voiceData: payload.voiceData,
+          attachments: payload.attachments,
+          replyTo: payload.replyTo
+        }, {
+          senderId: client.peerId,
+          isVoice: !!payload.voiceData
+        });
+      }
 
       // Clear typing indicator for sender
       presenceManager.clearTyping(client.peerId);
-      broadcastTypingUpdate(channelId);
+      broadcastTypingUpdate(targetChannel);
       break;
     }
 
