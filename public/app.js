@@ -1,4 +1,53 @@
 
+// --- 0.1 Tabur al-Rasail: Offline Resilient Message Queue (تَابُور الرَّسَائِل و صُمُود الانْقِطَاع) ---
+class TaburQueue {
+  static getQueue() {
+    try {
+      const q = localStorage.getItem("wyresup_tabur_queue");
+      return q ? JSON.parse(q) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  static enqueue(packet) {
+    const queue = this.getQueue();
+    queue.push({ packet, queuedAt: Date.now() });
+    localStorage.setItem("wyresup_tabur_queue", JSON.stringify(queue));
+    console.log(`[Tabur] Message queued offline (${queue.length} in queue)`);
+    this.updateQueueBadge();
+  }
+
+  static async flush(sendFn) {
+    const queue = this.getQueue();
+    if (queue.length === 0) return;
+
+    console.log(`[Tabur] Flushing ${queue.length} offline messages...`);
+    const remaining = [];
+
+    for (const item of queue) {
+      try {
+        await sendFn(item.packet);
+      } catch (err) {
+        remaining.push(item);
+      }
+    }
+
+    localStorage.setItem("wyresup_tabur_queue", JSON.stringify(remaining));
+    this.updateQueueBadge();
+  }
+
+  static updateQueueBadge() {
+    const queue = this.getQueue();
+    const badge = document.getElementById("tabur-queue-indicator");
+    if (badge) {
+      badge.style.display = queue.length > 0 ? "inline-flex" : "none";
+      badge.textContent = `⏳ Tabur: ${queue.length} offline`;
+    }
+  }
+}
+
+
 function generateClientMessageId() {
   const chars = "0123456789abcdef";
   let id = "";
@@ -89,11 +138,19 @@ async function sendEncryptedDm(dmChannelId, rawPayload) {
       batin: encryptedBatin
     };
 
-    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+    if (state.activeCall && state.activeCall.dataChannel && state.activeCall.dataChannel.readyState === "open") {
+      // Tier 1: Direct Zero-Hop WebRTC DataChannel (Barq Wire-Speed)
+      state.activeCall.dataChannel.send(JSON.stringify({ type: "P2P_PACKET", payload: packet }));
+      console.log("[Barq P2P] Message sent over direct WebRTC DataChannel (0 relay hops)");
+    } else if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+      // Tier 2: WebSocket Gossip Mesh Relay
       state.ws.send(JSON.stringify({
         type: "SEND_MESSAGE",
         payload: packet
       }));
+    } else {
+      // Tier 3: Offline Resilient Tabur Queue
+      TaburQueue.enqueue(packet);
     }
 
     // Immediate Local Echo
@@ -125,6 +182,40 @@ async function sendEncryptedDm(dmChannelId, rawPayload) {
 class WyreCrypto {
   static isSupported() {
     return typeof window !== "undefined" && window.crypto && !!window.crypto.subtle;
+  }
+
+
+  static padPayload(plaintext) {
+    const rawStr = typeof plaintext === "string" ? plaintext : JSON.stringify(plaintext);
+    const bucketSizes = [256, 1024, 4096, 16384];
+    let targetSize = bucketSizes[bucketSizes.length - 1];
+    for (const size of bucketSizes) {
+      if (rawStr.length + 16 <= size) {
+        targetSize = size;
+        break;
+      }
+    }
+    const padLen = Math.max(0, targetSize - rawStr.length - 16);
+    const randChars = "0123456789abcdef";
+    let padding = "";
+    for (let i = 0; i < padLen; i++) padding += randChars[Math.floor(Math.random() * randChars.length)];
+    return JSON.stringify({ d: rawStr, p: padding });
+  }
+
+  static unpadPayload(paddedStr) {
+    try {
+      const parsed = JSON.parse(paddedStr);
+      if (parsed && parsed.d) {
+        try { return JSON.parse(parsed.d); } catch { return parsed.d; }
+      }
+      return parsed;
+    } catch {
+      return paddedStr;
+    }
+  }
+
+  static computeMizanNonce(dataStr, difficulty = 2) {
+    return { nonce: Math.floor(Math.random() * 10000), difficulty };
   }
 
   static async generateKeyPairs() {
@@ -232,7 +323,8 @@ class WyreCrypto {
     if (!this.isSupported() || !sharedCryptoKey) return null;
     try {
       const iv = window.crypto.getRandomValues(new Uint8Array(12));
-      const plaintext = new TextEncoder().encode(typeof payload === "string" ? payload : JSON.stringify(payload));
+      const paddedJson = WyreCrypto.padPayload(payload);
+      const plaintext = new TextEncoder().encode(paddedJson);
       const ciphertextBuf = await window.crypto.subtle.encrypt(
         { name: "AES-GCM", iv },
         sharedCryptoKey,
@@ -268,7 +360,8 @@ class WyreCrypto {
         cipherBytes
       );
 
-      const decryptedStr = new TextDecoder().decode(decryptedBuf);
+      const decryptedRaw = new TextDecoder().decode(decryptedBuf);
+      const decryptedStr = typeof WyreCrypto.unpadPayload === "function" ? WyreCrypto.unpadPayload(decryptedRaw) : decryptedRaw;
       try {
         return JSON.parse(decryptedStr);
       } catch {
@@ -434,6 +527,11 @@ function initWebSocket() {
 
   state.ws.onopen = () => {
     console.log('[Mesh] Connected to Hub / Relay');
+    TaburQueue.flush((pkt) => {
+      if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+        state.ws.send(JSON.stringify({ type: "SEND_MESSAGE", payload: pkt }));
+      }
+    });
     updateConnectionBadge('P2P MESH // MUTTASIL', true);
 
     // Send IDENTIFY
