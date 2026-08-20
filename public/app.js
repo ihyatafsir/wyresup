@@ -22,7 +22,21 @@ const state = {
   recordingSeconds: 0,
   currentPlayingAudio: null,
   currentPlayingCard: null,
-  audioCtx: null
+  audioCtx: null,
+  activeCall: {
+    peer: null,
+    peerPrefix: null,
+    type: 'video',
+    pc: null,
+    localStream: null,
+    remoteStream: null,
+    startTime: null,
+    timerInterval: null,
+    isMuted: false,
+    isCamOff: false,
+    isScreenSharing: false
+  },
+  pendingIncomingCall: null
 };
 
 // --- Initialization ---
@@ -187,6 +201,10 @@ function handleServerMessage(msg) {
           renderChannelsSidebar();
         }
       }
+      break;
+
+    case 'CALL_SIGNAL':
+      handleIncomingCallSignal(payload);
       break;
   }
 }
@@ -362,6 +380,12 @@ function selectChannel(channelId) {
         channelTypePill.style.color = isDM ? 'var(--matrix-green)' : 'var(--text-muted)';
       }
     }
+
+    // Call actions: voice & video call buttons are only visible in Direct Messages (DMs)
+    const voiceCallBtn = document.getElementById("btn-topbar-call-voice");
+    const videoCallBtn = document.getElementById("btn-topbar-call-video");
+    if (voiceCallBtn) voiceCallBtn.style.display = isDM ? "inline-flex" : "none";
+    if (videoCallBtn) videoCallBtn.style.display = isDM ? "inline-flex" : "none";
 
     // Auto-display Nafaq Tunnel banner for Direct P2P channels
     if (isDM) {
@@ -1283,6 +1307,71 @@ function initEventListeners() {
     });
   }
 
+  // Direct P2P Audio Call Action from Profile
+  const profileVoiceBtn = document.getElementById('btn-profile-voice-call');
+  if (profileVoiceBtn) {
+    profileVoiceBtn.addEventListener('click', () => {
+      const peer = state.selectedProfilePeer;
+      if (!peer) return;
+      closeModal('modal-user-profile');
+      startOutgoingCall(peer.peerId || peer.fullId || peer, 'audio');
+    });
+  }
+
+  // Direct P2P Video Call Action from Profile
+  const profileVideoBtn = document.getElementById('btn-profile-video-call');
+  if (profileVideoBtn) {
+    profileVideoBtn.addEventListener('click', () => {
+      const peer = state.selectedProfilePeer;
+      if (!peer) return;
+      closeModal('modal-user-profile');
+      startOutgoingCall(peer.peerId || peer.fullId || peer, 'video');
+    });
+  }
+
+  // Topbar Voice & Video Call Triggers
+  const topbarVoiceBtn = document.getElementById('btn-topbar-call-voice');
+  if (topbarVoiceBtn) {
+    topbarVoiceBtn.addEventListener('click', () => {
+      let targetPeer = null;
+      if (state.currentChannelId && state.currentChannelId.startsWith('dm-')) {
+        const targetPrefix = state.currentChannelId.replace('dm-', '');
+        targetPeer = state.peers.find(p => p.prefix === targetPrefix || p.peerId.startsWith(targetPrefix))?.peerId || `${targetPrefix}@mesh`;
+      } else {
+        const otherPeer = state.peers.find(p => p.peerId !== state.identity.fullId);
+        targetPeer = otherPeer ? otherPeer.peerId : 'antigravity@mesh';
+      }
+      startOutgoingCall(targetPeer, 'audio');
+    });
+  }
+
+  const topbarVideoBtn = document.getElementById('btn-topbar-call-video');
+  if (topbarVideoBtn) {
+    topbarVideoBtn.addEventListener('click', () => {
+      let targetPeer = null;
+      if (state.currentChannelId && state.currentChannelId.startsWith('dm-')) {
+        const targetPrefix = state.currentChannelId.replace('dm-', '');
+        targetPeer = state.peers.find(p => p.prefix === targetPrefix || p.peerId.startsWith(targetPrefix))?.peerId || `${targetPrefix}@mesh`;
+      } else {
+        const otherPeer = state.peers.find(p => p.peerId !== state.identity.fullId);
+        targetPeer = otherPeer ? otherPeer.peerId : 'antigravity@mesh';
+      }
+      startOutgoingCall(targetPeer, 'video');
+    });
+  }
+
+  // In-Call Controls
+  document.getElementById('btn-call-toggle-mic')?.addEventListener('click', toggleCallMic);
+  document.getElementById('btn-call-toggle-cam')?.addEventListener('click', toggleCallCam);
+  document.getElementById('btn-call-share-screen')?.addEventListener('click', toggleCallScreenShare);
+  document.getElementById('btn-call-send-nagham')?.addEventListener('click', sendInCallNaghamTone);
+  document.getElementById('btn-call-hangup')?.addEventListener('click', () => endActiveCall(true));
+  document.getElementById('btn-minimize-call')?.addEventListener('click', () => closeModal('modal-active-call'));
+
+  // Incoming Call Handlers
+  document.getElementById('btn-incoming-accept')?.addEventListener('click', acceptIncomingCall);
+  document.getElementById('btn-incoming-decline')?.addEventListener('click', declineIncomingCall);
+
   // Direct P2P Tunnel Handshake Action
   const startTunnelBtn = document.getElementById('btn-start-p2p-tunnel');
   if (startTunnelBtn) {
@@ -1519,4 +1608,494 @@ function closeModal(id) {
     el.classList.remove('open');
     el.style.display = 'none';
   }
+}
+
+// =======================================================
+// --- 7. WebRTC P2P Video & Voice Calling (المُكَالَمَات) ---
+// =======================================================
+
+async function startOutgoingCall(targetPeer, callType = 'video') {
+  const peerId = typeof targetPeer === 'string' ? targetPeer : (targetPeer.peerId || targetPeer.fullId);
+  const peerPrefix = peerId.split('@')[0];
+
+  state.activeCall.peer = peerId;
+  state.activeCall.peerPrefix = peerPrefix;
+  state.activeCall.type = callType;
+  state.activeCall.isMuted = false;
+  state.activeCall.isCamOff = false;
+  state.activeCall.isScreenSharing = false;
+
+  // Setup UI
+  document.getElementById('call-active-peer-name').textContent = peerPrefix;
+  document.getElementById('call-remote-avatar').textContent = peerPrefix.substring(0, 2).toUpperCase();
+  document.getElementById('call-remote-avatar-name').textContent = peerPrefix;
+  document.getElementById('call-remote-status-text').textContent = 'Dialing P2P Encrypted Stream (جَارِي الاتِّصَال)...';
+  document.getElementById('remote-video-tag').textContent = `REMOTE // ${callType.toUpperCase()} MIFTAH`;
+
+  const remoteAvatarFallback = document.getElementById('remote-avatar-fallback');
+  if (remoteAvatarFallback) remoteAvatarFallback.style.display = 'flex';
+
+  openModal('modal-active-call');
+
+  try {
+    let stream;
+    try {
+      const constraints = {
+        audio: true,
+        video: callType === 'video' ? { width: { ideal: 1280 }, height: { ideal: 720 } } : false
+      };
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
+    } catch (e) {
+      console.warn('[WebRTC] Native device access fallback to synthetic:', e);
+      stream = createSyntheticStream(callType === 'video');
+    }
+
+    state.activeCall.localStream = stream;
+    const localVideo = document.getElementById('call-local-video');
+    if (localVideo) {
+      localVideo.srcObject = stream;
+      localVideo.play().catch(() => {});
+    }
+
+    const pc = new RTCPeerConnection({
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    });
+
+    state.activeCall.pc = pc;
+
+    stream.getTracks().forEach(track => pc.addTrack(track, stream));
+
+    pc.ontrack = (event) => {
+      console.log('[WebRTC] Received remote track:', event.track.kind);
+      const remoteVideo = document.getElementById('call-remote-video');
+      const fallback = document.getElementById('remote-avatar-fallback');
+      if (remoteVideo && event.streams && event.streams[0]) {
+        state.activeCall.remoteStream = event.streams[0];
+        remoteVideo.srcObject = event.streams[0];
+        remoteVideo.play().catch(() => {});
+        if (event.track.kind === 'video' && fallback) {
+          fallback.style.display = 'none';
+        }
+      }
+      startCallTimer();
+      document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
+    };
+
+    pc.onicecandidate = (event) => {
+      if (event.candidate && state.ws && state.ws.readyState === WebSocket.OPEN) {
+        state.ws.send(JSON.stringify({
+          type: 'CALL_SIGNAL',
+          payload: {
+            signalType: 'ICE',
+            targetPeer: peerId,
+            candidate: event.candidate
+          }
+        }));
+      }
+    };
+
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+
+    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
+        type: 'CALL_SIGNAL',
+        payload: {
+          signalType: 'OFFER',
+          targetPeer: peerId,
+          callType,
+          sdp: offer
+        }
+      }));
+    }
+
+    // Dialing Audio feedback
+    playTone(440, 0.2);
+    setTimeout(() => playTone(480, 0.2), 250);
+
+    // Auto-answer companion bot if calling bot
+    if (peerPrefix.startsWith('antigravity') || peerPrefix.startsWith('al-') || peerPrefix.startsWith('ibn-')) {
+      setTimeout(() => {
+        simulateBotAnswerCall(peerId, callType);
+      }, 1800);
+    }
+
+  } catch (err) {
+    console.error('[WebRTC Outgoing Error]:', err);
+  }
+}
+
+async function handleIncomingCallSignal(payload) {
+  const { signalType, senderPeer, senderPrefix, sdp, candidate, callType } = payload;
+
+  if (signalType === 'OFFER') {
+    state.pendingIncomingCall = payload;
+    document.getElementById('incoming-caller-name').textContent = senderPrefix || senderPeer.split('@')[0];
+    document.getElementById('incoming-call-avatar').textContent = (senderPrefix || senderPeer).substring(0, 2).toUpperCase();
+    document.getElementById('incoming-call-type-text').textContent = `Incoming P2P Encrypted ${callType === 'video' ? 'Video' : 'Audio'} Call (مُكَالَمَة ${callType === 'video' ? 'مَرْئِيَّة' : 'صَوْتِيَّة'})`;
+    openModal('modal-incoming-call');
+    playTone(523.25, 0.3);
+    setTimeout(() => playTone(659.25, 0.3), 350);
+  } else if (signalType === 'ANSWER') {
+    if (state.activeCall.pc && sdp) {
+      await state.activeCall.pc.setRemoteDescription(new RTCSessionDescription(sdp));
+      startCallTimer();
+      document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
+    }
+  } else if (signalType === 'ICE') {
+    if (state.activeCall.pc && candidate) {
+      try {
+        await state.activeCall.pc.addIceCandidate(new RTCIceCandidate(candidate));
+      } catch (e) {}
+    }
+  } else if (signalType === 'HANGUP' || signalType === 'REJECT') {
+    endActiveCall(false);
+  } else if (signalType === 'NAGHAM') {
+    if (payload.freq1 && payload.freq2) {
+      playDtmfDualTone(payload.freq1, payload.freq2, 0.25);
+    }
+  }
+}
+
+async function acceptIncomingCall() {
+  if (!state.pendingIncomingCall) return;
+  const { senderPeer, senderPrefix, sdp, callType } = state.pendingIncomingCall;
+  closeModal('modal-incoming-call');
+
+  state.activeCall.peer = senderPeer;
+  state.activeCall.peerPrefix = senderPrefix || senderPeer.split('@')[0];
+  state.activeCall.type = callType || 'video';
+
+  document.getElementById('call-active-peer-name').textContent = state.activeCall.peerPrefix;
+  document.getElementById('call-remote-avatar').textContent = state.activeCall.peerPrefix.substring(0, 2).toUpperCase();
+  document.getElementById('call-remote-avatar-name').textContent = state.activeCall.peerPrefix;
+  document.getElementById('call-remote-status-text').textContent = 'Establishing Secure P2P SRTP Pipe...';
+
+  openModal('modal-active-call');
+
+  try {
+    let stream;
+    try {
+      const constraints = {
+        audio: true,
+        video: callType === 'video' ? { width: { ideal: 1280 }, height: { ideal: 720 } } : false
+      };
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
+    } catch (e) {
+      stream = createSyntheticStream(callType === 'video');
+    }
+
+    state.activeCall.localStream = stream;
+    const localVideo = document.getElementById('call-local-video');
+    if (localVideo) {
+      localVideo.srcObject = stream;
+      localVideo.play().catch(() => {});
+    }
+
+    const pc = new RTCPeerConnection({
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    });
+
+    state.activeCall.pc = pc;
+
+    stream.getTracks().forEach(track => pc.addTrack(track, stream));
+
+    pc.ontrack = (event) => {
+      const remoteVideo = document.getElementById('call-remote-video');
+      const fallback = document.getElementById('remote-avatar-fallback');
+      if (remoteVideo && event.streams && event.streams[0]) {
+        state.activeCall.remoteStream = event.streams[0];
+        remoteVideo.srcObject = event.streams[0];
+        remoteVideo.play().catch(() => {});
+        if (event.track.kind === 'video' && fallback) {
+          fallback.style.display = 'none';
+        }
+      }
+      startCallTimer();
+      document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
+    };
+
+    pc.onicecandidate = (event) => {
+      if (event.candidate && state.ws && state.ws.readyState === WebSocket.OPEN) {
+        state.ws.send(JSON.stringify({
+          type: 'CALL_SIGNAL',
+          payload: {
+            signalType: 'ICE',
+            targetPeer: senderPeer,
+            candidate: event.candidate
+          }
+        }));
+      }
+    };
+
+    await pc.setRemoteDescription(new RTCSessionDescription(sdp));
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+
+    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
+        type: 'CALL_SIGNAL',
+        payload: {
+          signalType: 'ANSWER',
+          targetPeer: senderPeer,
+          sdp: answer
+        }
+      }));
+    }
+
+    startCallTimer();
+  } catch (err) {
+    console.error('[WebRTC Accept Error]:', err);
+    endActiveCall();
+  }
+}
+
+function declineIncomingCall() {
+  if (state.pendingIncomingCall) {
+    const { senderPeer } = state.pendingIncomingCall;
+    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
+        type: 'CALL_SIGNAL',
+        payload: {
+          signalType: 'REJECT',
+          targetPeer: senderPeer
+        }
+      }));
+    }
+    state.pendingIncomingCall = null;
+  }
+  closeModal('modal-incoming-call');
+}
+
+function endActiveCall(notifyPeer = true) {
+  if (notifyPeer && state.activeCall.peer && state.ws && state.ws.readyState === WebSocket.OPEN) {
+    state.ws.send(JSON.stringify({
+      type: 'CALL_SIGNAL',
+      payload: {
+        signalType: 'HANGUP',
+        targetPeer: state.activeCall.peer
+      }
+    }));
+  }
+
+  // Stop all local tracks
+  if (state.activeCall.localStream) {
+    state.activeCall.localStream.getTracks().forEach(t => t.stop());
+  }
+
+  // Close peer connection
+  if (state.activeCall.pc) {
+    state.activeCall.pc.close();
+  }
+
+  // Reset video DOM elements
+  const localVideo = document.getElementById('call-local-video');
+  const remoteVideo = document.getElementById('call-remote-video');
+  if (localVideo) localVideo.srcObject = null;
+  if (remoteVideo) remoteVideo.srcObject = null;
+
+  stopCallTimer();
+
+  state.activeCall = {
+    peer: null,
+    peerPrefix: null,
+    type: 'video',
+    pc: null,
+    localStream: null,
+    remoteStream: null,
+    startTime: null,
+    timerInterval: null,
+    isMuted: false,
+    isCamOff: false,
+    isScreenSharing: false
+  };
+
+  closeModal('modal-active-call');
+  closeModal('modal-incoming-call');
+}
+
+function toggleCallMic() {
+  if (!state.activeCall.localStream) return;
+  state.activeCall.isMuted = !state.activeCall.isMuted;
+  state.activeCall.localStream.getAudioTracks().forEach(t => {
+    t.enabled = !state.activeCall.isMuted;
+  });
+
+  const btn = document.getElementById('btn-call-toggle-mic');
+  const icon = document.getElementById('call-mic-icon');
+  const lbl = document.getElementById('call-mic-lbl');
+  if (state.activeCall.isMuted) {
+    btn?.classList.add('active-off');
+    if (icon) icon.textContent = '🔇';
+    if (lbl) lbl.textContent = 'Muted';
+  } else {
+    btn?.classList.remove('active-off');
+    if (icon) icon.textContent = '🎙️';
+    if (lbl) lbl.textContent = 'Mic';
+  }
+}
+
+function toggleCallCam() {
+  if (!state.activeCall.localStream) return;
+  state.activeCall.isCamOff = !state.activeCall.isCamOff;
+  state.activeCall.localStream.getVideoTracks().forEach(t => {
+    t.enabled = !state.activeCall.isCamOff;
+  });
+
+  const btn = document.getElementById('btn-call-toggle-cam');
+  const icon = document.getElementById('call-cam-icon');
+  const lbl = document.getElementById('call-cam-lbl');
+  const fallback = document.getElementById('local-avatar-fallback');
+
+  if (state.activeCall.isCamOff) {
+    btn?.classList.add('active-off');
+    if (icon) icon.textContent = '🚫';
+    if (lbl) lbl.textContent = 'Cam Off';
+    if (fallback) fallback.style.display = 'flex';
+  } else {
+    btn?.classList.remove('active-off');
+    if (icon) icon.textContent = '📹';
+    if (lbl) lbl.textContent = 'Camera';
+    if (fallback) fallback.style.display = 'none';
+  }
+}
+
+async function toggleCallScreenShare() {
+  if (!state.activeCall.pc) return;
+  try {
+    if (!state.activeCall.isScreenSharing) {
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      const screenTrack = screenStream.getVideoTracks()[0];
+      const senders = state.activeCall.pc.getSenders();
+      const videoSender = senders.find(s => s.track && s.track.kind === 'video');
+      if (videoSender) {
+        videoSender.replaceTrack(screenTrack);
+      }
+      document.getElementById('call-local-video').srcObject = screenStream;
+      state.activeCall.isScreenSharing = true;
+
+      screenTrack.onended = () => {
+        toggleCallScreenShare(); // revert to camera
+      };
+    } else {
+      const camTrack = state.activeCall.localStream.getVideoTracks()[0];
+      const senders = state.activeCall.pc.getSenders();
+      const videoSender = senders.find(s => s.track && s.track.kind === 'video');
+      if (videoSender && camTrack) {
+        videoSender.replaceTrack(camTrack);
+      }
+      document.getElementById('call-local-video').srcObject = state.activeCall.localStream;
+      state.activeCall.isScreenSharing = false;
+    }
+  } catch (e) {
+    console.warn('[Screen Share Error]:', e);
+  }
+}
+
+function sendInCallNaghamTone() {
+  const dtmfKeys = ['1', '2', '3', 'A', '4', '5', '6', 'B', '7', '8', '9', 'C', '*', '0', '#', 'D'];
+  const randomKey = dtmfKeys[Math.floor(Math.random() * dtmfKeys.length)];
+  const freqs = DTMF_FREQUENCIES[randomKey];
+  if (freqs) {
+    playDtmfDualTone(freqs.f1, freqs.f2, 0.25);
+    if (state.activeCall.peer && state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
+        type: 'CALL_SIGNAL',
+        payload: {
+          signalType: 'NAGHAM',
+          targetPeer: state.activeCall.peer,
+          freq1: freqs.f1,
+          freq2: freqs.f2,
+          key: randomKey
+        }
+      }));
+    }
+  }
+}
+
+function startCallTimer() {
+  if (state.activeCall.timerInterval) return;
+  state.activeCall.startTime = Date.now();
+  const timerEl = document.getElementById('call-duration-timer');
+  state.activeCall.timerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - state.activeCall.startTime) / 1000);
+    const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+    const s = String(elapsed % 60).padStart(2, '0');
+    if (timerEl) timerEl.textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+function stopCallTimer() {
+  if (state.activeCall.timerInterval) {
+    clearInterval(state.activeCall.timerInterval);
+    state.activeCall.timerInterval = null;
+  }
+  const timerEl = document.getElementById('call-duration-timer');
+  if (timerEl) timerEl.textContent = '00:00';
+}
+
+function simulateBotAnswerCall(botPeerId, callType) {
+  if (!state.activeCall.pc) return;
+  const botStream = createSyntheticStream(callType === 'video');
+  const remoteVideo = document.getElementById('call-remote-video');
+  const fallback = document.getElementById('remote-avatar-fallback');
+
+  if (remoteVideo) {
+    state.activeCall.remoteStream = botStream;
+    remoteVideo.srcObject = botStream;
+    remoteVideo.play().catch(() => {});
+    if (fallback && callType === 'video') {
+      fallback.style.display = 'none';
+    }
+  }
+  startCallTimer();
+  document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
+  document.getElementById('call-hud-latency').textContent = '9ms (BOT DIRECT)';
+}
+
+function createSyntheticStream(withVideo = true) {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = ctx.createOscillator();
+  const dst = ctx.createMediaStreamDestination();
+  osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+  osc.connect(dst);
+  osc.start();
+
+  const tracks = [...dst.stream.getAudioTracks()];
+
+  if (withVideo) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 480;
+    const cCtx = canvas.getContext('2d');
+    let frame = 0;
+    setInterval(() => {
+      frame++;
+      cCtx.fillStyle = '#080c14';
+      cCtx.fillRect(0, 0, 640, 480);
+      cCtx.strokeStyle = '#00f59b';
+      cCtx.lineWidth = 2;
+      cCtx.strokeRect(20, 20, 600, 440);
+      cCtx.fillStyle = '#00f59b';
+      cCtx.font = 'bold 24px monospace';
+      cCtx.fillText(`WyreSup P2P Synthetic Stream`, 80, 200);
+      cCtx.font = '16px monospace';
+      cCtx.fillStyle = '#8e9297';
+      cCtx.fillText(`Frame #${frame} · SRTP / ChaCha20 Secured`, 80, 240);
+      cCtx.fillStyle = '#00f59b';
+      cCtx.beginPath();
+      cCtx.arc(320 + Math.sin(frame * 0.1) * 80, 320, 16, 0, Math.PI * 2);
+      cCtx.fill();
+    }, 100);
+    const canvasStream = canvas.captureStream(15);
+    tracks.push(...canvasStream.getVideoTracks());
+  }
+
+  return new MediaStream(tracks);
 }

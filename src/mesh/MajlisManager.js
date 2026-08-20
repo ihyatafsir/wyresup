@@ -16,8 +16,8 @@ class MajlisManager {
     // 1. Global Public Mesh
     this.createSpace({
       id: 'space-public-mesh',
-      name: 'Global Mesh Network',
-      arabicName: 'المَجْلِس العَام',
+      name: 'WYRESUP',
+      arabicName: 'مَجْلِس وَايِرْسَب',
       icon: '🌐',
       description: 'The root decentralized gossip mesh for WyreSup nodes.',
       channels: [

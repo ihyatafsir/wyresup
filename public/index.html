@@ -50,8 +50,8 @@
         <div class="space-title-wrap">
           <button class="mobile-close-sidebar-btn" id="btn-close-sidebar" title="Back to Chat">←</button>
           <div>
-            <h2 class="space-title" id="current-space-name">Global Mesh Network</h2>
-            <span class="space-sub" id="current-space-arabic">المَجْلِس العَام</span>
+            <h2 class="space-title" id="current-space-name">WYRESUP</h2>
+            <span class="space-sub" id="current-space-arabic">مَجْلِس وَايِرْسَب</span>
           </div>
         </div>
         <button class="space-menu-btn" id="btn-space-menu" title="Space Options">▾</button>
@@ -137,6 +137,9 @@
           <p class="topbar-channel-topic" id="topbar-channel-topic">General mesh discussions, tests, and pings.</p>
         </div>
         <div class="topbar-right">
+          <!-- Voice & Video Call Action Buttons (Direct Messages Only) -->
+          <button class="topbar-btn topbar-call-btn" id="btn-topbar-call-voice" title="Start Audio Call (مُكَالَمَة صَوْتِيَّة)" style="display: none;">📞</button>
+          <button class="topbar-btn topbar-call-btn" id="btn-topbar-call-video" title="Start Video Call (مُكَالَمَة مَرْئِيَّة)" style="display: none;">📹</button>
           <!-- Live Network Indicator Badge -->
           <div class="mesh-badge" id="topbar-mesh-badge" title="P2P Connection Status">
             <span class="pulse-dot"></span>
@@ -496,12 +499,18 @@
           </div>
         </div>
 
-        <div class="profile-actions">
+        <div class="profile-actions-grid">
           <button class="btn btn-primary btn-dm-action" id="btn-start-direct-dm">
-            <span>💬</span> Start Direct P2P Chat (مُحَادَثَة مُبَاشِرَة)
+            <span>💬</span> Direct Chat (مُحَادَثَة)
+          </button>
+          <button class="btn btn-voice-call-action" id="btn-profile-voice-call">
+            <span>📞</span> Audio Call (صَوْت)
+          </button>
+          <button class="btn btn-video-call-action" id="btn-profile-video-call">
+            <span>📹</span> Video Call (مَرْئِيّ)
           </button>
           <button class="btn btn-tunnel-action" id="btn-start-p2p-tunnel">
-            <span>🛡️</span> Establish Nafaq Tunnel (إِقَامَة نَفَق)
+            <span>🛡️</span> Nafaq Tunnel (نَفَق)
           </button>
         </div>
       </div>
@@ -591,6 +600,94 @@
           <button class="btn btn-secondary" id="btn-generate-random-identity">🎲 Random</button>
           <button class="btn btn-primary" id="btn-save-username">Save Identity (حِفْظ)</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. P2P Video & Voice Call Stage Modal (المُكَالَمَة المَرْئِيَّة و الصَّوْتِيَّة) -->
+  <div class="modal-overlay" id="modal-active-call">
+    <div class="modal-card video-call-card">
+      <div class="call-stage-header">
+        <div class="call-peer-badge">
+          <span class="call-pulse-dot"></span>
+          <span class="call-peer-name" id="call-active-peer-name">antigravity</span>
+          <span class="call-crypto-badge">MIFTAH // SRTP P2P</span>
+        </div>
+        <div class="call-timer-badge" id="call-duration-timer">00:00</div>
+        <button class="modal-close call-stage-close" id="btn-minimize-call" title="Minimize / Close">✕</button>
+      </div>
+
+      <!-- Main Video Grid -->
+      <div class="call-video-grid" id="call-video-grid">
+        <!-- Remote Video Tile -->
+        <div class="video-tile remote-video-tile" id="remote-video-tile">
+          <video id="call-remote-video" autoplay playsinline></video>
+          <div class="video-avatar-fallback" id="remote-avatar-fallback">
+            <div class="call-large-avatar" id="call-remote-avatar">AG</div>
+            <p class="call-avatar-label" id="call-remote-avatar-name">antigravity</p>
+            <span class="call-avatar-status" id="call-remote-status-text">Direct P2P Encrypted Stream</span>
+          </div>
+          <span class="video-tile-tag" id="remote-video-tag">REMOTE // 1080p OPUS</span>
+        </div>
+
+        <!-- Local Video PIP Tile -->
+        <div class="video-tile local-video-pip" id="local-video-tile">
+          <video id="call-local-video" autoplay playsinline muted></video>
+          <div class="video-avatar-fallback pip-fallback" id="local-avatar-fallback" style="display: none;">
+            <div class="pip-avatar" id="call-local-avatar">ME</div>
+          </div>
+          <span class="video-tile-tag">YOU (مُبَاشِر)</span>
+        </div>
+      </div>
+
+      <!-- Live Stream HUD -->
+      <div class="call-hud-bar">
+        <span>⚡ Latency: <strong id="call-hud-latency" class="emerald">12ms</strong></span>
+        <span>🛡️ Cipher: <strong class="emerald">ChaCha20-Poly1305 / SRTP</strong></span>
+        <span>📡 Codec: <strong>Opus 48kHz + VP8</strong></span>
+      </div>
+
+      <!-- Call Controls Dock -->
+      <div class="call-controls-dock">
+        <button class="call-ctrl-btn" id="btn-call-toggle-mic" title="Mute / Unmute Mic">
+          <span class="ctrl-icon" id="call-mic-icon">🎙️</span>
+          <span class="ctrl-lbl" id="call-mic-lbl">Mute</span>
+        </button>
+        <button class="call-ctrl-btn" id="btn-call-toggle-cam" title="Turn Camera On / Off">
+          <span class="ctrl-icon" id="call-cam-icon">📹</span>
+          <span class="ctrl-lbl" id="call-cam-lbl">Camera</span>
+        </button>
+        <button class="call-ctrl-btn" id="btn-call-share-screen" title="Screen Share (تَبَادُل الشَّاشَة)">
+          <span class="ctrl-icon">🖥️</span>
+          <span class="ctrl-lbl">Share</span>
+        </button>
+        <button class="call-ctrl-btn" id="btn-call-send-nagham" title="Send In-Call DTMF Acoustic Pulse">
+          <span class="ctrl-icon">🎵</span>
+          <span class="ctrl-lbl">Nagham</span>
+        </button>
+        <button class="call-ctrl-btn end-call-btn" id="btn-call-hangup" title="End Call (إِنْهَاء المُكَالَمَة)">
+          <span class="ctrl-icon">🔴</span>
+          <span class="ctrl-lbl">Hang Up</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Incoming Call Banner Modal (إِشْعَار مُكَالَمَة وَارِدَة) -->
+  <div class="modal-overlay" id="modal-incoming-call">
+    <div class="modal-card incoming-call-card">
+      <div class="incoming-call-pulse-ring">
+        <div class="incoming-call-avatar" id="incoming-call-avatar">AG</div>
+      </div>
+      <h3 class="incoming-caller-name" id="incoming-caller-name">antigravity</h3>
+      <p class="incoming-call-type" id="incoming-call-type-text">Incoming P2P Encrypted Video Call (مُكَالَمَة مَرْئِيَّة)</p>
+      <div class="incoming-actions">
+        <button class="btn btn-decline-call" id="btn-incoming-decline">
+          <span>❌</span> Decline (رَفْض)
+        </button>
+        <button class="btn btn-accept-call" id="btn-incoming-accept">
+          <span>📞</span> Accept (قَبُول)
+        </button>
       </div>
     </div>
   </div>

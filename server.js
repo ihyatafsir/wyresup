@@ -35,7 +35,11 @@ const MIME_TYPES = {
   '.js': 'application/javascript',
   '.json': 'application/json',
   '.png': 'image/png',
-  '.svg': 'image/svg+xml'
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.svg': 'image/svg+xml',
+  '.zip': 'application/zip'
 };
 
 // HTTP Server
@@ -282,6 +286,28 @@ function handleClientMessage(ws, msg) {
         client.currentChannelId = payload.channelId;
         presenceManager.updatePeer(client);
         broadcastPresenceUpdate();
+      }
+      break;
+    }
+
+    case 'CALL_SIGNAL': {
+      const client = connectedClients.get(ws);
+      if (!client) return;
+      const targetPeer = payload.targetPeer;
+      for (const [targetWs, targetRecord] of connectedClients.entries()) {
+        const matches = targetRecord.peerId === targetPeer ||
+                        targetRecord.prefix === targetPeer ||
+                        targetRecord.peerId.startsWith(`${targetPeer}@`);
+        if (matches && targetWs !== ws && targetWs.readyState === WebSocket.OPEN) {
+          targetWs.send(JSON.stringify({
+            type: 'CALL_SIGNAL',
+            payload: {
+              ...payload,
+              senderPeer: client.peerId,
+              senderPrefix: client.prefix
+            }
+          }));
+        }
       }
       break;
     }
