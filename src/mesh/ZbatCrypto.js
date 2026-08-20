@@ -59,9 +59,10 @@ class ZbatCrypto {
         content: payload.content || '',
         mediaUrl: payload.mediaUrl || null,
         voiceData: payload.voiceData || null, // Base64 audio or PCM
+        attachments: payload.attachments || null, // P2P File transfers
         replyTo: payload.replyTo || null,
         reactions: payload.reactions || {},
-        sig: crypto.createHash('sha256').update(`${senderId}:${messageId}:${payload.content}`).digest('hex').substring(0, 12)
+        sig: crypto.createHash('sha256').update(`${senderId}:${messageId}:${payload.content || ''}`).digest('hex').substring(0, 12)
       }
     };
   }

@@ -38,7 +38,7 @@ function initIdentity() {
   let savedId = localStorage.getItem('wyresup_identity');
   if (!savedId) {
     const randomHex = Math.random().toString(16).substring(2, 10);
-    const names = ['khalid', 'tariq', 'salman', 'amira', 'layla', 'omar', 'zayd'];
+    const names = ['khalid', 'tariq', 'salman', 'amira', 'layla', 'omar', 'zayd', 'nour', 'faris'];
     const prefix = names[Math.floor(Math.random() * names.length)];
     state.identity = {
       prefix,
@@ -58,6 +58,36 @@ function initIdentity() {
   document.getElementById('current-user-name').textContent = state.identity.prefix;
   document.getElementById('current-user-id').textContent = state.identity.fullId;
   document.getElementById('current-user-avatar').textContent = state.identity.prefix.substring(0, 2).toUpperCase();
+}
+
+function updateIdentity(newPrefix, newHash = null) {
+  const cleanPrefix = (newPrefix || 'peer').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '') || 'peer';
+  const shortHash = newHash || state.identity?.shortHash || Math.random().toString(16).substring(2, 10);
+  state.identity = {
+    prefix: cleanPrefix,
+    shortHash,
+    fullId: `${cleanPrefix}@${shortHash}`
+  };
+  localStorage.setItem('wyresup_identity', JSON.stringify(state.identity));
+
+  // Update UI user bar
+  document.getElementById('current-user-name').textContent = state.identity.prefix;
+  document.getElementById('current-user-id').textContent = state.identity.fullId;
+  document.getElementById('current-user-avatar').textContent = state.identity.prefix.substring(0, 2).toUpperCase();
+
+  // Inform WebSocket Relay & Mesh of updated identity
+  if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+    state.ws.send(JSON.stringify({
+      type: 'IDENTIFY',
+      payload: {
+        peerId: state.identity.fullId,
+        prefix: state.identity.prefix,
+        shortHash: state.identity.shortHash,
+        spaceId: state.currentSpaceId,
+        channelId: state.currentChannelId
+      }
+    }));
+  }
 }
 
 // --- 2. WebSocket Connection (Al-Wasl) ---
@@ -411,7 +441,13 @@ function appendMessageToDOM(packet) {
   card.className = `msg-card ${isSelf ? 'self-msg' : ''}`;
   card.id = `msg-${messageId}`;
 
-  let bodyHtml = content ? `<div class="msg-text">${escapeHtml(content)}</div>` : '';
+  let bodyHtml = '';
+
+  // Suppress raw fallback string if attachments or images exist
+  const isFallbackText = content && content.startsWith('[مَلَفّ P2P File:');
+  if (content && (!isFallbackText || (!attachments && !mediaUrl))) {
+    bodyHtml += `<div class="msg-text">${escapeHtml(content)}</div>`;
+  }
 
   // 1. Voice Note Card
   if (voiceData) {
@@ -437,9 +473,12 @@ function appendMessageToDOM(packet) {
   // 2. File & Image Attachments
   if (attachments && Array.isArray(attachments)) {
     attachments.forEach(att => {
-      if (att.type && att.type.startsWith('image/')) {
+      const isImg = (att.type && att.type.startsWith('image/')) || /\.(jpg|jpeg|png|gif|webp|svg|bmp|heic)$/i.test(att.name || '');
+      if (isImg) {
         bodyHtml += `
-          <img src="${att.data}" alt="${escapeHtml(att.name)}" class="msg-attachment-img" onclick="openImageLightbox('${att.data}')">
+          <div class="msg-attachment-img-wrap">
+            <img src="${att.data}" alt="${escapeHtml(att.name)}" class="msg-attachment-img" onclick="openImageLightbox('${att.data}')">
+          </div>
         `;
       } else {
         bodyHtml += `
@@ -1069,7 +1108,7 @@ function initEventListeners() {
         payload: {
           spaceId: state.currentSpaceId,
           channelId: state.currentChannelId,
-          content: text || (hasAttachments ? `[مَلَفّ P2P File: ${state.stagedAttachments.map(a => a.name).join(', ')}]` : ''),
+          content: text || '',
           attachments: state.stagedAttachments.length > 0 ? [...state.stagedAttachments] : undefined
         }
       }));
@@ -1413,6 +1452,49 @@ function initEventListeners() {
       console.error(e);
     }
   });
+
+  // Identity / Username Settings Handlers
+  const userSettingsBtn = document.getElementById('btn-user-settings');
+  const userAvatarWrap = document.querySelector('.user-avatar-wrap');
+  const openSettings = () => {
+    const input = document.getElementById('settings-username-input');
+    const disp = document.getElementById('settings-full-id-display');
+    if (input) input.value = state.identity?.prefix || '';
+    if (disp) disp.textContent = state.identity?.fullId || 'peer@00000000';
+    openModal('modal-user-settings');
+  };
+
+  if (userSettingsBtn) userSettingsBtn.addEventListener('click', openSettings);
+  if (userAvatarWrap) {
+    userAvatarWrap.style.cursor = 'pointer';
+    userAvatarWrap.title = 'Change Identity / Username';
+    userAvatarWrap.addEventListener('click', openSettings);
+  }
+
+  const saveUsernameBtn = document.getElementById('btn-save-username');
+  if (saveUsernameBtn) {
+    saveUsernameBtn.addEventListener('click', () => {
+      const input = document.getElementById('settings-username-input');
+      if (input && input.value.trim()) {
+        updateIdentity(input.value.trim());
+      }
+      closeModal('modal-user-settings');
+    });
+  }
+
+  const randomIdentityBtn = document.getElementById('btn-generate-random-identity');
+  if (randomIdentityBtn) {
+    randomIdentityBtn.addEventListener('click', () => {
+      const names = ['khalid', 'tariq', 'salman', 'amira', 'layla', 'omar', 'zayd', 'nour', 'faris'];
+      const prefix = names[Math.floor(Math.random() * names.length)];
+      const hash = Math.random().toString(16).substring(2, 10);
+      const input = document.getElementById('settings-username-input');
+      const disp = document.getElementById('settings-full-id-display');
+      if (input) input.value = prefix;
+      if (disp) disp.textContent = `${prefix}@${hash}`;
+      updateIdentity(prefix, hash);
+    });
+  }
 
   // Generic Modal Close Handlers
   document.querySelectorAll('[data-close]').forEach(btn => {

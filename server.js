@@ -237,6 +237,7 @@ function handleClientMessage(ws, msg) {
         content: payload.content,
         mediaUrl: payload.mediaUrl,
         voiceData: payload.voiceData,
+        attachments: payload.attachments,
         replyTo: payload.replyTo
       }, {
         senderId: client.peerId,
