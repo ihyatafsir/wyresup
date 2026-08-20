@@ -1,0 +1,24 @@
+{
+  "name": "wyresup-mesh-app",
+  "version": "1.7.0",
+  "description": "WyreSup Decentralized P2P Cryptographic Mesh Messenger (v1.7.0)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/mesh_gossip_test.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "keywords": [
+    "p2p",
+    "mesh",
+    "decentralized",
+    "gossip",
+    "discord-channels",
+    "wyresup",
+    "lisan-al-arab"
+  ],
+  "author": "WyreSup Network",
+  "license": "MIT"
+}

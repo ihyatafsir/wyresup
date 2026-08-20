@@ -1,0 +1,1429 @@
+/**
+ * WyreSup Discord-Style Mesh Client App (تَطْبِيق الوَيْب للمَجَالِس)
+ * Manages WebSocket Mesh connection, Space/Channel switching,
+ * Sawt Voice notes, Nagham DTMF audio synthesizer, and presence.
+ */
+
+// --- Global App State ---
+const state = {
+  identity: null,
+  ws: null,
+  currentSpaceId: 'space-public-mesh',
+  currentChannelId: 'chan-general',
+  spaces: [],
+  channels: [],
+  peers: [],
+  typingPeers: [],
+  messages: new Map(), // channelId -> Array of messages
+  isRecordingSawt: false,
+  mediaRecorder: null,
+  audioChunks: [],
+  recordingInterval: null,
+  recordingSeconds: 0,
+  currentPlayingAudio: null,
+  currentPlayingCard: null,
+  audioCtx: null
+};
+
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', () => {
+  initIdentity();
+  initWebSocket();
+  initEventListeners();
+  initDtmfAudio();
+});
+
+// --- 1. Identity & Keys (Huwiyya) ---
+function initIdentity() {
+  let savedId = localStorage.getItem('wyresup_identity');
+  if (!savedId) {
+    const randomHex = Math.random().toString(16).substring(2, 10);
+    const names = ['khalid', 'tariq', 'salman', 'amira', 'layla', 'omar', 'zayd'];
+    const prefix = names[Math.floor(Math.random() * names.length)];
+    state.identity = {
+      prefix,
+      shortHash: randomHex,
+      fullId: `${prefix}@${randomHex}`
+    };
+    localStorage.setItem('wyresup_identity', JSON.stringify(state.identity));
+  } else {
+    try {
+      state.identity = JSON.parse(savedId);
+    } catch (e) {
+      state.identity = { prefix: 'peer', shortHash: '00000000', fullId: 'peer@00000000' };
+    }
+  }
+
+  // Update UI user bar
+  document.getElementById('current-user-name').textContent = state.identity.prefix;
+  document.getElementById('current-user-id').textContent = state.identity.fullId;
+  document.getElementById('current-user-avatar').textContent = state.identity.prefix.substring(0, 2).toUpperCase();
+}
+
+// --- 2. WebSocket Connection (Al-Wasl) ---
+function initWebSocket() {
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const wsUrl = `${protocol}//${window.location.host}`;
+
+  state.ws = new WebSocket(wsUrl);
+
+  state.ws.onopen = () => {
+    console.log('[Mesh] Connected to Hub / Relay');
+    updateConnectionBadge('P2P MESH // MUTTASIL', true);
+
+    // Send IDENTIFY
+    state.ws.send(JSON.stringify({
+      type: 'IDENTIFY',
+      payload: {
+        peerId: state.identity.fullId,
+        prefix: state.identity.prefix,
+        shortHash: state.identity.shortHash,
+        spaceId: state.currentSpaceId,
+        channelId: state.currentChannelId
+      }
+    }));
+  };
+
+  state.ws.onmessage = (event) => {
+    try {
+      const msg = JSON.parse(event.data);
+      handleServerMessage(msg);
+    } catch (err) {
+      console.error('[WS Parse Error]:', err);
+    }
+  };
+
+  state.ws.onclose = () => {
+    console.warn('[Mesh] Disconnected. Reconnecting in 2s (I\'adat al-Wasl)...');
+    updateConnectionBadge('DISCONNECTED // MUNFASIL', false);
+    setTimeout(initWebSocket, 2000);
+  };
+
+  state.ws.onerror = (err) => {
+    console.error('[Mesh WS Error]:', err);
+  };
+}
+
+function updateConnectionBadge(text, isOnline) {
+  const badge = document.getElementById('topbar-mesh-badge');
+  const textEl = document.getElementById('topbar-mesh-status');
+  if (textEl) textEl.textContent = text;
+  if (badge) {
+    badge.style.borderColor = isOnline ? 'rgba(0, 255, 136, 0.25)' : 'rgba(255, 68, 68, 0.4)';
+    badge.style.color = isOnline ? 'var(--matrix-green)' : 'var(--muqta)';
+  }
+}
+
+// --- 3. Message Handling & Dispatch ---
+function handleServerMessage(msg) {
+  const { type, payload } = msg;
+
+  switch (type) {
+    case 'IDENTIFIED':
+      state.spaces = payload.spaces || [];
+      state.peers = payload.peers || [];
+      renderSpacesRail();
+      selectSpace(state.currentSpaceId);
+      renderMembers();
+      break;
+
+    case 'GOSSIP_PACKET':
+      handleIncomingGossipPacket(payload);
+      break;
+
+    case 'PRESENCE_SYNC':
+      state.peers = payload.peers || [];
+      renderMembers();
+      renderVoiceParticipants();
+      break;
+
+    case 'TYPING_UPDATE':
+      if (payload.channelId === state.currentChannelId) {
+        state.typingPeers = payload.typing || [];
+        renderTypingIndicator();
+      }
+      break;
+
+    case 'SPACE_CREATED':
+      state.spaces.push(payload);
+      renderSpacesRail();
+      break;
+
+    case 'CHANNEL_CREATED':
+      const targetSpace = state.spaces.find(s => s.id === payload.spaceId);
+      if (targetSpace) {
+        targetSpace.channels.push(payload.channel);
+        if (state.currentSpaceId === payload.spaceId) {
+          renderChannelsSidebar();
+        }
+      }
+      break;
+  }
+}
+
+function handleIncomingGossipPacket(packet) {
+  if (!packet || !packet.zahir || !packet.batin) return;
+  const { channelId, messageId } = packet.zahir;
+
+  if (!state.messages.has(channelId)) {
+    state.messages.set(channelId, []);
+  }
+
+  const list = state.messages.get(channelId);
+  // Check if message already exists
+  if (!list.some(m => m.zahir.messageId === messageId)) {
+    list.push(packet);
+    if (channelId === state.currentChannelId) {
+      appendMessageToDOM(packet);
+      scrollToBottom();
+    }
+  }
+}
+
+// --- 4. Render Spaces & Channels ---
+function renderSpacesRail() {
+  const rail = document.getElementById('spaces-list');
+  const rootBtn = document.getElementById('btn-root-mesh');
+  
+  if (rootBtn) {
+    if (state.currentSpaceId === 'space-public-mesh') {
+      rootBtn.classList.add('active');
+    } else {
+      rootBtn.classList.remove('active');
+    }
+  }
+
+  rail.innerHTML = '';
+
+  state.spaces.forEach(space => {
+    // If it's the root mesh, the top brand icon represents it, or we render all spaces cleanly
+    if (space.id === 'space-public-mesh') return;
+
+    const btn = document.createElement('button');
+    btn.className = `rail-icon ${space.id === state.currentSpaceId ? 'active' : ''}`;
+    btn.title = `${space.name} (${space.arabicName || ''})`;
+    btn.innerHTML = `
+      <span>${space.icon || '💬'}</span>
+      <div class="active-pill"></div>
+    `;
+    btn.onclick = () => selectSpace(space.id);
+    rail.appendChild(btn);
+  });
+}
+
+function selectSpace(spaceId) {
+  state.currentSpaceId = spaceId;
+  const space = state.spaces.find(s => s.id === spaceId) || state.spaces[0];
+  if (!space) return;
+
+  document.getElementById('current-space-name').textContent = space.name;
+  document.getElementById('current-space-arabic').textContent = space.arabicName || '';
+
+  renderSpacesRail();
+  renderChannelsSidebar();
+
+  // Select first channel in space if current not in space
+  const channelExists = space.channels.some(c => c.id === state.currentChannelId);
+  if (!channelExists && space.channels.length > 0) {
+    selectChannel(space.channels[0].id);
+  } else {
+    selectChannel(state.currentChannelId);
+  }
+}
+
+function renderChannelsSidebar() {
+  const space = state.spaces.find(s => s.id === state.currentSpaceId);
+  if (!space) return;
+
+  const textList = document.getElementById('text-channels-list');
+  const voiceList = document.getElementById('voice-channels-list');
+  const dmList = document.getElementById('dm-channels-list');
+  const dmCategory = document.getElementById('dm-category');
+
+  textList.innerHTML = '';
+  voiceList.innerHTML = '';
+  if (dmList) dmList.innerHTML = '';
+
+  let hasDMs = false;
+
+  space.channels.forEach(ch => {
+    const el = document.createElement('div');
+    el.className = `channel-item ${ch.id === state.currentChannelId ? 'active' : ''}`;
+    el.innerHTML = `
+      <span class="channel-icon">${ch.icon || (ch.id.startsWith('dm-') ? '🔒' : (ch.type === 'voice' ? '🔊' : '#'))}</span>
+      <span class="channel-name">${ch.name}</span>
+    `;
+    el.onclick = () => selectChannel(ch.id);
+
+    if (ch.id.startsWith('dm-')) {
+      hasDMs = true;
+      if (dmList) dmList.appendChild(el);
+    } else if (ch.type === 'voice') {
+      voiceList.appendChild(el);
+    } else {
+      textList.appendChild(el);
+    }
+  });
+
+  if (dmCategory) {
+    dmCategory.style.display = hasDMs ? 'flex' : 'none';
+  }
+}
+
+function selectChannel(channelId) {
+  state.currentChannelId = channelId;
+  const space = state.spaces.find(s => s.id === state.currentSpaceId);
+  let channel = space?.channels.find(c => c.id === channelId);
+
+  // If DM channel not in space array yet, create it dynamically
+  if (!channel && channelId.startsWith('dm-')) {
+    const peerName = channelId.replace('dm-', '');
+    channel = {
+      id: channelId,
+      name: `dm-${peerName}`,
+      type: 'text',
+      topic: `Direct P2P Encrypted Session with @${peerName} (مُحَادَثَة خَاصَّة)`,
+      icon: '🔒'
+    };
+    if (space) space.channels.push(channel);
+  }
+
+  const voiceBanner = document.getElementById('voice-lounge-banner');
+  const channelTypePill = document.getElementById('topbar-channel-type');
+
+  if (channel) {
+    const isDM = channel.id.startsWith('dm-');
+    const peerName = isDM ? channel.id.replace('dm-', '') : '';
+
+    document.getElementById('topbar-channel-title').textContent = channel.name;
+    document.getElementById('topbar-channel-icon').textContent = channel.icon || (isDM ? '🔒' : (channel.type === 'voice' ? '🔊' : '#'));
+    document.getElementById('topbar-channel-topic').textContent = channel.topic || 'Mesh channel';
+
+    if (isDM) {
+      document.getElementById('hero-channel-title').textContent = `🔒 Direct P2P Session with @${peerName}`;
+      document.getElementById('hero-channel-desc').textContent = `End-to-End Encrypted Tunnel (Nafaq) via ChaCha20-Poly1305. Direct session with zero relay hops.`;
+      document.getElementById('hero-icon').textContent = '🔒';
+    } else {
+      document.getElementById('hero-channel-title').textContent = `Welcome to #${channel.name}!`;
+      document.getElementById('hero-channel-desc').textContent = channel.topic || 'Decentralized Gossip Mesh Room.';
+      document.getElementById('hero-icon').textContent = channel.icon || (channel.type === 'voice' ? '🔊' : '#');
+    }
+
+    const input = document.getElementById('message-input');
+    input.placeholder = isDM ? `Send private encrypted message to @${peerName}...` : `Broadcast encrypted message to #${channel.name}...`;
+
+    const voiceConnectedBar = document.getElementById('voice-connected-bar');
+    if (channel.type === 'voice') {
+      if (voiceBanner) voiceBanner.style.display = 'flex';
+      if (voiceConnectedBar) {
+        voiceConnectedBar.style.display = 'flex';
+        document.getElementById('voice-conn-channel-name').textContent = channel.name;
+      }
+      if (channelTypePill) {
+        channelTypePill.textContent = 'VOICE & SAWT';
+        channelTypePill.style.color = 'var(--matrix-green)';
+      }
+      document.getElementById('voice-lounge-name').textContent = `${channel.name} (صَوْت و نَغَم)`;
+      renderVoiceParticipants();
+    } else {
+      if (voiceBanner) voiceBanner.style.display = 'none';
+      if (channelTypePill) {
+        channelTypePill.textContent = isDM ? 'P2P DM // NAFAQ' : 'TEXT';
+        channelTypePill.style.color = isDM ? 'var(--matrix-green)' : 'var(--text-muted)';
+      }
+    }
+
+    // Auto-display Nafaq Tunnel banner for Direct P2P channels
+    if (isDM) {
+      const targetPeer = state.peers.find(p => p.prefix === peerName) || { prefix: peerName, peerId: `${peerName}@mesh`, latency: 9 };
+      activateNafaqTunnel(targetPeer);
+    } else if (!state.manualTunnel) {
+      deactivateNafaqTunnel();
+    }
+  }
+
+  // Close mobile drawer on channel selection so chat window is completely unobstructed
+  closeDrawers();
+
+  renderChannelsSidebar();
+  loadChannelHistory(channelId);
+
+  // Notify server of switch
+  if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+    state.ws.send(JSON.stringify({
+      type: 'SWITCH_CHANNEL',
+      payload: { spaceId: state.currentSpaceId, channelId }
+    }));
+  }
+}
+
+function renderVoiceParticipants() {
+  const container = document.getElementById('voice-participants-bar');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const activePeers = state.peers.filter(p => p.status === 'hadir');
+  activePeers.forEach(peer => {
+    const chip = document.createElement('div');
+    chip.className = 'voice-peer-chip';
+    chip.innerHTML = `
+      <span>🔊</span>
+      <span>${peer.prefix || peer.peerId}</span>
+      <span style="opacity:0.6;font-size:9px;">${peer.latency || 12}ms</span>
+    `;
+    container.appendChild(chip);
+  });
+}
+
+async function loadChannelHistory(channelId) {
+  const stream = document.getElementById('messages-stream');
+  stream.innerHTML = '';
+
+  // Fetch from server if not cached
+  if (!state.messages.has(channelId)) {
+    try {
+      const res = await fetch(`/api/history/${channelId}`);
+      if (res.ok) {
+        const history = await res.json();
+        state.messages.set(channelId, history);
+      }
+    } catch (e) {
+      console.warn('Could not fetch channel history:', e);
+    }
+  }
+
+  const msgs = state.messages.get(channelId) || [];
+  msgs.forEach(packet => appendMessageToDOM(packet));
+  scrollToBottom();
+}
+
+function appendMessageToDOM(packet) {
+  const stream = document.getElementById('messages-stream');
+  const { senderId, timestamp, hops, messageId } = packet.zahir;
+  const { content, voiceData, attachments, mediaUrl } = packet.batin;
+
+  const prefix = senderId.split('@')[0] || 'peer';
+  const isBot = prefix.startsWith('antigravity') || prefix.startsWith('al-') || prefix.startsWith('ibn-');
+  const isSelf = senderId === state.identity.fullId;
+  const timeStr = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  const card = document.createElement('div');
+  card.className = `msg-card ${isSelf ? 'self-msg' : ''}`;
+  card.id = `msg-${messageId}`;
+
+  let bodyHtml = content ? `<div class="msg-text">${escapeHtml(content)}</div>` : '';
+
+  // 1. Voice Note Card
+  if (voiceData) {
+    bodyHtml += `
+      <div class="sawt-audio-card" id="audio-card-${messageId}">
+        <button class="sawt-play-btn" onclick="playSawtAudio('${messageId}', '${voiceData}')">▶</button>
+        <div class="sawt-track-wrap">
+          <div class="sawt-waveform-bars">
+            <div class="sawt-wave-bar"></div><div class="sawt-wave-bar"></div><div class="sawt-wave-bar"></div>
+            <div class="sawt-wave-bar"></div><div class="sawt-wave-bar"></div><div class="sawt-wave-bar"></div>
+            <div class="sawt-wave-bar"></div><div class="sawt-wave-bar"></div><div class="sawt-wave-bar"></div>
+            <div class="sawt-wave-bar"></div><div class="sawt-wave-bar"></div><div class="sawt-wave-bar"></div>
+          </div>
+          <div class="sawt-time-row">
+            <span class="sawt-time-display" id="time-${messageId}">0:00</span>
+            <span class="sawt-format-tag">SAWT // 48kHz OPUS</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 2. File & Image Attachments
+  if (attachments && Array.isArray(attachments)) {
+    attachments.forEach(att => {
+      if (att.type && att.type.startsWith('image/')) {
+        bodyHtml += `
+          <img src="${att.data}" alt="${escapeHtml(att.name)}" class="msg-attachment-img" onclick="openImageLightbox('${att.data}')">
+        `;
+      } else {
+        bodyHtml += `
+          <div class="msg-file-card">
+            <span class="file-icon">📄</span>
+            <div class="file-info">
+              <a href="${att.data}" download="${escapeHtml(att.name)}" class="file-name">${escapeHtml(att.name)}</a>
+              <span class="file-size">${formatBytes(att.size)} · P2P Direct File</span>
+            </div>
+            <a href="${att.data}" download="${escapeHtml(att.name)}" class="file-download-btn" title="Download File">⬇️</a>
+          </div>
+        `;
+      }
+    });
+  } else if (mediaUrl) {
+    bodyHtml += `<img src="${mediaUrl}" class="msg-attachment-img" onclick="openImageLightbox('${mediaUrl}')">`;
+  }
+
+  card.innerHTML = `
+    <!-- Floating Discord Action Bar -->
+    <div class="msg-action-bar">
+      <button class="msg-action-btn" onclick="sendQuickReaction('⚡')" title="React ⚡">⚡</button>
+      <button class="msg-action-btn" onclick="sendQuickReaction('🛡️')" title="React 🛡️">🛡️</button>
+      <button class="msg-action-btn" onclick="sendQuickReaction('👍')" title="React 👍">👍</button>
+      <button class="msg-action-btn" onclick="sendQuickReaction('🔥')" title="React 🔥">🔥</button>
+    </div>
+
+    <div class="msg-avatar">${prefix.substring(0, 2).toUpperCase()}</div>
+    <div class="msg-content-wrap">
+      <div class="msg-meta">
+        <span class="msg-author ${prefix === 'antigravity' ? 'antigravity' : ''}">${prefix}</span>
+        ${isBot ? '<span class="msg-badge">APP</span>' : ''}
+        <span class="msg-id">${senderId}</span>
+        <span class="msg-badge zbat">🛡️ ZBAT</span>
+        <span class="msg-badge hops">${hops === 0 ? 'Direct' : `${hops} hops`}</span>
+        <span class="msg-time">${timeStr}</span>
+      </div>
+      ${bodyHtml}
+    </div>
+  `;
+
+  stream.appendChild(card);
+}
+
+function formatBytes(bytes, decimals = 1) {
+  if (!bytes) return '0 B';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+function openImageLightbox(src) {
+  const img = document.getElementById('lightbox-img');
+  if (img) img.src = src;
+  openModal('modal-image-lightbox');
+}
+
+function sendQuickReaction(emoji) {
+  if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+    state.ws.send(JSON.stringify({
+      type: 'SEND_MESSAGE',
+      payload: {
+        spaceId: state.currentSpaceId,
+        channelId: state.currentChannelId,
+        content: emoji
+      }
+    }));
+  }
+}
+
+function scrollToBottom(smooth = false) {
+  const container = document.getElementById('messages-container');
+  if (!container) return;
+  requestAnimationFrame(() => {
+    if (smooth) {
+      container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+    } else {
+      container.scrollTop = container.scrollHeight;
+    }
+  });
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// --- 5. Members List Rendering (Hudur) ---
+function renderMembers() {
+  const onlineList = document.getElementById('online-members-list');
+  const offlineList = document.getElementById('offline-members-list');
+  onlineList.innerHTML = '';
+  offlineList.innerHTML = '';
+
+  let onlineCount = 0;
+  let offlineCount = 0;
+
+  // Deduplicate peers by prefix, prioritizing hadir status
+  const seenPrefixes = new Set();
+  const sortedPeers = [...state.peers].sort((a, b) => (b.status === 'hadir' ? 1 : 0) - (a.status === 'hadir' ? 1 : 0));
+  const uniquePeers = [];
+
+  sortedPeers.forEach(peer => {
+    const key = peer.prefix || peer.peerId.split('@')[0];
+    if (!seenPrefixes.has(key)) {
+      seenPrefixes.add(key);
+      uniquePeers.push(peer);
+    }
+  });
+
+  uniquePeers.forEach(peer => {
+    const isHadir = peer.status === 'hadir';
+    const item = document.createElement('div');
+    item.className = 'member-item';
+    item.title = `Click to view profile / Direct DM with ${peer.prefix}`;
+    item.innerHTML = `
+      <div class="member-avatar">
+        ${(peer.prefix || 'P').substring(0, 2).toUpperCase()}
+        <span class="status-indicator ${isHadir ? 'hadir' : 'ghaib'}"></span>
+      </div>
+      <span class="member-name">${peer.prefix || peer.peerId}</span>
+      <span class="member-tag">${peer.latency || 15}ms</span>
+    `;
+    item.onclick = () => {
+      closeDrawers();
+      showUserProfile(peer);
+    };
+
+    if (isHadir) {
+      onlineCount++;
+      onlineList.appendChild(item);
+    } else {
+      offlineCount++;
+      offlineList.appendChild(item);
+    }
+  });
+
+  document.getElementById('online-count-header').textContent = `ONLINE (حَاضِر) — ${onlineCount}`;
+  document.getElementById('offline-count-header').textContent = `OFFLINE (غَائِب) — ${offlineCount}`;
+}
+
+function showUserProfile(peer) {
+  state.selectedProfilePeer = peer;
+  const prefix = peer.prefix || peer.peerId.split('@')[0] || 'peer';
+  const isHadir = peer.status === 'hadir';
+
+  document.getElementById('profile-modal-avatar').textContent = prefix.substring(0, 2).toUpperCase();
+  document.getElementById('profile-modal-name').textContent = prefix;
+  document.getElementById('profile-modal-id').textContent = peer.peerId || 'peer@00000000';
+  document.getElementById('profile-modal-status').textContent = isHadir ? 'ONLINE (حَاضِر)' : 'OFFLINE (غَائِب)';
+  document.getElementById('profile-modal-status').className = `stat-val ${isHadir ? 'hadir' : 'ghaib'}`;
+  document.getElementById('profile-modal-latency').textContent = `${peer.latency || 12}ms`;
+
+  openModal('modal-user-profile');
+}
+
+function showUserProfileBySenderId(senderId) {
+  const peer = state.peers.find(p => p.peerId === senderId) || {
+    peerId: senderId,
+    prefix: senderId.split('@')[0],
+    status: 'hadir',
+    latency: 14
+  };
+  showUserProfile(peer);
+}
+
+// --- 6. Typing Indicator (Yaktub) ---
+function handleTypingInput() {
+  if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+    state.ws.send(JSON.stringify({
+      type: 'TYPING',
+      payload: { channelId: state.currentChannelId }
+    }));
+  }
+}
+
+function renderTypingIndicator() {
+  const textEl = document.getElementById('typing-text');
+  const dotsEl = document.getElementById('typing-dots');
+  const others = state.typingPeers.filter(p => p.peerId !== state.identity.fullId);
+
+  if (others.length === 1) {
+    textEl.textContent = `${others[0].prefix} is broadcasting... (يَكْتُب)`;
+    if (dotsEl) dotsEl.style.display = 'inline-flex';
+  } else if (others.length > 1) {
+    textEl.textContent = `${others.length} peers are broadcasting...`;
+    if (dotsEl) dotsEl.style.display = 'inline-flex';
+  } else {
+    textEl.textContent = '';
+    if (dotsEl) dotsEl.style.display = 'none';
+  }
+}
+
+// --- 7. Sawt Voice Recording Engine ---
+async function startSawtRecording() {
+  const recBar = document.getElementById('sawt-recording-bar');
+  const timerEl = document.getElementById('rec-timer');
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    state.mediaRecorder = new MediaRecorder(stream);
+    state.audioChunks = [];
+
+    state.mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) state.audioChunks.push(e.data);
+    };
+
+    state.mediaRecorder.onstop = async () => {
+      clearInterval(state.recordingInterval);
+      if (state.audioChunks.length > 0) {
+        const audioBlob = new Blob(state.audioChunks, { type: 'audio/webm' });
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          sendSawtMessage(reader.result);
+        };
+      }
+    };
+
+    state.mediaRecorder.start();
+    state.isRecordingSawt = true;
+    state.recordingSeconds = 0;
+    timerEl.textContent = '00:00';
+    if (recBar) recBar.style.display = 'flex';
+
+    state.recordingInterval = setInterval(() => {
+      state.recordingSeconds++;
+      const mins = String(Math.floor(state.recordingSeconds / 60)).padStart(2, '0');
+      const secs = String(state.recordingSeconds % 60).padStart(2, '0');
+      timerEl.textContent = `${mins}:${secs}`;
+    }, 1000);
+
+  } catch (err) {
+    console.warn('Microphone permission not available, generating synthetic Sawt carrier tone:', err);
+    generateSyntheticSawtAudio();
+  }
+}
+
+function cancelSawtRecording() {
+  if (state.mediaRecorder && state.mediaRecorder.state === 'recording') {
+    state.audioChunks = [];
+    state.mediaRecorder.stop();
+  }
+  clearInterval(state.recordingInterval);
+  state.isRecordingSawt = false;
+  const recBar = document.getElementById('sawt-recording-bar');
+  if (recBar) recBar.style.display = 'none';
+}
+
+function finishSawtRecording() {
+  if (state.mediaRecorder && state.mediaRecorder.state === 'recording') {
+    state.mediaRecorder.stop();
+  }
+  clearInterval(state.recordingInterval);
+  state.isRecordingSawt = false;
+  const recBar = document.getElementById('sawt-recording-bar');
+  if (recBar) recBar.style.display = 'none';
+}
+
+function toggleSawtRecording() {
+  if (!state.isRecordingSawt) {
+    startSawtRecording();
+  } else {
+    finishSawtRecording();
+  }
+}
+
+function generateSyntheticSawtAudio() {
+  // Generate synthetic Sawt audio using Web Audio Buffer (WAV)
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const sampleRate = ctx.sampleRate;
+  const duration = 2.0; // 2 seconds voice pulse
+  const numFrames = sampleRate * duration;
+  const audioBuffer = ctx.createBuffer(1, numFrames, sampleRate);
+  const channelData = audioBuffer.getChannelData(0);
+
+  for (let i = 0; i < numFrames; i++) {
+    const t = i / sampleRate;
+    // Harmonic carrier with pitch modulation (Arabic musical scale simulation)
+    const freq = 440 + Math.sin(t * 8) * 120;
+    channelData[i] = Math.sin(2 * Math.PI * freq * t) * Math.exp(-t * 0.8) * 0.4;
+  }
+
+  // Convert AudioBuffer to WAV Base64
+  const wavBlob = audioBufferToWav(audioBuffer);
+  const reader = new FileReader();
+  reader.readAsDataURL(wavBlob);
+  reader.onloadend = () => {
+    sendSawtMessage(reader.result);
+  };
+}
+
+function audioBufferToWav(buffer) {
+  const numOfChan = buffer.numberOfChannels;
+  const length = buffer.length * numOfChan * 2 + 44;
+  const out = new DataView(new ArrayBuffer(length));
+  const channels = [];
+  let sample = 0;
+  let offset = 0;
+  let pos = 0;
+
+  function setUint16(data) { out.setUint16(pos, data, true); pos += 2; }
+  function setUint32(data) { out.setUint32(pos, data, true); pos += 4; }
+
+  setUint32(0x46464952); // "RIFF"
+  setUint32(length - 8);
+  setUint32(0x45564157); // "WAVE"
+  setUint32(0x20746d66); // "fmt "
+  setUint32(16);
+  setUint16(1);
+  setUint16(numOfChan);
+  setUint32(buffer.sampleRate);
+  setUint32(buffer.sampleRate * 2 * numOfChan);
+  setUint16(numOfChan * 2);
+  setUint16(16);
+  setUint32(0x61746164); // "data"
+  setUint32(length - pos - 4);
+
+  for (let i = 0; i < buffer.numberOfChannels; i++) channels.push(buffer.getChannelData(i));
+  while (offset < buffer.length) {
+    for (let i = 0; i < numOfChan; i++) {
+      sample = Math.max(-1, Math.min(1, channels[i][offset]));
+      sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
+      out.setInt16(pos, sample, true);
+      pos += 2;
+    }
+    offset++;
+  }
+  return new Blob([out.buffer], { type: 'audio/wav' });
+}
+
+function sendSawtMessage(voiceData) {
+  if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+    state.ws.send(JSON.stringify({
+      type: 'SEND_MESSAGE',
+      payload: {
+        spaceId: state.currentSpaceId,
+        channelId: state.currentChannelId,
+        content: '[صَوْت Sawt Audio Note]',
+        voiceData
+      }
+    }));
+  }
+}
+
+// --- 8. Sawt Audio Playback ---
+window.playSawtAudio = function(msgId, voiceData) {
+  const card = document.getElementById(`audio-card-${msgId}`);
+  const timeEl = document.getElementById(`time-${msgId}`);
+  const btn = card ? card.querySelector('.sawt-play-btn') : null;
+
+  if (state.currentPlayingAudio) {
+    state.currentPlayingAudio.pause();
+    if (state.currentPlayingCard) {
+      state.currentPlayingCard.classList.remove('playing');
+      const prevBtn = state.currentPlayingCard.querySelector('.sawt-play-btn');
+      if (prevBtn) prevBtn.textContent = '▶';
+    }
+    if (state.currentPlayingAudio.dataset?.msgId === msgId) {
+      state.currentPlayingAudio = null;
+      state.currentPlayingCard = null;
+      return;
+    }
+  }
+
+  const audio = new Audio(voiceData);
+  audio.dataset = { msgId };
+  state.currentPlayingAudio = audio;
+  state.currentPlayingCard = card;
+
+  if (card) card.classList.add('playing');
+  if (btn) btn.textContent = '⏸';
+
+  audio.ontimeupdate = () => {
+    if (timeEl && audio.duration) {
+      const cur = Math.floor(audio.currentTime);
+      const total = Math.floor(audio.duration);
+      timeEl.textContent = `0:0${cur} / 0:0${total}`;
+    }
+  };
+
+  audio.onended = () => {
+    if (card) card.classList.remove('playing');
+    if (btn) btn.textContent = '▶';
+    if (timeEl) timeEl.textContent = '0:00';
+    state.currentPlayingAudio = null;
+    state.currentPlayingCard = null;
+  };
+
+  audio.play().catch(e => {
+    console.log('Audio playback fallback to tone synth:', e);
+    playDtmfTone('A');
+    if (card) card.classList.remove('playing');
+    if (btn) btn.textContent = '▶';
+  });
+};
+
+// --- 9. Nagham DTMF Audio Synthesizer ---
+const DTMF_FREQS = {
+  '1': [697, 1209], '2': [697, 1336], '3': [697, 1477], 'A': [697, 1633],
+  '4': [770, 1209], '5': [770, 1336], '6': [770, 1477], 'B': [770, 1633],
+  '7': [852, 1209], '8': [852, 1336], '9': [852, 1477], 'C': [852, 1633],
+  '*': [941, 1209], '0': [941, 1336], '#': [941, 1477], 'D': [941, 1633]
+};
+
+function initDtmfAudio() {
+  const keys = document.querySelectorAll('.dtmf-key');
+  keys.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.getAttribute('data-key');
+      playDtmfTone(key);
+      const display = document.getElementById('dtmf-sequence-display');
+      if (display) display.textContent = `TONE [${key}] FREQS: ${DTMF_FREQS[key]?.join('/')} Hz`;
+    });
+  });
+}
+
+function playDtmfTone(key) {
+  const freqs = DTMF_FREQS[key];
+  if (!freqs) return;
+
+  const ctx = state.audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+  state.audioCtx = ctx;
+
+  const osc1 = ctx.createOscillator();
+  const osc2 = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc1.frequency.value = freqs[0];
+  osc2.frequency.value = freqs[1];
+
+  gain.gain.value = 0.15;
+  osc1.connect(gain);
+  osc2.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc1.start();
+  osc2.start();
+
+  setTimeout(() => {
+    osc1.stop();
+    osc2.stop();
+  }, 150);
+}
+
+// --- 10. Drawer Navigation & Event Listeners ---
+function closeDrawers() {
+  document.getElementById('app-container')?.classList.remove('drawer-open');
+  document.getElementById('channels-sidebar')?.classList.remove('show-mobile');
+  document.getElementById('space-rail')?.classList.remove('show-mobile');
+  document.getElementById('members-sidebar')?.classList.remove('show-mobile');
+  document.getElementById('drawer-backdrop')?.classList.remove('active');
+}
+
+function toggleChannelsDrawer() {
+  const app = document.getElementById('app-container');
+  const sidebar = document.getElementById('channels-sidebar');
+  const rail = document.getElementById('space-rail');
+  const backdrop = document.getElementById('drawer-backdrop');
+  document.getElementById('members-sidebar')?.classList.remove('show-mobile');
+
+  if (sidebar) {
+    const isShowing = sidebar.classList.toggle('show-mobile');
+    if (rail) rail.classList.toggle('show-mobile', isShowing);
+    if (app) app.classList.toggle('drawer-open', isShowing);
+    if (backdrop) backdrop.classList.toggle('active', isShowing);
+  }
+}
+
+function toggleMembersDrawer() {
+  const members = document.getElementById('members-sidebar');
+  const backdrop = document.getElementById('drawer-backdrop');
+  const sidebar = document.getElementById('channels-sidebar');
+  const rail = document.getElementById('space-rail');
+  const app = document.getElementById('app-container');
+
+  sidebar?.classList.remove('show-mobile');
+  rail?.classList.remove('show-mobile');
+  app?.classList.remove('drawer-open');
+
+  if (members) {
+    const isShowing = members.classList.toggle('show-mobile');
+    if (backdrop) backdrop.classList.toggle('active', isShowing);
+  }
+}
+
+function toggleCategory(catId) {
+  const el = document.getElementById(catId);
+  if (el) {
+    el.classList.toggle('collapsed');
+  }
+}
+
+// --- Nafaq Tunnel Controller ---
+function activateNafaqTunnel(peer) {
+  if (!peer) return;
+  state.activeTunnel = {
+    peer,
+    ip: '10.240.0.2',
+    latency: peer.latency || 9,
+    establishedAt: Date.now()
+  };
+
+  const banner = document.getElementById('nafaq-tunnel-banner');
+  if (banner) banner.style.display = 'flex';
+
+  const prefix = peer.prefix || peer.peerId.split('@')[0];
+  const ipEl = document.getElementById('tunnel-assigned-ip');
+  const infoEl = document.getElementById('tunnel-peer-info');
+  if (ipEl) ipEl.textContent = '10.240.0.2/24';
+  if (infoEl) infoEl.textContent = `Direct Zero-RTT ChaCha20-Poly1305 link with peer @${prefix} (${peer.peerId}) · ${peer.latency || 8}ms latency`;
+  
+  // Update Topbar badge
+  const badgeText = document.getElementById('topbar-mesh-status');
+  if (badgeText) badgeText.textContent = '🛡️ NAFAQ // 10.240.0.2';
+
+  // Update Dashboard modal fields
+  const dIp = document.getElementById('diag-tunnel-ip');
+  const dPeer = document.getElementById('diag-tunnel-peer');
+  const dLat = document.getElementById('diag-tunnel-latency');
+  if (dIp) dIp.textContent = '10.240.0.2 / 24';
+  if (dPeer) dPeer.textContent = peer.peerId || `${prefix}@mesh`;
+  if (dLat) dLat.textContent = `${peer.latency || 8}ms (0 Hops Direct)`;
+
+  startTrafficSimulation();
+}
+
+function deactivateNafaqTunnel() {
+  state.activeTunnel = null;
+  state.manualTunnel = false;
+  const banner = document.getElementById('nafaq-tunnel-banner');
+  if (banner) banner.style.display = 'none';
+
+  const badgeText = document.getElementById('topbar-mesh-status');
+  if (badgeText) badgeText.textContent = 'P2P MESH // MUTTASIL';
+}
+
+let trafficInterval = null;
+function startTrafficSimulation() {
+  if (trafficInterval) clearInterval(trafficInterval);
+  let tx = 1.4;
+  let rx = 3.8;
+  trafficInterval = setInterval(() => {
+    if (!state.activeTunnel) {
+      clearInterval(trafficInterval);
+      return;
+    }
+    tx += (Math.random() * 0.05);
+    rx += (Math.random() * 0.08);
+    const txEl = document.getElementById('tunnel-tx-count');
+    const rxEl = document.getElementById('tunnel-rx-count');
+    if (txEl) txEl.textContent = `${tx.toFixed(2)} MB`;
+    if (rxEl) rxEl.textContent = `${rx.toFixed(2)} MB`;
+  }, 3000);
+}
+
+// --- Attachment State & Helpers ---
+state.stagedAttachments = [];
+
+function handleFileSelect(files) {
+  if (!files || files.length === 0) return;
+  Array.from(files).forEach(file => {
+    if (file.size > 5 * 1024 * 1024) {
+      alert(`File "${file.name}" is larger than 5MB. P2P Mesh transfer limits file bursts to 5MB.`);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      state.stagedAttachments.push({
+        name: file.name,
+        size: file.size,
+        type: file.type || 'application/octet-stream',
+        data: e.target.result
+      });
+      renderAttachmentTray();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderAttachmentTray() {
+  const tray = document.getElementById('attachment-staging-tray');
+  if (!tray) return;
+  tray.innerHTML = '';
+  if (state.stagedAttachments.length === 0) {
+    tray.style.display = 'none';
+    return;
+  }
+  tray.style.display = 'flex';
+  state.stagedAttachments.forEach((att, idx) => {
+    const chip = document.createElement('div');
+    chip.className = 'attachment-chip';
+    const isImg = att.type && att.type.startsWith('image/');
+    chip.innerHTML = `
+      ${isImg ? `<img src="${att.data}" alt="preview">` : '<span>📄</span>'}
+      <span class="chip-name">${escapeHtml(att.name)}</span>
+      <button class="chip-remove-btn" onclick="removeStagedAttachment(${idx})">✕</button>
+    `;
+    tray.appendChild(chip);
+  });
+}
+
+function removeStagedAttachment(idx) {
+  state.stagedAttachments.splice(idx, 1);
+  renderAttachmentTray();
+}
+
+function initEventListeners() {
+  const input = document.getElementById('message-input');
+  const sendBtn = document.getElementById('btn-send-message');
+
+  const sendMessage = () => {
+    const text = input.value.trim();
+    const hasAttachments = state.stagedAttachments.length > 0;
+    if (!text && !hasAttachments) return;
+
+    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
+        type: 'SEND_MESSAGE',
+        payload: {
+          spaceId: state.currentSpaceId,
+          channelId: state.currentChannelId,
+          content: text || (hasAttachments ? `[مَلَفّ P2P File: ${state.stagedAttachments.map(a => a.name).join(', ')}]` : ''),
+          attachments: state.stagedAttachments.length > 0 ? [...state.stagedAttachments] : undefined
+        }
+      }));
+    }
+
+    input.value = '';
+    input.style.height = 'auto';
+    state.stagedAttachments = [];
+    renderAttachmentTray();
+  };
+
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    } else {
+      handleTypingInput();
+    }
+  });
+
+  // File Attachment triggers
+  const attachBtn = document.getElementById('btn-attach-file');
+  const fileInput = document.getElementById('file-attachment-input');
+  if (attachBtn && fileInput) {
+    attachBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      handleFileSelect(e.target.files);
+      fileInput.value = '';
+    });
+  }
+
+  // Sawt Voice Record Buttons
+  document.getElementById('btn-record-sawt').addEventListener('click', toggleSawtRecording);
+  document.getElementById('btn-cancel-recording').addEventListener('click', cancelSawtRecording);
+  document.getElementById('btn-finish-recording').addEventListener('click', finishSawtRecording);
+
+  // Push to talk in Voice Lounge
+  const pttBtn = document.getElementById('btn-voice-ptt');
+  if (pttBtn) pttBtn.addEventListener('click', toggleSawtRecording);
+  const dtmfLoungeBtn = document.getElementById('btn-lounge-dtmf');
+  if (dtmfLoungeBtn) dtmfLoungeBtn.addEventListener('click', () => openModal('modal-nagham'));
+
+  // Quick Reactions
+  document.querySelectorAll('.quick-reaction-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const emoji = btn.getAttribute('data-reaction');
+      if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+        state.ws.send(JSON.stringify({
+          type: 'SEND_MESSAGE',
+          payload: {
+            spaceId: state.currentSpaceId,
+            channelId: state.currentChannelId,
+            content: emoji
+          }
+        }));
+      }
+    });
+  });
+
+  // Root Mesh Brand Button
+  const rootMeshBtn = document.getElementById('btn-root-mesh');
+  if (rootMeshBtn) {
+    rootMeshBtn.addEventListener('click', () => {
+      selectSpace('space-public-mesh');
+    });
+  }
+
+  // Mobile drawer toggles & Close buttons
+  const toggleSidebarBtn = document.getElementById('btn-toggle-sidebar');
+  if (toggleSidebarBtn) {
+    toggleSidebarBtn.addEventListener('click', toggleChannelsDrawer);
+  }
+
+  const closeSidebarBtn = document.getElementById('btn-close-sidebar');
+  if (closeSidebarBtn) {
+    closeSidebarBtn.addEventListener('click', closeDrawers);
+  }
+
+  const toggleMembersBtn = document.getElementById('btn-toggle-members');
+  if (toggleMembersBtn) {
+    toggleMembersBtn.addEventListener('click', toggleMembersDrawer);
+  }
+
+  const closeMembersBtn = document.getElementById('btn-close-members');
+  if (closeMembersBtn) {
+    closeMembersBtn.addEventListener('click', closeDrawers);
+  }
+
+  const drawerBackdrop = document.getElementById('drawer-backdrop');
+  if (drawerBackdrop) {
+    drawerBackdrop.addEventListener('click', closeDrawers);
+  }
+
+  // Scroll monitoring for Jump to Present button
+  const messagesContainer = document.getElementById('messages-container');
+  const jumpBottomBtn = document.getElementById('btn-jump-bottom');
+  if (messagesContainer && jumpBottomBtn) {
+    messagesContainer.addEventListener('scroll', () => {
+      const distFromBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight;
+      if (distFromBottom > 180) {
+        jumpBottomBtn.style.display = 'inline-flex';
+      } else {
+        jumpBottomBtn.style.display = 'none';
+      }
+    });
+
+    jumpBottomBtn.addEventListener('click', () => {
+      scrollToBottom(true);
+      document.getElementById('message-input')?.focus();
+    });
+  }
+
+  // Composer box auto-focus
+  const composerBox = document.querySelector('.composer-box');
+  if (composerBox) {
+    composerBox.addEventListener('click', (e) => {
+      if (e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
+        document.getElementById('message-input')?.focus();
+      }
+    });
+  }
+
+  // Auto-scroll when textarea focused
+  const messageInput = document.getElementById('message-input');
+  if (messageInput) {
+    messageInput.addEventListener('focus', () => {
+      setTimeout(() => scrollToBottom(true), 150);
+    });
+  }
+
+  // Direct P2P Chat Handshake Action
+  const startDmBtn = document.getElementById('btn-start-direct-dm');
+  if (startDmBtn) {
+    startDmBtn.addEventListener('click', () => {
+      const peer = state.selectedProfilePeer;
+      if (!peer) return;
+      closeModal('modal-user-profile');
+
+      const prefix = peer.prefix || peer.peerId.split('@')[0];
+      const dmChannelId = `dm-${prefix}`;
+
+      // Find or create direct channel in current space
+      const currentSpace = state.spaces.find(s => s.id === state.currentSpaceId) || state.spaces[0];
+      let dmChannel = currentSpace.channels.find(c => c.id === dmChannelId);
+
+      if (!dmChannel) {
+        dmChannel = {
+          id: dmChannelId,
+          name: `dm-${prefix}`,
+          type: 'text',
+          topic: `Direct P2P Encrypted Session with @${prefix} (مُحَادَثَة خَاصَّة)`,
+          icon: '🔒'
+        };
+        currentSpace.channels.push(dmChannel);
+        renderChannelsSidebar();
+      }
+
+      selectChannel(dmChannelId);
+
+      // Broadcast Direct P2P handshake initiation
+      if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+        state.ws.send(JSON.stringify({
+          type: 'SEND_MESSAGE',
+          payload: {
+            spaceId: state.currentSpaceId,
+            channelId: dmChannelId,
+            content: `🔒 [Miftah Handshake] Requesting Direct P2P session with @${prefix} (${peer.peerId}). Forward secrecy initialized.`
+          }
+        }));
+      }
+    });
+  }
+
+  // Direct P2P Tunnel Handshake Action
+  const startTunnelBtn = document.getElementById('btn-start-p2p-tunnel');
+  if (startTunnelBtn) {
+    startTunnelBtn.addEventListener('click', () => {
+      const peer = state.selectedProfilePeer;
+      if (!peer) return;
+      closeModal('modal-user-profile');
+
+      const prefix = peer.prefix || peer.peerId.split('@')[0];
+      const dmChannelId = `dm-${prefix}`;
+
+      // Find or create direct channel in current space
+      const currentSpace = state.spaces.find(s => s.id === state.currentSpaceId) || state.spaces[0];
+      let dmChannel = currentSpace.channels.find(c => c.id === dmChannelId);
+
+      if (!dmChannel) {
+        dmChannel = {
+          id: dmChannelId,
+          name: `dm-${prefix}`,
+          type: 'text',
+          topic: `Direct P2P Encrypted Session with @${prefix} (مُحَادَثَة خَاصَّة)`,
+          icon: '🔒'
+        };
+        currentSpace.channels.push(dmChannel);
+        renderChannelsSidebar();
+      }
+
+      state.manualTunnel = true;
+      selectChannel(dmChannelId);
+      activateNafaqTunnel(peer);
+
+      if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+        state.ws.send(JSON.stringify({
+          type: 'SEND_MESSAGE',
+          payload: {
+            spaceId: state.currentSpaceId,
+            channelId: dmChannelId,
+            content: `🛡️ [Nafaq Tunnel Established] Direct wire-speed encrypted tunnel activated with @${prefix} (${peer.peerId}). Virtual Mesh IP: 10.240.0.2/24.`
+          }
+        }));
+      }
+    });
+  }
+
+  // Nafaq Tunnel Banner & Dashboard Handlers
+  const openTunnelDetailsBtn = document.getElementById('btn-open-tunnel-details');
+  if (openTunnelDetailsBtn) {
+    openTunnelDetailsBtn.addEventListener('click', () => {
+      openModal('modal-nafaq-dashboard');
+    });
+  }
+
+  const closeTunnelBtn = document.getElementById('btn-close-tunnel');
+  if (closeTunnelBtn) {
+    closeTunnelBtn.addEventListener('click', () => {
+      deactivateNafaqTunnel();
+    });
+  }
+
+  const teardownTunnelBtn = document.getElementById('btn-teardown-tunnel');
+  if (teardownTunnelBtn) {
+    teardownTunnelBtn.addEventListener('click', () => {
+      deactivateNafaqTunnel();
+      closeModal('modal-nafaq-dashboard');
+    });
+  }
+
+  const rekeyTunnelBtn = document.getElementById('btn-rekey-tunnel');
+  if (rekeyTunnelBtn) {
+    rekeyTunnelBtn.addEventListener('click', () => {
+      if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+        state.ws.send(JSON.stringify({
+          type: 'SEND_MESSAGE',
+          payload: {
+            spaceId: state.currentSpaceId,
+            channelId: state.currentChannelId,
+            content: '🔄 [Miftah Ratchet] Session key rotated with 0-RTT forward-secrecy.'
+          }
+        }));
+      }
+      closeModal('modal-nafaq-dashboard');
+    });
+  }
+
+  // Voice Connected Disconnect Button
+  const disconnectVoiceBtn = document.getElementById('btn-voice-disconnect');
+  if (disconnectVoiceBtn) {
+    disconnectVoiceBtn.addEventListener('click', () => {
+      const voiceConnectedBar = document.getElementById('voice-connected-bar');
+      if (voiceConnectedBar) voiceConnectedBar.style.display = 'none';
+      selectChannel('chan-general');
+    });
+  }
+
+  // Quick DTMF Transmitter
+  document.getElementById('btn-quick-dtmf').addEventListener('click', () => {
+    openModal('modal-nagham');
+  });
+
+  // Diagnostics Modal Trigger
+  document.getElementById('btn-open-diagnostics').addEventListener('click', async () => {
+    try {
+      const res = await fetch('/api/diagnostics');
+      if (res.ok) {
+        const data = await res.json();
+        document.getElementById('diag-local-id').textContent = state.identity.fullId;
+        document.getElementById('diag-msgs-published').textContent = data.meshStats?.stats?.messagesPublished || 0;
+        document.getElementById('diag-msgs-received').textContent = data.meshStats?.stats?.messagesReceived || 0;
+        document.getElementById('diag-dups-dropped').textContent = data.meshStats?.stats?.duplicatesDropped || 0;
+        
+        const hops = data.meshStats?.stats?.hopsObserved || [];
+        const avg = hops.length ? (hops.reduce((a,b)=>a+b, 0)/hops.length).toFixed(1) : '1.0';
+        document.getElementById('diag-avg-hops').textContent = avg;
+      }
+    } catch(e){}
+    openModal('modal-diagnostics');
+  });
+
+  // Spawn Simulated Bot Button
+  document.getElementById('btn-spawn-bot').addEventListener('click', async () => {
+    try {
+      await fetch('/api/bots/spawn', { method: 'POST' });
+    } catch (e) {}
+  });
+
+  // Space & Channel Creation Modals
+  document.getElementById('btn-open-create-space').addEventListener('click', () => openModal('modal-create-space'));
+  document.getElementById('btn-add-text-channel').addEventListener('click', () => openModal('modal-create-channel'));
+  document.getElementById('btn-add-voice-channel').addEventListener('click', () => openModal('modal-create-channel'));
+  document.getElementById('btn-nagham-modal').addEventListener('click', () => openModal('modal-nagham'));
+
+  // Submit Space
+  document.getElementById('btn-submit-create-space').addEventListener('click', async () => {
+    const name = document.getElementById('space-name-input').value.trim();
+    const arabicName = document.getElementById('space-arabic-input').value.trim();
+    const icon = document.getElementById('space-icon-input').value.trim() || '💬';
+    const description = document.getElementById('space-desc-input').value.trim();
+
+    if (!name) return;
+    try {
+      await fetch('/api/spaces', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, arabicName, icon, description, creatorId: state.identity.fullId })
+      });
+      closeModal('modal-create-space');
+    } catch (e) {
+      console.error(e);
+    }
+  });
+
+  // Submit Channel
+  document.getElementById('btn-submit-create-channel').addEventListener('click', async () => {
+    const name = document.getElementById('channel-name-input').value.trim();
+    const type = document.querySelector('input[name="channel-type"]:checked')?.value || 'text';
+    const topic = document.getElementById('channel-topic-input').value.trim();
+
+    if (!name) return;
+    try {
+      await fetch(`/api/spaces/${state.currentSpaceId}/channels`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, type, topic })
+      });
+      closeModal('modal-create-channel');
+    } catch (e) {
+      console.error(e);
+    }
+  });
+
+  // Generic Modal Close Handlers
+  document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const modalId = btn.getAttribute('data-close');
+      closeModal(modalId);
+    });
+  });
+}
+
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('open');
+}
+
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>WyreSup // Decentralized Cryptographic Mesh Messenger</title>
+  <meta name="description" content="Ultra-secure, decentralized P2P cryptographic mesh messenger featuring zero-RTT ChaCha20 encryption, Sawt audio, and Nafaq VPN tunneling.">
+  <!-- Google Fonts: Outfit, Inter, JetBrains Mono, Noto Sans Arabic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app-container" class="app-layout">
+    
+    <!-- 1. LEFT RAIL: SPACES / MAJALIS (المَجَالِس) -->
+    <nav class="space-rail" id="space-rail" aria-label="Spaces Navigation">
+      <div class="rail-header">
+        <button class="rail-icon brand-icon active" title="WyreSup Root Mesh" id="btn-root-mesh">
+          <span class="icon-text">⚡</span>
+          <div class="active-pill"></div>
+        </button>
+      </div>
+      <div class="rail-divider"></div>
+
+      <!-- Dynamic Spaces List -->
+      <div class="spaces-list" id="spaces-list">
+        <!-- Injected via JS -->
+      </div>
+
+      <!-- Add / Join Space -->
+      <div class="rail-actions">
+        <button class="rail-icon add-btn" id="btn-open-create-space" title="Create or Join Space (مَجْلِس جَدِيد)">
+          <span>+</span>
+        </button>
+        <button class="rail-icon spawn-bot-btn" id="btn-spawn-bot" title="Spawn Simulated Mesh Bot (Al-Kindi, Ibn-Sina...)">
+          <span>🤖</span>
+        </button>
+        <button class="rail-icon diag-btn" id="btn-open-diagnostics" title="Mesh Network Diagnostics (المُؤَشِّر)">
+          <span>📊</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- 2. CHANNELS SIDEBAR: GHURAF (الغُرَف) -->
+    <aside class="channels-sidebar" id="channels-sidebar">
+      <!-- Space Header -->
+      <div class="space-header" id="space-header">
+        <div class="space-title-wrap">
+          <button class="mobile-close-sidebar-btn" id="btn-close-sidebar" title="Back to Chat">←</button>
+          <div>
+            <h2 class="space-title" id="current-space-name">Global Mesh Network</h2>
+            <span class="space-sub" id="current-space-arabic">المَجْلِس العَام</span>
+          </div>
+        </div>
+        <button class="space-menu-btn" id="btn-space-menu" title="Space Options">▾</button>
+      </div>
+
+      <!-- Channels List Categories -->
+      <div class="channels-scroller" id="channels-scroller">
+        <!-- Text Channels Category -->
+        <div class="channel-category" id="cat-text-channels">
+          <div class="category-header" onclick="toggleCategory('cat-text-channels')">
+            <span class="category-title"><span class="chevron">▾</span> 💬 TEXT CHANNELS</span>
+            <button class="add-channel-btn" id="btn-add-text-channel" onclick="event.stopPropagation(); openModal('modal-create-channel')" title="Create Text Channel">+</button>
+          </div>
+          <div class="category-channels" id="text-channels-list">
+            <!-- Dynamic Channels -->
+          </div>
+        </div>
+
+        <!-- Direct DMs Category -->
+        <div class="channel-category" id="dm-category" style="display: none;">
+          <div class="category-header" onclick="toggleCategory('dm-category')">
+            <span class="category-title"><span class="chevron">▾</span> 🔒 DIRECT MESSAGES</span>
+          </div>
+          <div class="category-channels" id="dm-channels-list">
+            <!-- Dynamic DMs -->
+          </div>
+        </div>
+
+        <!-- Voice & Sawt Category -->
+        <div class="channel-category" id="cat-voice-channels">
+          <div class="category-header" onclick="toggleCategory('cat-voice-channels')">
+            <span class="category-title"><span class="chevron">▾</span> 🔊 VOICE & SAWT</span>
+            <button class="add-channel-btn" id="btn-add-voice-channel" onclick="event.stopPropagation(); openModal('modal-create-channel')" title="Create Voice Channel">+</button>
+          </div>
+          <div class="category-channels" id="voice-channels-list">
+            <!-- Dynamic Voice Channels -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Discord Voice Connected Bar -->
+      <div class="voice-connected-bar" id="voice-connected-bar" style="display: none;">
+        <div class="voice-conn-left">
+          <span class="voice-conn-icon">🔊</span>
+          <div class="voice-conn-info">
+            <span class="voice-conn-status">RTC CONNECTED</span>
+            <span class="voice-conn-channel" id="voice-conn-channel-name">Voice Lounge</span>
+          </div>
+        </div>
+        <button class="voice-disconnect-btn" id="btn-voice-disconnect" title="Disconnect Voice">✕</button>
+      </div>
+
+      <!-- User Control / Identity Bar -->
+      <div class="user-bar">
+        <div class="user-avatar-wrap">
+          <div class="user-avatar" id="current-user-avatar">?</div>
+          <span class="status-indicator hadir" id="current-user-status"></span>
+        </div>
+        <div class="user-info">
+          <div class="user-name" id="current-user-name">Loading...</div>
+          <div class="user-id" id="current-user-id">peer@00000000</div>
+        </div>
+        <div class="user-actions">
+          <button class="icon-action-btn" id="btn-toggle-mic" title="Toggle Mic / Sawt">🎙️</button>
+          <button class="icon-action-btn" id="btn-nagham-modal" title="Nagham DTMF Keypad">🎵</button>
+          <button class="icon-action-btn" id="btn-user-settings" title="Identity Settings">⚙️</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 3. MAIN CHAT AREA: MESSAGES & COMPOSER -->
+    <main class="chat-main" id="chat-main">
+      <!-- Chat Topbar -->
+      <header class="chat-topbar">
+        <div class="topbar-left">
+          <button class="mobile-nav-toggle" id="btn-toggle-sidebar" title="Toggle Navigation">☰</button>
+          <span class="channel-hash-icon" id="topbar-channel-icon">#</span>
+          <div class="topbar-channel-info">
+            <h3 class="topbar-channel-title" id="topbar-channel-title">general</h3>
+            <span class="channel-type-pill" id="topbar-channel-type">TEXT</span>
+          </div>
+          <div class="topbar-divider"></div>
+          <p class="topbar-channel-topic" id="topbar-channel-topic">General mesh discussions, tests, and pings.</p>
+        </div>
+        <div class="topbar-right">
+          <!-- Live Network Indicator Badge -->
+          <div class="mesh-badge" id="topbar-mesh-badge" title="P2P Connection Status">
+            <span class="pulse-dot"></span>
+            <span class="badge-text" id="topbar-mesh-status">P2P MESH // MUTTASIL</span>
+          </div>
+          <button class="topbar-btn" id="btn-toggle-members" title="Toggle Member List">👥</button>
+        </div>
+      </header>
+
+      <!-- Voice Lounge Hub Banner (Active when on voice channels) -->
+      <div class="voice-lounge-banner" id="voice-lounge-banner" style="display: none;">
+        <div class="voice-lounge-header">
+          <div class="voice-lounge-title-wrap">
+            <span class="voice-lounge-icon">🔊</span>
+            <div>
+              <h4 class="voice-lounge-title" id="voice-lounge-name">Voice Lounge (صَوْت و نَغَم)</h4>
+              <p class="voice-lounge-sub">Decentralized P2P Acoustic & Voice Exchange</p>
+            </div>
+          </div>
+          <div class="voice-lounge-actions">
+            <button class="btn btn-voice-action" id="btn-voice-ptt">
+              <span class="mic-icon">🎙️</span>
+              <span id="voice-ptt-text">Push to Record Sawt</span>
+            </button>
+            <button class="btn btn-secondary" id="btn-lounge-dtmf">🎵 Send DTMF Acoustic Key</button>
+          </div>
+        </div>
+        <div class="voice-participants-bar" id="voice-participants-bar">
+          <!-- Active voice participants list -->
+        </div>
+      </div>
+
+      <!-- Nafaq Encrypted Tunnel Banner (Active when P2P VPN / Direct Tunnel is established) -->
+      <div class="nafaq-tunnel-banner" id="nafaq-tunnel-banner" style="display: none;">
+        <div class="tunnel-banner-left">
+          <div class="tunnel-icon-wrap">
+            <span class="tunnel-icon">🛡️</span>
+            <span class="tunnel-status-dot"></span>
+          </div>
+          <div class="tunnel-info-wrap">
+            <div class="tunnel-title-row">
+              <span class="tunnel-title">NAFAQ P2P VPN TUNNEL // ACTIVE</span>
+              <span class="tunnel-badge">نَفَق مُبَاشِر</span>
+              <span class="tunnel-ip" id="tunnel-assigned-ip">10.240.0.2/24</span>
+            </div>
+            <p class="tunnel-sub" id="tunnel-peer-info">Direct Zero-RTT ChaCha20-Poly1305 link with peer antigravity · 9ms latency</p>
+          </div>
+        </div>
+        <div class="tunnel-banner-actions">
+          <div class="tunnel-live-traffic">
+            <span class="traffic-tag tx">▲ TX <span id="tunnel-tx-count">1.4 MB</span></span>
+            <span class="traffic-tag rx">▼ RX <span id="tunnel-rx-count">3.8 MB</span></span>
+          </div>
+          <button class="btn-tunnel-inspect" id="btn-open-tunnel-details">⚙️ Dashboard</button>
+          <button class="btn-tunnel-close" id="btn-close-tunnel" title="Tear Down Tunnel">✕</button>
+        </div>
+      </div>
+
+      <!-- Message History View -->
+      <div class="messages-container" id="messages-container">
+        <!-- Welcome Hero in Channel -->
+        <div class="channel-welcome-hero" id="channel-welcome-hero">
+          <div class="hero-icon" id="hero-icon">#</div>
+          <h1 class="hero-title" id="hero-channel-title">Welcome to #general!</h1>
+          <p class="hero-desc" id="hero-channel-desc">This is the start of the #general channel in the WyreSup Decentralized Gossip Mesh.</p>
+        </div>
+
+        <!-- Messages Stream -->
+        <div class="messages-stream" id="messages-stream">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Live Voice Recording Floating Bar -->
+      <div class="sawt-recording-bar" id="sawt-recording-bar" style="display: none;">
+        <div class="rec-indicator">
+          <span class="rec-dot"></span>
+          <span class="rec-label">RECORDING SAWT (تَسْجِيل صَوْت)</span>
+          <span class="rec-timer" id="rec-timer">00:00</span>
+        </div>
+        <div class="rec-visualizer">
+          <div class="rec-bar"></div><div class="rec-bar"></div><div class="rec-bar"></div>
+          <div class="rec-bar"></div><div class="rec-bar"></div><div class="rec-bar"></div>
+          <div class="rec-bar"></div><div class="rec-bar"></div>
+        </div>
+        <div class="rec-actions">
+          <button class="rec-cancel-btn" id="btn-cancel-recording" title="Cancel">✕ Cancel</button>
+          <button class="rec-send-btn" id="btn-finish-recording" title="Send Sawt Audio">Send Voice Note ➤</button>
+        </div>
+      </div>
+
+      <!-- Floating Jump to Present Pill -->
+      <button class="jump-to-bottom-btn" id="btn-jump-bottom" style="display: none;" title="Jump to Present">
+        <span>↓ Jump to Present (الِانْتِقَال لِلأَسْفَل)</span>
+      </button>
+
+      <!-- Typing Indicator -->
+      <div class="typing-bar" id="typing-bar">
+        <div class="typing-dots" id="typing-dots" style="display:none;">
+          <span></span><span></span><span></span>
+        </div>
+        <span class="typing-text" id="typing-text"></span>
+      </div>
+
+      <!-- Message Composer Area -->
+      <footer class="composer-footer">
+        <!-- File Attachment Staging Tray -->
+        <div class="attachment-staging-tray" id="attachment-staging-tray" style="display: none;">
+          <!-- Injected via JS -->
+        </div>
+
+        <div class="composer-box">
+          <!-- Hidden File Input -->
+          <input type="file" id="file-attachment-input" style="display: none;" multiple>
+          
+          <!-- Attachment Button -->
+          <button class="composer-btn attach-file-btn" id="btn-attach-file" title="Upload File / P2P Transfer (إِرْفَاق مَلَفّ)">
+            <span>➕</span>
+          </button>
+
+          <button class="composer-btn voice-record-btn" id="btn-record-sawt" title="Record Sawt Voice Note (تسجيل صَوْت)">
+            <span>🎙️</span>
+          </button>
+          
+          <textarea 
+            id="message-input" 
+            class="message-textarea" 
+            placeholder="Broadcast encrypted message to #general..." 
+            rows="1"
+          ></textarea>
+
+          <div class="composer-actions">
+            <button class="composer-btn quick-reaction-btn" data-reaction="⚡" title="React Lightning">⚡</button>
+            <button class="composer-btn quick-reaction-btn" data-reaction="🛡️" title="React Shield">🛡️</button>
+            <button class="composer-btn dtmf-quick-btn" id="btn-quick-dtmf" title="Send DTMF Acoustic Tones (نَغَم)">
+              <span>🎵</span>
+            </button>
+            <button class="composer-btn send-btn" id="btn-send-message" title="Send (إِرْسَال)">
+              <span>➤</span>
+            </button>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Mobile Drawer Backdrop -->
+    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+    <!-- 4. RIGHT SIDEBAR: HUDUR / MEMBER LIST -->
+    <aside class="members-sidebar" id="members-sidebar">
+      <div class="members-header-mobile">
+        <span class="members-header-title">👥 MEMBERS (الأَعْضَاء)</span>
+        <button class="btn-close-members" id="btn-close-members" title="Close Members">✕</button>
+      </div>
+
+      <div class="members-category">
+        <h4 class="members-cat-title" id="online-count-header">ONLINE (حَاضِر) — 0</h4>
+        <div class="members-list" id="online-members-list">
+          <!-- Dynamic Members -->
+        </div>
+      </div>
+
+      <div class="members-category">
+        <h4 class="members-cat-title" id="offline-count-header">OFFLINE (غَائِب) — 0</h4>
+        <div class="members-list" id="offline-members-list">
+          <!-- Dynamic Offline Members -->
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- MODALS CONTAINER -->
+
+  <!-- 1. Diagnostics Modal (المُؤَشِّر) -->
+  <div class="modal-overlay" id="modal-diagnostics">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>📊 WyreSup Mesh Diagnostics (المُؤَشِّر)</h3>
+        <button class="modal-close" data-close="modal-diagnostics">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="diag-grid">
+          <div class="diag-card">
+            <span class="diag-label">LOCAL IDENTITY</span>
+            <span class="diag-val" id="diag-local-id">peer@...</span>
+          </div>
+          <div class="diag-card">
+            <span class="diag-label">TRANSPORT PROTOCOL</span>
+            <span class="diag-val emerald">ZBAT / Miftah / Barq</span>
+          </div>
+          <div class="diag-card">
+            <span class="diag-label">MESSAGES PUBLISHED</span>
+            <span class="diag-val" id="diag-msgs-published">0</span>
+          </div>
+          <div class="diag-card">
+            <span class="diag-label">MESSAGES RECEIVED</span>
+            <span class="diag-val" id="diag-msgs-received">0</span>
+          </div>
+          <div class="diag-card">
+            <span class="diag-label">DUPLICATES DROPPED</span>
+            <span class="diag-val" id="diag-dups-dropped">0</span>
+          </div>
+          <div class="diag-card">
+            <span class="diag-label">AVERAGE HOPS OBSERVED</span>
+            <span class="diag-val" id="diag-avg-hops">0.0</span>
+          </div>
+        </div>
+        <div class="diag-section">
+          <h4>CONNECTED MESH PEERS & ROUTES</h4>
+          <div class="peers-table-wrap" id="diag-peers-table">
+            <!-- Injected table -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Create Space Modal -->
+  <div class="modal-overlay" id="modal-create-space">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🏛️ Create New Mesh Space (مَجْلِس جَدِيد)</h3>
+        <button class="modal-close" data-close="modal-create-space">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="space-name-input">Space Name</label>
+          <input type="text" id="space-name-input" placeholder="e.g. Cyber Citadel, Dev Mesh...">
+        </div>
+        <div class="form-group">
+          <label for="space-arabic-input">Arabic Name (Optional)</label>
+          <input type="text" id="space-arabic-input" placeholder="e.g. مَجْلِس التَّطْوِير">
+        </div>
+        <div class="form-group">
+          <label for="space-icon-input">Icon / Emoji</label>
+          <input type="text" id="space-icon-input" value="🛡️" maxlength="2">
+        </div>
+        <div class="form-group">
+          <label for="space-desc-input">Description</label>
+          <textarea id="space-desc-input" rows="2" placeholder="Describe the purpose of this decentralized space..."></textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" data-close="modal-create-space">Cancel</button>
+          <button class="btn btn-primary" id="btn-submit-create-space">Create Space</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Create Channel Modal -->
+  <div class="modal-overlay" id="modal-create-channel">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>💬 Create New Channel (غُرْفَة جَدِيدَة)</h3>
+        <button class="modal-close" data-close="modal-create-channel">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="channel-name-input">Channel Name</label>
+          <input type="text" id="channel-name-input" placeholder="e.g. general, announcements...">
+        </div>
+        <div class="form-group">
+          <label>Channel Type</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="channel-type" value="text" checked>
+              <span>💬 Text Channel</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="channel-type" value="voice">
+              <span>🔊 Voice & Sawt Lounge</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="channel-topic-input">Topic / Purpose</label>
+          <input type="text" id="channel-topic-input" placeholder="What is this channel about?">
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" data-close="modal-create-channel">Cancel</button>
+          <button class="btn btn-primary" id="btn-submit-create-channel">Create Channel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Nagham DTMF Acoustic Keypad Modal -->
+  <div class="modal-overlay" id="modal-nagham">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🎵 Nagham DTMF Acoustic Channel (نَغَم)</h3>
+        <button class="modal-close" data-close="modal-nagham">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="nagham-desc">Play and transmit dual-frequency acoustic tones across voice channels for key exchange without data networks.</p>
+        <div class="dtmf-keypad" id="dtmf-keypad">
+          <button class="dtmf-key" data-key="1">1<span class="sub">697/1209</span></button>
+          <button class="dtmf-key" data-key="2">2<span class="sub">697/1336</span></button>
+          <button class="dtmf-key" data-key="3">3<span class="sub">697/1477</span></button>
+          <button class="dtmf-key special" data-key="A">A<span class="sub">697/1633</span></button>
+
+          <button class="dtmf-key" data-key="4">4<span class="sub">770/1209</span></button>
+          <button class="dtmf-key" data-key="5">5<span class="sub">770/1336</span></button>
+          <button class="dtmf-key" data-key="6">6<span class="sub">770/1477</span></button>
+          <button class="dtmf-key special" data-key="B">B<span class="sub">770/1633</span></button>
+
+          <button class="dtmf-key" data-key="7">7<span class="sub">852/1209</span></button>
+          <button class="dtmf-key" data-key="8">8<span class="sub">852/1336</span></button>
+          <button class="dtmf-key" data-key="9">9<span class="sub">852/1477</span></button>
+          <button class="dtmf-key special" data-key="C">C<span class="sub">852/1633</span></button>
+
+          <button class="dtmf-key special" data-key="*">*<span class="sub">941/1209</span></button>
+          <button class="dtmf-key" data-key="0">0<span class="sub">941/1336</span></button>
+          <button class="dtmf-key special" data-key="#">#<span class="sub">941/1477</span></button>
+          <button class="dtmf-key special" data-key="D">D<span class="sub">941/1633</span></button>
+        </div>
+        <div class="dtmf-display">
+          <span class="display-label">ACOUSTIC STREAM:</span>
+          <span class="display-value" id="dtmf-sequence-display">READY</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. User Profile & Direct Connection Modal -->
+  <div class="modal-overlay" id="modal-user-profile">
+    <div class="modal-card profile-card">
+      <div class="profile-banner">
+        <div class="profile-avatar-large" id="profile-modal-avatar">AG</div>
+        <button class="modal-close banner-close" data-close="modal-user-profile">✕</button>
+      </div>
+      <div class="profile-body">
+        <div class="profile-header-info">
+          <h3 class="profile-name" id="profile-modal-name">antigravity</h3>
+          <span class="profile-badge">ZBAT PEER</span>
+        </div>
+        <div class="profile-id-row">
+          <span class="profile-full-id" id="profile-modal-id">antigravity@000b2024</span>
+        </div>
+        
+        <div class="profile-section">
+          <div class="profile-sec-title">MESH STATUS & CONNECTION</div>
+          <div class="profile-status-box">
+            <div class="profile-stat-item">
+              <span class="stat-lbl">Hudur State:</span>
+              <span class="stat-val hadir" id="profile-modal-status">ONLINE (حَاضِر)</span>
+            </div>
+            <div class="profile-stat-item">
+              <span class="stat-lbl">Direct Latency:</span>
+              <span class="stat-val" id="profile-modal-latency">11ms</span>
+            </div>
+            <div class="profile-stat-item">
+              <span class="stat-lbl">Ratchet Handshake:</span>
+              <span class="stat-val emerald">Miftah-Ready 🛡️</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button class="btn btn-primary btn-dm-action" id="btn-start-direct-dm">
+            <span>💬</span> Start Direct P2P Chat (مُحَادَثَة مُبَاشِرَة)
+          </button>
+          <button class="btn btn-tunnel-action" id="btn-start-p2p-tunnel">
+            <span>🛡️</span> Establish Nafaq Tunnel (إِقَامَة نَفَق)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Nafaq P2P Tunnel Dashboard Modal -->
+  <div class="modal-overlay" id="modal-nafaq-dashboard">
+    <div class="modal-card tunnel-modal-card">
+      <div class="modal-header">
+        <h3>🛡️ Nafaq P2P VPN Tunnel Dashboard (لَوْحَة النَّفَق)</h3>
+        <button class="modal-close" data-close="modal-nafaq-dashboard">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="tunnel-status-header">
+          <div class="tunnel-status-indicator-wrap">
+            <span class="tunnel-pulse-dot"></span>
+          </div>
+          <div>
+            <h4 class="tunnel-state-title">P2P TUNNEL ACTIVE (نَفَق قَائِم و مُشَفَّر)</h4>
+            <p class="tunnel-state-desc">Encrypted WireGuard-grade tunnel with direct peer forward-secrecy.</p>
+          </div>
+        </div>
+
+        <div class="diag-grid">
+          <div class="diag-card">
+            <span class="diag-label">VIRTUAL MESH IP</span>
+            <span class="diag-val emerald" id="diag-tunnel-ip">10.240.0.2 / 24</span>
+          </div>
+          <div class="diag-card">
+            <span class="diag-label">PEER ENDPOINT</span>
+            <span class="diag-val" id="diag-tunnel-peer">antigravity@mesh</span>
+          </div>
+          <div class="diag-card">
+            <span class="diag-label">SOCKS5 PROXY</span>
+            <span class="diag-val emerald">127.0.0.1:1080 (READY)</span>
+          </div>
+          <div class="diag-card">
+            <span class="diag-label">RATCHET CIPHER</span>
+            <span class="diag-val">ChaCha20-Poly1305</span>
+          </div>
+          <div class="diag-card">
+            <span class="diag-label">DIRECT LATENCY</span>
+            <span class="diag-val emerald" id="diag-tunnel-latency">8ms (0 Intermediate Hops)</span>
+          </div>
+          <div class="diag-card">
+            <span class="diag-label">HANDSHAKE STATE</span>
+            <span class="diag-val emerald">MUTABASIM (مُتَبَاسِم)</span>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-primary" id="btn-rekey-tunnel">🔄 Re-Key Ratchet (تَجْدِيد)</button>
+          <button class="btn btn-secondary" id="btn-teardown-tunnel">Disconnect Tunnel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Image / Media Lightbox Modal -->
+  <div class="modal-overlay" id="modal-image-lightbox" onclick="closeModal('modal-image-lightbox')">
+    <div class="lightbox-content-wrap" onclick="event.stopPropagation()">
+      <button class="lightbox-close-btn" data-close="modal-image-lightbox">✕</button>
+      <img id="lightbox-img" src="" alt="Zoomed Media" class="lightbox-img">
+    </div>
+  </div>
+
+  <!-- Main JavaScript Bundle -->
+  <script src="app.js"></script>
+</body>
+</html>
