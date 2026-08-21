@@ -149,6 +149,7 @@
           <!-- Voice & Video Call Action Buttons (Direct Messages Only) -->
           <button class="topbar-btn topbar-call-btn" id="btn-topbar-call-voice" title="Start Audio Call (مُكَالَمَة صَوْتِيَّة)" style="display: none;">📞</button>
           <button class="topbar-btn topbar-call-btn" id="btn-topbar-call-video" title="Start Video Call (مُكَالَمَة مَرْئِيَّة)" style="display: none;">📹</button>
+          <button class="topbar-btn topbar-call-btn" id="btn-topbar-stream-youtube" title="Stream YouTube Video to Call (بَثّ يوتيوب)">📺</button>
           <!-- Live Network Indicator Badge -->
           <div class="mesh-badge" id="topbar-mesh-badge" title="P2P Connection Status">
             <span class="pulse-dot"></span>
@@ -623,6 +624,7 @@
           <span class="call-crypto-badge">MIFTAH // SRTP P2P</span>
         </div>
         <div class="call-timer-badge" id="call-duration-timer">00:00</div>
+        <button class="btn-swap-call-views" id="btn-swap-call-views" title="Swap Main / PIP Video Screens (تَبْدِيل الشَّاشَة)">⇄ Swap</button>
         <button class="modal-close call-stage-close" id="btn-minimize-call" title="Minimize / Close">✕</button>
       </div>
 
@@ -677,6 +679,10 @@
         <button class="call-ctrl-btn" id="btn-call-send-nagham" title="Send In-Call DTMF Acoustic Pulse">
           <span class="ctrl-icon">🎵</span>
           <span class="ctrl-lbl">Nagham</span>
+        </button>
+        <button class="call-ctrl-btn" id="btn-call-stream-youtube" title="Stream YouTube Video to Call (بَثّ يوتيوب)">
+          <span class="ctrl-icon">📺</span>
+          <span class="ctrl-lbl">YouTube</span>
         </button>
         <button class="call-ctrl-btn end-call-btn" id="btn-call-hangup" title="End Call (إِنْهَاء المُكَالَمَة)">
           <span class="ctrl-icon">🔴</span>
@@ -741,5 +747,53 @@
 
   <!-- Main JavaScript Bundle -->
   <script src="app.js"></script>
+  <!-- 11. MODAL: STREAM YOUTUBE VIDEO TO CALL (بَثّ اليوتيوب) -->
+  <div class="modal-overlay" id="modal-stream-youtube">
+    <div class="modal-content modal-youtube-stream">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">📺</span>
+          <h3>Stream YouTube to Call (بَثّ اليوتيوب)</h3>
+        </div>
+        <button class="modal-close" data-close="modal-stream-youtube">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">Enter any YouTube link or search query to stream the video in real-time with synchronized audio over the encrypted WebRTC call.</p>
+        
+        <div class="form-group">
+          <label for="yt-stream-url-input">YouTube Link / Search Query</label>
+          <div class="yt-input-row">
+            <input type="text" id="yt-stream-url-input" class="form-control" placeholder="e.g. https://youtu.be/... or Mos Def Ms Fat Booty">
+            <button class="btn btn-secondary" id="btn-yt-search-action">🔍 Search</button>
+          </div>
+        </div>
+
+        <!-- Quick Preset Chips -->
+        <div class="yt-preset-chips">
+          <span class="yt-chip-label">Quick Streams:</span>
+          <button class="yt-preset-chip" data-query="Mos Def Ms Fat Booty">🎵 Mos Def - Ms. Fat Booty</button>
+          <button class="yt-preset-chip" data-query="Yasiin Bey Supermagic">🎶 Yasiin Bey - Supermagic</button>
+          <button class="yt-preset-chip" data-query="Lofi Hip Hop radio chill beats">☕ Lofi Chill Beats</button>
+          <button class="yt-preset-chip" data-query="Abdul Basit Surah Rahman">📖 Abdul Basit</button>
+        </div>
+
+        <!-- Search Results Area -->
+        <div class="yt-search-results-list" id="yt-search-results" style="display: none;"></div>
+
+        <!-- Target Peer Info -->
+        <div class="yt-target-peer-banner" id="yt-target-peer-banner">
+          <span>Target Peer: <strong id="yt-target-peer-name">enver</strong></span>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-secondary" data-close="modal-stream-youtube">Cancel</button>
+          <button class="btn btn-primary btn-yt-stream-start" id="btn-yt-start-stream">
+            <span>🚀 Start Video Call & Stream</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

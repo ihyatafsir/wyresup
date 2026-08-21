@@ -413,7 +413,7 @@ class WyreCrypto {
  */
 
 // --- Global App State ---
-const state = {
+const state = window.state = {
   identity: null,
   crypto: {
     keys: null,
@@ -1827,6 +1827,34 @@ function initEventListeners() {
     });
   }
 
+
+  // YouTube Streaming UI Event Listeners
+  document.getElementById('btn-topbar-stream-youtube')?.addEventListener('click', () => openStreamYoutubeModal());
+  document.getElementById('btn-call-stream-youtube')?.addEventListener('click', () => openStreamYoutubeModal());
+
+  document.getElementById('btn-yt-search-action')?.addEventListener('click', () => {
+    const val = document.getElementById('yt-stream-url-input')?.value;
+    if (val) searchYouTubeVideos(val);
+  });
+
+  document.getElementById('btn-yt-start-stream')?.addEventListener('click', () => {
+    const val = document.getElementById('yt-stream-url-input')?.value;
+    if (val) {
+      startYoutubeStreamCall(state.youtubeStreamTarget, val);
+    } else {
+      alert('Please enter a YouTube URL or query');
+    }
+  });
+
+  document.querySelectorAll('.yt-preset-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const q = chip.getAttribute('data-query');
+      const input = document.getElementById('yt-stream-url-input');
+      if (input) input.value = q;
+      startYoutubeStreamCall(state.youtubeStreamTarget, q);
+    });
+  });
+
   // Topbar Voice & Video Call Triggers
   const topbarVoiceBtn = document.getElementById('btn-topbar-call-voice');
   if (topbarVoiceBtn) {
@@ -1858,6 +1886,14 @@ function initEventListeners() {
     });
   }
 
+  document.getElementById('btn-swap-call-views')?.addEventListener('click', toggleSwapCallViews);
+  document.getElementById('local-video-tile')?.addEventListener('click', toggleSwapCallViews);
+  document.getElementById('remote-video-tile')?.addEventListener('click', (e) => {
+    const grid = document.getElementById('call-video-grid');
+    if (grid && grid.classList.contains('is-swapped')) {
+      toggleSwapCallViews();
+    }
+  });
   // In-Call Controls
   document.getElementById('btn-call-toggle-mic')?.addEventListener('click', toggleCallMic);
   document.getElementById('btn-call-toggle-cam')?.addEventListener('click', toggleCallCam);
@@ -2110,6 +2146,307 @@ function closeModal(id) {
 }
 
 // =======================================================
+function playTone(freq = 440, duration = 0.2) {
+  try {
+    const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+    const ctx = state.audioCtx || new AudioCtxClass();
+    state.audioCtx = ctx;
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+
+
+// --- 7.1 YouTube Stream & Watch Party Controller (بَثّ اليوتيوب) ---
+// ===================================================================
+
+function openStreamYoutubeModal(targetPeer = null) {
+  let target = targetPeer;
+  if (!target) {
+    if (state.activeCall && state.activeCall.peer) {
+      target = state.activeCall.peer;
+    } else if (state.currentChannelId && state.currentChannelId.startsWith('dm-')) {
+      const targetPrefix = state.currentChannelId.replace('dm-', '');
+      target = state.peers.find(p => p.prefix === targetPrefix || p.peerId.startsWith(targetPrefix))?.peerId || targetPrefix;
+    } else {
+      const otherPeer = state.peers.find(p => state.identity && p.peerId !== state.identity.fullId);
+      target = otherPeer ? otherPeer.peerId : 'enver';
+    }
+  }
+
+  state.youtubeStreamTarget = target;
+  const peerDisplay = typeof target === 'string' ? target.split('@')[0] : 'enver';
+  const targetLabel = document.getElementById('yt-target-peer-name');
+  if (targetLabel) targetLabel.textContent = peerDisplay;
+
+  openModal('modal-stream-youtube');
+}
+
+async function searchYouTubeVideos(query) {
+  const container = document.getElementById('yt-search-results');
+  if (!container) return;
+  container.innerHTML = '<div style="color:#00f59b; padding:10px; font-size:0.85rem;">🔍 Searching YouTube for streams...</div>';
+  container.style.display = 'flex';
+
+  try {
+    const res = await fetch(`/api/youtube/search?q=${encodeURIComponent(query)}`);
+    const results = await res.json();
+    if (!results || results.length === 0) {
+      container.innerHTML = '<div style="color:#8e9297; padding:8px; font-size:0.85rem;">No videos found. Try direct link or search query.</div>';
+      return;
+    }
+
+    container.innerHTML = '';
+    results.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'yt-result-item';
+      row.innerHTML = `
+        <img class="yt-result-thumb" src="${item.thumbnail || ''}" alt="thumb" onerror="this.style.display='none'">
+        <div class="yt-result-info">
+          <div class="yt-result-title">${item.title}</div>
+          <div class="yt-result-meta">${item.uploader || 'YouTube'} · ${item.duration || ''}</div>
+        </div>
+      `;
+      row.addEventListener('click', () => {
+        document.getElementById('yt-stream-url-input').value = item.url;
+        container.style.display = 'none';
+      });
+      container.appendChild(row);
+    });
+  } catch (err) {
+    container.innerHTML = `<div style="color:#f04747; padding:8px; font-size:0.85rem;">Search error: ${err.message}</div>`;
+  }
+}
+
+async function startYoutubeStreamCall(targetPeer, queryOrUrl) {
+  const btn = document.getElementById('btn-yt-start-stream');
+  const originalText = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳ Preparing Stream...</span>';
+  }
+
+  try {
+    const res = await fetch('/api/youtube/prepare', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: queryOrUrl })
+    });
+
+    const streamInfo = await res.json();
+    if (!res.ok || streamInfo.error) {
+      throw new Error(streamInfo.error || 'Failed to prepare video stream');
+    }
+
+    closeModal('modal-stream-youtube');
+
+    // Create stream with YouTube video + real-time green HUD
+    const ytStream = await createYouTubeMediaStream(streamInfo);
+
+    if (state.activeCall && state.activeCall.pc && state.activeCall.pc.connectionState === 'connected') {
+      // Mid-call track swap
+      const senders = state.activeCall.pc.getSenders();
+      const videoSender = senders.find(s => s.track && s.track.kind === 'video');
+      const audioSender = senders.find(s => s.track && s.track.kind === 'audio');
+      
+      const newVideoTrack = ytStream.getVideoTracks()[0];
+      const newAudioTrack = ytStream.getAudioTracks()[0];
+
+      if (videoSender && newVideoTrack) videoSender.replaceTrack(newVideoTrack);
+      if (audioSender && newAudioTrack) audioSender.replaceTrack(newAudioTrack);
+
+      const localVideo = document.getElementById('call-local-video');
+      if (localVideo) localVideo.srcObject = ytStream;
+      state.activeCall.localStream = ytStream;
+      console.log('✅ YouTube stream hot-swapped into active call!');
+    } else {
+      // Start new call with this stream
+      await startOutgoingCallWithCustomStream(targetPeer || state.youtubeStreamTarget || 'enver', ytStream, streamInfo.title);
+    }
+
+  } catch (err) {
+    alert(`YouTube Stream Error: ${err.message}`);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+    }
+  }
+}
+
+async function createYouTubeMediaStream(streamInfo) {
+  const { title, uploader, duration, streamUrl } = streamInfo;
+
+  // 1. Create HTML5 Video Element
+  const video = document.createElement('video');
+  video.src = streamUrl;
+  video.crossOrigin = 'anonymous';
+  video.loop = true;
+  video.autoplay = true;
+  video.muted = true; // Bypasses browser autoplay policy
+  video.playsInline = true;
+  document.body.appendChild(video);
+  await video.play().catch(e => console.warn('[Video Play]:', e));
+
+  // 2. Setup Web Audio API
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let ctx = state.audioCtx;
+  if (!ctx || ctx.state === 'closed') {
+    ctx = new AudioCtx();
+    state.audioCtx = ctx;
+  }
+  if (ctx.state === 'suspended') await ctx.resume();
+
+  const dst = ctx.createMediaStreamDestination();
+
+  try {
+    const resp = await fetch(streamUrl);
+    const arrayBuf = await resp.arrayBuffer();
+    const audioBuf = await ctx.decodeAudioData(arrayBuf);
+    const source = ctx.createBufferSource();
+    source.buffer = audioBuf;
+    source.loop = true;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.85, ctx.currentTime);
+    source.connect(gain);
+    gain.connect(dst);
+    source.start(0);
+    state.activeCall.activeBufferSource = source;
+  } catch (e) {
+    console.warn('[Audio stream setup warning]:', e.message);
+  }
+
+  // 3. Setup 30fps Canvas with Green Glowing HUD Header
+  const canvas = document.createElement('canvas');
+  canvas.width = 1280;
+  canvas.height = 720;
+  const cCtx = canvas.getContext('2d');
+
+  const anim = setInterval(() => {
+    if (!state.activeCall.localStream && !state.activeCall.pc) {
+      clearInterval(anim);
+      try { video.pause(); video.remove(); } catch(e){}
+      return;
+    }
+
+    if (video.readyState >= 2) {
+      // Draw Video Frame
+      cCtx.drawImage(video, 0, 0, 1280, 720);
+
+      // HUD Top Gradient
+      const topGrad = cCtx.createLinearGradient(0, 0, 0, 90);
+      topGrad.addColorStop(0, 'rgba(4, 7, 13, 0.90)');
+      topGrad.addColorStop(1, 'rgba(4, 7, 13, 0)');
+      cCtx.fillStyle = topGrad;
+      cCtx.fillRect(0, 0, 1280, 90);
+
+      // Neon Green HUD Title
+      cCtx.fillStyle = '#00f59b';
+      cCtx.font = 'bold 26px monospace';
+      const cleanTitle = (title || 'YOUTUBE STREAM').substring(0, 50).toUpperCase();
+      cCtx.fillText(`WYRESUP // P2P STREAM: ${cleanTitle}`, 30, 45);
+
+      // Cyan Subtitle & Duration
+      cCtx.font = '16px monospace';
+      cCtx.fillStyle = '#00e5ff';
+      cCtx.fillText(`${uploader || 'YouTube'} · ${duration || 'LIVE'} · 1080p SRTP P2P · Watch Party`, 30, 72);
+
+      // Outer Neon Green Border Frame
+      cCtx.strokeStyle = '#00f59b';
+      cCtx.lineWidth = 2;
+      cCtx.strokeRect(10, 10, 1260, 700);
+    }
+  }, 1000 / 30);
+
+  state.activeCall.syntheticInterval = anim;
+
+  const canvasStream = canvas.captureStream(30);
+  const audioTrack = dst.stream.getAudioTracks()[0];
+  const videoTrack = canvasStream.getVideoTracks()[0];
+
+  return new MediaStream([audioTrack, videoTrack].filter(Boolean));
+}
+
+async function startOutgoingCallWithCustomStream(targetPeer, customStream, streamTitle = '') {
+  const peerId = typeof targetPeer === 'string' ? targetPeer : (targetPeer.peerId || targetPeer.fullId);
+  const peerPrefix = peerId.split('@')[0];
+
+  state.activeCall.peer = peerId;
+  state.activeCall.peerPrefix = peerPrefix;
+  state.activeCall.type = 'video';
+  state.activeCall.localStream = customStream;
+  state.activeCall.pendingIceCandidates = [];
+
+  document.getElementById('call-active-peer-name').textContent = peerPrefix;
+  document.getElementById('call-remote-avatar').textContent = peerPrefix.substring(0, 2).toUpperCase();
+  document.getElementById('call-remote-avatar-name').textContent = peerPrefix;
+  document.getElementById('call-remote-status-text').textContent = `Streaming ${streamTitle || 'YouTube'} (جَارِي البَثّ)...`;
+  document.getElementById('remote-video-tag').textContent = `REMOTE // YOUTUBE P2P`;
+
+  const localVideo = document.getElementById('call-local-video');
+  if (localVideo) {
+    localVideo.srcObject = customStream;
+    localVideo.muted = true;
+    localVideo.play().catch(() => {});
+  }
+
+  openModal('modal-active-call');
+
+  const pc = new RTCPeerConnection(RTC_CONFIG);
+  state.activeCall.pc = pc;
+
+  customStream.getTracks().forEach(track => pc.addTrack(track, customStream));
+
+  pc.ontrack = (event) => {
+    let rStream = (event.streams && event.streams[0]) ? event.streams[0] : null;
+    if (!rStream) {
+      if (!state.activeCall.remoteStream) state.activeCall.remoteStream = new MediaStream();
+      state.activeCall.remoteStream.addTrack(event.track);
+      rStream = state.activeCall.remoteStream;
+    }
+    attachRemoteStreamToMediaElements(rStream, 'video');
+    startCallTimer();
+    document.getElementById('call-remote-status-text').textContent = 'P2P Stream Active (مُتَّصِل)';
+  };
+
+  pc.onicecandidate = (event) => {
+    if (event.candidate && state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
+        type: 'CALL_SIGNAL',
+        payload: {
+          signalType: 'ICE',
+          targetPeer: peerId,
+          candidate: event.candidate
+        }
+      }));
+    }
+  };
+
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+
+  if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+    state.ws.send(JSON.stringify({
+      type: 'CALL_SIGNAL',
+      payload: {
+        signalType: 'OFFER',
+        targetPeer: peerId,
+        callType: 'video',
+        sdp: offer
+      }
+    }));
+  }
+}
+
 // --- 7. WebRTC P2P Video & Voice Calling (المُكَالَمَات) ---
 // =======================================================
 
@@ -2169,7 +2506,7 @@ async function drainPendingIceCandidates() {
   }
 }
 
-async function startOutgoingCall(targetPeer, callType = 'video') {
+window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType = 'video') {
   const peerId = typeof targetPeer === 'string' ? targetPeer : (targetPeer.peerId || targetPeer.fullId);
   const peerPrefix = peerId.split('@')[0];
 
@@ -2329,6 +2666,19 @@ async function acceptIncomingCall() {
   if (!state.pendingIncomingCall) return;
   const { senderPeer, senderPrefix, sdp, callType } = state.pendingIncomingCall;
   closeModal('modal-incoming-call');
+
+  // Explicitly unlock audio on user gesture
+  const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+  if (!state.audioCtx || state.audioCtx.state === 'closed') {
+    state.audioCtx = new AudioCtxClass();
+  }
+  if (state.audioCtx && state.audioCtx.state === 'suspended') {
+    state.audioCtx.resume().catch(() => {});
+  }
+  const rAudio = document.getElementById('call-remote-audio');
+  const rVideo = document.getElementById('call-remote-video');
+  if (rAudio) { rAudio.muted = false; rAudio.volume = 1.0; rAudio.play().catch(() => {}); }
+  if (rVideo) { rVideo.muted = false; rVideo.volume = 1.0; rVideo.play().catch(() => {}); }
 
   state.activeCall.peer = senderPeer;
   state.activeCall.peerPrefix = senderPrefix || senderPeer.split('@')[0];
@@ -2595,6 +2945,14 @@ function sendInCallNaghamTone() {
   }
 }
 
+
+function toggleSwapCallViews() {
+  const grid = document.getElementById('call-video-grid');
+  if (grid) {
+    grid.classList.toggle('is-swapped');
+  }
+}
+
 function startCallTimer() {
   if (state.activeCall.timerInterval) return;
   state.activeCall.startTime = Date.now();
@@ -2639,29 +2997,52 @@ function createSyntheticStream(withVideo = true) {
 
   const dst = ctx.createMediaStreamDestination();
 
-  // Create an expressive ambient melodic synthesizer
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(432, ctx.currentTime);
-  gain.gain.setValueAtTime(0.08, ctx.currentTime);
-
-  const notes = [432, 540, 648, 864, 648, 540];
-  let noteIdx = 0;
-  const synthInterval = setInterval(() => {
-    if (!state.activeCall.localStream && !state.activeCall.remoteStream) {
-      clearInterval(synthInterval);
-      return;
-    }
-    if (ctx && ctx.state === 'running') {
-      noteIdx = (noteIdx + 1) % notes.length;
-      osc.frequency.setTargetAtTime(notes[noteIdx], ctx.currentTime, 0.05);
-    }
-  }, 400);
-
-  osc.connect(gain);
-  gain.connect(dst);
-  osc.start();
+  // Try streaming Supermagic by Yasiin Bey (Mos Def) first
+  let audioLoaded = false;
+  fetch('/supermagic.mp3')
+    .then(res => {
+      if (!res.ok) throw new Error('supermagic.mp3 not found');
+      return res.arrayBuffer();
+    })
+    .then(buf => ctx.decodeAudioData(buf))
+    .then(decodedBuffer => {
+      const source = ctx.createBufferSource();
+      source.buffer = decodedBuffer;
+      source.loop = true;
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.7, ctx.currentTime);
+      source.connect(gain);
+      gain.connect(dst);
+      source.start(0);
+      state.activeCall.activeBufferSource = source;
+      audioLoaded = true;
+      console.log('[WebRTC Media] Playing Yasiin Bey (Mos Def) - Supermagic 🎵');
+    })
+    .catch(err => {
+      console.warn('[WebRTC Media] Fallback to melodic synth:', err.message);
+      if (!audioLoaded) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(432, ctx.currentTime);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        const notes = [432, 540, 648, 864, 648, 540];
+        let noteIdx = 0;
+        const synthInterval = setInterval(() => {
+          if (!state.activeCall.localStream && !state.activeCall.remoteStream) {
+            clearInterval(synthInterval);
+            return;
+          }
+          if (ctx && ctx.state === 'running') {
+            noteIdx = (noteIdx + 1) % notes.length;
+            osc.frequency.setTargetAtTime(notes[noteIdx], ctx.currentTime, 0.05);
+          }
+        }, 400);
+        osc.connect(gain);
+        gain.connect(dst);
+        osc.start();
+      }
+    });
 
   const tracks = [...dst.stream.getAudioTracks()];
 
@@ -2690,7 +3071,7 @@ function createSyntheticStream(withVideo = true) {
 
       cCtx.fillStyle = '#00f59b';
       cCtx.font = 'bold 36px monospace';
-      cCtx.fillText('WyreSup // P2P Secure SRTP Stream (مُبَاشِر)', 70, 100);
+      cCtx.fillText('WYRESUP // YASIIN BEY (MOS DEF) - SUPERMAGIC 🎵', 70, 100);
 
       cCtx.font = '20px monospace';
       cCtx.fillStyle = '#8e9297';

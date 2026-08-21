@@ -3029,3 +3029,188 @@ html, body {
   0% { transform: scaleY(0.3); opacity: 0.5; }
   100% { transform: scaleY(1.2); opacity: 1; filter: drop-shadow(0 0 6px #00f59b); }
 }
+
+/* YouTube Streaming & Watch Party Styles */
+.modal-youtube-stream {
+  max-width: 580px;
+  background: rgba(13, 19, 31, 0.95);
+  border: 1px solid rgba(0, 245, 155, 0.3);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 245, 155, 0.15);
+}
+
+.yt-input-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.yt-input-row input {
+  flex: 1;
+}
+
+.yt-preset-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.yt-chip-label {
+  font-size: 0.78rem;
+  color: var(--text-muted, #8e9297);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.yt-preset-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e0e6ed;
+  font-size: 0.8rem;
+  padding: 5px 10px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.yt-preset-chip:hover {
+  background: rgba(0, 245, 155, 0.15);
+  border-color: #00f59b;
+  color: #00f59b;
+  transform: translateY(-1px);
+}
+
+.yt-search-results-list {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.yt-result-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.yt-result-item:hover {
+  background: rgba(0, 245, 155, 0.1);
+  border-left: 3px solid #00f59b;
+}
+
+.yt-result-thumb {
+  width: 50px;
+  height: 32px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.yt-result-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.yt-result-title {
+  font-size: 0.85rem;
+  color: #fff;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.yt-result-meta {
+  font-size: 0.75rem;
+  color: #8e9297;
+}
+
+.yt-target-peer-banner {
+  background: rgba(0, 229, 255, 0.08);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #00e5ff;
+  margin-top: 10px;
+}
+
+.btn-yt-stream-start {
+  background: linear-gradient(135deg, #00f59b 0%, #00b4d8 100%);
+  color: #000;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 245, 155, 0.3);
+}
+
+.btn-yt-stream-start:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Swap Views for PIP / Main Screen & Watch Party */
+.btn-swap-call-views {
+  background: rgba(0, 245, 155, 0.15);
+  border: 1px solid rgba(0, 245, 155, 0.4);
+  color: #00f59b;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-swap-call-views:hover {
+  background: #00f59b;
+  color: #000;
+  box-shadow: 0 0 10px rgba(0, 245, 155, 0.4);
+}
+
+.call-video-grid.is-swapped .remote-video-tile {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 180px;
+  height: 120px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid var(--matrix-green);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+  z-index: 10;
+}
+
+.call-video-grid.is-swapped .local-video-pip {
+  position: relative;
+  bottom: auto;
+  right: auto;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  z-index: 1;
+}
+
+.local-video-pip, .call-video-grid.is-swapped .remote-video-tile {
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.local-video-pip:hover, .call-video-grid.is-swapped .remote-video-tile:hover {
+  transform: scale(1.03);
+}

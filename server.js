@@ -17,6 +17,7 @@ const MajlisManager = require('./src/mesh/MajlisManager');
 const LisanEngine = require('./src/mesh/LisanEngine');
 const GossipMesh = require('./src/mesh/GossipMesh');
 const HudurPresence = require('./src/mesh/HudurPresence');
+const YouTubeStreamer = require('./src/mesh/YouTubeStreamer');
 
 const PORT = process.env.PORT || 5195;
 
@@ -40,7 +41,11 @@ const MIME_TYPES = {
   '.jpeg': 'image/jpeg',
   '.webp': 'image/webp',
   '.svg': 'image/svg+xml',
-  '.zip': 'application/zip'
+  '.zip': 'application/zip',
+  '.mp4': 'video/mp4',
+  '.mp3': 'audio/mpeg',
+  '.webm': 'video/webm',
+  '.m4a': 'audio/mp4'
 };
 
 // HTTP Server
@@ -150,23 +155,74 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // --- YouTube Streaming & Watch Party API ---
+  if (pathname === '/api/youtube/prepare' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        const data = JSON.parse(body || '{}');
+        const streamInfo = await YouTubeStreamer.prepareStream(data.url || data.query);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(streamInfo));
+      } catch (err) {
+        console.error('[YouTubeStreamer Error]:', err.message);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
+  if (pathname === '/api/youtube/search' && req.method === 'GET') {
+    const q = parsedUrl.searchParams.get('q') || '';
+    YouTubeStreamer.searchVideos(q)
+      .then(results => {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(results));
+      })
+      .catch(err => {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      });
+    return;
+  }
+
   // --- Static Files ---
   let filePath = path.join(__dirname, 'public', pathname === '/' ? 'index.html' : pathname);
   const extname = path.extname(filePath).toLowerCase();
   const contentType = MIME_TYPES[extname] || 'application/octet-stream';
 
-  fs.readFile(filePath, (err, content) => {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('404 Not Found');
-      } else {
-        res.writeHead(500);
-        res.end(`Server Error: ${err.code}`);
-      }
+  // Check file stats for range streaming
+  fs.stat(filePath, (statErr, stats) => {
+    if (statErr) {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('404 Not Found');
+      return;
+    }
+
+    const range = req.headers.range;
+    if (range && (extname === '.mp4' || extname === '.mp3' || extname === '.webm')) {
+      const parts = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
+      const chunksize = (end - start) + 1;
+      const fileStream = fs.createReadStream(filePath, { start, end });
+
+      res.writeHead(206, {
+        'Content-Range': `bytes ${start}-${end}/${stats.size}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunksize,
+        'Content-Type': contentType
+      });
+      fileStream.pipe(res);
     } else {
-      res.writeHead(200, { 'Content-Type': contentType });
-      res.end(content, 'utf-8');
+      res.writeHead(200, {
+        'Content-Length': stats.size,
+        'Content-Type': contentType,
+        'Accept-Ranges': 'bytes'
+      });
+      fs.createReadStream(filePath).pipe(res);
     }
   });
 });
