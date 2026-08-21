@@ -6,6 +6,15 @@
 
 const LISAN_LEXICON = {
   // Hardened Cryptographic Roots (Lisān al-'Arab)
+  ratq: {
+    root: "رتق",
+    arabicWord: "رَتْق",
+    technicalTerm: "Dual-Cipher Cascade Layered Encryption (AES-256-GCM + ChaCha20-Poly1305)",
+    layer: "Layer 4 - Cascade Defense-in-Depth",
+    classicalDefinition: "الرَّتْقُ: ضِدُّ الفَتْقِ، وهو الالتئامُ والانْضِمامُ حتّى لا يكونَ بينَ الشَّيْئَيْنِ فُرْجَةٌ ولا مَنْفَذ. وفي التنزيل: {كانَتا رَتْقاً فَفَتَقْناهُما}.",
+    mathematicalRole: "Cascading two orthogonal cryptographic ciphers (ChaCha20 inner shield + AES-256 outer fortress) with independent derived keys, guaranteeing confidentiality even if one cipher is mathematically broken.",
+    status: "DUAL_CASCADE_ACTIVE"
+  },
   tams: {
     root: "طمس",
     arabicWord: "طَمْس",

@@ -636,6 +636,76 @@ class ZbatCrypto {
     return hash.startsWith(targetPrefix);
   }
 
+  /**
+   * Al-Ratq (الرَّتْق): Dual-Cipher Cascading Defense-in-Depth (AES-256-GCM + ChaCha20-Poly1305)
+   * Encrypts plaintext through two distinct cipher primitives with distinct derived keys.
+   */
+  static encryptRatqCascade(payload, sharedKey) {
+    const rawKey = Buffer.isBuffer(sharedKey) ? sharedKey : crypto.createHash("sha256").update(sharedKey).digest();
+    
+    // Derive two distinct 256-bit sub-keys via HKDF
+    const keyAes = crypto.createHmac("sha256", rawKey).update(Buffer.from("ratq-aes256-v1")).digest();
+    const keyChaCha = crypto.createHmac("sha256", rawKey).update(Buffer.from("ratq-chacha20-v1")).digest();
+
+    const plaintext = typeof payload === "string" ? payload : JSON.stringify(payload);
+    const ptBuf = Buffer.from(plaintext, "utf8");
+
+    // 1. Layer 1: ChaCha20-Poly1305 (Inner Shield)
+    const ivChaCha = crypto.randomBytes(12);
+    const cipherChaCha = crypto.createCipheriv("chacha20-poly1305", keyChaCha, ivChaCha, { authTagLength: 16 });
+    const innerCt = Buffer.concat([cipherChaCha.update(ptBuf), cipherChaCha.final()]);
+    const innerTag = cipherChaCha.getAuthTag();
+
+    // 2. Layer 2: AES-256-GCM (Outer Fortress)
+    const innerPacked = Buffer.concat([ivChaCha, innerTag, innerCt]);
+    const ivAes = crypto.randomBytes(12);
+    const cipherAes = crypto.createCipheriv("aes-256-gcm", keyAes, ivAes);
+    const outerCt = Buffer.concat([cipherAes.update(innerPacked), cipherAes.final()]);
+    const outerTag = cipherAes.getAuthTag();
+
+    tamsScrub(keyAes);
+    tamsScrub(keyChaCha);
+
+    return {
+      outerCiphertext: outerCt.toString("hex"),
+      outerIv: ivAes.toString("hex"),
+      outerTag: outerTag.toString("hex"),
+      protocol: "AL_RATQ_CASCADE_AEAD"
+    };
+  }
+
+  static decryptRatqCascade(encryptedObj, sharedKey) {
+    const { outerCiphertext, outerIv, outerTag } = encryptedObj;
+    const rawKey = Buffer.isBuffer(sharedKey) ? sharedKey : crypto.createHash("sha256").update(sharedKey).digest();
+
+    const keyAes = crypto.createHmac("sha256", rawKey).update(Buffer.from("ratq-aes256-v1")).digest();
+    const keyChaCha = crypto.createHmac("sha256", rawKey).update(Buffer.from("ratq-chacha20-v1")).digest();
+
+    // 1. Decrypt Layer 2: AES-256-GCM
+    const decipherAes = crypto.createDecipheriv("aes-256-gcm", keyAes, Buffer.from(outerIv, "hex"));
+    decipherAes.setAuthTag(Buffer.from(outerTag, "hex"));
+    const innerPacked = Buffer.concat([decipherAes.update(Buffer.from(outerCiphertext, "hex")), decipherAes.final()]);
+
+    // 2. Decrypt Layer 1: ChaCha20-Poly1305
+    const ivChaCha = innerPacked.subarray(0, 12);
+    const innerTag = innerPacked.subarray(12, 28);
+    const innerCt = innerPacked.subarray(28);
+
+    const decipherChaCha = crypto.createDecipheriv("chacha20-poly1305", keyChaCha, ivChaCha, { authTagLength: 16 });
+    decipherChaCha.setAuthTag(innerTag);
+    const decryptedBuf = Buffer.concat([decipherChaCha.update(innerCt), decipherChaCha.final()]);
+
+    tamsScrub(keyAes);
+    tamsScrub(keyChaCha);
+
+    const rawStr = decryptedBuf.toString("utf8");
+    try {
+      return JSON.parse(rawStr);
+    } catch {
+      return rawStr;
+    }
+  }
+
   static getDtmfFrequencies() {
     return {
       "1": [697, 1209], "2": [697, 1336], "3": [697, 1477], "A": [697, 1633],
