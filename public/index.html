@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=1787348900">
 </head>
 <body>
   <div id="app-container" class="app-layout">
@@ -182,28 +182,20 @@
         </div>
       </div>
 
-      <!-- Nafaq Encrypted Tunnel Banner (Active when P2P VPN / Direct Tunnel is established) -->
+      <!-- Nafaq Encrypted Tunnel Banner (Ultra-Compact Single-Row Micro-Bar) -->
       <div class="nafaq-tunnel-banner" id="nafaq-tunnel-banner" style="display: none;">
         <div class="tunnel-banner-left">
-          <div class="tunnel-icon-wrap">
-            <span class="tunnel-icon">🛡️</span>
-            <span class="tunnel-status-dot"></span>
-          </div>
-          <div class="tunnel-info-wrap">
-            <div class="tunnel-title-row">
-              <span class="tunnel-title">NAFAQ P2P VPN TUNNEL // ACTIVE</span>
-              <span class="tunnel-badge">نَفَق مُبَاشِر</span>
-              <span class="tunnel-ip" id="tunnel-assigned-ip">10.240.0.2/24</span>
-            </div>
-            <p class="tunnel-sub" id="tunnel-peer-info">Direct Zero-RTT ChaCha20-Poly1305 link with peer antigravity · 9ms latency</p>
-          </div>
+          <span class="tunnel-icon">🛡️</span>
+          <span class="tunnel-title">NAFAQ P2P</span>
+          <span class="tunnel-ip" id="tunnel-assigned-ip">10.240.0.2</span>
+          <span class="tunnel-badge">نَفَق</span>
         </div>
         <div class="tunnel-banner-actions">
           <div class="tunnel-live-traffic">
-            <span class="traffic-tag tx">▲ TX <span id="tunnel-tx-count">1.4 MB</span></span>
-            <span class="traffic-tag rx">▼ RX <span id="tunnel-rx-count">3.8 MB</span></span>
+            <span class="traffic-tag tx">▲ <span id="tunnel-tx-count">1.4 MB</span></span>
+            <span class="traffic-tag rx">▼ <span id="tunnel-rx-count">3.8 MB</span></span>
           </div>
-          <button class="btn-tunnel-inspect" id="btn-open-tunnel-details">⚙️ Dashboard</button>
+          <button class="btn-tunnel-inspect" id="btn-open-tunnel-details" title="Open Dashboard">⚙️</button>
           <button class="btn-tunnel-close" id="btn-close-tunnel" title="Tear Down Tunnel">✕</button>
         </div>
       </div>
@@ -795,6 +787,6 @@
   </div>
 
   <!-- Main JavaScript Bundle with Cache-Buster -->
-  <script src="app.js?v=1787347700"></script>
+  <script src="app.js?v=1787348900"></script>
 </body>
 </html>
