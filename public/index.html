@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1787348900">
+  <link rel="stylesheet" href="style.css?v=1787349100">
 </head>
 <body>
   <div id="app-container" class="app-layout">
@@ -182,21 +182,28 @@
         </div>
       </div>
 
-      <!-- Nafaq Encrypted Tunnel Banner (Ultra-Compact Single-Row Micro-Bar) -->
+            <!-- Nafaq Encrypted Tunnel Banner (Compact 52px Dashboard Bar) -->
       <div class="nafaq-tunnel-banner" id="nafaq-tunnel-banner" style="display: none;">
-        <div class="tunnel-banner-left">
-          <span class="tunnel-icon">🛡️</span>
-          <span class="tunnel-title">NAFAQ P2P</span>
-          <span class="tunnel-ip" id="tunnel-assigned-ip">10.240.0.2</span>
-          <span class="tunnel-badge">نَفَق</span>
-        </div>
-        <div class="tunnel-banner-actions">
-          <div class="tunnel-live-traffic">
-            <span class="traffic-tag tx">▲ <span id="tunnel-tx-count">1.4 MB</span></span>
-            <span class="traffic-tag rx">▼ <span id="tunnel-rx-count">3.8 MB</span></span>
+        <div class="tunnel-banner-main">
+          <div class="tunnel-row-top">
+            <div class="tunnel-brand">
+              <span class="tunnel-icon">🛡️</span>
+              <span class="tunnel-title">NAFAQ P2P</span>
+              <span class="tunnel-badge">نَفَق مُبَاشِر</span>
+              <span class="tunnel-ip" id="tunnel-assigned-ip">10.240.0.2/24</span>
+            </div>
+            <div class="tunnel-top-actions">
+              <button class="btn-tunnel-inspect" id="btn-open-tunnel-details" title="Tunnel Dashboard">⚙️ Dashboard</button>
+              <button class="btn-tunnel-close" id="btn-close-tunnel" title="Tear Down Tunnel">✕</button>
+            </div>
           </div>
-          <button class="btn-tunnel-inspect" id="btn-open-tunnel-details" title="Open Dashboard">⚙️</button>
-          <button class="btn-tunnel-close" id="btn-close-tunnel" title="Tear Down Tunnel">✕</button>
+          <div class="tunnel-row-bottom">
+            <span class="tunnel-sub" id="tunnel-peer-info">Direct ChaCha20-Poly1305 link · 9ms</span>
+            <div class="tunnel-live-traffic">
+              <span class="traffic-tag tx">▲ <span id="tunnel-tx-count">1.4 MB</span></span>
+              <span class="traffic-tag rx">▼ <span id="tunnel-rx-count">3.8 MB</span></span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -787,6 +794,6 @@
   </div>
 
   <!-- Main JavaScript Bundle with Cache-Buster -->
-  <script src="app.js?v=1787348900"></script>
+  <script src="app.js?v=1787349100"></script>
 </body>
 </html>
