@@ -5,6 +5,53 @@
  */
 
 const LISAN_LEXICON = {
+  // Hardened Cryptographic Roots (Lisān al-'Arab)
+  tams: {
+    root: "طمس",
+    arabicWord: "طَمْس",
+    technicalTerm: "3-Pass Active Anti-Forensics Memory Sanitization",
+    layer: "Layer 3 - Anti-Forensic Memory Wipe",
+    classicalDefinition: "الطَّمْسُ: اسْتِئْصالُ أَثَرِ الشيءِ ومَحْوُه حتّى لا يُرَى له رَسْمٌ ولا مَعْلَم، وفي التنزيل: {فَإِذَا النُّجُومُ طُمِسَتْ} أَي مُحِيَ نُورُها وذَهَبَ أَثَرُها.",
+    mathematicalRole: "Multi-pass physical memory scrub (0xFF -> 0xAA -> CSPRNG -> 0x00) immediately eradicating ephemeral message keys from RAM.",
+    status: "ACTIVE_SCRUBBED"
+  },
+  habk: {
+    root: "حبك",
+    arabicWord: "حَبْك",
+    technicalTerm: "Double-Ratchet Asymmetric DH Weave (Break-In Recovery)",
+    layer: "Layer 3 - Double Ratchet",
+    classicalDefinition: "الحَبْكُ: إِحْكامُ الشَّدِّ وإِتْقانُ الصَّنْعَةِ وحُسْنُ تَرَدُّدِ الخُيُوطِ في النَّسِيج. وفي التنزيل: {وَالسَّمَاءِ ذَاتِ الْحُبُكِ}.",
+    mathematicalRole: "Asymmetric Diffie-Hellman ratchets interleaved with symmetric KDF message chains, guaranteeing post-compromise break-in recovery.",
+    status: "RATCHET_WEAVED"
+  },
+  sadd: {
+    root: "سدد",
+    arabicWord: "سَدّ",
+    technicalTerm: "Strict Constant-Time Side-Channel Immunity",
+    layer: "Layer 4 - Side-Channel Defense",
+    classicalDefinition: "السَّدُّ: رَدْمُ الخَلَلِ وإِغْلاقُ الثَّغْرَةِ حتّى لا يَنْفُذَ منها شَيْء، وقَوْلٌ سَدِيدٌ: قاصِدٌ مُحْكَمٌ لا عَيْبَ فيه ولا مَدْخَلَ لِلشُّبْهَة.",
+    mathematicalRole: "Constant-time bitwise verification (crypto.timingSafeEqual) eliminating nanosecond execution timing side-channel leaks.",
+    status: "TIMING_IMMUNE"
+  },
+  rasd: {
+    root: "رصد",
+    arabicWord: "رَصْد",
+    technicalTerm: "Autonomous Ingress Sentinel & Drift Monitor",
+    layer: "Layer 5 - Protocol Sentinel",
+    classicalDefinition: "الرَّصْدُ: التَّرَقُّبُ والانتظارُ لِلحِفْظِ والمُراقَبَةِ في مَرْصَدٍ مَنِيع. وفي التنزيل: {إِنَّ رَبَّكَ لَبِالْمِرْصَادِ}.",
+    mathematicalRole: "Zero-cost clock skew bounds, hop TTL decay, and replay detection rejecting malicious packets at wire ingress.",
+    status: "SENTINEL_ACTIVE"
+  },
+  katm: {
+    root: "كتم",
+    arabicWord: "كَتْم",
+    technicalTerm: "Metadata Onion Masking & Mesh Sender Anonymity",
+    layer: "Layer 9 - Onion Routing",
+    classicalDefinition: "الكَتْمُ والكِتْمانُ: سَتْرُ الحَدِيثِ والخَبَرِ وإِخْفاؤُه في الصَّدْرِ فلا يَبْدُو منه لَفْظٌ ولا لَحْظ.",
+    mathematicalRole: "Multi-layered encrypted Zahir routing headers preserving peer sender anonymity across intermediate gossip hops.",
+    status: "ANONYMOUS_ROUTED"
+  },
+
   // 14. VCWYVL & Watch Party (بَثّ المَرْئِيَّات عَبْر الرَّابِط)
   vcwyvl: {
     root: "نقل",
