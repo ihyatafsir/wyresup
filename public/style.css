@@ -3202,96 +3202,69 @@ html, body {
   transform: scale(1.03);
 }
 
-/* Imam Razi EPUB Book Cards */
-.msg-epub-book-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: linear-gradient(135deg, rgba(0, 245, 155, 0.08) 0%, rgba(13, 19, 31, 0.95) 100%);
-  border: 1px solid rgba(0, 245, 155, 0.25);
-  border-radius: 10px;
-  padding: 10px 14px;
-  margin-top: 6px;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-}
-
-.msg-epub-book-card:hover {
-  border-color: #00f59b;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0, 245, 155, 0.15);
-}
-
-.epub-book-icon {
-  font-size: 24px;
-  width: 42px;
-  height: 42px;
-  border-radius: 8px;
-  background: rgba(0, 245, 155, 0.12);
-  border: 1px solid rgba(0, 245, 155, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.epub-book-details {
-  flex: 1;
-  min-width: 0;
+/* Imam Razi Clickable Full-Width EPUB Cards */
+.msg-epub-card {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
+  background: linear-gradient(135deg, rgba(0, 245, 155, 0.07) 0%, rgba(13, 19, 31, 0.95) 100%);
+  border: 1px solid rgba(0, 245, 155, 0.25);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.epub-book-badge {
-  align-self: flex-start;
-  font-size: 0.68rem;
+.msg-epub-card:hover, .msg-epub-card:active {
+  background: linear-gradient(135deg, rgba(0, 245, 155, 0.15) 0%, rgba(13, 19, 31, 0.98) 100%);
+  border-color: #00f59b;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 245, 155, 0.2);
+}
+
+.epub-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.epub-card-badge {
+  font-size: 0.72rem;
   font-weight: 700;
   color: #00f59b;
-  background: rgba(0, 245, 155, 0.15);
+  background: rgba(0, 245, 155, 0.12);
   padding: 1px 6px;
   border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.epub-book-title {
-  font-size: 0.88rem;
+.epub-card-size {
+  font-size: 0.75rem;
+  color: #00e5ff;
+  font-family: var(--font-mono);
   font-weight: 600;
-  color: #fff;
-  text-decoration: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.epub-book-title:hover {
-  color: #00f59b;
-  text-decoration: underline;
+.epub-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.35;
+  word-break: break-word;
+  margin-top: 2px;
 }
 
-.epub-book-meta {
+.epub-card-filename {
   font-size: 0.75rem;
   color: #8e9297;
+  font-family: var(--font-mono);
+  word-break: break-all;
 }
 
-.epub-download-btn {
-  background: linear-gradient(135deg, #00f59b 0%, #00b4d8 100%);
-  color: #000;
-  font-size: 0.78rem;
-  font-weight: 700;
-  padding: 6px 12px;
-  border-radius: 6px;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-}
-
-.epub-download-btn:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 245, 155, 0.3);
-}
