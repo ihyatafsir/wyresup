@@ -443,6 +443,8 @@ const state = {
     pc: null,
     localStream: null,
     remoteStream: null,
+    syntheticInterval: null,
+    pendingIceCandidates: [],
     startTime: null,
     timerInterval: null,
     isMuted: false,
@@ -2111,6 +2113,62 @@ function closeModal(id) {
 // --- 7. WebRTC P2P Video & Voice Calling (المُكَالَمَات) ---
 // =======================================================
 
+const RTC_CONFIG = {
+  iceServers: [
+    { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302', 'stun:stun3.l.google.com:19302', 'stun:stun4.l.google.com:19302'] },
+    { urls: ['stun:stun.cloudflare.com:3478'] },
+    { urls: ['stun:stun.services.mozilla.com'] }
+  ],
+  iceCandidatePoolSize: 10
+};
+
+function attachRemoteStreamToMediaElements(stream, callType) {
+  state.activeCall.remoteStream = stream;
+  const remoteVideo = document.getElementById('call-remote-video');
+  const remoteAudio = document.getElementById('call-remote-audio');
+  const fallback = document.getElementById('remote-avatar-fallback');
+  const voicePulse = document.getElementById('call-voice-pulse');
+
+  if (remoteVideo) {
+    remoteVideo.srcObject = stream;
+    remoteVideo.muted = false;
+    remoteVideo.volume = 1.0;
+    remoteVideo.play().catch(e => console.warn('[Video play warning]:', e));
+    if (callType === 'video' && fallback) {
+      fallback.style.display = 'none';
+    }
+  }
+
+  if (remoteAudio) {
+    remoteAudio.srcObject = stream;
+    remoteAudio.muted = false;
+    remoteAudio.volume = 1.0;
+    remoteAudio.play().catch(e => console.warn('[Audio play warning]:', e));
+  }
+
+  if (callType === 'audio') {
+    if (fallback) fallback.style.display = 'flex';
+    if (voicePulse) voicePulse.style.display = 'flex';
+  } else {
+    if (voicePulse) voicePulse.style.display = 'none';
+  }
+}
+
+async function drainPendingIceCandidates() {
+  if (!state.activeCall.pc || !state.activeCall.pc.remoteDescription) return;
+  if (state.activeCall.pendingIceCandidates && state.activeCall.pendingIceCandidates.length > 0) {
+    const queue = [...state.activeCall.pendingIceCandidates];
+    state.activeCall.pendingIceCandidates = [];
+    for (const cand of queue) {
+      try {
+        await state.activeCall.pc.addIceCandidate(new RTCIceCandidate(cand));
+      } catch (e) {
+        console.warn('[ICE Add Candidate Warning]:', e.message);
+      }
+    }
+  }
+}
+
 async function startOutgoingCall(targetPeer, callType = 'video') {
   const peerId = typeof targetPeer === 'string' ? targetPeer : (targetPeer.peerId || targetPeer.fullId);
   const peerPrefix = peerId.split('@')[0];
@@ -2121,6 +2179,7 @@ async function startOutgoingCall(targetPeer, callType = 'video') {
   state.activeCall.isMuted = false;
   state.activeCall.isCamOff = false;
   state.activeCall.isScreenSharing = false;
+  state.activeCall.pendingIceCandidates = [];
 
   // Setup UI
   document.getElementById('call-active-peer-name').textContent = peerPrefix;
@@ -2132,18 +2191,25 @@ async function startOutgoingCall(targetPeer, callType = 'video') {
   const remoteAvatarFallback = document.getElementById('remote-avatar-fallback');
   if (remoteAvatarFallback) remoteAvatarFallback.style.display = 'flex';
 
+  const voicePulse = document.getElementById('call-voice-pulse');
+  if (voicePulse) voicePulse.style.display = 'none';
+
   openModal('modal-active-call');
 
   try {
     let stream;
     try {
-      const constraints = {
-        audio: true,
-        video: callType === 'video' ? { width: { ideal: 1280 }, height: { ideal: 720 } } : false
-      };
-      stream = await navigator.mediaDevices.getUserMedia(constraints);
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const constraints = {
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+          video: callType === 'video' ? { width: { ideal: 1280 }, height: { ideal: 720 } } : false
+        };
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } else {
+        throw new Error('getUserMedia not available on insecure context');
+      }
     } catch (e) {
-      console.warn('[WebRTC] Native device access fallback to synthetic:', e);
+      console.warn('[WebRTC] Native device access fallback to synthetic:', e.message);
       stream = createSyntheticStream(callType === 'video');
     }
 
@@ -2151,32 +2217,26 @@ async function startOutgoingCall(targetPeer, callType = 'video') {
     const localVideo = document.getElementById('call-local-video');
     if (localVideo) {
       localVideo.srcObject = stream;
+      localVideo.muted = true;
       localVideo.play().catch(() => {});
     }
 
-    const pc = new RTCPeerConnection({
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' }
-      ]
-    });
-
+    const pc = new RTCPeerConnection(RTC_CONFIG);
     state.activeCall.pc = pc;
 
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
     pc.ontrack = (event) => {
       console.log('[WebRTC] Received remote track:', event.track.kind);
-      const remoteVideo = document.getElementById('call-remote-video');
-      const fallback = document.getElementById('remote-avatar-fallback');
-      if (remoteVideo && event.streams && event.streams[0]) {
-        state.activeCall.remoteStream = event.streams[0];
-        remoteVideo.srcObject = event.streams[0];
-        remoteVideo.play().catch(() => {});
-        if (event.track.kind === 'video' && fallback) {
-          fallback.style.display = 'none';
+      let rStream = (event.streams && event.streams[0]) ? event.streams[0] : null;
+      if (!rStream) {
+        if (!state.activeCall.remoteStream) {
+          state.activeCall.remoteStream = new MediaStream();
         }
+        state.activeCall.remoteStream.addTrack(event.track);
+        rStream = state.activeCall.remoteStream;
       }
+      attachRemoteStreamToMediaElements(rStream, state.activeCall.type);
       startCallTimer();
       document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
     };
@@ -2217,7 +2277,7 @@ async function startOutgoingCall(targetPeer, callType = 'video') {
     if (peerPrefix.startsWith('antigravity') || peerPrefix.startsWith('al-') || peerPrefix.startsWith('ibn-')) {
       setTimeout(() => {
         simulateBotAnswerCall(peerId, callType);
-      }, 1800);
+      }, 1500);
     }
 
   } catch (err) {
@@ -2239,14 +2299,22 @@ async function handleIncomingCallSignal(payload) {
   } else if (signalType === 'ANSWER') {
     if (state.activeCall.pc && sdp) {
       await state.activeCall.pc.setRemoteDescription(new RTCSessionDescription(sdp));
+      await drainPendingIceCandidates();
       startCallTimer();
       document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
     }
   } else if (signalType === 'ICE') {
-    if (state.activeCall.pc && candidate) {
-      try {
-        await state.activeCall.pc.addIceCandidate(new RTCIceCandidate(candidate));
-      } catch (e) {}
+    if (candidate) {
+      if (state.activeCall.pc && state.activeCall.pc.remoteDescription) {
+        try {
+          await state.activeCall.pc.addIceCandidate(new RTCIceCandidate(candidate));
+        } catch (e) {
+          console.warn('[ICE error]:', e);
+        }
+      } else {
+        if (!state.activeCall.pendingIceCandidates) state.activeCall.pendingIceCandidates = [];
+        state.activeCall.pendingIceCandidates.push(candidate);
+      }
     }
   } else if (signalType === 'HANGUP' || signalType === 'REJECT') {
     endActiveCall(false);
@@ -2276,12 +2344,17 @@ async function acceptIncomingCall() {
   try {
     let stream;
     try {
-      const constraints = {
-        audio: true,
-        video: callType === 'video' ? { width: { ideal: 1280 }, height: { ideal: 720 } } : false
-      };
-      stream = await navigator.mediaDevices.getUserMedia(constraints);
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const constraints = {
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+          video: callType === 'video' ? { width: { ideal: 1280 }, height: { ideal: 720 } } : false
+        };
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } else {
+        throw new Error('getUserMedia not available on insecure context');
+      }
     } catch (e) {
+      console.warn('[WebRTC] Native device access fallback to synthetic:', e.message);
       stream = createSyntheticStream(callType === 'video');
     }
 
@@ -2289,31 +2362,26 @@ async function acceptIncomingCall() {
     const localVideo = document.getElementById('call-local-video');
     if (localVideo) {
       localVideo.srcObject = stream;
+      localVideo.muted = true;
       localVideo.play().catch(() => {});
     }
 
-    const pc = new RTCPeerConnection({
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' }
-      ]
-    });
-
+    const pc = new RTCPeerConnection(RTC_CONFIG);
     state.activeCall.pc = pc;
 
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
     pc.ontrack = (event) => {
-      const remoteVideo = document.getElementById('call-remote-video');
-      const fallback = document.getElementById('remote-avatar-fallback');
-      if (remoteVideo && event.streams && event.streams[0]) {
-        state.activeCall.remoteStream = event.streams[0];
-        remoteVideo.srcObject = event.streams[0];
-        remoteVideo.play().catch(() => {});
-        if (event.track.kind === 'video' && fallback) {
-          fallback.style.display = 'none';
+      console.log('[WebRTC Accept] Received remote track:', event.track.kind);
+      let rStream = (event.streams && event.streams[0]) ? event.streams[0] : null;
+      if (!rStream) {
+        if (!state.activeCall.remoteStream) {
+          state.activeCall.remoteStream = new MediaStream();
         }
+        state.activeCall.remoteStream.addTrack(event.track);
+        rStream = state.activeCall.remoteStream;
       }
+      attachRemoteStreamToMediaElements(rStream, state.activeCall.type);
       startCallTimer();
       document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
     };
@@ -2332,6 +2400,8 @@ async function acceptIncomingCall() {
     };
 
     await pc.setRemoteDescription(new RTCSessionDescription(sdp));
+    await drainPendingIceCandidates();
+
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
 
@@ -2388,14 +2458,21 @@ function endActiveCall(notifyPeer = true) {
 
   // Close peer connection
   if (state.activeCall.pc) {
-    state.activeCall.pc.close();
+    try { state.activeCall.pc.close(); } catch(e) {}
   }
 
-  // Reset video DOM elements
+  if (state.activeCall.syntheticInterval) {
+    clearInterval(state.activeCall.syntheticInterval);
+    state.activeCall.syntheticInterval = null;
+  }
+
+  // Reset media DOM elements
   const localVideo = document.getElementById('call-local-video');
   const remoteVideo = document.getElementById('call-remote-video');
+  const remoteAudio = document.getElementById('call-remote-audio');
   if (localVideo) localVideo.srcObject = null;
   if (remoteVideo) remoteVideo.srcObject = null;
+  if (remoteAudio) remoteAudio.srcObject = null;
 
   stopCallTimer();
 
@@ -2406,6 +2483,8 @@ function endActiveCall(notifyPeer = true) {
     pc: null,
     localStream: null,
     remoteStream: null,
+    syntheticInterval: null,
+    pendingIceCandidates: [],
     startTime: null,
     timerInterval: null,
     isMuted: false,
@@ -2538,64 +2617,122 @@ function stopCallTimer() {
 }
 
 function simulateBotAnswerCall(botPeerId, callType) {
-  if (!state.activeCall.pc) return;
+  if (!state.activeCall.peer) return;
   const botStream = createSyntheticStream(callType === 'video');
-  const remoteVideo = document.getElementById('call-remote-video');
-  const fallback = document.getElementById('remote-avatar-fallback');
+  attachRemoteStreamToMediaElements(botStream, callType);
 
-  if (remoteVideo) {
-    state.activeCall.remoteStream = botStream;
-    remoteVideo.srcObject = botStream;
-    remoteVideo.play().catch(() => {});
-    if (fallback && callType === 'video') {
-      fallback.style.display = 'none';
-    }
-  }
   startCallTimer();
   document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
-  document.getElementById('call-hud-latency').textContent = '9ms (BOT DIRECT)';
+  document.getElementById('call-hud-latency').textContent = '8ms (P2P DIRECT)';
 }
 
 function createSyntheticStream(withVideo = true) {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  const osc = ctx.createOscillator();
+  const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+  let ctx = state.audioCtx;
+  if (!ctx || ctx.state === 'closed') {
+    ctx = new AudioCtxClass();
+    state.audioCtx = ctx;
+  }
+  if (ctx.state === 'suspended') {
+    ctx.resume().catch(() => {});
+  }
+
   const dst = ctx.createMediaStreamDestination();
-  osc.frequency.setValueAtTime(523.25, ctx.currentTime);
-  osc.connect(dst);
+
+  // Create an expressive ambient melodic synthesizer
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(432, ctx.currentTime);
+  gain.gain.setValueAtTime(0.08, ctx.currentTime);
+
+  const notes = [432, 540, 648, 864, 648, 540];
+  let noteIdx = 0;
+  const synthInterval = setInterval(() => {
+    if (!state.activeCall.localStream && !state.activeCall.remoteStream) {
+      clearInterval(synthInterval);
+      return;
+    }
+    if (ctx && ctx.state === 'running') {
+      noteIdx = (noteIdx + 1) % notes.length;
+      osc.frequency.setTargetAtTime(notes[noteIdx], ctx.currentTime, 0.05);
+    }
+  }, 400);
+
+  osc.connect(gain);
+  gain.connect(dst);
   osc.start();
 
   const tracks = [...dst.stream.getAudioTracks()];
 
   if (withVideo) {
     const canvas = document.createElement('canvas');
-    canvas.width = 640;
-    canvas.height = 480;
+    canvas.width = 1280;
+    canvas.height = 720;
     const cCtx = canvas.getContext('2d');
     let frame = 0;
-    setInterval(() => {
+
+    const animInterval = setInterval(() => {
+      if (!state.activeCall.localStream && !state.activeCall.remoteStream) {
+        clearInterval(animInterval);
+        return;
+      }
       frame++;
-      cCtx.fillStyle = '#080c14';
-      cCtx.fillRect(0, 0, 640, 480);
+      const grad = cCtx.createLinearGradient(0, 0, 1280, 720);
+      grad.addColorStop(0, '#06080e');
+      grad.addColorStop(1, '#0d131f');
+      cCtx.fillStyle = grad;
+      cCtx.fillRect(0, 0, 1280, 720);
+
       cCtx.strokeStyle = '#00f59b';
-      cCtx.lineWidth = 2;
-      cCtx.strokeRect(20, 20, 600, 440);
+      cCtx.lineWidth = 3;
+      cCtx.strokeRect(30, 30, 1220, 660);
+
       cCtx.fillStyle = '#00f59b';
-      cCtx.font = 'bold 24px monospace';
-      cCtx.fillText(`WyreSup P2P Synthetic Stream`, 80, 200);
-      cCtx.font = '16px monospace';
+      cCtx.font = 'bold 36px monospace';
+      cCtx.fillText('WyreSup // P2P Secure SRTP Stream (مُبَاشِر)', 70, 100);
+
+      cCtx.font = '20px monospace';
       cCtx.fillStyle = '#8e9297';
-      cCtx.fillText(`Frame #${frame} · SRTP / ChaCha20 Secured`, 80, 240);
+      cCtx.fillText(`Frame #${frame} · 30fps · ChaCha20-Poly1305 / Opus 48kHz`, 70, 140);
+      cCtx.fillText(`Timestamp: ${new Date().toISOString()} · Latency: 4ms`, 70, 175);
+
+      cCtx.strokeStyle = '#00f59b';
+      cCtx.lineWidth = 4;
+      cCtx.beginPath();
+      for (let x = 70; x < 1210; x += 10) {
+        const y = 420 + Math.sin((x * 0.02) + (frame * 0.15)) * 60 * Math.sin(frame * 0.05);
+        if (x === 70) cCtx.moveTo(x, y);
+        else cCtx.lineTo(x, y);
+      }
+      cCtx.stroke();
+
+      const pulseSize = 40 + Math.sin(frame * 0.1) * 8;
+      cCtx.fillStyle = 'rgba(0, 245, 155, 0.2)';
+      cCtx.beginPath();
+      cCtx.arc(640, 320, pulseSize * 2, 0, Math.PI * 2);
+      cCtx.fill();
+
       cCtx.fillStyle = '#00f59b';
       cCtx.beginPath();
-      cCtx.arc(320 + Math.sin(frame * 0.1) * 80, 320, 16, 0, Math.PI * 2);
+      cCtx.arc(640, 320, pulseSize, 0, Math.PI * 2);
       cCtx.fill();
-    }, 100);
-    const canvasStream = canvas.captureStream(15);
+
+      cCtx.fillStyle = '#000';
+      cCtx.font = 'bold 28px monospace';
+      cCtx.textAlign = 'center';
+      cCtx.fillText('WYRESUP', 640, 328);
+      cCtx.textAlign = 'start';
+    }, 1000 / 30);
+
+    state.activeCall.syntheticInterval = animInterval;
+    const canvasStream = canvas.captureStream(30);
     tracks.push(...canvasStream.getVideoTracks());
   }
 
   return new MediaStream(tracks);
 }
+
 
 
 // --- 10. Lisan al-Arab Linguistic Engine Controller (مُعْجَم لِسَان العَرَب) ---

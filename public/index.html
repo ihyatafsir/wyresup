@@ -631,10 +631,14 @@
         <!-- Remote Video Tile -->
         <div class="video-tile remote-video-tile" id="remote-video-tile">
           <video id="call-remote-video" autoplay playsinline></video>
+          <audio id="call-remote-audio" autoplay playsinline></audio>
           <div class="video-avatar-fallback" id="remote-avatar-fallback">
             <div class="call-large-avatar" id="call-remote-avatar">AG</div>
             <p class="call-avatar-label" id="call-remote-avatar-name">antigravity</p>
             <span class="call-avatar-status" id="call-remote-status-text">Direct P2P Encrypted Stream</span>
+            <div class="call-voice-pulse" id="call-voice-pulse" style="display:none;">
+              <span class="voice-bar"></span><span class="voice-bar"></span><span class="voice-bar"></span><span class="voice-bar"></span><span class="voice-bar"></span>
+            </div>
           </div>
           <span class="video-tile-tag" id="remote-video-tag">REMOTE // 1080p OPUS</span>
         </div>
