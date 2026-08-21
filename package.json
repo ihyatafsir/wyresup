@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node test/lisan_hardened_crypto_test.js && node test/full_app_e2e_verification.js && node test/e2ee_miftah_crypto_test.js && node test/thaqb_ratchet_test.js && node test/nagham_goertzel_test.js && node test/shabah_stego_test.js && node test/resilience_and_speed_test.js && node test/hd_video_bandwidth_math_test.js && node test/sabk_zero_copy_test.js && node test/mesh_gossip_test.js"
+    "test": "node test/al_sabk_v2_protocol_test.js && node test/lisan_hardened_crypto_test.js && node test/full_app_e2e_verification.js && node test/e2ee_miftah_crypto_test.js && node test/thaqb_ratchet_test.js && node test/nagham_goertzel_test.js && node test/shabah_stego_test.js && node test/resilience_and_speed_test.js && node test/hd_video_bandwidth_math_test.js && node test/sabk_zero_copy_test.js && node test/mesh_gossip_test.js"
   },
   "dependencies": {
     "ws": "^8.18.0"
