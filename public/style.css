@@ -2942,32 +2942,88 @@ html, body {
 
 /* YouTube Streaming & Watch Party Styles */
 .modal-youtube-stream {
-  max-width: 580px;
-  background: rgba(13, 19, 31, 0.95);
-  border: 1px solid rgba(0, 245, 155, 0.3);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 245, 155, 0.15);
+  width: min(92vw, 480px);
+  max-width: 92vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: rgba(13, 19, 31, 0.98);
+  border: 1px solid rgba(0, 245, 155, 0.35);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 245, 155, 0.2);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.modal-youtube-stream .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-youtube-stream .modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.modal-youtube-stream .modal-title-wrap h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal-youtube-stream .modal-body {
+  padding: 12px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.modal-youtube-stream .modal-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted, #8e9297);
+  line-height: 1.4;
+  margin: 0;
 }
 
 .yt-input-row {
   display: flex;
-  gap: 8px;
-  margin-top: 6px;
+  gap: 6px;
+  margin-top: 4px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .yt-input-row input {
   flex: 1;
+  min-width: 0;
+  font-size: 0.85rem;
+}
+
+.yt-input-row button {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  font-size: 0.82rem;
 }
 
 .yt-preset-chips {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  margin: 14px 0;
+  gap: 6px;
+  margin: 6px 0;
 }
 
 .yt-chip-label {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   color: var(--text-muted, #8e9297);
   font-weight: 600;
   text-transform: uppercase;
@@ -2978,11 +3034,12 @@ html, body {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #e0e6ed;
-  font-size: 0.8rem;
-  padding: 5px 10px;
-  border-radius: 16px;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .yt-preset-chip:hover {
@@ -2993,48 +3050,53 @@ html, body {
 }
 
 .yt-search-results-list {
-  max-height: 200px;
+  max-height: 180px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin: 12px 0;
-  padding: 8px;
-  background: rgba(0, 0, 0, 0.3);
+  gap: 6px;
+  margin: 6px 0;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.4);
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .yt-result-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 10px;
+  gap: 8px;
+  padding: 6px 8px;
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.03);
   cursor: pointer;
   transition: all 0.2s ease;
+  min-width: 0;
 }
 
 .yt-result-item:hover {
-  background: rgba(0, 245, 155, 0.1);
+  background: rgba(0, 245, 155, 0.12);
   border-left: 3px solid #00f59b;
 }
 
 .yt-result-thumb {
-  width: 50px;
-  height: 32px;
+  width: 44px;
+  height: 28px;
   border-radius: 4px;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
 .yt-result-info {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
 .yt-result-title {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #fff;
   font-weight: 500;
   white-space: nowrap;
@@ -3043,18 +3105,33 @@ html, body {
 }
 
 .yt-result-meta {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #8e9297;
 }
 
 .yt-target-peer-banner {
   background: rgba(0, 229, 255, 0.08);
   border: 1px solid rgba(0, 229, 255, 0.2);
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 6px;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: #00e5ff;
+  margin-top: 4px;
+}
+
+.modal-youtube-stream .modal-actions {
+  display: flex;
+  gap: 8px;
   margin-top: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-youtube-stream .modal-actions .btn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  white-space: nowrap;
 }
 
 .btn-yt-stream-start {
