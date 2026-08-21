@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1787350600">
+  <link rel="stylesheet" href="style.css?v=1787351200">
 </head>
 <body>
   <div id="app-container" class="app-layout">
@@ -756,23 +756,20 @@
         <button class="modal-close" data-close="modal-stream-youtube">✕</button>
       </div>
       <div class="modal-body">
-        <p class="modal-desc">Enter any YouTube link or search query to stream the video in real-time with synchronized audio over the encrypted WebRTC call.</p>
+        <p class="modal-desc">Video call with Yt video link.</p>
         
         <div class="form-group">
           <label for="yt-stream-url-input">YouTube Link / Search Query</label>
           <div class="yt-input-row">
-            <input type="text" id="yt-stream-url-input" class="form-control" placeholder="e.g. https://youtu.be/... or Mos Def Ms Fat Booty">
+            <input type="text" id="yt-stream-url-input" class="form-control" placeholder="https://www.youtube.com/watch?v=WW6IJKt_OEI" value="https://www.youtube.com/watch?v=WW6IJKt_OEI">
             <button class="btn btn-secondary" id="btn-yt-search-action">🔍 Search</button>
           </div>
         </div>
 
         <!-- Quick Preset Chips -->
         <div class="yt-preset-chips">
-          <span class="yt-chip-label">Quick Streams:</span>
-          <button class="yt-preset-chip" data-query="Mos Def Ms Fat Booty">🎵 Mos Def - Ms. Fat Booty</button>
-          <button class="yt-preset-chip" data-query="Yasiin Bey Supermagic">🎶 Yasiin Bey - Supermagic</button>
-          <button class="yt-preset-chip" data-query="Lofi Hip Hop radio chill beats">☕ Lofi Chill Beats</button>
-          <button class="yt-preset-chip" data-query="Abdul Basit Surah Rahman">📖 Abdul Basit</button>
+          <span class="yt-chip-label">Quick Stream:</span>
+          <button class="yt-preset-chip" data-query="https://www.youtube.com/watch?v=WW6IJKt_OEI">🎶 Yasiin Bey - Supermagic</button>
         </div>
 
         <!-- Search Results Area -->
@@ -792,8 +789,9 @@
       </div>
     </div>
   </div>
+  </div>
 
   <!-- Main JavaScript Bundle with Cache-Buster -->
-  <script src="app.js?v=1787350600"></script>
+  <script src="app.js?v=1787351200"></script>
 </body>
 </html>
