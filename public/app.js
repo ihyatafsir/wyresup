@@ -2335,61 +2335,105 @@ async function startYoutubeStreamCall(targetPeer, queryOrUrl) {
 async function createYouTubeMediaStream(streamInfo) {
   const { title, uploader, duration, streamUrl } = streamInfo;
 
-  // 1. Create HTML5 Video Element
-  const video = document.createElement('video');
+  // 1. Create hidden HTML5 Video Element
+  let video = document.getElementById('wyresup-hidden-stream-video');
+  if (!video) {
+    video = document.createElement('video');
+    video.id = 'wyresup-hidden-stream-video';
+    video.style.position = 'fixed';
+    video.style.top = '-9999px';
+    video.style.left = '-9999px';
+    video.style.width = '1px';
+    video.style.height = '1px';
+    video.style.opacity = '0';
+    document.body.appendChild(video);
+  }
+
   video.src = streamUrl;
   video.crossOrigin = 'anonymous';
   video.loop = true;
   video.autoplay = true;
-  video.muted = true; // Bypasses browser autoplay policy
   video.playsInline = true;
-  document.body.appendChild(video);
-  await video.play().catch(e => console.warn('[Video Play]:', e));
+  video.muted = false;
+  video.volume = 1.0;
 
-  // 2. Setup Web Audio API
-  const AudioCtx = window.AudioContext || window.webkitAudioContext;
-  let ctx = state.audioCtx;
-  if (!ctx || ctx.state === 'closed') {
-    ctx = new AudioCtx();
-    state.audioCtx = ctx;
+  // Wait for canplay / loadeddata (max 3s)
+  await new Promise((resolve) => {
+    let done = false;
+    const onReady = () => {
+      if (!done) {
+        done = true;
+        resolve();
+      }
+    };
+    video.oncanplay = onReady;
+    video.onloadeddata = onReady;
+    setTimeout(onReady, 3000);
+  });
+
+  await video.play().catch(e => {
+    console.warn('[Video Play Mute Fallback]:', e);
+    video.muted = true;
+    return video.play().catch(() => {});
+  });
+
+  // 2. Audio Capture without memory-heavy decodeAudioData
+  let audioTrack = null;
+  if (typeof video.captureStream === 'function' || typeof video.mozCaptureStream === 'function') {
+    try {
+      const vStream = (video.captureStream || video.mozCaptureStream).call(video);
+      const aTracks = vStream.getAudioTracks();
+      if (aTracks.length > 0) audioTrack = aTracks[0];
+    } catch(e) {
+      console.warn('[Video captureStream Audio]:', e);
+    }
   }
-  if (ctx.state === 'suspended') await ctx.resume();
 
-  const dst = ctx.createMediaStreamDestination();
+  if (!audioTrack) {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      let ctx = state.audioCtx;
+      if (!ctx || ctx.state === 'closed') {
+        ctx = new AudioCtx();
+        state.audioCtx = ctx;
+      }
+      if (ctx.state === 'suspended') await ctx.resume();
 
-  try {
-    const resp = await fetch(streamUrl);
-    const arrayBuf = await resp.arrayBuffer();
-    const audioBuf = await ctx.decodeAudioData(arrayBuf);
-    const source = ctx.createBufferSource();
-    source.buffer = audioBuf;
-    source.loop = true;
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.85, ctx.currentTime);
-    source.connect(gain);
-    gain.connect(dst);
-    source.start(0);
-    state.activeCall.activeBufferSource = source;
-  } catch (e) {
-    console.warn('[Audio stream setup warning]:', e.message);
+      if (!video._sourceNode) {
+        video._sourceNode = ctx.createMediaElementSource(video);
+      }
+      const dst = ctx.createMediaStreamDestination();
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.85, ctx.currentTime);
+      video._sourceNode.connect(gain);
+      gain.connect(dst);
+      audioTrack = dst.stream.getAudioTracks()[0];
+    } catch (e) {
+      console.warn('[MediaElementSource Audio Fallback]:', e);
+    }
   }
 
-  // 3. Setup 30fps Canvas with Green Glowing HUD Header
+  // 3. Setup 30fps Canvas with Green Glowing Cyberpunk HUD
   const canvas = document.createElement('canvas');
   canvas.width = 1280;
   canvas.height = 720;
   const cCtx = canvas.getContext('2d');
 
+  if (state.activeCall.syntheticInterval) {
+    clearInterval(state.activeCall.syntheticInterval);
+  }
+
   const anim = setInterval(() => {
     if (!state.activeCall.localStream && !state.activeCall.pc) {
       clearInterval(anim);
-      try { video.pause(); video.remove(); } catch(e){}
+      try { video.pause(); } catch(e){}
       return;
     }
 
     if (video.readyState >= 2) {
-      // Draw Video Frame
-      cCtx.drawImage(video, 0, 0, 1280, 720);
+      try {
+        cCtx.drawImage(video, 0, 0, 1280, 720);
+      } catch (e) {}
 
       // HUD Top Gradient
       const topGrad = cCtx.createLinearGradient(0, 0, 0, 90);
@@ -2418,9 +2462,8 @@ async function createYouTubeMediaStream(streamInfo) {
 
   state.activeCall.syntheticInterval = anim;
 
-  const canvasStream = canvas.captureStream(30);
-  const audioTrack = dst.stream.getAudioTracks()[0];
-  const videoTrack = canvasStream.getVideoTracks()[0];
+  const canvasStream = canvas.captureStream ? canvas.captureStream(30) : (canvas.mozCaptureStream ? canvas.mozCaptureStream(30) : null);
+  const videoTrack = canvasStream ? canvasStream.getVideoTracks()[0] : null;
 
   return new MediaStream([audioTrack, videoTrack].filter(Boolean));
 }
