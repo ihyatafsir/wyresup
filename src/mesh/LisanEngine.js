@@ -5,6 +5,17 @@
  */
 
 const LISAN_LEXICON = {
+  // 14. VCWYVL & Watch Party (بَثّ المَرْئِيَّات عَبْر الرَّابِط)
+  vcwyvl: {
+    root: "نقل",
+    arabicWord: "بَثّ مَرْئِيّ (VCWYVL)",
+    technicalTerm: "Video Call With YouTube Video Link (VCWYVL)",
+    layer: "Layer 13 - P2P Media Streaming",
+    classicalDefinition: "النَّقْلُ والبَثُّ: إِشاعةُ الخَبَر وإِظهارُه على المَلأ. وفي اللسان: بَثَّ الشيءَ يَبُثُّه بَثّاً: أَذاعَه ونَشَرَه ليَصِل إِلى الأسْماع والأَبْصار.",
+    mathematicalRole: "Synchronized P2P WebRTC SRTP video streaming pipeline rendering high-fidelity video canvas with Cyberpunk green HUD and 48kHz Web Audio destination mixing.",
+    status: "ACTIVE_STREAMING"
+  },
+
   // 1. ZBAT & Framing (الظَّهْر و البَطْن)
   zahir: {
     root: "ظهر",

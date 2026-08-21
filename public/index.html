@@ -149,7 +149,7 @@
           <!-- Voice & Video Call Action Buttons (Direct Messages Only) -->
           <button class="topbar-btn topbar-call-btn" id="btn-topbar-call-voice" title="Start Audio Call (مُكَالَمَة صَوْتِيَّة)" style="display: none;">📞</button>
           <button class="topbar-btn topbar-call-btn" id="btn-topbar-call-video" title="Start Video Call (مُكَالَمَة مَرْئِيَّة)" style="display: none;">📹</button>
-          <button class="topbar-btn topbar-call-btn" id="btn-topbar-stream-youtube" title="Stream YouTube Video to Call (بَثّ يوتيوب)">📺</button>
+          <button class="topbar-btn topbar-call-btn" id="btn-topbar-stream-youtube" title="VCWYVL // Video Call With YouTube Video Link (بَثّ اليوتيوب)" style="display: none;">📺</button>
           <!-- Live Network Indicator Badge -->
           <div class="mesh-badge" id="topbar-mesh-badge" title="P2P Connection Status">
             <span class="pulse-dot"></span>
@@ -680,7 +680,7 @@
           <span class="ctrl-icon">🎵</span>
           <span class="ctrl-lbl">Nagham</span>
         </button>
-        <button class="call-ctrl-btn" id="btn-call-stream-youtube" title="Stream YouTube Video to Call (بَثّ يوتيوب)">
+        <button class="call-ctrl-btn" id="btn-call-stream-youtube" title="VCWYVL // Video Call With YouTube Video Link (بَثّ اليوتيوب)">
           <span class="ctrl-icon">📺</span>
           <span class="ctrl-lbl">YouTube</span>
         </button>
@@ -745,15 +745,14 @@
     </div>
   </div>
 
-  <!-- Main JavaScript Bundle -->
-  <script src="app.js"></script>
+
   <!-- 11. MODAL: STREAM YOUTUBE VIDEO TO CALL (بَثّ اليوتيوب) -->
   <div class="modal-overlay" id="modal-stream-youtube">
     <div class="modal-content modal-youtube-stream">
       <div class="modal-header">
         <div class="modal-title-wrap">
           <span class="modal-icon">📺</span>
-          <h3>Stream YouTube to Call (بَثّ اليوتيوب)</h3>
+          <h3>VCWYVL // Video Call With YouTube Video Link (بَثّ اليوتيوب)</h3>
         </div>
         <button class="modal-close" data-close="modal-stream-youtube">✕</button>
       </div>
@@ -795,5 +794,7 @@
     </div>
   </div>
 
+  <!-- Main JavaScript Bundle with Cache-Buster -->
+  <script src="app.js?v=1787347700"></script>
 </body>
 </html>

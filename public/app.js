@@ -862,11 +862,13 @@ function selectChannel(channelId) {
       }
     }
 
-    // Call actions: voice & video call buttons are only visible in Direct Messages (DMs)
+    // Call actions: voice, video & VCWYVL buttons are ONLY visible in Direct Messages (DMs)
     const voiceCallBtn = document.getElementById("btn-topbar-call-voice");
     const videoCallBtn = document.getElementById("btn-topbar-call-video");
+    const youtubeCallBtn = document.getElementById("btn-topbar-stream-youtube");
     if (voiceCallBtn) voiceCallBtn.style.display = isDM ? "inline-flex" : "none";
     if (videoCallBtn) videoCallBtn.style.display = isDM ? "inline-flex" : "none";
+    if (youtubeCallBtn) youtubeCallBtn.style.display = isDM ? "inline-flex" : "none";
 
     // Auto-display Nafaq Tunnel banner for Direct P2P channels
     if (isDM) {
@@ -971,6 +973,27 @@ function appendMessageToDOM(packet) {
             <span class="sawt-format-tag">SAWT // 48kHz OPUS</span>
           </div>
         </div>
+      </div>
+    `;
+  }
+
+  
+  // 3. YouTube / VCWYVL Stream Card
+  const ytMatch = content && (content.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/) || content.match(/^\/vcwyvl\s+(.+)/));
+  if (ytMatch) {
+    const ytQueryOrUrl = ytMatch[1] ? (ytMatch[1].length === 11 ? `https://www.youtube.com/watch?v=${ytMatch[1]}` : ytMatch[1]) : content;
+    bodyHtml += `
+      <div class="vcwyvl-chat-card" style="margin-top:8px; padding:10px 14px; background:rgba(0, 245, 155, 0.08); border:1px solid rgba(0, 245, 155, 0.3); border-radius:8px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1.4rem;">📺</span>
+          <div>
+            <div style="font-weight:700; color:#00f59b; font-size:0.85rem;">VCWYVL // YouTube Stream Ready</div>
+            <div style="font-size:0.75rem; color:#8e9297;">Tap to start synchronized P2P video call stream</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="padding:6px 14px; font-size:0.8rem; background:linear-gradient(135deg, #00f59b, #00b4d8); color:#000; font-weight:700; border:none; border-radius:6px; cursor:pointer;" onclick="startYoutubeStreamCall('${senderId === state.identity.fullId ? (state.currentChannelId?.startsWith('dm-') ? state.currentChannelId.replace('dm-', '') : 'enver') : senderId}', '${escapeHtml(ytQueryOrUrl)}')">
+          ▶️ Launch Call
+        </button>
       </div>
     `;
   }
@@ -1613,6 +1636,16 @@ function initEventListeners() {
 
   const sendMessage = async () => {
     const text = input.value.trim();
+    if (text.startsWith('/vcwyvl ') || text.startsWith('/stream ') || text === '/vcwyvl' || text === '/stream') {
+      const query = text.replace(/^\/(vcwyvl|stream)\s*/, '').trim();
+      input.value = '';
+      if (query) {
+        startYoutubeStreamCall(state.youtubeStreamTarget || (state.currentChannelId?.startsWith('dm-') ? state.currentChannelId.replace('dm-', '') : 'enver'), query);
+      } else {
+        openStreamYoutubeModal();
+      }
+      return;
+    }
     const hasAttachments = state.stagedAttachments.length > 0;
     if (!text && !hasAttachments) return;
 
@@ -2353,7 +2386,7 @@ async function createYouTubeMediaStream(streamInfo) {
       cCtx.fillStyle = '#00f59b';
       cCtx.font = 'bold 26px monospace';
       const cleanTitle = (title || 'YOUTUBE STREAM').substring(0, 50).toUpperCase();
-      cCtx.fillText(`WYRESUP // P2P STREAM: ${cleanTitle}`, 30, 45);
+      cCtx.fillText(`WYRESUP // VCWYVL P2P STREAM: ${cleanTitle}`, 30, 45);
 
       // Cyan Subtitle & Duration
       cCtx.font = '16px monospace';
