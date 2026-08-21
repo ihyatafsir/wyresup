@@ -29,13 +29,6 @@ class MajlisManager {
           topic: 'General mesh discussions, tests, and pings.'
         },
         {
-          id: 'chan-imam-razi',
-          name: 'imam-razi',
-          type: 'text',
-          icon: '📖',
-          topic: "Library of Fakhr al-Din al-Razi's Masterworks — Complete English EPUB Translations (Tafsir al-Kabir Vols 1-32, Al-Matalib Vols 1-9, Asas al-Taqdis, Lawami', etc.)"
-        },
-        {
           id: 'chan-protocol-dev',
           name: 'protocol-dev',
           type: 'text',
@@ -48,6 +41,13 @@ class MajlisManager {
           type: 'text',
           icon: '📢',
           topic: 'Decentralized broadcast channel (Nashr al-Akhbar).'
+        },
+        {
+          id: 'chan-imam-razi',
+          name: 'imam-razi',
+          type: 'text',
+          icon: '#',
+          topic: "Library of Fakhr al-Din al-Razi's Masterworks — Complete English EPUB Translations (Tafsir al-Kabir Vols 1-32, Al-Matalib Vols 1-9, Asas al-Taqdis, Lawami', etc.)"
         },
         {
           id: 'chan-voice-lounge',
