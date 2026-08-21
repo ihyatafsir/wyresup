@@ -1008,6 +1008,24 @@ function appendMessageToDOM(packet) {
             <img src="${att.data}" alt="${escapeHtml(att.name)}" class="msg-attachment-img" onclick="openImageLightbox('${att.data}')">
           </div>
         `;
+      } else if (att.name && att.name.endsWith('.epub')) {
+        const cleanName = (att.title || att.name.replace('.epub', '').replace(/_/g, ' '));
+        const isTafsir = att.name.startsWith('tafsir_kabir_');
+        const isMatalib = att.name.startsWith('al_matalib_');
+        const badgeTag = isTafsir ? 'Tafsir al-Kabir' : (isMatalib ? "Al-Matalib al-'Aliyyah" : 'Imam Razi Library');
+        bodyHtml += `
+          <div class="msg-epub-book-card">
+            <div class="epub-book-icon">📖</div>
+            <div class="epub-book-details">
+              <span class="epub-book-badge">${badgeTag}</span>
+              <a href="${att.data}" download="${escapeHtml(att.name)}" class="epub-book-title">${escapeHtml(cleanName)}</a>
+              <span class="epub-book-meta">${formatBytes(att.size)} · Standalone EPUB E-Book</span>
+            </div>
+            <a href="${att.data}" download="${escapeHtml(att.name)}" class="epub-download-btn" title="Download EPUB E-Book">
+              <span>⬇️ Download</span>
+            </a>
+          </div>
+        `;
       } else {
         bodyHtml += `
           <div class="msg-file-card">

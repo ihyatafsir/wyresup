@@ -18,6 +18,7 @@ const LisanEngine = require('./src/mesh/LisanEngine');
 const GossipMesh = require('./src/mesh/GossipMesh');
 const HudurPresence = require('./src/mesh/HudurPresence');
 const YouTubeStreamer = require('./src/mesh/YouTubeStreamer');
+const ImamRaziLibrary = require('./src/mesh/ImamRaziLibrary');
 
 const PORT = process.env.PORT || 5195;
 
@@ -45,7 +46,9 @@ const MIME_TYPES = {
   '.mp4': 'video/mp4',
   '.mp3': 'audio/mpeg',
   '.webm': 'video/webm',
-  '.m4a': 'audio/mp4'
+  '.m4a': 'audio/mp4',
+  '.epub': 'application/epub+zip',
+  '.pdf': 'application/pdf'
 };
 
 // HTTP Server
@@ -152,6 +155,12 @@ const server = http.createServer((req, res) => {
     spawnVirtualPeerBot();
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ success: true, message: 'Virtual mesh bot spawned' }));
+    return;
+  }
+
+  if (pathname === '/api/library/razi' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(ImamRaziLibrary.getCatalog()));
     return;
   }
 
@@ -445,6 +454,90 @@ const BOT_QUOTES = [
   'Decentralized channel state synced across 4 hops.'
 ];
 
+
+// Seed Imam Razi EPUB Library Catalog into #imam-razi channel
+function seedImamRaziLibrary() {
+  const channelId = 'chan-imam-razi';
+  const spaceId = 'space-public-mesh';
+  const history = gossipMesh.getChannelHistory(channelId);
+  if (history && history.length > 0) return;
+
+  const catalog = ImamRaziLibrary.getCatalog();
+
+  // 1. Welcome Message
+  gossipMesh.publish(spaceId, channelId, {
+    content: `📚 **مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِيّ // COMPLETE EPUB TRANSLATIONS LIBRARY**\n\nWelcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–606 AH / 1149–1209 CE)** translated masterworks. All volumes are available below as standalone EPUB e-books for offline reading and direct P2P download.`
+  }, { senderId: 'ibn-manzur@lisan' });
+
+  // 2. Tafsir al-Kabir (Volumes 1-32)
+  if (catalog.tafsirKabir && catalog.tafsirKabir.length > 0) {
+    const atts = catalog.tafsirKabir.map(item => ({
+      name: item.filename,
+      type: 'application/epub+zip',
+      size: 1500000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, channelId, {
+      content: `📖 **Tafsir al-Kabir (Mafatih al-Ghayb) — Volumes 1 to 32 (Complete)**\n*The monumental commentary on the Holy Quran by Imam Fakhr al-Din al-Razi. Complete 32-volume English translation.*`,
+      attachments: atts
+    }, { senderId: 'ibn-manzur@lisan' });
+  }
+
+  // 3. Al-Matalib al-'Aliyyah (Volumes 1-9 + Complete)
+  if (catalog.matalib && catalog.matalib.length > 0) {
+    const atts = catalog.matalib.map(item => ({
+      name: item.filename,
+      type: 'application/epub+zip',
+      size: 1200000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, channelId, {
+      content: `🌟 **Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi (The Sublime Quests in Divine Science)**\n*Imam al-Razi's final philosophical and theological magnum opus (Vols 1–9 + Complete Compendium in Pure English & Arabic Lexical Editions).*`,
+      attachments: atts
+    }, { senderId: 'ibn-manzur@lisan' });
+  }
+
+  // 4. Kalam & Theology Master Treatises
+  if (catalog.kalamTreatises && catalog.kalamTreatises.length > 0) {
+    const atts = catalog.kalamTreatises.map(item => ({
+      name: item.filename,
+      type: 'application/epub+zip',
+      size: 900000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, channelId, {
+      content: `📜 **Core Theological Treatises (Asas al-Taqdis, Lawami', Kitab al-Arba'in, 'Ismat al-Anbiya', etc.)**\n*The definitive classical theological treatises of Imam al-Razi on transcendence, divine names, prophecy, and scholastic theology (Kalam).*`,
+      attachments: atts
+    }, { senderId: 'ibn-manzur@lisan' });
+  }
+
+  // 5. Companion Works (Al-Shifa & Al-Futuhat)
+  if (catalog.companions && catalog.companions.length > 0) {
+    const atts = catalog.companions.map(item => ({
+      name: item.filename,
+      type: 'application/epub+zip',
+      size: 1800000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, channelId, {
+      content: `🏛️ **Companion Classical Masterworks (Al-Shifa by Qadi 'Iyad & Al-Futuhat by Ibn 'Arabi)**\n*English and Albanian translations of foundational Islamic classics.*`,
+      attachments: atts
+    }, { senderId: 'ibn-manzur@lisan' });
+  }
+}
+
 function spawnVirtualPeerBot() {
   const randomName = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
   const botId = ZbatCrypto.generateIdentity(randomName).fullId;
@@ -472,6 +565,7 @@ function spawnVirtualPeerBot() {
 
 // Start Server
 server.listen(PORT, () => {
+  seedImamRaziLibrary();
   console.log(`=======================================================`);
   console.log(`  WyreSup Mesh Server running on http://localhost:${PORT}`);
   console.log(`  Protocol: 13-Layer Stack (ZBAT + Miftah + Bathth)`);
