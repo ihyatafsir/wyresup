@@ -2847,29 +2847,27 @@ function attachRemoteStreamToMediaElements(stream, callType) {
 
   console.log(`[Media Attachment] Tracks: ${audioTracks.length} audio, ${videoTracks.length} video (callType: ${callType})`);
 
-  // 1. Unlocked Dedicated HTML5 Audio Player Route
+  // 1. Clean previous WebAudio route if any
+  if (state.activeCall.remoteAudioSourceNode) {
+    try { state.activeCall.remoteAudioSourceNode.disconnect(); } catch(e){}
+    state.activeCall.remoteAudioSourceNode = null;
+  }
+
+  // 2. Single-route audio output (HTML5 audio player with WebAudio fallback to avoid double audio)
   if (remoteAudio && audioTracks.length > 0) {
     remoteAudio.srcObject = stream;
     remoteAudio.muted = false;
     remoteAudio.volume = 1.0;
     remoteAudio.play().catch(e => {
       console.warn('[Remote Audio Play Notice]:', e.message);
-    });
-  }
-
-  // 2. Direct WebAudio Destination Bridge (Bypasses Mobile Tag Autoplay Policies)
-  if (audioTracks.length > 0 && state.audioCtx && state.audioCtx.state === 'running') {
-    try {
-      if (state.activeCall.remoteAudioSourceNode) {
-        state.activeCall.remoteAudioSourceNode.disconnect();
+      if (state.audioCtx && state.audioCtx.state === 'running') {
+        try {
+          const sourceNode = state.audioCtx.createMediaStreamSource(stream);
+          sourceNode.connect(state.audioCtx.destination);
+          state.activeCall.remoteAudioSourceNode = sourceNode;
+        } catch (err) {}
       }
-      const sourceNode = state.audioCtx.createMediaStreamSource(stream);
-      sourceNode.connect(state.audioCtx.destination);
-      state.activeCall.remoteAudioSourceNode = sourceNode;
-      console.log('[WebAudio Route] ✓ Direct audio bridge connected to device output speakers!');
-    } catch (err) {
-      console.warn('[WebAudio Direct Route Notice]:', err.message);
-    }
+    });
   }
 
   // 3. Video Display Management
@@ -3092,6 +3090,8 @@ function startNafaqPcmStream(targetPeer, localStream) {
 function handleIncomingNafaqPcm(payload) {
   const { data, sampleRate } = payload;
   if (!data) return;
+  // Ignore incoming audio PCM chunks if call is inactive or if viewing a media stream call
+  if (!state.activeCall || !state.activeCall.peer || state.activeCall.isCustomStreamCall) return;
 
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   if (!state.audioCtx || state.audioCtx.state === 'closed') {
@@ -3314,13 +3314,30 @@ async function handleIncomingCallSignal(payload) {
   const { signalType, senderPeer, senderPrefix, sdp, candidate, callType } = payload;
 
   if (signalType === 'OFFER') {
+    // 1. If user is already in an active call, ignore new offers so audio is never disrupted
+    if (state.activeCall && state.activeCall.peer) {
+      return;
+    }
     state.pendingIncomingCall = payload;
-    document.getElementById('incoming-caller-name').textContent = senderPrefix || senderPeer.split('@')[0];
-    document.getElementById('incoming-call-avatar').textContent = (senderPrefix || senderPeer).substring(0, 2).toUpperCase();
+    document.getElementById('incoming-caller-name').textContent = senderPrefix || (senderPeer ? senderPeer.split('@')[0] : 'Peer');
+    document.getElementById('incoming-call-avatar').textContent = (senderPrefix || senderPeer || 'AG').substring(0, 2).toUpperCase();
     document.getElementById('incoming-call-type-text').textContent = `Incoming P2P Encrypted ${callType === 'video' ? 'Video' : 'Audio'} Call (مُكَالَمَة ${callType === 'video' ? 'مَرْئِيَّة' : 'صَوْتِيَّة'})`;
+
+    const incomingModal = document.getElementById('modal-incoming-call');
+    const isAlreadyRinging = incomingModal && incomingModal.classList.contains('open');
+
     openModal('modal-incoming-call');
-    playTone(523.25, 0.3);
-    setTimeout(() => playTone(659.25, 0.3), 350);
+
+    // Only play chime once when modal first appears (prevents stutter/buzz on repeated signaling pulses)
+    if (!isAlreadyRinging) {
+      playTone(523.25, 0.25);
+      setTimeout(() => {
+        // Only play second tone if modal is still open and not accepted
+        if (!state.activeCall || !state.activeCall.peer) {
+          playTone(659.25, 0.25);
+        }
+      }, 300);
+    }
   } else if (signalType === 'ANSWER') {
     if (state.activeCall.pc && sdp) {
       await state.activeCall.pc.setRemoteDescription(new RTCSessionDescription(sdp));
@@ -3382,8 +3399,9 @@ async function acceptIncomingCall() {
   const streamTitle = (state.pendingIncomingCall && state.pendingIncomingCall.streamTitle) || '';
 
   state.activeCall.peer = senderPeer;
-  state.activeCall.peerPrefix = senderPrefix || senderPeer.split('@')[0];
+  state.activeCall.peerPrefix = senderPrefix || (senderPeer ? senderPeer.split('@')[0] : 'Peer');
   state.activeCall.type = callType || 'video';
+  state.activeCall.isCustomStreamCall = isCustomStreamCall;
 
   document.getElementById('call-active-peer-name').textContent = state.activeCall.peerPrefix;
   document.getElementById('call-remote-avatar').textContent = state.activeCall.peerPrefix.substring(0, 2).toUpperCase();
@@ -3584,6 +3602,14 @@ function endActiveCall(notifyPeer = true) {
     state.activeCall.nafaqPcmProcessor = null;
     state.activeCall.nafaqPcmSource = null;
   }
+  if (state.activeCall.nafaqSilentSink) {
+    try { state.activeCall.nafaqSilentSink.disconnect(); } catch(e) {}
+    state.activeCall.nafaqSilentSink = null;
+  }
+  if (state.activeCall.remoteAudioSourceNode) {
+    try { state.activeCall.remoteAudioSourceNode.disconnect(); } catch(e) {}
+    state.activeCall.remoteAudioSourceNode = null;
+  }
   if (state.activeCall.nafaqRecorder) {
     try { state.activeCall.nafaqRecorder.stop(); } catch(e){}
     state.activeCall.nafaqRecorder = null;
@@ -3641,36 +3667,19 @@ function endActiveCall(notifyPeer = true) {
     }
   });
 
-  // Reset & pause all call video and audio DOM elements
-  const localVideo = document.getElementById('call-local-video');
+  // Reset, mute & pause all video and audio DOM elements across the application
+  document.querySelectorAll('audio, video').forEach(el => {
+    try {
+      el.pause();
+      el.currentTime = 0;
+      el.muted = true;
+      el.src = '';
+      el.srcObject = null;
+      el.load();
+    } catch(e){}
+  });
   const remoteVideo = document.getElementById('call-remote-video');
-  const remoteAudio = document.getElementById('call-remote-audio');
-
-  if (localVideo) {
-    try {
-      localVideo.pause();
-      localVideo.src = '';
-      localVideo.srcObject = null;
-      localVideo.load();
-    } catch(e){}
-  }
-  if (remoteVideo) {
-    try {
-      remoteVideo.pause();
-      remoteVideo.src = '';
-      remoteVideo.srcObject = null;
-      remoteVideo.load();
-      remoteVideo.style.display = 'none';
-    } catch(e){}
-  }
-  if (remoteAudio) {
-    try {
-      remoteAudio.pause();
-      remoteAudio.src = '';
-      remoteAudio.srcObject = null;
-      remoteAudio.load();
-    } catch(e){}
-  }
+  if (remoteVideo) remoteVideo.style.display = 'none';
 
   // Show fallback avatar again for next call
   const fallback = document.getElementById('remote-avatar-fallback');
@@ -3884,55 +3893,8 @@ function createSyntheticStream(withVideo = true) {
     ctx.resume().catch(() => {});
   }
 
+  // Pure silent media stream destination: zero background audio/music interference
   const dst = ctx.createMediaStreamDestination();
-
-  // Try streaming Supermagic by Yasiin Bey (Mos Def) first
-  let audioLoaded = false;
-  fetch('/supermagic.mp3')
-    .then(res => {
-      if (!res.ok) throw new Error('supermagic.mp3 not found');
-      return res.arrayBuffer();
-    })
-    .then(buf => ctx.decodeAudioData(buf))
-    .then(decodedBuffer => {
-      const source = ctx.createBufferSource();
-      source.buffer = decodedBuffer;
-      source.loop = true;
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.7, ctx.currentTime);
-      source.connect(gain);
-      gain.connect(dst);
-      source.start(0);
-      state.activeCall.activeBufferSource = source;
-      audioLoaded = true;
-      console.log('[WebRTC Media] Playing Yasiin Bey (Mos Def) - Supermagic 🎵');
-    })
-    .catch(err => {
-      console.warn('[WebRTC Media] Fallback to melodic synth:', err.message);
-      if (!audioLoaded) {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(432, ctx.currentTime);
-        gain.gain.setValueAtTime(0.08, ctx.currentTime);
-        const notes = [432, 540, 648, 864, 648, 540];
-        let noteIdx = 0;
-        const synthInterval = setInterval(() => {
-          if (!state.activeCall.localStream && !state.activeCall.remoteStream) {
-            clearInterval(synthInterval);
-            return;
-          }
-          if (ctx && ctx.state === 'running') {
-            noteIdx = (noteIdx + 1) % notes.length;
-            osc.frequency.setTargetAtTime(notes[noteIdx], ctx.currentTime, 0.05);
-          }
-        }, 400);
-        osc.connect(gain);
-        gain.connect(dst);
-        osc.start();
-      }
-    });
-
   const tracks = [...dst.stream.getAudioTracks()];
 
   if (withVideo) {

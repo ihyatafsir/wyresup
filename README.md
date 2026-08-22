@@ -1,6 +1,14 @@
-# WyreSup // Decentralized Cryptographic Mesh Messenger (v1.7.0)
+# WyreSup // Decentralized Cryptographic Mesh Messenger (v1.8.0)
 
 > **WyreSup (واير سَب)** is an open-source, decentralized web messenger and P2P gossip mesh prototype exploring a Classical Arabic linguistic ontology (*Lisan al-Arab*) to structure cryptographic and networking primitives.
+
+---
+
+### 🚀 Version 1.8.0 Highlights (Nizām al-Jalā' wa'l-Nufūdh & Acoustic Hardening)
+- **Sovereign Single-Route Audio Pipeline**: Eliminated duplicate hardware audio sink routing and phase echo.
+- **NAFAQ / SHAF Dual-Conduit Fallback**: Unbreakable video call streaming over symmetric cellular CGNAT without ICE dropouts.
+- **Strict WebAudio Teardown (Katm & Ikhmad)**: Absolute zero-leakage teardown for all oscillators, buffer sources, and script processors on hangup.
+- **Clean Fallback Synthesis**: Eradicated background test oscillators and synthetic loop interference for pristine, noise-free duplex communication.
 
 ---
 

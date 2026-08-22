@@ -278,7 +278,7 @@ function startBot() {
         const p = msg.payload || {};
         if (p.signalType === 'OFFER') {
           const callerPeer = p.senderPeer;
-          console.log(`[AntigravityBot] 📹 Received incoming call from @${callerPeer}! Answering automatically with HD Video + Studio Audio...`);
+          console.log(`[AntigravityBot] 📹 Received incoming call from @${callerPeer}! Acknowledging without background tone noise...`);
 
           const dummyAnswer = {
             type: 'answer',
@@ -294,25 +294,11 @@ function startBot() {
             }
           }));
 
-          let chunkCount = 0;
-          const audioInterval = setInterval(() => {
-            if (ws.readyState !== WebSocket.OPEN) { clearInterval(audioInterval); return; }
-            const pcmData = generatePcmChunk(48000, 40, (chunkCount % 2 === 0) ? 520 : 650);
-            ws.send(JSON.stringify({
-              type: 'CALL_SIGNAL',
-              payload: {
-                signalType: 'NAFAQ_PCM',
-                targetPeer: callerPeer,
-                sampleRate: 48000,
-                data: pcmData
-              }
-            }));
-            chunkCount++;
-          }, 40);
-
+          // Pure silent video stream (Zero tone injection / Zero stutter noise)
+          if (ws._activeVideoInterval) clearInterval(ws._activeVideoInterval);
           let frameNum = 1;
-          const videoInterval = setInterval(() => {
-            if (ws.readyState !== WebSocket.OPEN) { clearInterval(videoInterval); return; }
+          ws._activeVideoInterval = setInterval(() => {
+            if (ws.readyState !== WebSocket.OPEN) { clearInterval(ws._activeVideoInterval); return; }
             const frameData = generateHdFrameDataUrl(frameNum);
             ws.send(JSON.stringify({
               type: 'CALL_SIGNAL',
@@ -324,7 +310,13 @@ function startBot() {
               }
             }));
             frameNum++;
-          }, 75);
+          }, 100);
+        } else if (p.signalType === 'HANGUP' || p.signalType === 'REJECT') {
+          console.log(`[AntigravityBot] Call ended by @${p.senderPeer}. Halting all stream intervals.`);
+          if (ws._activeVideoInterval) {
+            clearInterval(ws._activeVideoInterval);
+            ws._activeVideoInterval = null;
+          }
         }
       }
 

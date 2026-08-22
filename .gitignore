@@ -6,3 +6,8 @@ node_modules/
 .vscode/
 cloudflared
 *.zip
+
+.antigravity_keys.json
+*.key
+*.pem
+public/cached_videos/Med5d01XTt0.mp4
