@@ -6,6 +6,33 @@
 
 const LISAN_LEXICON = {
   // Hardened Cryptographic Roots (Lisān al-'Arab)
+  khatm: {
+    root: "ختم",
+    arabicWord: "خَتْم",
+    technicalTerm: "Cryptographic Digital Signature & Non-Repudiation Seal (ECDSA P-256 Low-S / Ed25519)",
+    layer: "Layer 2 - Sovereign Identity & Authentication",
+    classicalDefinition: "الخَتْمُ: تَغْيِيبُ الأَثَرِ وإِحْكامُ الشَّيْءِ بِالطِّينِ أَو الشَّمْعِ حتّى لا يُوصَلَ إِلى ما فيه، وخَتَمَ الكِتابَ: جَعَلَ عليه خاتَمَه ليَمْنَعَ فَتْحَه أَو التَّلَاعُبَ بهِ. وفي التنزيل: {خَتَمَ اللَّهُ عَلَى قُلُوبِهِمْ}.",
+    mathematicalRole: "Deterministic, non-malleable digital signature scheme with BIP-0062 Low-S canonical enforcement guaranteeing complete authenticity and non-repudiation.",
+    status: "CANONICAL_SEAL_ACTIVE"
+  },
+  fatq: {
+    root: "فتق",
+    arabicWord: "فَتْق",
+    technicalTerm: "RFC 5869 HKDF-Expand & Subkey Separation (Complement to Ratq)",
+    layer: "Layer 3 - Key Derivation & Expansion",
+    classicalDefinition: "الفَتْقُ: ضِدُّ الرَّتْقِ، وهو فِلْقُ الشَّيْءِ وإِظْهارُ ما فيه وتَفْرِيعُه. وفي التنزيل: {أَوَلَمْ يَرَ الَّذِينَ كَفَرُوا أَنَّ السَّمَاوَاتِ وَالأَرْضَ كَانَتَا رَتْقاً فَفَتَقْنَاهُمَا}.",
+    mathematicalRole: "Orthogonal key expansion deriving domain-separated encryption, authentication, and ratchet keys from a single master shared secret without key reuse.",
+    status: "HKDF_EXPAND_ACTIVE"
+  },
+  fasl: {
+    root: "فصل",
+    arabicWord: "فَصْل",
+    technicalTerm: "Cryptographic Domain Separation & Context Binding",
+    layer: "Layer 4 - Domain Separation",
+    classicalDefinition: "الفَصْلُ: إِبانَةُ شَيْءٍ من شَيْءٍ وتَمْيِيزُ الحَقِّ من الباطِلِ، وقَوْلٌ فَصْلٌ: حُكْمٌ قاطِعٌ بَيِّن. وفي التنزيل: {إِنَّهُ لَقَوْلٌ فَصْلٌ}.",
+    mathematicalRole: "Injecting unique protocol and purpose identifiers into HKDF info buffers (WyreSup-ZBAT-v2:purpose) preventing cross-protocol substitution attacks.",
+    status: "DOMAIN_SEPARATED"
+  },
   ratq: {
     root: "رتق",
     arabicWord: "رَتْق",

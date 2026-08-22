@@ -69,7 +69,7 @@ async function runAudit() {
   console.log("\n[2] Auditing Lisan al-Arab Linguistic API...");
   const lisanData = await fetchJson("/api/lisan");
   assert.strictEqual(lisanData.status, 200);
-  assert(lisanData.data && (lisanData.data.zbat || lisanData.data.miftah), "Must return lexicon data");
+  assert(lisanData.data && Object.keys(lisanData.data).length >= 20, "Must return lexicon data");
   console.log("  ✅ Lisan API operational: Vocabulary entries count =", Object.keys(lisanData.data).length);
 
   // 3. Diagnostics & Mesh Network Metrics API
