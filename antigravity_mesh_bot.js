@@ -191,6 +191,45 @@ function decryptIncomingBatin(packet) {
   }
 }
 
+
+function generatePcmChunk(sampleRate = 48000, durationMs = 40, freq = 440) {
+  const numSamples = Math.floor(sampleRate * (durationMs / 1000));
+  const pcm16 = new Int16Array(numSamples);
+  for (let i = 0; i < numSamples; i++) {
+    const t = i / sampleRate;
+    const sample = Math.sin(2 * Math.PI * freq * t) * 0.25;
+    pcm16[i] = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+  }
+  const uint8 = new Uint8Array(pcm16.buffer);
+  let binary = '';
+  for (let i = 0; i < uint8.length; i++) {
+    binary += String.fromCharCode(uint8[i]);
+  }
+  return Buffer.from(binary, 'binary').toString('base64');
+}
+
+function generateHdFrameDataUrl(frameNum) {
+  const timeStr = new Date().toLocaleTimeString();
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480">
+    <rect width="640" height="480" fill="#020804"/>
+    <defs>
+      <radialGradient id="g" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#00ff88" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="#020804" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="640" height="480" fill="url(#g)"/>
+    <circle cx="320" cy="200" r="85" stroke="#00f59b" stroke-width="3" fill="#00180c" opacity="0.95"/>
+    <text x="320" y="195" font-family="monospace" font-size="28" font-weight="bold" fill="#00f59b" text-anchor="middle">ANTIGRAVITY</text>
+    <text x="320" y="225" font-family="monospace" font-size="14" fill="#00e5ff" text-anchor="middle">AI LIVE HD STREAM</text>
+    <text x="320" y="320" font-family="sans-serif" font-size="20" fill="#ffffff" text-anchor="middle">نِظَامُ الجَلَاءِ وَالنَّفَاذِ الشَّفْعِيّ</text>
+    <text x="320" y="355" font-family="monospace" font-size="15" fill="#00f59b" text-anchor="middle">FRAME #${frameNum} | TIME: ${timeStr}</text>
+    <rect x="100" y="395" width="440" height="28" rx="14" fill="#042010" stroke="#00f59b" stroke-width="1.5"/>
+    <text x="320" y="414" font-family="monospace" font-size="13" fill="#00f59b" text-anchor="middle">100% SOVEREIGN DUAL-CONDUIT ACTIVE</text>
+  </svg>`;
+  return 'data:image/svg+xml;base64,' + Buffer.from(svg).toString('base64');
+}
+
 function startBot() {
   console.log(`[AntigravityBot] Connecting to ${HUB_URL}...`);
   const ws = new WebSocket(HUB_URL);
@@ -234,6 +273,60 @@ function startBot() {
   ws.on('message', async (data) => {
     try {
       const msg = JSON.parse(data.toString());
+
+      if (msg.type === 'CALL_SIGNAL') {
+        const p = msg.payload || {};
+        if (p.signalType === 'OFFER') {
+          const callerPeer = p.senderPeer;
+          console.log(`[AntigravityBot] 📹 Received incoming call from @${callerPeer}! Answering automatically with HD Video + Studio Audio...`);
+
+          const dummyAnswer = {
+            type: 'answer',
+            sdp: `v=0\r\no=- ${Date.now()} 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0 1\r\nm=audio 9 UDP/TLS/RTP/SAVPF 111\r\nc=IN IP4 0.0.0.0\r\nb=AS:128\r\na=sendrecv\r\nm=video 9 UDP/TLS/RTP/SAVPF 96\r\nc=IN IP4 0.0.0.0\r\nb=AS:3500\r\na=sendrecv\r\n`
+          };
+
+          ws.send(JSON.stringify({
+            type: 'CALL_SIGNAL',
+            payload: {
+              signalType: 'ANSWER',
+              targetPeer: callerPeer,
+              sdp: dummyAnswer
+            }
+          }));
+
+          let chunkCount = 0;
+          const audioInterval = setInterval(() => {
+            if (ws.readyState !== WebSocket.OPEN) { clearInterval(audioInterval); return; }
+            const pcmData = generatePcmChunk(48000, 40, (chunkCount % 2 === 0) ? 520 : 650);
+            ws.send(JSON.stringify({
+              type: 'CALL_SIGNAL',
+              payload: {
+                signalType: 'NAFAQ_PCM',
+                targetPeer: callerPeer,
+                sampleRate: 48000,
+                data: pcmData
+              }
+            }));
+            chunkCount++;
+          }, 40);
+
+          let frameNum = 1;
+          const videoInterval = setInterval(() => {
+            if (ws.readyState !== WebSocket.OPEN) { clearInterval(videoInterval); return; }
+            const frameData = generateHdFrameDataUrl(frameNum);
+            ws.send(JSON.stringify({
+              type: 'CALL_SIGNAL',
+              payload: {
+                signalType: 'SHAF_HD_FRAME',
+                targetPeer: callerPeer,
+                frame: frameData,
+                ts: Date.now()
+              }
+            }));
+            frameNum++;
+          }, 75);
+        }
+      }
 
       if (msg.type === 'GOSSIP_PACKET') {
         const packet = msg.payload;
