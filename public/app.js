@@ -563,7 +563,12 @@ const state = window.state = {
     timerInterval: null,
     isMuted: false,
     isCamOff: false,
-    isScreenSharing: false
+    isScreenSharing: false,
+    nafaqRecorder: null,
+    nafaqAudioNextTime: 0,
+    nafaqActive: false,
+    nafaqFallbackTimer: null,
+    nafaqSeq: 0
   },
   pendingIncomingCall: null
 };
@@ -2880,6 +2885,35 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
     const pc = new RTCPeerConnection(RTC_CONFIG);
     state.activeCall.pc = pc;
 
+    pc.oniceconnectionstatechange = () => {
+      const s = pc.iceConnectionState;
+      console.log('[WebRTC Outgoing ICE State]:', s);
+      if (s === 'connected' || s === 'completed') {
+        if (state.activeCall.nafaqFallbackTimer) {
+          clearTimeout(state.activeCall.nafaqFallbackTimer);
+          state.activeCall.nafaqFallbackTimer = null;
+        }
+        document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
+      } else if (s === 'failed' || s === 'disconnected') {
+        console.warn('[WebRTC ICE Failed] Activating NAFAQ Sovereign Tunnel fallback!');
+        state.activeCall.nafaqActive = true;
+        document.getElementById('call-remote-status-text').textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
+        startNafaqTunnelStream(peerId, stream, callType);
+      }
+    };
+
+    // Watchdog: If ICE not connected after 2.5s, engage NAFAQ Sovereign Tunnel!
+    state.activeCall.nafaqFallbackTimer = setTimeout(() => {
+      const iceState = state.activeCall.pc?.iceConnectionState;
+      if (iceState !== 'connected' && iceState !== 'completed') {
+        console.log('[WebRTC Watchdog] ICE state is', iceState, '— engaging NAFAQ Sovereign Tunneling!');
+        state.activeCall.nafaqActive = true;
+        const statusEl = document.getElementById('call-remote-status-text');
+        if (statusEl) statusEl.textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
+        startNafaqTunnelStream(peerId, stream, callType);
+      }
+    }, 2500);
+
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
     pc.ontrack = (event) => {
@@ -2974,6 +3008,8 @@ async function handleIncomingCallSignal(payload) {
     }
   } else if (signalType === 'HANGUP' || signalType === 'REJECT') {
     endActiveCall(false);
+  } else if (signalType === 'NAFAQ_FRAME') {
+    handleIncomingNafaqFrame(payload);
   } else if (signalType === 'NAGHAM') {
     if (payload.freq1 && payload.freq2) {
       playDtmfDualTone(payload.freq1, payload.freq2, 0.25);
@@ -2997,7 +3033,9 @@ async function acceptIncomingCall() {
   const rAudio = document.getElementById('call-remote-audio');
   const rVideo = document.getElementById('call-remote-video');
   const fallback = document.getElementById('remote-avatar-fallback');
-  const streamUrl = (state.pendingIncomingCall && state.pendingIncomingCall.streamUrl) || '/cached_videos/BrPffpg9KFM.mp4';
+  const isCustomStreamCall = !!(state.pendingIncomingCall && state.pendingIncomingCall.streamUrl);
+  const streamUrl = isCustomStreamCall ? state.pendingIncomingCall.streamUrl : null;
+  const streamTitle = (state.pendingIncomingCall && state.pendingIncomingCall.streamTitle) || '';
 
   state.activeCall.peer = senderPeer;
   state.activeCall.peerPrefix = senderPrefix || senderPeer.split('@')[0];
@@ -3006,38 +3044,24 @@ async function acceptIncomingCall() {
   document.getElementById('call-active-peer-name').textContent = state.activeCall.peerPrefix;
   document.getElementById('call-remote-avatar').textContent = state.activeCall.peerPrefix.substring(0, 2).toUpperCase();
   document.getElementById('call-remote-avatar-name').textContent = state.activeCall.peerPrefix;
-  document.getElementById('call-remote-status-text').textContent = 'P2P Stream Active // Damascus (Gorillaz ft. Yasiin Bey)';
 
-  if (callType === 'video') {
-    if (rAudio) {
-      rAudio.pause();
-      rAudio.srcObject = null;
-      rAudio.muted = true;
-    }
-    if (rVideo) {
-      rVideo.src = streamUrl;
-      rVideo.style.display = 'block';
-      rVideo.muted = false;
-      rVideo.volume = 1.0;
-      rVideo.play().catch(() => {
-        rVideo.muted = true;
-        rVideo.play().catch(() => {});
-      });
-    }
-    if (fallback) {
-      fallback.style.display = 'none';
+  if (isCustomStreamCall) {
+    document.getElementById('call-remote-status-text').textContent = `P2P Stream Active // ${streamTitle || 'Media Stream'}`;
+    if (callType === 'video') {
+      if (rAudio) { rAudio.pause(); rAudio.srcObject = null; rAudio.muted = true; }
+      if (rVideo) {
+        rVideo.src = streamUrl;
+        rVideo.style.display = 'block';
+        rVideo.muted = false;
+        rVideo.volume = 1.0;
+        rVideo.play().catch(() => { rVideo.muted = true; rVideo.play().catch(() => {}); });
+      }
+      if (fallback) fallback.style.display = 'none';
     }
   } else {
-    if (rVideo) {
-      rVideo.pause();
-      rVideo.srcObject = null;
-      rVideo.muted = true;
-    }
-    if (rAudio) {
-      rAudio.muted = false;
-      rAudio.volume = 1.0;
-      rAudio.play().catch(() => {});
-    }
+    document.getElementById('call-remote-status-text').textContent = 'Connecting P2P Encrypted Session (جَارِي الاتِّصَال)...';
+    if (rVideo) { rVideo.removeAttribute('src'); rVideo.srcObject = null; }
+    if (rAudio) { rAudio.removeAttribute('src'); rAudio.srcObject = null; }
   }
 
   startCallTimer();
@@ -3070,6 +3094,40 @@ async function acceptIncomingCall() {
 
     const pc = new RTCPeerConnection(RTC_CONFIG);
     state.activeCall.pc = pc;
+
+    pc.oniceconnectionstatechange = () => {
+      const s = pc.iceConnectionState;
+      console.log('[WebRTC Accept ICE State]:', s);
+      if (s === 'connected' || s === 'completed') {
+        if (state.activeCall.nafaqFallbackTimer) {
+          clearTimeout(state.activeCall.nafaqFallbackTimer);
+          state.activeCall.nafaqFallbackTimer = null;
+        }
+        if (!isCustomStreamCall) {
+          document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
+        }
+      } else if (s === 'failed' || s === 'disconnected') {
+        console.warn('[WebRTC ICE Failed] Activating NAFAQ Sovereign Tunnel fallback!');
+        state.activeCall.nafaqActive = true;
+        if (!isCustomStreamCall) {
+          document.getElementById('call-remote-status-text').textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
+        }
+        startNafaqTunnelStream(senderPeer, stream, callType);
+      }
+    };
+
+    if (!isCustomStreamCall) {
+      state.activeCall.nafaqFallbackTimer = setTimeout(() => {
+        const iceState = state.activeCall.pc?.iceConnectionState;
+        if (iceState !== 'connected' && iceState !== 'completed') {
+          console.log('[WebRTC Watchdog] ICE state is', iceState, '— engaging NAFAQ Sovereign Tunneling!');
+          state.activeCall.nafaqActive = true;
+          const statusEl = document.getElementById('call-remote-status-text');
+          if (statusEl) statusEl.textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
+          startNafaqTunnelStream(senderPeer, stream, callType);
+        }
+      }, 2500);
+    }
 
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
@@ -3143,6 +3201,16 @@ function declineIncomingCall() {
 }
 
 function endActiveCall(notifyPeer = true) {
+  if (state.activeCall.nafaqRecorder) {
+    try { state.activeCall.nafaqRecorder.stop(); } catch(e){}
+    state.activeCall.nafaqRecorder = null;
+  }
+  if (state.activeCall.nafaqFallbackTimer) {
+    clearTimeout(state.activeCall.nafaqFallbackTimer);
+    state.activeCall.nafaqFallbackTimer = null;
+  }
+  state.activeCall.nafaqAudioNextTime = 0;
+  state.activeCall.nafaqActive = false;
   if (notifyPeer && state.activeCall.peer && state.ws && state.ws.readyState === WebSocket.OPEN) {
     state.ws.send(JSON.stringify({
       type: 'CALL_SIGNAL',

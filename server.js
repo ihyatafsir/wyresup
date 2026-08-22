@@ -384,10 +384,15 @@ function handleClientMessage(ws, msg) {
       const client = connectedClients.get(ws);
       if (!client) return;
       const targetPeer = payload.targetPeer;
+      const targetPrefix = targetPeer ? targetPeer.split('@')[0] : '';
+
       for (const [targetWs, targetRecord] of connectedClients.entries()) {
+        const clientPrefix = targetRecord.prefix || (targetRecord.peerId ? targetRecord.peerId.split('@')[0] : '');
         const matches = targetRecord.peerId === targetPeer ||
                         targetRecord.prefix === targetPeer ||
-                        targetRecord.peerId.startsWith(`${targetPeer}@`);
+                        targetRecord.peerId.startsWith(`${targetPeer}@`) ||
+                        (targetPrefix && clientPrefix && targetPrefix === clientPrefix);
+
         if (matches && targetWs !== ws && targetWs.readyState === WebSocket.OPEN) {
           targetWs.send(JSON.stringify({
             type: 'CALL_SIGNAL',
@@ -510,7 +515,25 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
     }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // 4. Kalam & Theology Master Treatises (Including I'tiqadat Firaq al-Muslimin)
+  // 4. Firaq (Sects & Heresiography) & Usul al-Fiqh
+  if (catalog.firaqAndFiqh && catalog.firaqAndFiqh.length > 0) {
+    const atts = catalog.firaqAndFiqh.map(item => ({
+      name: item.filename,
+      type: 'application/epub+zip',
+      size: 800000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, channelId, {
+      content: `⚖️ **Comparative Heresiography (Firaq) & Usul al-Fiqh**
+*Imam al-Razi's famous treatise on world religions & Islamic sects (I'tiqadat Firaq al-Muslimin wa'l-Mushrikin in 3 translations) along with his magnum opus on legal methodology (Al-Mahsul fi 'Ilm Usul al-Fiqh).*`,
+      attachments: atts
+    }, { senderId: 'ibn-manzur@lisan' });
+  }
+
+  // 5. Core Kalam & Theological Treatises
   if (catalog.kalamTreatises && catalog.kalamTreatises.length > 0) {
     const atts = catalog.kalamTreatises.map(item => ({
       name: item.filename,
@@ -522,15 +545,15 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: `📜 **Core Theological Treatises & Kalam Masterworks**
-*Including I'tiqadat Firaq al-Muslimin wa'l-Mushrikin (The Beliefs of Muslim & Non-Muslim Sects), Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, 'Ismat al-Anbiya', Al-Mahsul, and Ma'alim Usul al-Din.*`,
+      content: `📜 **Core Kalam & Philosophical Theology Treatises**
+*Including Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, 'Ismat al-Anbiya', Ma'alim Usul al-Din, and Al-Qada' wa'l-Qadar.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // 5. Companion Classics (Al-Futuhat & Al-Shifa)
-  if (catalog.companions && catalog.companions.length > 0) {
-    const atts = catalog.companions.map(item => ({
+  // 6. Classical Spiritual & Prophetic Masterworks ('Irfan & Shama'il)
+  if (catalog.spiritualClassics && catalog.spiritualClassics.length > 0) {
+    const atts = catalog.spiritualClassics.map(item => ({
       name: item.filename,
       type: 'application/epub+zip',
       size: 1800000,
@@ -540,8 +563,8 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: `💎 **Classical Companion Masterworks**
-*Al-Futuhat al-Makkiyya (Ibn 'Arabi) and Al-Shifa bi-Ta'rif Huquq al-Mustafa (Qadi 'Iyad).*`,
+      content: `💎 **Classical Spiritual & Prophetic Masterworks (Tasawwuf, 'Irfan & Shama'il)**
+*Al-Futuhat al-Makkiyya (Shaykh al-Akbar Ibn 'Arabi — Islamic Metaphysics & Spiritual Illumination) and Al-Shifa bi-Ta'rif Huquq al-Mustafa (Qadi 'Iyad — Prophetic Biography & Shama'il).*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
