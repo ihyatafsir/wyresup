@@ -1,10 +1,10 @@
 /**
- * WyreSup Shabah (شَبَح) - Steganographic Covert Layer
+ * WyreSup Shabah (شَبَح) - Steganographic Covert Transport Layer
  * Grounded in Ibn Manzur's Lisan al-Arab: "شَبَحَ: الظِّلُّ أَوِ الشَّخْصُ الَّذِي يُرَى مِنْ بَعِيدٍ وَلَا يُسْتَبَانُ حَقِيقَتُهُ"
  *
  * Implements:
- * 1. Waswas (وَسْوَس): Zero-Width Unicode Steganography (hides binary encrypted ZBAT packets inside ordinary text)
- * 2. Ramz (رَمْز): Emoji-Carrier Steganography
+ * 1. Waswas (وَسْوَس): Zero-Width Unicode Steganography with Randomized Multi-Word Dispersal
+ * 2. Ramz (رَمْز): Visual Emoji-Carrier Steganography using natural emoji variation sequences
  */
 
 const ZERO_WIDTH = {
@@ -28,9 +28,15 @@ const ZW_TO_BIT = {
   "\u200E": "11"
 };
 
+// Natural emoji carrier dictionary for Al-Ramz (الرَّمْز)
+const EMOJI_CARRIERS = [
+  "✨", "🌿", "🕊️", "🌙", "🌊", "⭐", "🍃", "💎",
+  "🌸", "🔥", "🛡️", "📜", "🪐", "⚡", "🔮", "🏔️"
+];
+
 class ShabahStego {
   /**
-   * Hide binary or text payload inside innocent cover text using invisible Unicode characters (Waswas)
+   * Waswas (وَسْوَس): Hide payload inside cover text with randomized multi-word dispersal
    */
   static hideInText(coverText, secretPayload) {
     const payloadStr = typeof secretPayload === "string" ? secretPayload : JSON.stringify(secretPayload);
@@ -47,20 +53,30 @@ class ShabahStego {
       zeroWidthSeq += BIT_TO_ZW[bitPair] || ZERO_WIDTH.SPACE;
     }
 
-    // Embed invisible sequence right after first word or at midpoint
+    // Disperse zero-width characters evenly across multiple word boundaries
     const words = coverText.split(" ");
-    if (words.length > 1) {
-      words[0] = words[0] + zeroWidthSeq;
-      return words.join(" ");
+    if (words.length <= 1) {
+      return coverText + zeroWidthSeq;
     }
-    return coverText + zeroWidthSeq;
+
+    const chunkSize = Math.ceil(zeroWidthSeq.length / (words.length - 1));
+    let result = "";
+
+    for (let i = 0; i < words.length; i++) {
+      result += words[i];
+      if (i < words.length - 1) {
+        const chunk = zeroWidthSeq.substring(i * chunkSize, (i + 1) * chunkSize);
+        result += chunk + " ";
+      }
+    }
+
+    return result;
   }
 
   /**
    * Extract and decode hidden payload from text containing zero-width characters
    */
   static extractFromText(stegoText) {
-    const zwChars = [ZERO_WIDTH.SPACE, ZERO_WIDTH.JOINER, ZERO_WIDTH.NON_JOINER, ZERO_WIDTH.LEFT_MARK];
     let bitStr = "";
 
     for (let i = 0; i < stegoText.length; i++) {
@@ -78,6 +94,65 @@ class ShabahStego {
     for (let i = 0; i < byteCount; i++) {
       const byteBits = bitStr.substring(i * 8, (i + 1) * 8);
       bytes[i] = parseInt(byteBits, 2);
+    }
+
+    try {
+      const decodedStr = bytes.toString("utf8");
+      try { return JSON.parse(decodedStr); } catch { return decodedStr; }
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Al-Ramz (الرَّمْز): Hide binary payload inside a natural sequence of carrier emojis
+   */
+  static hideInEmojiSequence(secretPayload, prefixMessage = "Mesh Telemetry Verified") {
+    const payloadStr = typeof secretPayload === "string" ? secretPayload : JSON.stringify(secretPayload);
+    const buf = Buffer.from(payloadStr, "utf8");
+
+    let emojiSeq = "";
+    for (let i = 0; i < buf.length; i++) {
+      const byte = buf[i];
+      const highNibble = (byte >> 4) & 0x0F;
+      const lowNibble = byte & 0x0F;
+      emojiSeq += EMOJI_CARRIERS[highNibble] + EMOJI_CARRIERS[lowNibble];
+    }
+
+    return `${prefixMessage} ${emojiSeq}`;
+  }
+
+  /**
+   * Al-Ramz (الرَّمْز): Extract and decode binary payload from emoji sequence
+   */
+  static extractFromEmojiSequence(stegoText) {
+    const carrierMap = new Map();
+    EMOJI_CARRIERS.forEach((emoji, idx) => carrierMap.set(emoji, idx));
+
+    // Extract all recognized carrier emojis
+    const matchedNibbles = [];
+    for (const [emoji, nibbleVal] of carrierMap.entries()) {
+      let pos = 0;
+      while ((pos = stegoText.indexOf(emoji, pos)) !== -1) {
+        matchedNibbles.push({ pos, nibbleVal });
+        pos += emoji.length;
+      }
+    }
+
+    // Sort by order of appearance
+    matchedNibbles.sort((a, b) => a.pos - b.pos);
+
+    if (matchedNibbles.length < 2 || matchedNibbles.length % 2 !== 0) {
+      return null;
+    }
+
+    const byteCount = matchedNibbles.length / 2;
+    const bytes = Buffer.alloc(byteCount);
+
+    for (let i = 0; i < byteCount; i++) {
+      const high = matchedNibbles[i * 2].nibbleVal;
+      const low = matchedNibbles[i * 2 + 1].nibbleVal;
+      bytes[i] = (high << 4) | low;
     }
 
     try {

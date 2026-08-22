@@ -166,86 +166,219 @@ class ThaqbRatchet {
 /**
  * ḤabkRatchet (حَبْك): Full Double-Ratchet Asymmetric DH Weave with Break-In Recovery
  */
+/**
+ * ḤabkRatchet (حَبْك): Canonical Signal-Grade Double Ratchet Protocol
+ * Implements continuous per-turn asymmetric Diffie-Hellman ratchets (حَبْك)
+ * interleaved with symmetric KDF message chains (ثَقْب) and out-of-order skipped key cache.
+ * Provides true Forward Secrecy & Post-Compromise Security (Break-In Recovery).
+ */
+/**
+ * ḤabkRatchet (حَبْك): Canonical Signal-Grade Double Ratchet Protocol
+ * Implements continuous per-turn asymmetric Diffie-Hellman ratchets (حَبْك)
+ * interleaved with symmetric KDF message chains (ثَقْب) and out-of-order skipped key cache.
+ * Provides true Forward Secrecy & Post-Compromise Security (Break-In Recovery).
+ */
 class HabkRatchet {
-  constructor(rootKey, isInitiator = true) {
-    this.rootKey = Buffer.isBuffer(rootKey) ? Buffer.from(rootKey) : crypto.createHash("sha256").update(rootKey).digest();
+  constructor(sharedRootKey, isInitiator = true, remoteDhPubKey = null) {
+    this.RK = Buffer.isBuffer(sharedRootKey) 
+      ? Buffer.from(sharedRootKey) 
+      : crypto.createHash("sha256").update(sharedRootKey).digest();
+
     this.dhp = crypto.createECDH("prime256v1");
     this.dhp.generateKeys();
     this.localDhPubKey = this.dhp.getPublicKey("hex");
-    this.remoteDhPubKey = null;
+    this.remoteDhPubKey = remoteDhPubKey;
+
+    this.CKs = null; // Sending chain key
+    this.CKr = null; // Receiving chain key
+    this.Ns = 0;    // Number of messages sent in current chain
+    this.Nr = 0;    // Number of messages received in current chain
+    this.PN = 0;    // Number of messages in previous sending chain
+    this.MKSKIPPED = new Map(); // Map of "dhPubKey:messageIndex" -> messageKey
+
     this.isInitiator = isInitiator;
 
-    const initSeed = crypto.createHmac("sha256", this.rootKey).update(Buffer.from("habk-init-v1")).digest();
-    
+    const initSeed = crypto.createHmac("sha256", this.RK).update(Buffer.from("habk-init-v3")).digest();
     if (isInitiator) {
-      this.sendingRatchet = new ThaqbRatchet(initSeed);
-      this.receivingRatchet = null;
+      this.CKs = initSeed;
+      this.CKr = null;
     } else {
-      this.sendingRatchet = null;
-      this.receivingRatchet = new ThaqbRatchet(initSeed);
+      this.CKs = null;
+      this.CKr = initSeed;
     }
+  }
+
+  static kdfRK(rk, dhSecret) {
+    const nextRK = crypto.createHmac("sha256", rk).update(Buffer.concat([dhSecret, Buffer.from([0x01])])).digest();
+    const chainKey = crypto.createHmac("sha256", rk).update(Buffer.concat([dhSecret, Buffer.from([0x02])])).digest();
+    return { nextRK, chainKey };
+  }
+
+  static kdfCK(ck) {
+    const nextCK = crypto.createHmac("sha256", ck).update(Buffer.from([0x01])).digest();
+    const messageKey = crypto.createHmac("sha256", ck).update(Buffer.from([0x02])).digest();
+    return { nextCK, messageKey };
   }
 
   dhRatchetTurn(remoteDhPubKeyHex) {
+    this.PN = this.Ns;
+    this.Ns = 0;
+    this.Nr = 0;
     this.remoteDhPubKey = remoteDhPubKeyHex;
 
-    // Compute DH shared secret with remote peer's public key
-    const dhSecret = this.dhp.computeSecret(Buffer.from(remoteDhPubKeyHex, "hex"));
+    // 1. Receiving DH Step (with previous local DH key and new remote DH key)
+    const dhSecret1 = this.dhp.computeSecret(Buffer.from(remoteDhPubKeyHex, "hex"));
+    const step1 = HabkRatchet.kdfRK(this.RK, dhSecret1);
+    tamsScrub(this.RK);
+    this.RK = step1.nextRK;
+    this.CKr = step1.chainKey;
 
-    // Derive new RootKey and Receiving Chain Key
-    const nextRoot = crypto.createHmac("sha256", this.rootKey).update(Buffer.concat([dhSecret, Buffer.from([0x01])])).digest();
-    const recvChain = crypto.createHmac("sha256", this.rootKey).update(Buffer.concat([dhSecret, Buffer.from([0x02])])).digest();
+    // 2. Generate fresh local DH keypair for sending
+    this.dhp = crypto.createECDH("prime256v1");
+    this.dhp.generateKeys();
+    this.localDhPubKey = this.dhp.getPublicKey("hex");
 
-    tamsScrub(this.rootKey);
-    this.rootKey = nextRoot;
-    this.receivingRatchet = new ThaqbRatchet(recvChain);
+    // 3. Sending DH Step (with new local DH key and remote DH key)
+    const dhSecret2 = this.dhp.computeSecret(Buffer.from(remoteDhPubKeyHex, "hex"));
+    const step2 = HabkRatchet.kdfRK(this.RK, dhSecret2);
+    tamsScrub(this.RK);
+    this.RK = step2.nextRK;
+    this.CKs = step2.chainKey;
+  }
+
+  skipMessageKeys(untilIndex, isSending = false) {
+    const currentChain = isSending ? this.CKs : this.CKr;
+    let currentIndex = isSending ? this.Ns : this.Nr;
+
+    if (!currentChain) return;
+    if (currentIndex + 2000 < untilIndex) {
+      throw new Error("[Ḥabk Error] Too many skipped messages in ratchet chain (> 2000)");
+    }
+
+    let tempCK = currentChain;
+    while (currentIndex < untilIndex) {
+      const { nextCK, messageKey } = HabkRatchet.kdfCK(tempCK);
+      tempCK = nextCK;
+      const skipKey = `${this.remoteDhPubKey || "init"}:${currentIndex}`;
+      this.MKSKIPPED.set(skipKey, messageKey);
+      currentIndex++;
+    }
+
+    if (isSending) {
+      this.CKs = tempCK;
+      this.Ns = currentIndex;
+    } else {
+      this.CKr = tempCK;
+      this.Nr = currentIndex;
+    }
   }
 
   encrypt(payload) {
-    // If we received a DH turn previously and haven't updated our local DH keypair yet,
-    // generate a fresh keypair and ratchet the sending chain (Self-Healing Break-in Recovery)
-    if (this.remoteDhPubKey && (!this.sendingRatchet || this.needsNewSendingChain)) {
-      this.dhp = crypto.createECDH("prime256v1");
-      this.dhp.generateKeys();
-      this.localDhPubKey = this.dhp.getPublicKey("hex");
+    // If responder has received remote DH pubkey but has no sending chain yet, execute DH ratchet turn
+    if (!this.CKs) {
+      if (this.remoteDhPubKey) {
+        this.dhp = crypto.createECDH("prime256v1");
+        this.dhp.generateKeys();
+        this.localDhPubKey = this.dhp.getPublicKey("hex");
 
-      const dhSecret = this.dhp.computeSecret(Buffer.from(this.remoteDhPubKey, "hex"));
-      const nextRoot = crypto.createHmac("sha256", this.rootKey).update(Buffer.concat([dhSecret, Buffer.from([0x01])])).digest();
-      const sendChain = crypto.createHmac("sha256", this.rootKey).update(Buffer.concat([dhSecret, Buffer.from([0x02])])).digest();
-
-      tamsScrub(this.rootKey);
-      this.rootKey = nextRoot;
-      this.sendingRatchet = new ThaqbRatchet(sendChain);
-      this.needsNewSendingChain = false;
-    } else if (!this.sendingRatchet) {
-      const sendSeed = crypto.createHmac("sha256", this.rootKey).update(Buffer.from("habk-init-v1")).digest();
-      this.sendingRatchet = new ThaqbRatchet(sendSeed);
+        const dhSecret = this.dhp.computeSecret(Buffer.from(this.remoteDhPubKey, "hex"));
+        const step = HabkRatchet.kdfRK(this.RK, dhSecret);
+        tamsScrub(this.RK);
+        this.RK = step.nextRK;
+        this.CKs = step.chainKey;
+      } else {
+        this.CKs = crypto.createHmac("sha256", this.RK).update(Buffer.from("habk-init-v3")).digest();
+      }
     }
 
-    const enc = this.sendingRatchet.encryptMessage(payload);
+    const { nextCK, messageKey } = HabkRatchet.kdfCK(this.CKs);
+    tamsScrub(this.CKs);
+    this.CKs = nextCK;
+
+    const messageIndex = this.Ns;
+    this.Ns++;
+
+    const plaintext = typeof payload === "string" ? payload : JSON.stringify(payload);
+    const iv = crypto.randomBytes(12);
+    const cipher = crypto.createCipheriv("aes-256-gcm", messageKey, iv);
+    
+    // Bind Ratchet Header into AAD
+    const headerAad = Buffer.from(`${this.localDhPubKey}:${messageIndex}:${this.PN}`);
+    cipher.setAAD(headerAad);
+
+    const ciphertext = Buffer.concat([cipher.update(plaintext, "utf8"), cipher.final()]);
+    const tag = cipher.getAuthTag();
+
+    tamsScrub(messageKey);
+
     return {
-      ...enc,
+      ciphertext: ciphertext.toString("hex"),
+      iv: iv.toString("hex"),
+      tag: tag.toString("hex"),
       dhPubKey: this.localDhPubKey,
-      protocol: "HABK_DOUBLE_RATCHET_V2"
+      messageIndex,
+      previousChainLength: this.PN,
+      protocol: "HABK_CANONICAL_DOUBLE_RATCHET_V3"
     };
   }
 
   decrypt(encryptedObj) {
-    if (encryptedObj.dhPubKey) {
-      if (!this.remoteDhPubKey) {
-        if (this.isInitiator) {
-          this.dhRatchetTurn(encryptedObj.dhPubKey);
-          this.needsNewSendingChain = true;
-        } else {
-          this.remoteDhPubKey = encryptedObj.dhPubKey;
+    const { ciphertext, iv, tag, dhPubKey, messageIndex, previousChainLength } = encryptedObj;
+    const remoteKey = dhPubKey || this.remoteDhPubKey;
+    const skipKey = `${remoteKey || "init"}:${messageIndex}`;
+
+    let messageKey = null;
+
+    // 1. Check if key was previously skipped and cached
+    if (this.MKSKIPPED.has(skipKey)) {
+      messageKey = this.MKSKIPPED.get(skipKey);
+      this.MKSKIPPED.delete(skipKey);
+    } else {
+      // 2. Check if DH ratchet turn is required
+      if (dhPubKey) {
+        if (!this.remoteDhPubKey) {
+          if (this.isInitiator) {
+            // Initiator receiving first reply from responder: execute DH ratchet turn
+            this.dhRatchetTurn(dhPubKey);
+          } else {
+            // Responder receiving first message from initiator: record remote key (initial chain is active)
+            this.remoteDhPubKey = dhPubKey;
+          }
+        } else if (dhPubKey !== this.remoteDhPubKey) {
+          if (this.CKr && previousChainLength !== undefined) {
+            this.skipMessageKeys(previousChainLength, false);
+          }
+          this.dhRatchetTurn(dhPubKey);
         }
-      } else if (encryptedObj.dhPubKey !== this.remoteDhPubKey) {
-        this.dhRatchetTurn(encryptedObj.dhPubKey);
-        this.needsNewSendingChain = true;
       }
+
+      // 3. Skip missing keys in current receiving chain if out-of-order
+      if (messageIndex > this.Nr) {
+        this.skipMessageKeys(messageIndex, false);
+      }
+
+      const { nextCK, messageKey: derivedKey } = HabkRatchet.kdfCK(this.CKr);
+      tamsScrub(this.CKr);
+      this.CKr = nextCK;
+      this.Nr++;
+      messageKey = derivedKey;
     }
-    const r = this.receivingRatchet || this.sendingRatchet;
-    return r.decryptMessage(encryptedObj);
+
+    try {
+      const decipher = crypto.createDecipheriv("aes-256-gcm", messageKey, Buffer.from(iv, "hex"));
+      decipher.setAuthTag(Buffer.from(tag, "hex"));
+      const headerAad = Buffer.from(`${dhPubKey || this.remoteDhPubKey}:${messageIndex}:${previousChainLength || 0}`);
+      decipher.setAAD(headerAad);
+
+      const decrypted = Buffer.concat([decipher.update(Buffer.from(ciphertext, "hex")), decipher.final()]);
+      tamsScrub(messageKey);
+
+      const str = decrypted.toString("utf8");
+      try { return JSON.parse(str); } catch { return str; }
+    } catch (err) {
+      if (messageKey) tamsScrub(messageKey);
+      throw err;
+    }
   }
 }
 
@@ -266,7 +399,7 @@ class ZbatCrypto {
     if (Math.abs(now - zahirPacket.timestamp) > maxClockSkewMs) {
       return { valid: false, reason: "TIMESTAMP_SKEW_EXCEEDED" };
     }
-    if (zahirPacket.hops !== undefined && (zahirPacket.hops > 15 || zahirPacket.ttl < 0)) {
+    if (zahirPacket.hops !== undefined && (zahirPacket.hops > 15 || (zahirPacket.ttl !== undefined && (zahirPacket.ttl <= 0 || zahirPacket.hops >= zahirPacket.ttl)))) {
       return { valid: false, reason: "TTL_HOP_EXHAUSTION" };
     }
     return { valid: true };
@@ -698,9 +831,11 @@ class ZbatCrypto {
     }
   }
 
-  static computeMizanPoW(zahirEnvelope, difficulty = 2) {
+  static computeMizanPoW(zahirEnvelopeOrString, difficulty = 2) {
     const targetPrefix = "0".repeat(difficulty);
-    const baseData = `${zahirEnvelope.senderId}:${zahirEnvelope.messageId}:${zahirEnvelope.timestamp}`;
+    const baseData = typeof zahirEnvelopeOrString === "string" 
+      ? zahirEnvelopeOrString 
+      : `${zahirEnvelopeOrString.senderId}:${zahirEnvelopeOrString.messageId}:${zahirEnvelopeOrString.timestamp}`;
     let nonce = 0;
     
     while (true) {
@@ -714,11 +849,15 @@ class ZbatCrypto {
     return { nonce, hash: "00", difficulty };
   }
 
-  static verifyMizanPoW(zahirEnvelope, mizanObj) {
-    if (!mizanObj || mizanObj.nonce === undefined) return false;
-    const targetPrefix = "0".repeat(mizanObj.difficulty || 2);
-    const baseData = `${zahirEnvelope.senderId}:${zahirEnvelope.messageId}:${zahirEnvelope.timestamp}`;
-    const hash = crypto.createHash("sha256").update(`${baseData}:${mizanObj.nonce}`).digest("hex");
+  static verifyMizanPoW(zahirEnvelopeOrString, mizanObj, difficulty = null) {
+    if (mizanObj === null || mizanObj === undefined) return false;
+    const nonce = typeof mizanObj === "object" ? mizanObj.nonce : mizanObj;
+    const diff = difficulty || (typeof mizanObj === "object" ? mizanObj.difficulty : 2) || 2;
+    const targetPrefix = "0".repeat(diff);
+    const baseData = typeof zahirEnvelopeOrString === "string" 
+      ? zahirEnvelopeOrString 
+      : `${zahirEnvelopeOrString.senderId}:${zahirEnvelopeOrString.messageId}:${zahirEnvelopeOrString.timestamp}`;
+    const hash = crypto.createHash("sha256").update(`${baseData}:${nonce}`).digest("hex");
     return hash.startsWith(targetPrefix);
   }
 
