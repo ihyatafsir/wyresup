@@ -1280,7 +1280,6 @@ function appendMessageToDOM(packet) {
       <button class="msg-action-btn" onclick="sendQuickReaction('🔥')" title="React 🔥">🔥</button>
     </div>
 
-    <div class="msg-avatar" onclick="showUserProfileBySenderId('${senderId}')" style="cursor: pointer;" title="View ${prefix}'s profile">${prefix.substring(0, 2).toUpperCase()}</div>
     <div class="msg-content-wrap">
       <div class="msg-meta">
         <span class="msg-author ${prefix === 'antigravity' ? 'antigravity' : ''}" onclick="showUserProfileBySenderId('${senderId}')" style="cursor: pointer;" title="View ${prefix}'s profile">${prefix}</span>
