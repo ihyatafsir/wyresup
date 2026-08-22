@@ -2912,7 +2912,7 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
         if (statusEl) statusEl.textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
         startNafaqTunnelStream(peerId, stream, callType);
       }
-    }, 2500);
+    }, 1200);
 
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
@@ -3126,7 +3126,7 @@ async function acceptIncomingCall() {
           if (statusEl) statusEl.textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
           startNafaqTunnelStream(senderPeer, stream, callType);
         }
-      }, 2500);
+      }, 1200);
     }
 
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
@@ -3211,6 +3211,7 @@ function endActiveCall(notifyPeer = true) {
   }
   state.activeCall.nafaqAudioNextTime = 0;
   state.activeCall.nafaqActive = false;
+  releaseCallWakeLock();
   if (notifyPeer && state.activeCall.peer && state.ws && state.ws.readyState === WebSocket.OPEN) {
     state.ws.send(JSON.stringify({
       type: 'CALL_SIGNAL',
@@ -3441,7 +3442,24 @@ function toggleSwapCallViews() {
   }
 }
 
+// Mobile WakeLock & Screen Keep-Alive (حِفْظُ البَقَاء)
+async function requestCallWakeLock() {
+  try {
+    if ('wakeLock' in navigator && !state.activeCall.wakeLock) {
+      state.activeCall.wakeLock = await navigator.wakeLock.request('screen');
+    }
+  } catch (e) {}
+}
+
+function releaseCallWakeLock() {
+  if (state.activeCall.wakeLock) {
+    try { state.activeCall.wakeLock.release(); } catch(e) {}
+    state.activeCall.wakeLock = null;
+  }
+}
+
 function startCallTimer() {
+  requestCallWakeLock();
   if (state.activeCall.timerInterval) return;
   state.activeCall.startTime = Date.now();
   const timerEl = document.getElementById('call-duration-timer');
