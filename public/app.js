@@ -2743,7 +2743,7 @@ async function startOutgoingCallWithCustomStream(targetPeer, customStream, strea
   }
 
   openModal('modal-active-call');
-  updateCallStreamTitleUI(query || 'Live Media Stream');
+  updateCallStreamTitleUI(streamTitle || 'Live Media Stream');
 
   const pc = new RTCPeerConnection(RTC_CONFIG);
   state.activeCall.pc = pc;
