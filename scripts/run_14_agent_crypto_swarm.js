@@ -2,7 +2,19 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
+// Automatically load .env if present
+if (fs.existsSync(path.join(__dirname, '../.env'))) {
+  const envContent = fs.readFileSync(path.join(__dirname, '../.env'), 'utf8');
+  for (const line of envContent.split('
+')) {
+    const match = line.match(/^([^=]+)=(.*)$/);
+    if (match && !process.env[match[1].trim()]) {
+      process.env[match[1].trim()] = match[2].trim();
+    }
+  }
+}
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || "";
+
 
 async function callDeepSeek(agentName, systemPrompt, userPrompt) {
   console.log(`[Swarm] 🤖 Launching ${agentName}...`);
