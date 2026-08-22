@@ -438,11 +438,14 @@ class ZbatCrypto {
     };
   }
 
-  static deriveSharedKey(localPrivKeyHex, remotePubKeyHex) {
+  static deriveSharedKey(localPrivKeyHex, remotePubKeyHex, senderId = 'peerA', targetId = 'peerB') {
     const ecdh = crypto.createECDH("prime256v1");
     ecdh.setPrivateKey(Buffer.from(localPrivKeyHex, "hex"));
     const rawSecret = ecdh.computeSecret(Buffer.from(remotePubKeyHex, "hex"));
-    const sharedKey = crypto.createHash("sha256").update(rawSecret).digest();
+    const salt = Buffer.from("wyresup-miftah-v2-salt", "utf8");
+    const sorted = [senderId || 'peerA', targetId || 'peerB'].sort().join(':');
+    const info = Buffer.from(`wyresup-authenticated-session:${sorted}`, "utf8");
+    const sharedKey = Buffer.from(crypto.hkdfSync("sha256", rawSecret, salt, info, 32));
     tamsScrub(rawSecret);
     return sharedKey;
   }

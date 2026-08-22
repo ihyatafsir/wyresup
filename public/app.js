@@ -57,19 +57,72 @@ function generateClientMessageId() {
   return id;
 }
 
+// --- TOFU (Trust On First Use) Cryptographic Key Pinning Store ---
+const TOFU_STORAGE_KEY = 'wyresup_tofu_pinned_keys_v1';
+
+function getPinnedPeerKeys(peerId) {
+  try {
+    const store = JSON.parse(localStorage.getItem(TOFU_STORAGE_KEY) || '{}');
+    return store[peerId] || null;
+  } catch {
+    return null;
+  }
+}
+
+function pinPeerKeys(peerId, ecdhPubKey, signPubKey) {
+  try {
+    const store = JSON.parse(localStorage.getItem(TOFU_STORAGE_KEY) || '{}');
+    if (!store[peerId]) {
+      store[peerId] = { ecdhPubKey, signPubKey, pinnedAt: Date.now() };
+      localStorage.setItem(TOFU_STORAGE_KEY, JSON.stringify(store));
+      console.log(`[WyreCrypto TOFU] Pinned cryptographic identity keys for @${peerId}`);
+    }
+  } catch (e) {
+    console.warn("[WyreCrypto TOFU] Failed to persist pinned key:", e);
+  }
+}
+
+function appendSystemNotice(text) {
+  const channelId = state.currentChannelId;
+  if (!state.messages.has(channelId)) state.messages.set(channelId, []);
+  const noticePacket = {
+    zahir: {
+      version: 'zbat/1.5.0',
+      messageId: 'sys_' + Date.now(),
+      senderId: 'system@mesh',
+      channelId,
+      timestamp: Date.now(),
+      isEncrypted: false
+    },
+    batin: { content: text },
+    isSystem: true
+  };
+  state.messages.get(channelId).push(noticePacket);
+  appendMessageToDOM(noticePacket);
+  scrollToBottom();
+}
+
 async function getOrDeriveSharedKey(peer) {
-  if (!state.crypto.isSupported || !state.crypto.keys) return null;
+  if (!WyreCrypto.isSupported() || !state.crypto.keys) return null;
   const peerId = typeof peer === "string" ? peer : (peer.peerId || peer.fullId);
 
   if (state.crypto.sharedKeyCache.has(peerId)) {
     return state.crypto.sharedKeyCache.get(peerId);
   }
 
-  let remoteEcdhJwk = peer && peer.ecdhPubKey;
+  // 1. Check TOFU pinned keys first
+  let remoteEcdhJwk = null;
+  const pinned = getPinnedPeerKeys(peerId);
+  if (pinned && pinned.ecdhPubKey) {
+    remoteEcdhJwk = pinned.ecdhPubKey;
+  }
+
+  // 2. Check live peer announcement
   if (!remoteEcdhJwk) {
     const knownPeer = state.peers.find(p => p.peerId === peerId || p.prefix === peerId.split('@')[0]);
     if (knownPeer && knownPeer.ecdhPubKey) {
       remoteEcdhJwk = knownPeer.ecdhPubKey;
+      pinPeerKeys(peerId, knownPeer.ecdhPubKey, knownPeer.signPubKey);
     }
   }
 
@@ -169,16 +222,9 @@ async function sendEncryptedDm(dmChannelId, rawPayload) {
     };
     handleIncomingGossipPacket(localEchoPacket);
   } else {
-    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
-      state.ws.send(JSON.stringify({
-        type: "SEND_MESSAGE",
-        payload: {
-          spaceId: state.currentSpaceId,
-          channelId: dmChannelId,
-          ...rawPayload
-        }
-      }));
-    }
+    // STRICT FAIL-CLOSED POLICY (H-001): Never fall back to plaintext for Direct Messages!
+    console.error(`[WyreCrypto Fail-Closed] Cannot deliver DM to @${targetPrefix}: Recipient key unavailable.`);
+    appendSystemNotice(`🔒 [Miftah Security Policy]: Direct Message to @${targetPrefix} was blocked from sending in plaintext. Awaiting recipient public key announcement on the mesh.`);
   }
 }
 
@@ -186,6 +232,8 @@ class WyreCrypto {
   static isSupported() {
     return !!(window.crypto && window.crypto.subtle);
   }
+
+  static async generateKeyPairs() { return this.generateIdentityKeys(); }
 
   static async generateIdentityKeys() {
     if (!this.isSupported()) return null;
@@ -707,7 +755,7 @@ async function handleIncomingGossipPacket(packet) {
   const list = state.messages.get(channelId);
   if (list.some(m => m.zahir.messageId === messageId)) return;
 
-  // Real Authenticated AEAD Decryption with ECDSA Signature Verification
+  // Real Authenticated AEAD Decryption with TOFU & ECDSA Signature Verification
   if (isEncrypted && packet.batin && packet.batin.ciphertext) {
     packet.isEncrypted = true;
     if (senderId === state.identity.fullId && packet.isDecrypted) {
@@ -721,25 +769,53 @@ async function handleIncomingGossipPacket(packet) {
         timestamp
       };
 
-      // 1. Verify ECDSA signature if attached
-      let signatureVerified = false;
-      if (signature && encryptionMeta?.senderSignPubKey) {
-        const signPubKey = await WyreCrypto.importRemoteSignPublicKey(encryptionMeta.senderSignPubKey);
-        if (signPubKey) {
-          const dataToVerify = new TextEncoder().encode(
-            `${packet.batin.ciphertext}:${packet.batin.iv}:${JSON.stringify(authContext)}`
-          );
-          signatureVerified = await WyreCrypto.verifyPacket(dataToVerify, signature, signPubKey);
-          if (!signatureVerified) {
-            console.warn(`[WyreCrypto Security Alert] Dropping forged/tampered message ${messageId} from ${senderId}!`);
-            return;
-          }
+      // 1. Strict TOFU Key Pinning & Anti-Impersonation Check (H-002)
+      let trustedSignPubKeyJwk = null;
+      let trustedEcdhPubKeyJwk = null;
+      const pinned = getPinnedPeerKeys(senderId);
+
+      if (pinned) {
+        trustedSignPubKeyJwk = pinned.signPubKey;
+        trustedEcdhPubKeyJwk = pinned.ecdhPubKey;
+        // Key change detection
+        if (encryptionMeta?.senderSignPubKey && JSON.stringify(pinned.signPubKey) !== JSON.stringify(encryptionMeta.senderSignPubKey)) {
+          console.error(`[WyreCrypto TOFU Alert] Key mismatch for @${senderId}! Possible MITM/Impersonation attack. Packet dropped.`);
+          return;
         }
+      } else if (encryptionMeta?.senderSignPubKey && encryptionMeta?.senderPubKey) {
+        // Trust On First Use (TOFU)
+        pinPeerKeys(senderId, encryptionMeta.senderPubKey, encryptionMeta.senderSignPubKey);
+        trustedSignPubKeyJwk = encryptionMeta.senderSignPubKey;
+        trustedEcdhPubKeyJwk = encryptionMeta.senderPubKey;
       }
 
-      const senderPeer = state.peers.find(p => p.peerId === senderId) || { peerId: senderId, ecdhPubKey: encryptionMeta?.senderPubKey };
-      if (encryptionMeta?.senderPubKey) {
-        senderPeer.ecdhPubKey = encryptionMeta.senderPubKey;
+      // 2. Strict Signature Enforcement (Fail-Closed)
+      if (!signature || !trustedSignPubKeyJwk) {
+        console.warn(`[WyreCrypto Security Alert] Dropping unauthenticated message ${messageId} from ${senderId}: Missing valid signature or signing key!`);
+        return;
+      }
+
+      const signPubKey = await WyreCrypto.importRemoteSignPublicKey(trustedSignPubKeyJwk);
+      if (!signPubKey) {
+        console.warn(`[WyreCrypto Security Alert] Could not import signing key for ${senderId}. Message dropped.`);
+        return;
+      }
+
+      const dataToVerify = new TextEncoder().encode(
+        `${packet.batin.ciphertext}:${packet.batin.iv}:${JSON.stringify(authContext)}`
+      );
+      const isSignatureValid = await WyreCrypto.verifyPacket(dataToVerify, signature, signPubKey);
+      if (!isSignatureValid) {
+        console.error(`[WyreCrypto Security Alert] Signature verification FAILED for message ${messageId} from ${senderId}! Dropping forged packet.`);
+        return;
+      }
+
+      const senderPeer = state.peers.find(p => p.peerId === senderId) || {
+        peerId: senderId,
+        ecdhPubKey: trustedEcdhPubKeyJwk
+      };
+      if (trustedEcdhPubKeyJwk) {
+        senderPeer.ecdhPubKey = trustedEcdhPubKeyJwk;
       }
 
       const sharedKey = await getOrDeriveSharedKey(senderPeer);
@@ -748,7 +824,7 @@ async function handleIncomingGossipPacket(packet) {
         if (decryptedBatin) {
           packet.batin = decryptedBatin;
           packet.isDecrypted = true;
-          packet.isSignatureVerified = signatureVerified;
+          packet.isSignatureVerified = true;
         } else {
           packet.batin = { content: "🔒 [ZBAT AEAD Auth Tag Verification Failed — Tampered Packet]" };
           packet.isDecrypted = false;

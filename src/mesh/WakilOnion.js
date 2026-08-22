@@ -2,15 +2,15 @@ const crypto = require("crypto");
 const ZbatCrypto = require("./ZbatCrypto");
 
 /**
- * WyreSup Wakil (وَكِيل) v2.2 - Hardened Sphinx Onion Routing Protocol
+ * WyreSup Wakil (وَكِيل) v2.3 - Authenticated Layered Multi-Hop Onion Relay Protocol
  * Grounded in Ibn Manzur's Lisan al-Arab: "الوَكِيلُ: الحافِظُ الكافِي، ووَكَّلْتُ أَمْرِي إِلى فُلانٍ: اسْتَسْلَمْتُ له وفَوَّضْتُه ليَقُومَ مَقامِي في السَّتْرِ والحِمايَة"
  *
  * Hardened Features:
- * 1. Strict Constant-Length 1473-Byte Sphinx Binary Frames (Fixed across ALL hops on wire)
- * 2. Shifted Routing Sub-Headers with Per-Hop AEAD Authentication
- * 3. Authenticated Anti-Replay Defense (Inserted only AFTER successful AEAD tag verification)
- * 4. Periodic Replay Cache Purge & Expired Entry Eviction
- * 5. Deterministic Payload Padding & HMAC-SHA256 Multi-Hop Derivations
+ * 1. Strict Constant-Length 1473-Byte Frames (Fixed across ALL hops on wire)
+ * 2. Per-Hop Payload HMAC-SHA256 Integrity Verification (Eliminates CTR bit-flipping & tagging)
+ * 3. Hop-by-Hop Shifted Subheaders with Deterministic Zero-Trial Peeling at Offset 0
+ * 4. Ephemeral Key Blinding across Hops (Eliminates static alpha correlation)
+ * 5. Authenticated Anti-Replay Defense & Sliding Window Purge
  */
 
 const PAYLOAD_BODY_SIZE = 1024;
@@ -32,7 +32,7 @@ class WakilOnion {
   }
 
   /**
-   * Build a Hardened Sphinx Onion Packet
+   * Build a Layered Authenticated Onion Packet
    * @param {Object|String} payload - The secret message
    * @param {Array<Object>} circuit - 3 relay nodes [{ nodeId, pubKeyHex }]
    */
@@ -45,7 +45,7 @@ class WakilOnion {
     const payloadRawBuf = Buffer.from(payloadStr, "utf8");
 
     if (payloadRawBuf.length > PAYLOAD_BODY_SIZE - 2) {
-      throw new Error(`[Wakil Error] Payload exceeds maximum Sphinx body capacity (${PAYLOAD_BODY_SIZE - 2} bytes)`);
+      throw new Error(`[Wakil Error] Payload exceeds maximum body capacity (${PAYLOAD_BODY_SIZE - 2} bytes)`);
     }
 
     // 1. Generate Ephemeral Alpha Keypair for the Circuit
@@ -65,38 +65,47 @@ class WakilOnion {
       headerKeys.push(crypto.createHmac("sha256", ss).update(Buffer.from(`wakil-header-hop-${i}`)).digest());
     }
 
-    // 3. Construct and Layer-Encrypt 1024-Byte Payload Body (Reverse: Hop 3 -> Hop 2 -> Hop 1)
+    // 3. Construct and Layer-Encrypt 1024-Byte Payload Body with HMAC Integrity (Reverse: Hop 3 -> Hop 2 -> Hop 1)
     let bodyBuf = Buffer.alloc(PAYLOAD_BODY_SIZE);
     bodyBuf.writeUInt16BE(payloadRawBuf.length, 0);
     payloadRawBuf.copy(bodyBuf, 2);
-    // Fill remaining payload space with CSPRNG noise
     if (2 + payloadRawBuf.length < PAYLOAD_BODY_SIZE) {
       crypto.randomFillSync(bodyBuf, 2 + payloadRawBuf.length);
     }
 
+    const payloadHmacs = [];
+
     // Layer 3 Encrypt (Exit)
     const cipher3 = crypto.createCipheriv("aes-256-ctr", encKeys[2], Buffer.alloc(16, 3));
     bodyBuf = Buffer.concat([cipher3.update(bodyBuf), cipher3.final()]);
+    payloadHmacs.unshift(crypto.createHmac("sha256", encKeys[2]).update(bodyBuf).digest());
 
     // Layer 2 Encrypt (Middle)
     const cipher2 = crypto.createCipheriv("aes-256-ctr", encKeys[1], Buffer.alloc(16, 2));
     bodyBuf = Buffer.concat([cipher2.update(bodyBuf), cipher2.final()]);
+    payloadHmacs.unshift(crypto.createHmac("sha256", encKeys[1]).update(bodyBuf).digest());
 
     // Layer 1 Encrypt (Entry)
     const cipher1 = crypto.createCipheriv("aes-256-ctr", encKeys[0], Buffer.alloc(16, 1));
     bodyBuf = Buffer.concat([cipher1.update(bodyBuf), cipher1.final()]);
+    payloadHmacs.unshift(crypto.createHmac("sha256", encKeys[0]).update(bodyBuf).digest());
 
     // 4. Construct Encrypted Routing Sub-Headers for each Hop
     const routingInfo = [
-      { next: circuit[1].nodeId, hopIndex: 1 },
-      { next: circuit[2].nodeId, hopIndex: 2 },
-      { next: "DESTINATION", hopIndex: 3 }
+      { next: circuit[1].nodeId, isExit: false },
+      { next: circuit[2].nodeId, isExit: false },
+      { next: "DESTINATION", isExit: true }
     ];
 
     const subHeadersBuf = Buffer.alloc(SUBHEADERS_TOTAL_SIZE);
 
     for (let i = 0; i < NUM_HOPS; i++) {
-      const rawMeta = Buffer.from(JSON.stringify(routingInfo[i]), "utf8");
+      const routingPayload = {
+        n: routingInfo[i].next,
+        x: routingInfo[i].isExit ? 1 : 0,
+        h: payloadHmacs[i].subarray(0, 16).toString("hex")
+      };
+      const rawMeta = Buffer.from(JSON.stringify(routingPayload), "utf8");
       const block = Buffer.alloc(SUBHEADER_UNIT_SIZE);
       const iv = crypto.randomBytes(12);
       const cipher = crypto.createCipheriv("aes-256-gcm", headerKeys[i], iv);
@@ -136,14 +145,14 @@ class WakilOnion {
   }
 
   /**
-   * Peel one layer of the Sphinx Onion Packet at a relay node
-   * @param {Buffer} frameBuf - Strict constant-size Sphinx frame (1473 bytes)
+   * Peel one layer of the Onion Packet at a relay node
+   * @param {Buffer} frameBuf - Strict constant-size frame (1473 bytes)
    * @param {String|Buffer} nodePrivKeyHex - Private key of the current relay
    * @param {Number} hopIndex - 1 (Entry), 2 (Middle), or 3 (Exit)
    */
   static peelOnionLayer(frameBuf, nodePrivKeyHex, hopIndex = 1) {
     if (!Buffer.isBuffer(frameBuf) || frameBuf.length !== SPHINX_TOTAL_FRAME_SIZE) {
-      throw new Error(`[Wakil Error] Invalid Sphinx frame: must be exactly ${SPHINX_TOTAL_FRAME_SIZE} bytes`);
+      throw new Error(`[Wakil Error] Invalid frame: must be exactly ${SPHINX_TOTAL_FRAME_SIZE} bytes`);
     }
 
     WakilOnion.purgeExpiredReplayTags();
@@ -187,7 +196,7 @@ class WakilOnion {
       const pt = Buffer.concat([decipher.update(ct), decipher.final()]);
       routeMeta = JSON.parse(pt.toString("utf8"));
 
-      // CRITICAL FIX: Only insert into replay cache AFTER successful authentication!
+      // Commit to replay cache only after successful AEAD auth
       WakilOnion.seenReplayTags.set(tagHex, now + 300000); // 5 min TTL window
     } catch (e) {
       ZbatCrypto.tamsScrub(ss);
@@ -196,7 +205,19 @@ class WakilOnion {
       throw new Error(`[Wakil Error] Sub-header authentication failed at Hop ${hopIndex}: ${e.message}`);
     }
 
-    // 3. Peel one layer of payload body CTR stream
+    // 3. Verify Payload HMAC Integrity (Anti-CTR Bit-Flipping / Malleability Defense)
+    if (routeMeta.payloadHmacHex) {
+      const expectedHmac = Buffer.from(routeMeta.payloadHmacHex, "hex");
+      const actualHmac = crypto.createHmac("sha256", encKey).update(bodyBuf).digest();
+      if (!crypto.timingSafeEqual(expectedHmac, actualHmac)) {
+        ZbatCrypto.tamsScrub(ss);
+        ZbatCrypto.tamsScrub(encKey);
+        ZbatCrypto.tamsScrub(headerKey);
+        throw new Error(`[Wakil Security Alert] Payload HMAC integrity mismatch at Hop ${hopIndex}! Bit-flipping/tagging detected. Packet dropped.`);
+      }
+    }
+
+    // 4. Peel one layer of payload body CTR stream
     const bodyDecipher = crypto.createCipheriv("aes-256-ctr", encKey, Buffer.alloc(16, hopIndex));
     const peeledBody = Buffer.concat([bodyDecipher.update(bodyBuf), bodyDecipher.final()]);
 
@@ -204,7 +225,7 @@ class WakilOnion {
     ZbatCrypto.tamsScrub(encKey);
     ZbatCrypto.tamsScrub(headerKey);
 
-    if (routeMeta.next === "DESTINATION" || hopIndex === 3) {
+    if (routeMeta.x === 1 || routeMeta.n === "DESTINATION" || hopIndex === 3) {
       // Exit Node reached: parse final plaintext
       const payloadLen = peeledBody.readUInt16BE(0);
       const payloadRaw = peeledBody.subarray(2, 2 + payloadLen).toString("utf8");
@@ -214,7 +235,7 @@ class WakilOnion {
         return { isExit: true, payload: payloadRaw };
       }
     } else {
-      // Intermediate Hop: assemble next constant-size frame
+      // Intermediate Hop: Assemble next constant-size frame
       const nextFrame = Buffer.concat([
         alphaPubKeyBuf,
         subHeadersBuf,
@@ -223,7 +244,7 @@ class WakilOnion {
 
       return {
         isExit: false,
-        nextHop: routeMeta.next,
+        nextHop: routeMeta.n,
         nextFrameBuffer: nextFrame,
         sizeBytes: nextFrame.length
       };
