@@ -1,7 +1,7 @@
 {
   "name": "wyresup-mesh-app",
-  "version": "1.7.0",
-  "description": "WyreSup Decentralized P2P Cryptographic Mesh Messenger (v1.7.0)",
+  "version": "1.8.0",
+  "description": "WyreSup Decentralized P2P Cryptographic Mesh Messenger (v1.8.0) - Mobile-First Precision & Lisan Arabic-Crypto Engine",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

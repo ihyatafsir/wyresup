@@ -12,12 +12,13 @@ class ImamRaziLibrary {
 
     const files = fs.readdirSync(dir).filter(f => f.endsWith('.epub'));
     
-    // Group catalog
+    // Group catalog into rigorous scholarly classifications
     const catalog = {
       tafsirKabir: [],
       matalib: [],
+      firaqAndFiqh: [],
       kalamTreatises: [],
-      companions: []
+      spiritualClassics: []
     };
 
     files.sort().forEach(file => {
@@ -26,6 +27,7 @@ class ImamRaziLibrary {
       const sizeStr = (stats.size / (1024 * 1024)).toFixed(2) + ' MB';
       const downloadUrl = `/epubs/${file}`;
 
+      // 1. Tafsir al-Kabir (Mafatih al-Ghayb)
       if (file.startsWith('tafsir_kabir_')) {
         const volMatch = file.match(/vol_(\d+)/);
         const volNum = volMatch ? parseInt(volMatch[1], 10) : 1;
@@ -35,12 +37,14 @@ class ImamRaziLibrary {
           title: `Tafsir al-Kabir (Mafatih al-Ghayb) — Volume ${volNum}`,
           arabicTitle: `التفسير الكبير (مفاتيح الغيب) — المجلد ${volNum}`,
           author: 'Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي)',
-          category: 'Tafsir & Quranic Sciences',
+          category: 'Tafsir & Quranic Sciences (التفسير وعلوم القرآن)',
           volume: volNum,
           size: sizeStr,
           downloadUrl
         });
-      } else if (file.startsWith('al_matalib_')) {
+      } 
+      // 2. Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi
+      else if (file.startsWith('al_matalib_')) {
         const volMatch = file.match(/vol_(\d+)/);
         const volNum = volMatch ? parseInt(volMatch[1], 10) : 'Complete';
         const isLex = file.includes('ar_lex');
@@ -50,38 +54,62 @@ class ImamRaziLibrary {
           title: `Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi ${volNum === 'Complete' ? '— Complete Edition' : `— Volume ${volNum}`} ${isLex ? '(Arabic Lexicon Edition)' : '(Pure English)'}`,
           arabicTitle: `المطالب العالية من العلم الإلهي ${volNum === 'Complete' ? '(المجموعة الكاملة)' : `(الجزء ${volNum})`}`,
           author: 'Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي)',
-          category: 'Theology & Metaphysics',
+          category: 'Theology & Metaphysics (العلم الإلهي والميتافيزيقا)',
           volume: volNum,
           size: sizeStr,
           downloadUrl
         });
-      } else if (file.startsWith('al_shifa_') || file.startsWith('al_futuhat_')) {
-        const isShifa = file.startsWith('al_shifa_');
-        const lang = file.endsWith('_sq.epub') ? 'Albanian (Shqip)' : 'English';
-        catalog.companions.push({
-          id: file.replace('.epub', ''),
-          filename: file,
-          title: isShifa ? `Al-Shifa bi-Ta'rif Huquq al-Mustafa (${lang})` : `Al-Futuhat al-Makkiyya (${lang})`,
-          arabicTitle: isShifa ? 'الشفا بتعريف حقوق المصطفى' : 'الفتوحات المكية',
-          author: isShifa ? "Qadi 'Iyad al-Yahsubi (القاضي عياض)" : "Shaykh al-Akbar Ibn 'Arabi (الشيخ الأكبر ابن عربي)",
-          category: isShifa ? 'Prophetic Biography & Shama\'il' : 'Islamic Metaphysics & Sufism',
-          size: sizeStr,
-          downloadUrl
-        });
-      } else {
-        // Other treaties of Imam Razi
-        let title = file.replace('.epub', '').replace(/_/g, ' ');
-        let arabicTitle = 'رسائل الإمام الرازي';
-        
-        if (file.includes('itiqadat') || file.includes('firaq') || file.includes('firqa')) {
+      }
+      // 3. Firaq (Sects & Heresiography) & Usul al-Fiqh
+      else if (file.includes('itiqadat') || file.includes('firaq') || file.includes('firqa') || file.includes('mahsul')) {
+        let title = '';
+        let arabicTitle = '';
+        let category = 'Comparative Heresiography & Usul al-Fiqh (الفرق وأصول الفقه)';
+
+        if (file.includes('mahsul')) {
+          title = "Al-Mahsul fi 'Ilm Usul al-Fiqh (The Sum Total in Jurisprudence) [Arabic Lexicon Edition]";
+          arabicTitle = 'المحصول في علم أصول الفقه';
+          category = 'Usul al-Fiqh & Legal Methodology (أصول الفقه)';
+        } else {
           const isLex = file.includes('ar_lex');
           const isGuided = file.includes('guided');
           title = "I'tiqadat Firaq al-Muslimin wa'l-Mushrikin (Beliefs of Muslim & Non-Muslim Sects) " + (isLex ? '[Arabic Lexicon Edition]' : (isGuided ? '[Guided Translation]' : '[Standard Complete Edition]'));
           arabicTitle = 'اعتقادات فرق المسلمين والمشركين';
-        } else if (file.includes('mahsul')) {
-          title = "Al-Mahsul fi 'Ilm Usul al-Fiqh (The Sum Total in Jurisprudence) [Arabic Lexicon Edition]";
-          arabicTitle = 'المحصول في علم أصول الفقه';
-        } else if (file.startsWith('al_qada') || file.startsWith('qada_')) {
+          category = 'Comparative Heresiography & Sects (الفِرَق والمذاهب)';
+        }
+
+        catalog.firaqAndFiqh.push({
+          id: file.replace('.epub', ''),
+          filename: file,
+          title,
+          arabicTitle,
+          author: 'Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي)',
+          category,
+          size: sizeStr,
+          downloadUrl
+        });
+      }
+      // 4. Spiritual & Prophetic Classics ('Irfan, Tasawwuf & Shama'il)
+      else if (file.startsWith('al_shifa_') || file.startsWith('al_futuhat_')) {
+        const isShifa = file.startsWith('al_shifa_');
+        const lang = file.endsWith('_sq.epub') ? 'Albanian (Shqip)' : 'English';
+        catalog.spiritualClassics.push({
+          id: file.replace('.epub', ''),
+          filename: file,
+          title: isShifa ? `Al-Shifa bi-Ta'rif Huquq al-Mustafa (${lang})` : `Al-Futuhat al-Makkiyya (${lang})`,
+          arabicTitle: isShifa ? 'الشفا بتعريف حقوق المصطفى' : 'الفتوحات المكية',
+          author: isShifa ? "Qadi 'Iyad al-Yahsubi (القاضي عياض)" : "Shaykh al-Akbar Ibn 'Arabi (الشيخ الأكبر محيي الدين بن عربي)",
+          category: isShifa ? 'Prophetic Biography & Shama\'il (السيرة والشمائل المحمدية)' : 'Islamic Metaphysics, Tasawwuf & Irfan (التصوف والعرفان الإلهي)',
+          size: sizeStr,
+          downloadUrl
+        });
+      }
+      // 5. Core Kalam & Philosophical Theology Treatises of Imam Razi
+      else {
+        let title = file.replace('.epub', '').replace(/_/g, ' ');
+        let arabicTitle = 'رسائل الإمام الرازي';
+        
+        if (file.startsWith('al_qada') || file.startsWith('qada_')) {
           title = "Al-Qada' wa'l-Qadar (Treatise on Divine Decree & Destiny)";
           arabicTitle = 'رسالة في القضاء والقدر';
         } else if (file.includes('asas')) {
@@ -110,7 +138,7 @@ class ImamRaziLibrary {
           title,
           arabicTitle,
           author: 'Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي)',
-          category: 'Kalam & Philosophical Theology',
+          category: 'Kalam & Philosophical Theology (علم الكلام وأصول الدين)',
           size: sizeStr,
           downloadUrl
         });
