@@ -1,4 +1,28 @@
 
+// --- High-Fidelity Linear Interpolation PCM Resampler ---
+function resamplePCM(input, sourceRate, targetRate) {
+  if (!input || input.length === 0 || sourceRate === targetRate || !sourceRate || !targetRate) {
+    return input;
+  }
+  const ratio = sourceRate / targetRate;
+  const outputLength = Math.round(input.length / ratio);
+  const output = new Float32Array(outputLength);
+
+  for (let i = 0; i < outputLength; i++) {
+    const position = i * ratio;
+    const index = Math.floor(position);
+    const fraction = position - index;
+
+    if (index >= input.length - 1) {
+      output[i] = input[input.length - 1];
+    } else {
+      output[i] = input[index] * (1 - fraction) + input[index + 1] * fraction;
+    }
+  }
+  return output;
+}
+
+
 function updateCallStreamTitleUI(title) {
   const banner = document.getElementById('call-video-title-banner');
   const titleText = document.getElementById('call-video-title-text');
@@ -2970,9 +2994,12 @@ function handleIncomingNafaqPcm(payload) {
       float32[i] = pcm16[i] / (pcm16[i] < 0 ? 0x8000 : 0x7FFF);
     }
 
-    const rate = sampleRate || state.audioCtx.sampleRate;
-    const audioBuffer = state.audioCtx.createBuffer(1, float32.length, rate);
-    audioBuffer.getChannelData(0).set(float32);
+    const sourceRate = sampleRate || state.audioCtx.sampleRate;
+    const targetRate = state.audioCtx.sampleRate;
+    const resampledData = (sourceRate === targetRate) ? float32 : resamplePCM(float32, sourceRate, targetRate);
+
+    const audioBuffer = state.audioCtx.createBuffer(1, resampledData.length, targetRate);
+    audioBuffer.getChannelData(0).set(resampledData);
 
     const source = state.audioCtx.createBufferSource();
     source.buffer = audioBuffer;

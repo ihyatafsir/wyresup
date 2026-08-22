@@ -3312,3 +3312,20 @@ html, body {
   font-weight: 900;
   letter-spacing: 0.5px;
 }
+
+/* Swarm v3 Mobile Call Dock Touch Optimization */
+.call-ctrl-btn {
+  min-width: 52px !important;
+  min-height: 52px !important;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+.topbar-call-btn {
+  min-width: 44px !important;
+  min-height: 44px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+}
