@@ -148,14 +148,48 @@ async function getOrDeriveSharedKey(peer) {
 
 async function sendEncryptedDm(dmChannelId, rawPayload) {
   const targetPrefix = dmChannelId.replace("dm-", "");
+  const messageId = generateClientMessageId();
+  const timestamp = Date.now();
+
+  // Special Handling for Sovereign AI Companion (Antigravity)
+  if (targetPrefix === "antigravity" || targetPrefix.includes("antigravity")) {
+    const aiPacket = {
+      zahir: {
+        version: "zbat/1.5.0",
+        messageId,
+        senderId: state.identity.fullId,
+        senderPrefix: state.identity.prefix,
+        spaceId: state.currentSpaceId,
+        channelId: dmChannelId,
+        timestamp,
+        ttl: 5,
+        hops: 0,
+        routeType: "direct_ai_dm",
+        priority: "high",
+        isVoice: !!rawPayload.voiceData,
+        isEncrypted: false
+      },
+      batin: rawPayload
+    };
+
+    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({ type: "GOSSIP_PACKET", payload: aiPacket }));
+    }
+    const localEchoPacket = {
+      zahir: aiPacket.zahir,
+      batin: rawPayload,
+      isEncrypted: false,
+      isDecrypted: true
+    };
+    handleIncomingGossipPacket(localEchoPacket);
+    return;
+  }
   const targetPeer = state.peers.find(p => p.prefix === targetPrefix || p.peerId.startsWith(targetPrefix)) || {
     peerId: `${targetPrefix}@mesh`,
     prefix: targetPrefix
   };
 
   const sharedKey = await getOrDeriveSharedKey(targetPeer);
-  const messageId = generateClientMessageId();
-  const timestamp = Date.now();
 
   if (sharedKey) {
     // 1. Authenticated Metadata Context (Bound to GCM Tag via additionalData)

@@ -22,6 +22,13 @@ class MajlisManager {
       description: 'The root decentralized gossip mesh for WyreSup nodes.',
       channels: [
         {
+          id: 'dm-antigravity',
+          name: '🤖 antigravity',
+          type: 'text',
+          icon: '🤖',
+          topic: '🔒 Private AI Pair-Programming Session (رَفِيقُكَ المُسَاعِد) — Prompt Antigravity directly in DM.'
+        },
+        {
           id: 'chan-general',
           name: 'general',
           type: 'text',
