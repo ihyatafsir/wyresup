@@ -1027,8 +1027,9 @@ function appendMessageToDOM(packet) {
         const filename = att.name;
         const isTafsir = att.name.startsWith('tafsir_kabir_');
         const isMatalib = att.name.startsWith('al_matalib_');
-        const isFiraq = att.name.includes('itiqadat') || att.name.includes('firaq') || att.name.includes('firqa');
-        const badgeTag = isFiraq ? "I'tiqadat Firaq al-Muslimin" : (isTafsir ? "Tafsir al-Kabir" : (isMatalib ? "Al-Matalib al-'Aliyyah" : "Kalam Masterwork"));
+        const isFiraq = att.name.includes('itiqadat') || att.name.includes('firaq') || att.name.includes('firqa') || att.name.includes('mahsul');
+        const isSpiritual = att.name.startsWith('al_futuhat_') || att.name.startsWith('al_shifa_');
+        const badgeTag = isFiraq ? "Firaq & Usul" : (isSpiritual ? "Irfan & Shama'il" : (isTafsir ? "Tafsir al-Kabir" : (isMatalib ? "Al-Matalib al-'Aliyyah" : "Kalam Masterwork")));
         bodyHtml += `
           <a href="${att.data}" download="${escapeHtml(att.name)}" class="msg-epub-card" title="Click to download ${escapeHtml(cleanName)}">
             <div class="epub-card-header">
@@ -2376,7 +2377,7 @@ async function createYouTubeMediaStream(streamInfo) {
   video.loop = true;
   video.autoplay = true;
   video.playsInline = true;
-  video.muted = false;
+  video.muted = true;
   video.volume = 1.0;
 
   // Wait for canplay / loadeddata (max 3s)
@@ -2513,6 +2514,14 @@ async function startOutgoingCallWithCustomStream(targetPeer, customStream, strea
     localVideo.play().catch(() => {});
   }
 
+  // Ensure background audio element is muted to prevent duplicate audio
+  const remoteAudio = document.getElementById('call-remote-audio');
+  if (remoteAudio) {
+    remoteAudio.pause();
+    remoteAudio.srcObject = null;
+    remoteAudio.muted = true;
+  }
+
   // Display video directly in the main central stage
   const remoteVideo = document.getElementById('call-remote-video');
   const fallback = document.getElementById('remote-avatar-fallback');
@@ -2610,28 +2619,40 @@ function attachRemoteStreamToMediaElements(stream, callType) {
   const fallback = document.getElementById('remote-avatar-fallback');
   const voicePulse = document.getElementById('call-voice-pulse');
 
-  if (remoteVideo) {
-    remoteVideo.srcObject = stream;
-    remoteVideo.muted = false;
-    remoteVideo.volume = 1.0;
-    remoteVideo.play().catch(e => console.warn('[Video play warning]:', e));
-    if (callType === 'video' && fallback) {
-      fallback.style.display = 'none';
+  if (callType === 'video') {
+    // Single audio route through video player to prevent double playback
+    if (remoteAudio) {
+      remoteAudio.pause();
+      remoteAudio.srcObject = null;
+      remoteAudio.muted = true;
     }
-  }
-
-  if (remoteAudio) {
-    remoteAudio.srcObject = stream;
-    remoteAudio.muted = false;
-    remoteAudio.volume = 1.0;
-    remoteAudio.play().catch(e => console.warn('[Audio play warning]:', e));
-  }
-
-  if (callType === 'audio') {
+    if (remoteVideo) {
+      remoteVideo.srcObject = stream;
+      remoteVideo.muted = false;
+      remoteVideo.volume = 1.0;
+      remoteVideo.play().catch(e => {
+        console.warn('[Video play fallback]:', e);
+        remoteVideo.muted = true;
+        remoteVideo.play().catch(() => {});
+      });
+      if (fallback) fallback.style.display = 'none';
+    }
+    if (voicePulse) voicePulse.style.display = 'none';
+  } else {
+    // Voice-only call route
+    if (remoteVideo) {
+      remoteVideo.pause();
+      remoteVideo.srcObject = null;
+      remoteVideo.muted = true;
+    }
+    if (remoteAudio) {
+      remoteAudio.srcObject = stream;
+      remoteAudio.muted = false;
+      remoteAudio.volume = 1.0;
+      remoteAudio.play().catch(e => console.warn('[Audio play warning]:', e));
+    }
     if (fallback) fallback.style.display = 'flex';
     if (voicePulse) voicePulse.style.display = 'flex';
-  } else {
-    if (voicePulse) voicePulse.style.display = 'none';
   }
 }
 
@@ -2833,23 +2854,36 @@ async function acceptIncomingCall() {
   document.getElementById('call-remote-avatar-name').textContent = state.activeCall.peerPrefix;
   document.getElementById('call-remote-status-text').textContent = 'P2P Stream Active // Damascus (Gorillaz ft. Yasiin Bey)';
 
-  if (rVideo) {
-    rVideo.src = streamUrl;
-    rVideo.style.display = 'block';
-    rVideo.muted = false;
-    rVideo.volume = 1.0;
-    rVideo.play().catch(() => {
+  if (callType === 'video') {
+    if (rAudio) {
+      rAudio.pause();
+      rAudio.srcObject = null;
+      rAudio.muted = true;
+    }
+    if (rVideo) {
+      rVideo.src = streamUrl;
+      rVideo.style.display = 'block';
+      rVideo.muted = false;
+      rVideo.volume = 1.0;
+      rVideo.play().catch(() => {
+        rVideo.muted = true;
+        rVideo.play().catch(() => {});
+      });
+    }
+    if (fallback) {
+      fallback.style.display = 'none';
+    }
+  } else {
+    if (rVideo) {
+      rVideo.pause();
+      rVideo.srcObject = null;
       rVideo.muted = true;
-      rVideo.play().catch(() => {});
-    });
-  }
-  if (fallback) {
-    fallback.style.display = 'none';
-  }
-  if (rAudio) {
-    rAudio.muted = false;
-    rAudio.volume = 1.0;
-    rAudio.play().catch(() => {});
+    }
+    if (rAudio) {
+      rAudio.muted = false;
+      rAudio.volume = 1.0;
+      rAudio.play().catch(() => {});
+    }
   }
 
   startCallTimer();
