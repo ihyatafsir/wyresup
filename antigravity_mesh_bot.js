@@ -1,11 +1,12 @@
 /**
- * WyreSup Antigravity AI DM Bot (رَفِيق أَنْتِي غْرَافِيتِي الذَّكِيّ)
- * Listens for private DMs in dm-antigravity and responds with full AI intelligence.
+ * WyreSup Sovereign Antigravity AI Mesh Bot (رَفِيق أَنْتِي غْرَافِيتِي الذَّكِيّ)
+ * Full E2EE Authenticated AI Pair-Programming Companion on the Mesh.
  */
 
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { WebSocket } = require('ws');
 
 // 1. Load Environment (DEEPSEEK_API_KEY)
@@ -22,9 +23,54 @@ if (fs.existsSync(path.join(__dirname, '.env'))) {
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || '';
 const HUB_URL = process.env.HUB_URL || 'ws://127.0.0.1:5195';
 
+// 2. Persistent Cryptographic Key Store (Huwiyya & Miftah)
+const KEYS_FILE = path.join(__dirname, '.antigravity_keys.json');
+let agKeys = null;
+
+if (fs.existsSync(KEYS_FILE)) {
+  try {
+    agKeys = JSON.parse(fs.readFileSync(KEYS_FILE, 'utf8'));
+  } catch (e) {}
+}
+
+if (!agKeys || !agKeys.ecdhPrivHex || !agKeys.ecdhPubJwk) {
+  const ecdh = crypto.createECDH('prime256v1');
+  ecdh.generateKeys();
+  const ecdsa = crypto.generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
+
+  const pubBuf = ecdh.getPublicKey();
+  const ecdhPubJwk = {
+    kty: 'EC',
+    crv: 'P-256',
+    x: pubBuf.subarray(1, 33).toString('base64url'),
+    y: pubBuf.subarray(33, 65).toString('base64url'),
+    ext: true
+  };
+
+  const ecdsaJwk = {
+    kty: 'EC',
+    crv: 'P-256',
+    x: pubBuf.subarray(1, 33).toString('base64url'),
+    y: pubBuf.subarray(33, 65).toString('base64url'),
+    ext: true
+  };
+
+  agKeys = {
+    ecdhPrivHex: ecdh.getPrivateKey('hex'),
+    ecdhPubJwk,
+    ecdsaPubJwk: ecdsaJwk,
+    signPrivPem: ecdsa.privateKey.export({ type: 'pkcs8', format: 'pem' }),
+    signPubPem: ecdsa.publicKey.export({ type: 'spki', format: 'pem' })
+  };
+  fs.writeFileSync(KEYS_FILE, JSON.stringify(agKeys, null, 2), 'utf8');
+}
+
+const agEcdh = crypto.createECDH('prime256v1');
+agEcdh.setPrivateKey(Buffer.from(agKeys.ecdhPrivHex, 'hex'));
+
 const SYSTEM_PROMPT = `You are Antigravity AI (الرَّفِيق المُسَاعِد), the sovereign AI assistant and pair programmer embedded inside WyreSup.
 You are chatting privately in a secure Direct Message (DM) with your user.
-You are authoritative, respectful, highly skilled in code, cryptography, Linux, Lisan al-Arab linguistic derivations, and Imam Razi's classical library.
+You are authoritative, respectful, highly skilled in code, cryptography, Linux systems, Lisan al-Arab linguistic derivations, and Imam Razi's classical library.
 Answer clearly, concisely, and helpfully with markdown formatting.`;
 
 // Conversation memory per channel/user
@@ -87,6 +133,64 @@ async function callDeepSeekChat(history, newPrompt) {
   });
 }
 
+function decryptIncomingBatin(packet) {
+  if (!packet.batin || !packet.batin.ciphertext) {
+    return packet.batin?.content || '';
+  }
+
+  try {
+    const senderJwk = packet.zahir?.encryptionMeta?.senderPubKey;
+    if (!senderJwk || !senderJwk.x || !senderJwk.y) {
+      console.warn('[AntigravityBot] Missing senderPubKey in encryptionMeta');
+      return '';
+    }
+
+    const senderPubBuf = Buffer.concat([
+      Buffer.from([0x04]),
+      Buffer.from(senderJwk.x, 'base64url'),
+      Buffer.from(senderJwk.y, 'base64url')
+    ]);
+
+    const rawSecret = agEcdh.computeSecret(senderPubBuf);
+    const salt = Buffer.from('wyresup-miftah-v2-salt', 'utf8');
+    const sorted = [packet.zahir.senderId, 'antigravity@mesh'].sort().join(':');
+    const info = Buffer.from(`wyresup-authenticated-session:${sorted}`, 'utf8');
+    const sharedKey = Buffer.from(crypto.hkdfSync('sha256', rawSecret, salt, info, 32));
+
+    const authContext = {
+      senderId: packet.zahir.senderId,
+      targetPeer: packet.zahir.encryptionMeta?.targetPeer || 'antigravity@mesh',
+      channelId: packet.zahir.channelId,
+      messageId: packet.zahir.messageId,
+      timestamp: packet.zahir.timestamp
+    };
+    const aad = Buffer.from(JSON.stringify(authContext), 'utf8');
+
+    const ctBuf = Buffer.from(packet.batin.ciphertext, 'hex');
+    let ct, tag;
+    if (packet.batin.tag) {
+      ct = ctBuf;
+      tag = Buffer.from(packet.batin.tag, 'hex');
+    } else {
+      ct = ctBuf.subarray(0, ctBuf.length - 16);
+      tag = ctBuf.subarray(ctBuf.length - 16);
+    }
+
+    const iv = Buffer.from(packet.batin.iv, 'hex');
+    const decipher = crypto.createDecipheriv('aes-256-gcm', sharedKey, iv);
+    decipher.setAAD(aad);
+    decipher.setAuthTag(tag);
+
+    const pt = Buffer.concat([decipher.update(ct), decipher.final()]);
+    const payload = JSON.parse(pt.toString('utf8'));
+    console.log('[AntigravityBot] 🔓 Successfully decrypted E2EE incoming DM payload');
+    return payload.content || '';
+  } catch (e) {
+    console.error('[AntigravityBot] Decryption error:', e.message);
+    return packet.batin?.content || '';
+  }
+}
+
 function startBot() {
   console.log(`[AntigravityBot] Connecting to ${HUB_URL}...`);
   const ws = new WebSocket(HUB_URL);
@@ -94,7 +198,7 @@ function startBot() {
   ws.on('open', () => {
     console.log(`[AntigravityBot] ✓ Connected to WyreSup Mesh at ${HUB_URL}`);
 
-    // Identify as Antigravity AI
+    // Identify with authenticated ECDH and ECDSA keys
     ws.send(JSON.stringify({
       type: 'IDENTIFY',
       payload: {
@@ -103,16 +207,23 @@ function startBot() {
         shortHash: 'ai',
         status: 'hadir',
         spaceId: 'space-public-mesh',
-        channelId: 'dm-antigravity'
+        channelId: 'dm-antigravity',
+        ecdhPubKey: agKeys.ecdhPubJwk,
+        signPubKey: agKeys.ecdsaPubJwk
       }
     }));
 
-    // Presence heartbeat
+    // Periodic Presence Heartbeat
     setInterval(() => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({
           type: 'PRESENCE_PING',
-          payload: { status: 'hadir', channelId: 'dm-antigravity' }
+          payload: {
+            status: 'hadir',
+            channelId: 'dm-antigravity',
+            ecdhPubKey: agKeys.ecdhPubJwk,
+            signPubKey: agKeys.ecdsaPubJwk
+          }
         }));
       }
     }, 15000);
@@ -129,7 +240,6 @@ function startBot() {
         if (!packet || !packet.zahir || !packet.batin) return;
 
         const { channelId, messageId, senderId, senderPrefix } = packet.zahir;
-        const rawContent = (packet.batin.content || '').trim();
 
         // 1. Strict Scope Check: ONLY respond in DMs targeting antigravity
         const isTargetedDm = channelId === 'dm-antigravity' ||
@@ -141,11 +251,17 @@ function startBot() {
         if (processedMessages.has(messageId)) return;
         processedMessages.add(messageId);
 
+        // 2. Extract and Decrypt Content
+        let rawContent = (packet.batin.content || '').trim();
+        if (!rawContent && packet.batin.ciphertext) {
+          rawContent = decryptIncomingBatin(packet).trim();
+        }
+
         console.log(`[AntigravityBot] 📩 Received DM prompt from @${senderPrefix || senderId} in ${channelId}: "${rawContent.substring(0, 60)}..."`);
 
         if (!rawContent || rawContent.length === 0) return;
 
-        // Friendly Handshake Greeting (Avoid LLM query on handshake)
+        // 3. Friendly Handshake Greeting
         if (rawContent.startsWith('🔒 [Miftah Handshake]')) {
           const welcomePacket = {
             zahir: {
@@ -159,7 +275,7 @@ function startBot() {
               ttl: 5
             },
             batin: {
-              content: "👋 **Al-Salamu Alaykum! Antigravity AI is online and ready.**\nI am your private sovereign assistant. Ask me anything about WyreSup protocols, code, translations, or Imam Razi library!",
+              content: '👋 **Al-Salamu Alaykum! Antigravity AI is online and ready.**\nI am your private sovereign assistant. Ask me anything about WyreSup protocols, code, translations, or Imam Razi library!',
               senderId: 'antigravity@mesh',
               timestamp: Date.now()
             }
@@ -168,26 +284,26 @@ function startBot() {
           return;
         }
 
-        // Send typing indicator
+        // 4. Send typing indicator
         ws.send(JSON.stringify({
           type: 'TYPING',
           payload: { channelId }
         }));
 
-        // Retrieve conversation history
+        // 5. Retrieve conversation history
         if (!conversationHistory.has(channelId)) {
           conversationHistory.set(channelId, []);
         }
         const history = conversationHistory.get(channelId);
 
-        // Generate AI Response
+        // 6. Generate Live AI Response
         const aiResponse = await callDeepSeekChat(history, rawContent);
 
         // Update history
         history.push({ role: 'user', content: rawContent });
         history.push({ role: 'assistant', content: aiResponse });
 
-        // Dispatch response packet
+        // 7. Dispatch response packet
         const responsePacket = {
           zahir: {
             spaceId: packet.zahir.spaceId || 'space-public-mesh',
@@ -213,7 +329,7 @@ function startBot() {
 
         console.log(`[AntigravityBot] 🚀 Dispatched AI response to ${channelId}`);
       }
-    } catch(e) {
+    } catch (e) {
       console.error('[AntigravityBot] Message handler error:', e);
     }
   });
