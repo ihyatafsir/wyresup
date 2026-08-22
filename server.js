@@ -406,7 +406,7 @@ function handleClientMessage(ws, msg) {
           forwardedCount++;
         }
       }
-      if (payload.signalType !== 'NAFAQ_PCM') {
+      if (payload.signalType !== 'NAFAQ_PCM' && payload.signalType !== 'SHAF_HD_FRAME' && payload.signalType !== 'WASAM_PING') {
         console.log(`[CALL_SIGNAL] ${payload.signalType} from ${client.peerId} -> ${targetPeer} (Forwarded to ${forwardedCount} peer socket(s))`);
       }
       break;

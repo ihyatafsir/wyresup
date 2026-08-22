@@ -2908,6 +2908,121 @@ async function drainPendingIceCandidates() {
 }
 
 
+
+// --- NIZĀM AL-JALĀ' WA'L-NUFŪDH AL-SHAF'IYY (نظام الجلاء والنفاذ الشفعي) ---
+// High-Definition Video (1080p/720p) + Studio 48kHz Stereo Audio + Mobile ISP CGNAT Breaker
+
+function upliftSdpBitrates(sdpStr) {
+  if (!sdpStr) return sdpStr;
+  try {
+    let s = sdpStr;
+    if (s.includes('m=video')) {
+      s = s.replace(/(m=video [^\r\n]+[\r\n]+)/, '$1b=AS:3500\r\nb=TIAS:3500000\r\n');
+    }
+    if (s.includes('m=audio')) {
+      s = s.replace(/(m=audio [^\r\n]+[\r\n]+)/, '$1b=AS:128\r\nb=TIAS:128000\r\n');
+    }
+    return s;
+  } catch (e) {
+    return sdpStr;
+  }
+}
+
+let shafVideoCanvas = null;
+let shafVideoCtx = null;
+let shafVideoTimer = null;
+
+function startShafHdVideoStream(targetPeer, localStream) {
+  if (!localStream || localStream.getVideoTracks().length === 0) return;
+  if (shafVideoTimer) clearInterval(shafVideoTimer);
+
+  const vTrack = localStream.getVideoTracks()[0];
+  if (!vTrack) return;
+
+  const tempVideo = document.createElement('video');
+  tempVideo.muted = true;
+  tempVideo.playsInline = true;
+  tempVideo.srcObject = new MediaStream([vTrack]);
+  tempVideo.play().catch(() => {});
+
+  if (!shafVideoCanvas) {
+    shafVideoCanvas = document.createElement('canvas');
+    shafVideoCanvas.width = 640;
+    shafVideoCanvas.height = 480;
+    shafVideoCtx = shafVideoCanvas.getContext('2d');
+  }
+
+  shafVideoTimer = setInterval(() => {
+    if (!state.activeCall.peer || state.activeCall.isCamOff) return;
+    if (tempVideo.readyState >= 2 && shafVideoCtx) {
+      try {
+        shafVideoCtx.drawImage(tempVideo, 0, 0, shafVideoCanvas.width, shafVideoCanvas.height);
+        const frameData = shafVideoCanvas.toDataURL('image/webp', 0.65);
+        if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+          state.ws.send(JSON.stringify({
+            type: 'CALL_SIGNAL',
+            payload: {
+              signalType: 'SHAF_HD_FRAME',
+              targetPeer,
+              frame: frameData,
+              ts: Date.now()
+            }
+          }));
+        }
+      } catch (e) {}
+    }
+  }, 75); // ~13.3 FPS HD frame rate (smooth & lightweight over cellular 4G/5G)
+}
+
+function stopShafHdVideoStream() {
+  if (shafVideoTimer) {
+    clearInterval(shafVideoTimer);
+    shafVideoTimer = null;
+  }
+}
+
+function handleIncomingShafHdFrame(payload) {
+  const { frame } = payload;
+  if (!frame) return;
+
+  const remoteVideo = document.getElementById('call-remote-video');
+  const fallback = document.getElementById('remote-avatar-fallback');
+  if (fallback) fallback.style.display = 'none';
+
+  let remoteCanvas = document.getElementById('call-remote-shaf-canvas');
+  if (!remoteCanvas && remoteVideo && remoteVideo.parentElement) {
+    remoteCanvas = document.createElement('canvas');
+    remoteCanvas.id = 'call-remote-shaf-canvas';
+    remoteCanvas.style.position = 'absolute';
+    remoteCanvas.style.top = '0';
+    remoteCanvas.style.left = '0';
+    remoteCanvas.style.width = '100%';
+    remoteCanvas.style.height = '100%';
+    remoteCanvas.style.objectFit = 'cover';
+    remoteCanvas.style.zIndex = '5';
+    remoteCanvas.style.borderRadius = '16px';
+    remoteVideo.parentElement.appendChild(remoteCanvas);
+  }
+
+  if (remoteCanvas) {
+    const ctx = remoteCanvas.getContext('2d');
+    const img = new Image();
+    img.onload = () => {
+      if (remoteCanvas.width !== img.width || remoteCanvas.height !== img.height) {
+        remoteCanvas.width = img.width;
+        remoteCanvas.height = img.height;
+      }
+      ctx.drawImage(img, 0, 0);
+    };
+    img.src = frame;
+  }
+
+  const statusEl = document.getElementById('call-remote-status-text');
+  if (statusEl && !statusEl.textContent.includes('Shaf')) {
+    statusEl.textContent = '🟢 HD Sovereign Dual-Conduit Active (نِظَامُ الشَّفْعِ الجَلِيّ)';
+  }
+}
+
 // --- NAFAQ (نَفَق) Containerless PCM & Sovereign Media Streaming Engine ---
 function startNafaqPcmStream(targetPeer, localStream) {
   if (!localStream || localStream.getAudioTracks().length === 0) return;
@@ -2959,9 +3074,14 @@ function startNafaqPcmStream(targetPeer, localStream) {
       }
     };
 
+    // Symmetrical Zero-Gain Sink: Processes microphone stream without echoing local voice into speaker!
+    const silentGain = state.audioCtx.createGain();
+    silentGain.gain.value = 0;
     source.connect(processor);
-    processor.connect(state.audioCtx.destination);
+    processor.connect(silentGain);
+    silentGain.connect(state.audioCtx.destination);
     state.activeCall.nafaqPcmSource = source;
+    state.activeCall.nafaqSilentSink = silentGain;
     state.activeCall.nafaqPcmProcessor = processor;
     console.log('[NAFAQ PCM Engine] 🚀 Live containerless PCM voice streaming activated to @' + targetPeer);
   } catch (err) {
@@ -3065,8 +3185,19 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
     try {
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         const constraints = {
-          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-          video: callType === 'video' ? { width: { ideal: 1280 }, height: { ideal: 720 } } : false
+          audio: {
+            echoCancellation: { ideal: true },
+            noiseSuppression: { ideal: true },
+            autoGainControl: { ideal: true },
+            channelCount: { ideal: 2 },
+            sampleRate: { ideal: 48000 }
+          },
+          video: callType === 'video' ? {
+            width: { ideal: 1920, min: 1280 },
+            height: { ideal: 1080, min: 720 },
+            frameRate: { ideal: 30, max: 60 },
+            facingMode: 'user'
+          } : false
         };
         stream = await navigator.mediaDevices.getUserMedia(constraints);
       } else {
@@ -3148,6 +3279,7 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
     };
 
     const offer = await pc.createOffer();
+    offer.sdp = upliftSdpBitrates(offer.sdp);
     await pc.setLocalDescription(offer);
 
     if (state.ws && state.ws.readyState === WebSocket.OPEN) {
@@ -3195,9 +3327,12 @@ async function handleIncomingCallSignal(payload) {
       await drainPendingIceCandidates();
       startCallTimer();
       document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
-      // Instant NAFAQ PCM voice link activation on handshake completion
+      // Instant Symmetrical Dual-Conduit (Audio + HD Video) activation on handshake completion
       if (state.activeCall.localStream && state.activeCall.peer) {
         startNafaqPcmStream(state.activeCall.peer, state.activeCall.localStream);
+        if (state.activeCall.type === 'video') {
+          startShafHdVideoStream(state.activeCall.peer, state.activeCall.localStream);
+        }
       }
     }
   } else if (signalType === 'ICE') {
@@ -3282,8 +3417,19 @@ async function acceptIncomingCall() {
     try {
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         const constraints = {
-          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-          video: callType === 'video' ? { width: { ideal: 1280 }, height: { ideal: 720 } } : false
+          audio: {
+            echoCancellation: { ideal: true },
+            noiseSuppression: { ideal: true },
+            autoGainControl: { ideal: true },
+            channelCount: { ideal: 2 },
+            sampleRate: { ideal: 48000 }
+          },
+          video: callType === 'video' ? {
+            width: { ideal: 1920, min: 1280 },
+            height: { ideal: 1080, min: 720 },
+            frameRate: { ideal: 30, max: 60 },
+            facingMode: 'user'
+          } : false
         };
         stream = await navigator.mediaDevices.getUserMedia(constraints);
       } else {
@@ -3373,6 +3519,7 @@ async function acceptIncomingCall() {
     await drainPendingIceCandidates();
 
     const answer = await pc.createAnswer();
+    answer.sdp = upliftSdpBitrates(answer.sdp);
     await pc.setLocalDescription(answer);
 
     if (state.ws && state.ws.readyState === WebSocket.OPEN) {
@@ -3387,9 +3534,12 @@ async function acceptIncomingCall() {
     }
 
     startCallTimer();
-    // Instant NAFAQ PCM voice link activation on answer
+    // Instant Symmetrical Dual-Conduit (Audio + HD Video) activation on answer
     if (stream && senderPeer) {
       startNafaqPcmStream(senderPeer, stream);
+      if (callType === 'video') {
+        startShafHdVideoStream(senderPeer, stream);
+      }
     }
   } catch (err) {
     console.error('[WebRTC Accept Error]:', err);
@@ -3415,6 +3565,9 @@ function declineIncomingCall() {
 }
 
 function endActiveCall(notifyPeer = true) {
+  stopShafHdVideoStream();
+  const remoteCanvas = document.getElementById('call-remote-shaf-canvas');
+  if (remoteCanvas) remoteCanvas.remove();
   updateCallStreamTitleUI(null);
   if (state.activeCall.activeBufferSource) {
     try {
