@@ -32,15 +32,6 @@ class YouTubeStreamer {
         thumbnail: 'https://i.ytimg.com/vi/X4YSNpSYX0g/maxresdefault.jpg',
         url: 'https://www.youtube.com/watch?v=X4YSNpSYX0g',
         streamUrl: '/cached_videos/X4YSNpSYX0g.mp4'
-      },
-      {
-        videoId: 'ms_fat_booty',
-        title: 'Mos Def (Yasiin Bey) - Ms. Fat Booty (Official Video)',
-        uploader: 'Yasiin Bey / Rawkus',
-        duration: '3:45',
-        thumbnail: 'https://i.ytimg.com/vi/B9TlvrPgTm8/maxresdefault.jpg',
-        url: '/ms_fat_booty.mp4',
-        streamUrl: '/ms_fat_booty.mp4'
       }
     ];
   }
