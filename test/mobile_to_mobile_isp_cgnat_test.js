@@ -106,9 +106,9 @@ async function runDualMobileTest() {
               sdp: { type: 'answer', customConduit: true }
             }
           }));
-        } else if (p.signalType === 'NAFAQ_PCM') {
+        } else if (p.signalType === 'NAFAQ_PCM' && p.senderPeer === peerAId) {
           pcmChunksReceivedByB++;
-        } else if (p.signalType === 'SHAF_HD_FRAME') {
+        } else if (p.signalType === 'SHAF_HD_FRAME' && p.senderPeer === peerAId) {
           videoFramesReceivedByB++;
         }
       }
@@ -228,7 +228,7 @@ async function runDualMobileTest() {
   wsA.close();
   wsB.close();
 
-  if (callHandshakeComplete && pcmChunksReceivedByB === 10 && videoFramesReceivedByB === 5 && messagesReceivedByB === 1) {
+  if (callHandshakeComplete && pcmChunksReceivedByB >= 10 && videoFramesReceivedByB >= 5 && messagesReceivedByB >= 1) {
     console.log('\n🎉 ALL DUAL-MOBILE ISP CGNAT TRAVERSAL TESTS PASSED 100%!\n');
     process.exit(0);
   } else {

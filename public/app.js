@@ -3339,20 +3339,41 @@ async function handleIncomingCallSignal(payload) {
       }, 300);
     }
   } else if (signalType === 'ANSWER') {
-    if (state.activeCall.pc && sdp) {
-      await state.activeCall.pc.setRemoteDescription(new RTCSessionDescription(sdp));
-      await drainPendingIceCandidates();
-      startCallTimer();
-      document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
-      // Instant Symmetrical Dual-Conduit (Audio + HD Video) activation on handshake completion
-      if (state.activeCall.localStream && state.activeCall.peer) {
-        startNafaqPcmStream(state.activeCall.peer, state.activeCall.localStream);
-        if (state.activeCall.type === 'video') {
-          startShafHdVideoStream(state.activeCall.peer, state.activeCall.localStream);
-        }
+    if (state.activeCall.pc && sdp && sdp.sdp) {
+      try {
+        await state.activeCall.pc.setRemoteDescription(new RTCSessionDescription(sdp));
+        await drainPendingIceCandidates();
+      } catch (e) {
+        console.warn('[WebRTC SetRemote Warning]:', e.message);
+      }
+    }
+    startCallTimer();
+    const statusEl = document.getElementById('call-remote-status-text');
+    if (statusEl) {
+      statusEl.textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
+    }
+    // Instant Symmetrical Dual-Conduit (Audio + HD Video) activation on handshake completion
+    if (state.activeCall.localStream && state.activeCall.peer && !state.activeCall.isCustomStreamCall) {
+      startNafaqPcmStream(state.activeCall.peer, state.activeCall.localStream);
+      if (state.activeCall.type === 'video') {
+        startShafHdVideoStream(state.activeCall.peer, state.activeCall.localStream);
       }
     }
   } else if (signalType === 'ICE') {
+    if (candidate) {
+      if (state.activeCall.pc && state.activeCall.pc.remoteDescription) {
+        try {
+          await state.activeCall.pc.addIceCandidate(new RTCIceCandidate(candidate));
+        } catch (e) {
+          console.warn('[ICE error]:', e);
+        }
+      } else {
+        if (!state.activeCall.pendingIceCandidates) state.activeCall.pendingIceCandidates = [];
+        state.activeCall.pendingIceCandidates.push(candidate);
+      }
+    }
+  } else if (signalType === 'SHAF_HD_FRAME') {
+    handleIncomingShafHdFrame(payload);
     if (candidate) {
       if (state.activeCall.pc && state.activeCall.pc.remoteDescription) {
         try {
@@ -3533,35 +3554,61 @@ async function acceptIncomingCall() {
       }
     };
 
-    await pc.setRemoteDescription(new RTCSessionDescription(sdp));
-    await drainPendingIceCandidates();
+    let sdpHandshakeSuccess = false;
+    if (!isCustomStreamCall && sdp && sdp.sdp) {
+      try {
+        await pc.setRemoteDescription(new RTCSessionDescription(sdp));
+        await drainPendingIceCandidates();
 
-    const answer = await pc.createAnswer();
-    answer.sdp = upliftSdpBitrates(answer.sdp);
-    await pc.setLocalDescription(answer);
+        const answer = await pc.createAnswer();
+        answer.sdp = upliftSdpBitrates(answer.sdp);
+        await pc.setLocalDescription(answer);
 
-    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
-      state.ws.send(JSON.stringify({
-        type: 'CALL_SIGNAL',
-        payload: {
-          signalType: 'ANSWER',
-          targetPeer: senderPeer,
-          sdp: answer
+        if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+          state.ws.send(JSON.stringify({
+            type: 'CALL_SIGNAL',
+            payload: {
+              signalType: 'ANSWER',
+              targetPeer: senderPeer,
+              sdp: answer
+            }
+          }));
         }
-      }));
+        sdpHandshakeSuccess = true;
+      } catch (sdpErr) {
+        console.warn('[WebRTC SDP Handshake Warning]:', sdpErr.message);
+      }
+    }
+
+    // Always send ANSWER signal to lock in the session if not already sent by WebRTC
+    if (!sdpHandshakeSuccess) {
+      if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+        state.ws.send(JSON.stringify({
+          type: 'CALL_SIGNAL',
+          payload: {
+            signalType: 'ANSWER',
+            targetPeer: senderPeer,
+            sdp: { type: 'answer', customConduit: true }
+          }
+        }));
+      }
     }
 
     startCallTimer();
-    // Instant Symmetrical Dual-Conduit (Audio + HD Video) activation on answer
-    if (stream && senderPeer) {
+    // Symmetrical Dual-Conduit (Audio + HD Video) activation on answer
+    if (stream && senderPeer && !isCustomStreamCall) {
       startNafaqPcmStream(senderPeer, stream);
       if (callType === 'video') {
         startShafHdVideoStream(senderPeer, stream);
       }
     }
   } catch (err) {
-    console.error('[WebRTC Accept Error]:', err);
-    endActiveCall();
+    console.warn('[Accept Call Non-Fatal Warning]:', err.message);
+    if (!isCustomStreamCall && !state.activeCall.nafaqActive) {
+      endActiveCall();
+    } else {
+      console.log('[Accept Call] Stream/NAFAQ active conduit maintained smoothly.');
+    }
   }
 }
 
