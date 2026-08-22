@@ -2340,7 +2340,7 @@ async function startYoutubeStreamCall(targetPeer, queryOrUrl) {
       console.log('✅ YouTube stream hot-swapped into active call!');
     } else {
       // Start new call with this stream
-      await startOutgoingCallWithCustomStream(targetPeer || state.youtubeStreamTarget || 'enver', ytStream, streamInfo.title);
+      await startOutgoingCallWithCustomStream(targetPeer || state.youtubeStreamTarget || 'enver', ytStream, streamInfo.title, streamInfo.streamUrl);
     }
 
   } catch (err) {
@@ -2489,7 +2489,7 @@ async function createYouTubeMediaStream(streamInfo) {
   return new MediaStream([audioTrack, videoTrack].filter(Boolean));
 }
 
-async function startOutgoingCallWithCustomStream(targetPeer, customStream, streamTitle = '') {
+async function startOutgoingCallWithCustomStream(targetPeer, customStream, streamTitle = '', rawStreamUrl = '') {
   const peerId = typeof targetPeer === 'string' ? targetPeer : (targetPeer.peerId || targetPeer.fullId);
   const peerPrefix = peerId.split('@')[0];
 
@@ -2510,6 +2510,30 @@ async function startOutgoingCallWithCustomStream(targetPeer, customStream, strea
     localVideo.srcObject = customStream;
     localVideo.muted = true;
     localVideo.play().catch(() => {});
+  }
+
+  // Display video directly in the main central stage
+  const remoteVideo = document.getElementById('call-remote-video');
+  const fallback = document.getElementById('remote-avatar-fallback');
+  if (remoteVideo) {
+    if (customStream && customStream.getVideoTracks().length > 0) {
+      remoteVideo.srcObject = customStream;
+    } else if (rawStreamUrl) {
+      remoteVideo.src = rawStreamUrl;
+    } else {
+      remoteVideo.srcObject = customStream;
+    }
+    remoteVideo.style.display = 'block';
+    remoteVideo.muted = false;
+    remoteVideo.volume = 1.0;
+    remoteVideo.play().catch(() => {
+      console.warn('[Video Autoplay Muted Fallback]');
+      remoteVideo.muted = true;
+      remoteVideo.play().catch(() => {});
+    });
+  }
+  if (fallback) {
+    fallback.style.display = 'none';
   }
 
   openModal('modal-active-call');
@@ -3309,3 +3333,10 @@ function renderLisanLexicon(items) {
     </div>
   `).join("");
 }
+
+// Global Window Bindings for Inline HTML Handlers
+window.startYoutubeStreamCall = startYoutubeStreamCall;
+window.openStreamYoutubeModal = openStreamYoutubeModal;
+window.acceptIncomingCall = acceptIncomingCall;
+window.rejectIncomingCall = rejectIncomingCall;
+window.endActiveCall = endActiveCall;
