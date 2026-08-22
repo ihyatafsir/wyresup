@@ -2,7 +2,7 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || "sk-f92eb1a9e7624dadb735d10233c0b129";
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || "";
 
 async function callDeepSeek(agentName, systemPrompt, userPrompt) {
   console.log(`[Nafaq-Wakil Swarm] 🤖 Launching ${agentName}...`);

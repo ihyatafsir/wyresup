@@ -246,8 +246,22 @@ class WyreCrypto {
     }
   }
 
-  static computeMizanNonce(dataStr, difficulty = 2) {
-    return { nonce: Math.floor(Math.random() * 10000), difficulty };
+  static async computeMizanNonce(dataStr, difficulty = 2) {
+    const targetPrefix = "0".repeat(difficulty);
+    const encoder = new TextEncoder();
+    let nonce = 0;
+    while (true) {
+      const dataToHash = encoder.encode(`${dataStr}:${nonce}`);
+      const hashBuf = await window.crypto.subtle.digest("SHA-256", dataToHash);
+      const hashArray = Array.from(new Uint8Array(hashBuf));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+      if (hashHex.startsWith(targetPrefix)) {
+        return { nonce, hash: hashHex, difficulty };
+      }
+      nonce++;
+      if (nonce > 50000) break;
+    }
+    return { nonce, difficulty };
   }
 
   static async generateKeyPairs() {
