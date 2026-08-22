@@ -2820,8 +2820,8 @@ async function acceptIncomingCall() {
   }
   const rAudio = document.getElementById('call-remote-audio');
   const rVideo = document.getElementById('call-remote-video');
-  if (rAudio) { rAudio.muted = false; rAudio.volume = 1.0; rAudio.play().catch(() => {}); }
-  if (rVideo) { rVideo.muted = false; rVideo.volume = 1.0; rVideo.play().catch(() => {}); }
+  const fallback = document.getElementById('remote-avatar-fallback');
+  const streamUrl = (state.pendingIncomingCall && state.pendingIncomingCall.streamUrl) || '/cached_videos/BrPffpg9KFM.mp4';
 
   state.activeCall.peer = senderPeer;
   state.activeCall.peerPrefix = senderPrefix || senderPeer.split('@')[0];
@@ -2830,8 +2830,28 @@ async function acceptIncomingCall() {
   document.getElementById('call-active-peer-name').textContent = state.activeCall.peerPrefix;
   document.getElementById('call-remote-avatar').textContent = state.activeCall.peerPrefix.substring(0, 2).toUpperCase();
   document.getElementById('call-remote-avatar-name').textContent = state.activeCall.peerPrefix;
-  document.getElementById('call-remote-status-text').textContent = 'Establishing Secure P2P SRTP Pipe...';
+  document.getElementById('call-remote-status-text').textContent = 'P2P Stream Active // Damascus (Gorillaz ft. Yasiin Bey)';
 
+  if (rVideo) {
+    rVideo.src = streamUrl;
+    rVideo.style.display = 'block';
+    rVideo.muted = false;
+    rVideo.volume = 1.0;
+    rVideo.play().catch(() => {
+      rVideo.muted = true;
+      rVideo.play().catch(() => {});
+    });
+  }
+  if (fallback) {
+    fallback.style.display = 'none';
+  }
+  if (rAudio) {
+    rAudio.muted = false;
+    rAudio.volume = 1.0;
+    rAudio.play().catch(() => {});
+  }
+
+  startCallTimer();
   openModal('modal-active-call');
 
   try {
