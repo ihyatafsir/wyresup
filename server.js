@@ -457,44 +457,28 @@ const BOT_QUOTES = [
 
 // Seed Imam Razi EPUB Library Catalog into #imam-razi channel
 function seedImamRaziLibrary() {
-  const channelId = "chan-imam-razi";
-  const spaceId = "space-public-mesh";
+  const channelId = 'chan-imam-razi';
+  const spaceId = 'space-public-mesh';
   const catalog = ImamRaziLibrary.getCatalog();
 
-  // Clear existing seeded messages for a fresh, clean load
+  // Clear existing messages to apply clean restored layout
   const channelMsgs = gossipMesh.getChannelHistory(channelId);
   if (channelMsgs && channelMsgs.length > 0) {
     gossipMesh.messages.set(channelId, []);
   }
 
-  // 1. Welcome Header
+  // 1. Welcome Message
   gossipMesh.publish(spaceId, channelId, {
-    content: "**مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِيّ // IMAM FAKHR AL-DIN AL-RAZI EPUB LIBRARY**\n\nWelcome to the official digital repository of **Imam Fakhr al-Din al-Razi (544–606 AH / 1149–1209 CE)** masterworks. All volumes are available below as standalone EPUB e-books with Arabic-English lexicon mapping and offline reading support."
-  }, { senderId: "ibn-manzur@lisan" });
+    content: `📚 **مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِيّ // COMPLETE EPUB TRANSLATIONS LIBRARY**
 
-  // 2. I'tiqadat Firaq al-Muslimin (Featured Firqa Section)
-  const firaqItems = catalog.kalamTreatises.filter(x => x.filename.includes("itiqadat") || x.filename.includes("firaq"));
-  if (firaqItems.length > 0) {
-    const firaqAtts = firaqItems.map(item => ({
-      name: item.filename,
-      type: "application/epub+zip",
-      size: 450000,
-      data: item.downloadUrl,
-      title: item.title,
-      arabicTitle: item.arabicTitle
-    }));
+Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–606 AH / 1149–1209 CE)** translated masterworks. All volumes are available below as standalone EPUB e-books for offline reading and direct P2P download.`
+  }, { senderId: 'ibn-manzur@lisan' });
 
-    gossipMesh.publish(spaceId, channelId, {
-      content: "**I'tiqadat Firaq al-Muslimin wa'l-Mushrikin (اعتقادات فرق المسلمين والمشركين)**\n*Imam al-Razi's definitive comparative heresiography and theological taxonomy of Islamic and world religions. Available in 3 translations: Arabic Lexicon Edition, Guided Translation, and Standard Complete Edition.*",
-      attachments: firaqAtts
-    }, { senderId: "ibn-manzur@lisan" });
-  }
-
-  // 3. Tafsir al-Kabir (Volumes 1-32)
+  // 2. Tafsir al-Kabir (Volumes 1-32)
   if (catalog.tafsirKabir && catalog.tafsirKabir.length > 0) {
     const atts = catalog.tafsirKabir.map(item => ({
       name: item.filename,
-      type: "application/epub+zip",
+      type: 'application/epub+zip',
       size: 1500000,
       data: item.downloadUrl,
       title: item.title,
@@ -502,16 +486,17 @@ function seedImamRaziLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "**Tafsir al-Kabir (Mafatih al-Ghayb) — Volumes 1 to 32 (Complete)**\n*The monumental commentary on the Holy Quran by Imam Fakhr al-Din al-Razi. Complete 32-volume English translation.*",
+      content: `📖 **Tafsir al-Kabir (Mafatih al-Ghayb) — Volumes 1 to 32 (Complete)**
+*The monumental commentary on the Holy Quran by Imam Fakhr al-Din al-Razi. Complete 32-volume English translation.*`,
       attachments: atts
-    }, { senderId: "ibn-manzur@lisan" });
+    }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // 4. Al-Matalib al-'Aliyyah (Volumes 1-9 + Complete)
+  // 3. Al-Matalib al-'Aliyyah (Volumes 1-9 + Complete)
   if (catalog.matalib && catalog.matalib.length > 0) {
     const atts = catalog.matalib.map(item => ({
       name: item.filename,
-      type: "application/epub+zip",
+      type: 'application/epub+zip',
       size: 1200000,
       data: item.downloadUrl,
       title: item.title,
@@ -519,17 +504,17 @@ function seedImamRaziLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "**Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi (The Sublime Quests in Divine Science)**\n*Imam al-Razi's final philosophical and theological magnum opus (Vols 1–9 + Complete Compendium in Pure English & Arabic Lexical Editions).*",
+      content: `🌟 **Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi (The Sublime Quests in Divine Science)**
+*Imam al-Razi's final philosophical and theological magnum opus (Vols 1–9 + Complete Compendium in Pure English & Arabic Lexical Editions).*`,
       attachments: atts
-    }, { senderId: "ibn-manzur@lisan" });
+    }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // 5. Other Kalam & Theology Treatises
-  const otherKalam = catalog.kalamTreatises.filter(x => !x.filename.includes("itiqadat") && !x.filename.includes("firaq"));
-  if (otherKalam.length > 0) {
-    const atts = otherKalam.map(item => ({
+  // 4. Kalam & Theology Master Treatises (Including I'tiqadat Firaq al-Muslimin)
+  if (catalog.kalamTreatises && catalog.kalamTreatises.length > 0) {
+    const atts = catalog.kalamTreatises.map(item => ({
       name: item.filename,
-      type: "application/epub+zip",
+      type: 'application/epub+zip',
       size: 900000,
       data: item.downloadUrl,
       title: item.title,
@@ -537,16 +522,17 @@ function seedImamRaziLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "**Core Theological Treatises & Kalam Masterworks**\n*Including Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, 'Ismat al-Anbiya', Al-Mahsul, and Ma'alim Usul al-Din.*",
+      content: `📜 **Core Theological Treatises & Kalam Masterworks**
+*Including I'tiqadat Firaq al-Muslimin wa'l-Mushrikin (The Beliefs of Muslim & Non-Muslim Sects), Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, 'Ismat al-Anbiya', Al-Mahsul, and Ma'alim Usul al-Din.*`,
       attachments: atts
-    }, { senderId: "ibn-manzur@lisan" });
+    }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // 6. Companion Classics (Al-Futuhat & Al-Shifa)
+  // 5. Companion Classics (Al-Futuhat & Al-Shifa)
   if (catalog.companions && catalog.companions.length > 0) {
     const atts = catalog.companions.map(item => ({
       name: item.filename,
-      type: "application/epub+zip",
+      type: 'application/epub+zip',
       size: 1800000,
       data: item.downloadUrl,
       title: item.title,
@@ -554,9 +540,10 @@ function seedImamRaziLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "**Classical Companion Masterworks**\n*Al-Futuhat al-Makkiyya (Ibn 'Arabi) and Al-Shifa bi-Ta'rif Huquq al-Mustafa (Qadi 'Iyad).*",
+      content: `💎 **Classical Companion Masterworks**
+*Al-Futuhat al-Makkiyya (Ibn 'Arabi) and Al-Shifa bi-Ta'rif Huquq al-Mustafa (Qadi 'Iyad).*`,
       attachments: atts
-    }, { senderId: "ibn-manzur@lisan" });
+    }, { senderId: 'ibn-manzur@lisan' });
   }
 }
 
