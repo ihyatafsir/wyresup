@@ -385,6 +385,7 @@ function handleClientMessage(ws, msg) {
       if (!client) return;
       const targetPeer = payload.targetPeer;
       const targetPrefix = targetPeer ? targetPeer.split('@')[0] : '';
+      let forwardedCount = 0;
 
       for (const [targetWs, targetRecord] of connectedClients.entries()) {
         const clientPrefix = targetRecord.prefix || (targetRecord.peerId ? targetRecord.peerId.split('@')[0] : '');
@@ -402,7 +403,11 @@ function handleClientMessage(ws, msg) {
               senderPrefix: client.prefix
             }
           }));
+          forwardedCount++;
         }
+      }
+      if (payload.signalType !== 'NAFAQ_PCM') {
+        console.log(`[CALL_SIGNAL] ${payload.signalType} from ${client.peerId} -> ${targetPeer} (Forwarded to ${forwardedCount} peer socket(s))`);
       }
       break;
     }

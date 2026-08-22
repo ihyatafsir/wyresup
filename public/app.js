@@ -3195,6 +3195,10 @@ async function handleIncomingCallSignal(payload) {
       await drainPendingIceCandidates();
       startCallTimer();
       document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
+      // Instant NAFAQ PCM voice link activation on handshake completion
+      if (state.activeCall.localStream && state.activeCall.peer) {
+        startNafaqPcmStream(state.activeCall.peer, state.activeCall.localStream);
+      }
     }
   } else if (signalType === 'ICE') {
     if (candidate) {
@@ -3383,6 +3387,10 @@ async function acceptIncomingCall() {
     }
 
     startCallTimer();
+    // Instant NAFAQ PCM voice link activation on answer
+    if (stream && senderPeer) {
+      startNafaqPcmStream(senderPeer, stream);
+    }
   } catch (err) {
     console.error('[WebRTC Accept Error]:', err);
     endActiveCall();
