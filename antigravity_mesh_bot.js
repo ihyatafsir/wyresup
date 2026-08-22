@@ -143,6 +143,31 @@ function startBot() {
 
         console.log(`[AntigravityBot] 📩 Received DM prompt from @${senderPrefix || senderId} in ${channelId}: "${rawContent.substring(0, 60)}..."`);
 
+        if (!rawContent || rawContent.length === 0) return;
+
+        // Friendly Handshake Greeting (Avoid LLM query on handshake)
+        if (rawContent.startsWith('🔒 [Miftah Handshake]')) {
+          const welcomePacket = {
+            zahir: {
+              spaceId: packet.zahir.spaceId || 'space-public-mesh',
+              channelId,
+              senderId: 'antigravity@mesh',
+              senderPrefix: 'antigravity',
+              messageId: 'ag_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+              timestamp: Date.now(),
+              isEncrypted: false,
+              ttl: 5
+            },
+            batin: {
+              content: "👋 **Al-Salamu Alaykum! Antigravity AI is online and ready.**\nI am your private sovereign assistant. Ask me anything about WyreSup protocols, code, translations, or Imam Razi library!",
+              senderId: 'antigravity@mesh',
+              timestamp: Date.now()
+            }
+          };
+          ws.send(JSON.stringify({ type: 'GOSSIP_PACKET', payload: welcomePacket }));
+          return;
+        }
+
         // Send typing indicator
         ws.send(JSON.stringify({
           type: 'TYPING',
