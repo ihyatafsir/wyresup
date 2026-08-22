@@ -1368,7 +1368,7 @@ function renderMembers() {
   uniquePeers.forEach(peer => {
     const isHadir = peer.status === 'hadir';
     const item = document.createElement('div');
-    item.className = 'member-item';
+    item.className = `member-item ${isHadir ? 'online' : 'offline'}`;
     item.title = `Click to view profile / Direct DM with ${peer.prefix}`;
     item.innerHTML = `
       <div class="member-avatar-wrap">
@@ -1378,7 +1378,7 @@ function renderMembers() {
         <span class="status-indicator ${isHadir ? 'hadir' : 'ghaib'}"></span>
       </div>
       <div class="member-info">
-        <span class="member-name ${peer.prefix === 'antigravity' ? 'antigravity' : ''}">${peer.prefix || peer.peerId}</span>
+        <span class="member-name ${isHadir && peer.prefix === 'antigravity' ? 'antigravity' : ''}">${peer.prefix || peer.peerId}</span>
         <span class="member-sub">${peer.latency || 12}ms · ${isHadir ? 'حَاضِر' : 'غَائِب'}</span>
       </div>
     `;
