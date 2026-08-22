@@ -1028,7 +1028,7 @@ function appendMessageToDOM(packet) {
         const isTafsir = att.name.startsWith('tafsir_kabir_');
         const isMatalib = att.name.startsWith('al_matalib_');
         const isFiraq = att.name.includes('itiqadat') || att.name.includes('firaq') || att.name.includes('firqa');
-        const badgeTag = isFiraq ? "🏛️ I'tiqadat Firaq al-Muslimin" : (isTafsir ? "📖 Tafsir al-Kabir" : (isMatalib ? "🌟 Al-Matalib al-'Aliyyah" : "📜 Kalam Masterwork"));
+        const badgeTag = isFiraq ? "I'tiqadat Firaq al-Muslimin" : (isTafsir ? "Tafsir al-Kabir" : (isMatalib ? "Al-Matalib al-'Aliyyah" : "Kalam Masterwork"));
         bodyHtml += `
           <a href="${att.data}" download="${escapeHtml(att.name)}" class="msg-epub-card" title="Click to download ${escapeHtml(cleanName)}">
             <div class="epub-card-header">

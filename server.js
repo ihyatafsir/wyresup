@@ -469,7 +469,7 @@ function seedImamRaziLibrary() {
 
   // 1. Welcome Header
   gossipMesh.publish(spaceId, channelId, {
-    content: "📚 **مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِيّ // IMAM FAKHR AL-DIN AL-RAZI EPUB LIBRARY**\n\nWelcome to the official digital repository of **Imam Fakhr al-Din al-Razi (544–606 AH / 1149–1209 CE)** masterworks. All volumes are available below as standalone EPUB e-books with Arabic-English lexicon mapping and offline reading support."
+    content: "**مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِيّ // IMAM FAKHR AL-DIN AL-RAZI EPUB LIBRARY**\n\nWelcome to the official digital repository of **Imam Fakhr al-Din al-Razi (544–606 AH / 1149–1209 CE)** masterworks. All volumes are available below as standalone EPUB e-books with Arabic-English lexicon mapping and offline reading support."
   }, { senderId: "ibn-manzur@lisan" });
 
   // 2. I'tiqadat Firaq al-Muslimin (Featured Firqa Section)
@@ -485,7 +485,7 @@ function seedImamRaziLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "🏛️ **I'tiqadat Firaq al-Muslimin wa'l-Mushrikin (اعتقادات فرق المسلمين والمشركين)**\n*Imam al-Razi's definitive comparative heresiography and theological taxonomy of Islamic and world religions. Available in 3 translations: Arabic Lexicon Edition, Guided Translation, and Standard Complete Edition.*",
+      content: "**I'tiqadat Firaq al-Muslimin wa'l-Mushrikin (اعتقادات فرق المسلمين والمشركين)**\n*Imam al-Razi's definitive comparative heresiography and theological taxonomy of Islamic and world religions. Available in 3 translations: Arabic Lexicon Edition, Guided Translation, and Standard Complete Edition.*",
       attachments: firaqAtts
     }, { senderId: "ibn-manzur@lisan" });
   }
@@ -502,7 +502,7 @@ function seedImamRaziLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "📖 **Tafsir al-Kabir (Mafatih al-Ghayb) — Volumes 1 to 32 (Complete)**\n*The monumental commentary on the Holy Quran by Imam Fakhr al-Din al-Razi. Complete 32-volume English translation.*",
+      content: "**Tafsir al-Kabir (Mafatih al-Ghayb) — Volumes 1 to 32 (Complete)**\n*The monumental commentary on the Holy Quran by Imam Fakhr al-Din al-Razi. Complete 32-volume English translation.*",
       attachments: atts
     }, { senderId: "ibn-manzur@lisan" });
   }
@@ -519,7 +519,7 @@ function seedImamRaziLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "🌟 **Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi (The Sublime Quests in Divine Science)**\n*Imam al-Razi's final philosophical and theological magnum opus (Vols 1–9 + Complete Compendium in Pure English & Arabic Lexical Editions).*",
+      content: "**Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi (The Sublime Quests in Divine Science)**\n*Imam al-Razi's final philosophical and theological magnum opus (Vols 1–9 + Complete Compendium in Pure English & Arabic Lexical Editions).*",
       attachments: atts
     }, { senderId: "ibn-manzur@lisan" });
   }
@@ -537,7 +537,7 @@ function seedImamRaziLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "📜 **Core Theological Treatises & Kalam Masterworks**\n*Including Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, 'Ismat al-Anbiya', Al-Mahsul, and Ma'alim Usul al-Din.*",
+      content: "**Core Theological Treatises & Kalam Masterworks**\n*Including Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, 'Ismat al-Anbiya', Al-Mahsul, and Ma'alim Usul al-Din.*",
       attachments: atts
     }, { senderId: "ibn-manzur@lisan" });
   }
@@ -554,7 +554,7 @@ function seedImamRaziLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "💎 **Classical Companion Masterworks**\n*Al-Futuhat al-Makkiyya (Ibn 'Arabi) and Al-Shifa bi-Ta'rif Huquq al-Mustafa (Qadi 'Iyad).*",
+      content: "**Classical Companion Masterworks**\n*Al-Futuhat al-Makkiyya (Ibn 'Arabi) and Al-Shifa bi-Ta'rif Huquq al-Mustafa (Qadi 'Iyad).*",
       attachments: atts
     }, { senderId: "ibn-manzur@lisan" });
   }
