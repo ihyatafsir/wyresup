@@ -882,7 +882,7 @@ function selectChannel(channelId) {
     const youtubeCallBtn = document.getElementById("btn-topbar-stream-youtube");
     if (voiceCallBtn) voiceCallBtn.style.display = isDM ? "inline-flex" : "none";
     if (videoCallBtn) videoCallBtn.style.display = isDM ? "inline-flex" : "none";
-    if (youtubeCallBtn) youtubeCallBtn.style.display = isDM ? "inline-flex" : "none";
+    if (youtubeCallBtn) youtubeCallBtn.style.display = "inline-flex";
 
     // Auto-display Nafaq Tunnel banner for Direct P2P channels
     if (isDM) {
@@ -1898,6 +1898,13 @@ function initEventListeners() {
   document.getElementById('btn-yt-search-action')?.addEventListener('click', () => {
     const val = document.getElementById('yt-stream-url-input')?.value;
     if (val) searchYouTubeVideos(val);
+  });
+
+  document.getElementById('yt-stream-url-input')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const val = document.getElementById('yt-stream-url-input')?.value;
+      if (val) searchYouTubeVideos(val);
+    }
   });
 
   document.getElementById('btn-yt-start-stream')?.addEventListener('click', () => {

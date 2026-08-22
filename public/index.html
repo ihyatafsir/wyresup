@@ -149,7 +149,7 @@
           <!-- Voice & Video Call Action Buttons (Direct Messages Only) -->
           <button class="topbar-btn topbar-call-btn" id="btn-topbar-call-voice" title="Start Audio Call (مُكَالَمَة صَوْتِيَّة)" style="display: none;">📞</button>
           <button class="topbar-btn topbar-call-btn" id="btn-topbar-call-video" title="Start Video Call (مُكَالَمَة مَرْئِيَّة)" style="display: none;">📹</button>
-          <button class="topbar-btn topbar-call-btn" id="btn-topbar-stream-youtube" title="VCWYVL // Video Call With YouTube Video Link (بَثّ اليوتيوب)" style="display: none;">📺</button>
+          <button class="topbar-btn topbar-call-btn" id="btn-topbar-stream-youtube" title="VCWYVL // Video Call With YouTube Video Link (بَثّ اليوتيوب)" style="display: inline-flex;">📺</button>
           <!-- Live Network Indicator Badge -->
           <div class="mesh-badge" id="topbar-mesh-badge" title="P2P Connection Status">
             <span class="pulse-dot"></span>
@@ -767,9 +767,11 @@
         </div>
 
         <!-- Quick Preset Chips -->
-        <div class="yt-preset-chips">
-          <span class="yt-chip-label">Quick Stream:</span>
-          <button class="yt-preset-chip" data-query="https://www.youtube.com/watch?v=X4YSNpSYX0g">🎶 Yasiin Bey - Supermagic</button>
+        <div class="yt-preset-chips" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
+          <span class="yt-chip-label" style="width:100%; color:#00f59b; font-weight:700; font-size:0.8rem;">Quick Stream Presets:</span>
+          <button class="yt-preset-chip" data-query="https://www.youtube.com/watch?v=BrPffpg9KFM" style="background:rgba(0, 245, 155, 0.15); border:1px solid #00f59b; color:#00f59b; border-radius:6px; padding:6px 12px; cursor:pointer; font-weight:600;">🇸🇾 Yasiin Bey - Damascus</button>
+          <button class="yt-preset-chip" data-query="https://www.youtube.com/watch?v=X4YSNpSYX0g" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:6px; padding:6px 12px; cursor:pointer;">🎶 Yasiin Bey - Supermagic</button>
+          <button class="yt-preset-chip" data-query="/ms_fat_booty.mp4" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:6px; padding:6px 12px; cursor:pointer;">🎤 Yasiin Bey - Ms. Fat Booty</button>
         </div>
 
         <!-- Search Results Area -->
