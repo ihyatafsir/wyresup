@@ -2798,7 +2798,16 @@ const RTC_CONFIG = {
   iceServers: [
     { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302', 'stun:stun3.l.google.com:19302', 'stun:stun4.l.google.com:19302'] },
     { urls: ['stun:stun.cloudflare.com:3478'] },
-    { urls: ['stun:stun.services.mozilla.com'] }
+    { urls: ['stun:stun.services.mozilla.com'] },
+    {
+      urls: [
+        'turn:openrelay.metered.ca:80',
+        'turn:openrelay.metered.ca:443',
+        'turn:openrelay.metered.ca:443?transport=tcp'
+      ],
+      username: 'openrelay',
+      credential: 'openrelay'
+    }
   ],
   iceCandidatePoolSize: 10
 };
@@ -2872,6 +2881,129 @@ async function drainPendingIceCandidates() {
         console.warn('[ICE Add Candidate Warning]:', e.message);
       }
     }
+  }
+}
+
+
+// --- NAFAQ (نَفَق) Containerless PCM & Sovereign Media Streaming Engine ---
+function startNafaqPcmStream(targetPeer, localStream) {
+  if (!localStream || localStream.getAudioTracks().length === 0) return;
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!state.audioCtx || state.audioCtx.state === 'closed') {
+    state.audioCtx = new AudioCtx();
+  }
+  if (state.audioCtx && state.audioCtx.state === 'suspended') {
+    state.audioCtx.resume().catch(() => {});
+  }
+
+  try {
+    if (state.activeCall.nafaqPcmProcessor) {
+      try {
+        state.activeCall.nafaqPcmProcessor.disconnect();
+        state.activeCall.nafaqPcmSource.disconnect();
+      } catch(e) {}
+    }
+
+    const source = state.audioCtx.createMediaStreamSource(localStream);
+    const processor = state.audioCtx.createScriptProcessor(2048, 1, 1);
+
+    processor.onaudioprocess = (e) => {
+      if (!state.activeCall.peer || state.activeCall.isMuted) return;
+      const inputData = e.inputBuffer.getChannelData(0);
+      const pcm16 = new Int16Array(inputData.length);
+      for (let i = 0; i < inputData.length; i++) {
+        let s = Math.max(-1, Math.min(1, inputData[i]));
+        pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+      }
+
+      const uint8 = new Uint8Array(pcm16.buffer);
+      let binary = '';
+      for (let i = 0; i < uint8.length; i++) {
+        binary += String.fromCharCode(uint8[i]);
+      }
+      const base64Data = btoa(binary);
+
+      if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+        state.ws.send(JSON.stringify({
+          type: 'CALL_SIGNAL',
+          payload: {
+            signalType: 'NAFAQ_PCM',
+            targetPeer,
+            sampleRate: state.audioCtx.sampleRate,
+            data: base64Data
+          }
+        }));
+      }
+    };
+
+    source.connect(processor);
+    processor.connect(state.audioCtx.destination);
+    state.activeCall.nafaqPcmSource = source;
+    state.activeCall.nafaqPcmProcessor = processor;
+    console.log('[NAFAQ PCM Engine] 🚀 Live containerless PCM voice streaming activated to @' + targetPeer);
+  } catch (err) {
+    console.warn('[NAFAQ PCM Error]:', err.message);
+  }
+}
+
+function handleIncomingNafaqPcm(payload) {
+  const { data, sampleRate } = payload;
+  if (!data) return;
+
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!state.audioCtx || state.audioCtx.state === 'closed') {
+    state.audioCtx = new AudioCtx();
+  }
+  if (state.audioCtx && state.audioCtx.state === 'suspended') {
+    state.audioCtx.resume().catch(() => {});
+  }
+
+  try {
+    const binary = atob(data);
+    const uint8 = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      uint8[i] = binary.charCodeAt(i);
+    }
+    const pcm16 = new Int16Array(uint8.buffer);
+    const float32 = new Float32Array(pcm16.length);
+    for (let i = 0; i < pcm16.length; i++) {
+      float32[i] = pcm16[i] / (pcm16[i] < 0 ? 0x8000 : 0x7FFF);
+    }
+
+    const rate = sampleRate || state.audioCtx.sampleRate;
+    const audioBuffer = state.audioCtx.createBuffer(1, float32.length, rate);
+    audioBuffer.getChannelData(0).set(float32);
+
+    const source = state.audioCtx.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(state.audioCtx.destination);
+
+    const now = state.audioCtx.currentTime;
+    let startTime = state.activeCall.nafaqAudioNextTime || 0;
+    if (startTime < now || (startTime - now) > 0.3) {
+      startTime = now + 0.02; // 20ms jitter cushion
+    }
+    source.start(startTime);
+    state.activeCall.nafaqAudioNextTime = startTime + audioBuffer.duration;
+
+    const voicePulse = document.getElementById('call-voice-pulse');
+    if (voicePulse) voicePulse.style.display = 'flex';
+    const statusEl = document.getElementById('call-remote-status-text');
+    if (statusEl && !statusEl.textContent.includes('NAFAQ')) {
+      statusEl.textContent = '🟢 NAFAQ Sovereign Voice Tunnel Active (صَوْت مُبَاشِر)';
+    }
+  } catch (err) {
+    // Jitter skip
+  }
+}
+
+function startNafaqTunnelStream(targetPeer, localStream, callType) {
+  startNafaqPcmStream(targetPeer, localStream);
+}
+
+function handleIncomingNafaqFrame(payload) {
+  if (payload.data) {
+    handleIncomingNafaqPcm(payload);
   }
 }
 
@@ -3055,6 +3187,8 @@ async function handleIncomingCallSignal(payload) {
     endActiveCall(false);
   } else if (signalType === 'NAFAQ_FRAME') {
     handleIncomingNafaqFrame(payload);
+  } else if (signalType === 'NAFAQ_PCM') {
+    handleIncomingNafaqPcm(payload);
   } else if (signalType === 'NAGHAM') {
     if (payload.freq1 && payload.freq2) {
       playDtmfDualTone(payload.freq1, payload.freq2, 0.25);
@@ -3248,6 +3382,14 @@ function declineIncomingCall() {
 
 function endActiveCall(notifyPeer = true) {
   updateCallStreamTitleUI(null);
+  if (state.activeCall.nafaqPcmProcessor) {
+    try {
+      state.activeCall.nafaqPcmProcessor.disconnect();
+      state.activeCall.nafaqPcmSource.disconnect();
+    } catch(e) {}
+    state.activeCall.nafaqPcmProcessor = null;
+    state.activeCall.nafaqPcmSource = null;
+  }
   if (state.activeCall.nafaqRecorder) {
     try { state.activeCall.nafaqRecorder.stop(); } catch(e){}
     state.activeCall.nafaqRecorder = null;
