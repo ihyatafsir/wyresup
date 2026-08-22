@@ -2390,52 +2390,63 @@ html, body {
 }
 
 .call-stage-header {
-  height: 50px;
-  padding: 0 16px;
+  height: 42px;
+  padding: 0 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: #121620;
   border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0;
+  gap: 4px;
 }
 
 .call-peer-badge {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
+  min-width: 0;
+  overflow: hidden;
 }
 .call-pulse-dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background-color: var(--matrix-green);
-  box-shadow: 0 0 8px var(--matrix-green);
+  box-shadow: 0 0 6px var(--matrix-green);
   animation: pulse-glow 1.5s infinite;
+  flex-shrink: 0;
 }
 .call-peer-name {
   font-weight: 700;
   color: #fff;
-  font-size: 15px;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .call-crypto-badge {
-  font-size: 11px;
+  font-size: 8.5px;
   font-family: monospace;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 1px 4px;
+  border-radius: 3px;
   background: rgba(0, 245, 155, 0.15);
   color: var(--matrix-green);
   border: 1px solid rgba(0, 245, 155, 0.3);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .call-timer-badge {
   font-family: monospace;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   color: #fff;
   background: rgba(255, 255, 255, 0.08);
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .call-video-grid {
@@ -2550,27 +2561,29 @@ html, body {
 }
 
 .call-hud-bar {
-  height: 32px;
+  height: 24px;
   background: #12151e;
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: space-around;
-  font-size: 12px;
+  font-size: 10px;
   color: var(--text-muted);
   flex-shrink: 0;
 }
 
 .call-controls-dock {
-  height: 70px;
-  padding: 0 20px;
+  height: 56px;
+  padding: 0 6px;
   background: #0e1118;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
+  justify-content: space-between;
+  gap: 4px;
   flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .call-ctrl-btn {
@@ -2578,21 +2591,23 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
   background: #1a1f2c;
   border: 1px solid var(--border-subtle);
   color: #fff;
-  border-radius: 12px;
-  width: 60px;
-  height: 52px;
+  border-radius: 8px;
+  flex: 1;
+  max-width: 52px;
+  min-width: 36px;
+  height: 44px;
+  padding: 2px 0;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .call-ctrl-btn:hover {
   background: #252c3d;
   border-color: var(--matrix-green);
-  transform: translateY(-2px);
 }
 
 .call-ctrl-btn.active-off {
@@ -2602,23 +2617,29 @@ html, body {
 }
 
 .call-ctrl-btn.end-call-btn {
-  background: #ed4245;
-  border-color: #ed4245;
-  color: #fff;
-  width: 70px;
+  background: #ed4245 !important;
+  border-color: #ed4245 !important;
+  color: #fff !important;
+  max-width: 56px;
 }
 .call-ctrl-btn.end-call-btn:hover {
-  background: #c03537;
-  transform: scale(1.05);
+  background: #c03537 !important;
 }
 
 .ctrl-icon {
-  font-size: 18px;
+  font-size: 15px;
+  line-height: 1;
 }
 .ctrl-lbl {
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 8px;
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.3px;
+  line-height: 1;
+  color: #8e9297;
+}
+.call-ctrl-btn.end-call-btn .ctrl-lbl {
+  color: #fff;
 }
 
 /* --- Incoming Call Modal Banner --- */
@@ -3317,12 +3338,7 @@ html, body {
 }
 
 /* Clean Compact Mobile UI Optimizations */
-.call-ctrl-btn {
-  min-width: 44px;
-  min-height: 44px;
-  touch-action: manipulation;
-  cursor: pointer;
-}
+
 
 .topbar-call-btn {
   width: 32px !important;
