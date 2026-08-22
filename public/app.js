@@ -2536,6 +2536,12 @@ async function startOutgoingCallWithCustomStream(targetPeer, customStream, strea
     fallback.style.display = 'none';
   }
 
+  // Auto-maximize the video stream to full central theater stage
+  const grid = document.getElementById('call-video-grid');
+  if (grid) {
+    grid.classList.add('is-swapped');
+  }
+
   openModal('modal-active-call');
 
   const pc = new RTCPeerConnection(RTC_CONFIG);
