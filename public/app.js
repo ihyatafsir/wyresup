@@ -1,4 +1,35 @@
 
+function updateCallStreamTitleUI(title) {
+  const banner = document.getElementById('call-video-title-banner');
+  const titleText = document.getElementById('call-video-title-text');
+  const remoteTag = document.getElementById('remote-video-tag');
+  const localTag = document.getElementById('local-video-tag');
+
+  if (title) {
+    if (banner) banner.style.display = 'flex';
+    if (titleText) titleText.textContent = title;
+    if (remoteTag) {
+      remoteTag.textContent = `🟢 ${title}`;
+      remoteTag.classList.add('video-stream-badge');
+    }
+    if (localTag) {
+      localTag.textContent = `🟢 ${title}`;
+      localTag.classList.add('video-stream-badge');
+    }
+  } else {
+    if (banner) banner.style.display = 'none';
+    if (remoteTag) {
+      remoteTag.textContent = 'REMOTE // 1080p OPUS';
+      remoteTag.classList.remove('video-stream-badge');
+    }
+    if (localTag) {
+      localTag.textContent = 'YOU (مُبَاشِر)';
+      localTag.classList.remove('video-stream-badge');
+    }
+  }
+}
+
+
 // --- 0.1 Tabur al-Rasail: Offline Resilient Message Queue (تَابُور الرَّسَائِل و صُمُود الانْقِطَاع) ---
 class TaburQueue {
   static getQueue() {
@@ -2712,6 +2743,7 @@ async function startOutgoingCallWithCustomStream(targetPeer, customStream, strea
   }
 
   openModal('modal-active-call');
+  updateCallStreamTitleUI(query || 'Live Media Stream');
 
   const pc = new RTCPeerConnection(RTC_CONFIG);
   state.activeCall.pc = pc;
@@ -3046,6 +3078,7 @@ async function acceptIncomingCall() {
   document.getElementById('call-remote-avatar-name').textContent = state.activeCall.peerPrefix;
 
   if (isCustomStreamCall) {
+    updateCallStreamTitleUI(streamTitle || 'Media Stream');
     document.getElementById('call-remote-status-text').textContent = `P2P Stream Active // ${streamTitle || 'Media Stream'}`;
     if (callType === 'video') {
       if (rAudio) { rAudio.pause(); rAudio.srcObject = null; rAudio.muted = true; }
@@ -3201,6 +3234,7 @@ function declineIncomingCall() {
 }
 
 function endActiveCall(notifyPeer = true) {
+  updateCallStreamTitleUI(null);
   if (state.activeCall.nafaqRecorder) {
     try { state.activeCall.nafaqRecorder.stop(); } catch(e){}
     state.activeCall.nafaqRecorder = null;
