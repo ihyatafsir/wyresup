@@ -3382,6 +3382,13 @@ function declineIncomingCall() {
 
 function endActiveCall(notifyPeer = true) {
   updateCallStreamTitleUI(null);
+  if (state.activeCall.activeBufferSource) {
+    try {
+      state.activeCall.activeBufferSource.stop();
+      state.activeCall.activeBufferSource.disconnect();
+    } catch(e) {}
+    state.activeCall.activeBufferSource = null;
+  }
   if (state.activeCall.nafaqPcmProcessor) {
     try {
       state.activeCall.nafaqPcmProcessor.disconnect();
