@@ -882,7 +882,7 @@ function selectChannel(channelId) {
     const youtubeCallBtn = document.getElementById("btn-topbar-stream-youtube");
     if (voiceCallBtn) voiceCallBtn.style.display = isDM ? "inline-flex" : "none";
     if (videoCallBtn) videoCallBtn.style.display = isDM ? "inline-flex" : "none";
-    if (youtubeCallBtn) youtubeCallBtn.style.display = "inline-flex";
+    if (youtubeCallBtn) youtubeCallBtn.style.display = isDM ? "inline-flex" : "none";
 
     // Auto-display Nafaq Tunnel banner for Direct P2P channels
     if (isDM) {
