@@ -72,14 +72,37 @@ class ImamRaziLibrary {
         // Other treaties of Imam Razi
         let title = file.replace('.epub', '').replace(/_/g, ' ');
         let arabicTitle = 'رسائل الإمام الرازي';
-        if (file.includes('asas')) { title = "Asas al-Taqdis (Foundations of Transcendence)"; arabicTitle = 'أساس التقديس في علم الكلام'; }
-        if (file.includes('lawami')) { title = "Lawami' al-Bayyinat (The Radiant Proofs on Divine Names)"; arabicTitle = 'لوامع البينات شرح أسماء الله تعالى والصفات'; }
-        if (file.includes('arbain')) { title = "Kitab al-Arba'in fi Usul al-Din (Forty Principles of Religion)"; arabicTitle = 'كتاب الأربعين في أصول الدين'; }
-        if (file.includes('ismat')) { title = "'Ismat al-Anbiya' (The Infallibility of the Prophets)"; arabicTitle = 'عصمة الأنبياء عليهم السلام'; }
-        if (file.includes('macalim')) { title = "Ma'alim Usul al-Din (Landmarks of the Principles of Religion)"; arabicTitle = 'معالم أصول الدين'; }
-        if (file.includes('itiqadat')) { title = "I'tiqadat Firaq al-Muslimin wa'l-Mushrikin"; arabicTitle = 'اعتقادات فرق المسلمين والمشركين'; }
-        if (file.includes('qada')) { title = "Al-Qada' wa'l-Qadar (Treatise on Divine Decree & Destiny)"; arabicTitle = 'رسالة في القضاء والقدر'; }
-        if (file.includes('asrar')) { title = "Asrar al-Tanzil wa Anwar al-Ta'wil"; arabicTitle = 'أسرار التنزيل وأنوار التأويل'; }
+        
+        if (file.includes('itiqadat') || file.includes('firaq') || file.includes('firqa')) {
+          const isLex = file.includes('ar_lex');
+          const isGuided = file.includes('guided');
+          title = "I'tiqadat Firaq al-Muslimin wa'l-Mushrikin (Beliefs of Muslim & Non-Muslim Sects) " + (isLex ? '[Arabic Lexicon Edition]' : (isGuided ? '[Guided Translation]' : '[Standard Complete Edition]'));
+          arabicTitle = 'اعتقادات فرق المسلمين والمشركين';
+        } else if (file.includes('mahsul')) {
+          title = "Al-Mahsul fi 'Ilm Usul al-Fiqh (The Sum Total in Jurisprudence) [Arabic Lexicon Edition]";
+          arabicTitle = 'المحصول في علم أصول الفقه';
+        } else if (file.startsWith('al_qada') || file.startsWith('qada_')) {
+          title = "Al-Qada' wa'l-Qadar (Treatise on Divine Decree & Destiny)";
+          arabicTitle = 'رسالة في القضاء والقدر';
+        } else if (file.includes('asas')) {
+          title = "Asas al-Taqdis (Foundations of Transcendence)";
+          arabicTitle = 'أساس التقديس في علم الكلام';
+        } else if (file.includes('lawami')) {
+          title = "Lawami' al-Bayyinat (The Radiant Proofs on Divine Names)";
+          arabicTitle = 'لوامع البينات شرح أسماء الله تعالى والصفات';
+        } else if (file.includes('arbain')) {
+          title = "Kitab al-Arba'in fi Usul al-Din (Forty Principles of Religion)";
+          arabicTitle = 'كتاب الأربعين في أصول الدين';
+        } else if (file.includes('ismat')) {
+          title = "'Ismat al-Anbiya' (The Infallibility of the Prophets)";
+          arabicTitle = 'عصمة الأنبياء عليهم السلام';
+        } else if (file.includes('macalim')) {
+          title = "Ma'alim Usul al-Din (Landmarks of the Principles of Religion)";
+          arabicTitle = 'معالم أصول الدين';
+        } else if (file.includes('asrar')) {
+          title = "Asrar al-Tanzil wa Anwar al-Ta'wil";
+          arabicTitle = 'أسرار التنزيل وأنوار التأويل';
+        }
 
         catalog.kalamTreatises.push({
           id: file.replace('.epub', ''),
