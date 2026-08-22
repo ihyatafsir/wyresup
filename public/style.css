@@ -1061,11 +1061,13 @@ html, body {
   font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
-  color: var(--header-primary);
+  color: var(--matrix-green) !important;
+  text-shadow: 0 0 10px rgba(0, 245, 155, 0.25);
+  letter-spacing: 0.2px;
 }
 
 .msg-author.antigravity {
-  color: var(--matrix-green);
+  color: var(--matrix-green) !important;
 }
 
 .msg-badge {
