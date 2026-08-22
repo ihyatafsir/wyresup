@@ -2810,37 +2810,50 @@ function attachRemoteStreamToMediaElements(stream, callType) {
   const fallback = document.getElementById('remote-avatar-fallback');
   const voicePulse = document.getElementById('call-voice-pulse');
 
-  if (callType === 'video') {
-    // Single audio route through video player to prevent double playback
-    if (remoteAudio) {
-      remoteAudio.pause();
-      remoteAudio.srcObject = null;
-      remoteAudio.muted = true;
+  const audioTracks = stream ? stream.getAudioTracks() : [];
+  const videoTracks = stream ? stream.getVideoTracks() : [];
+
+  console.log(`[Media Attachment] Tracks: ${audioTracks.length} audio, ${videoTracks.length} video (callType: ${callType})`);
+
+  // 1. Unlocked Dedicated HTML5 Audio Player Route
+  if (remoteAudio && audioTracks.length > 0) {
+    remoteAudio.srcObject = stream;
+    remoteAudio.muted = false;
+    remoteAudio.volume = 1.0;
+    remoteAudio.play().catch(e => {
+      console.warn('[Remote Audio Play Notice]:', e.message);
+    });
+  }
+
+  // 2. Direct WebAudio Destination Bridge (Bypasses Mobile Tag Autoplay Policies)
+  if (audioTracks.length > 0 && state.audioCtx && state.audioCtx.state === 'running') {
+    try {
+      if (state.activeCall.remoteAudioSourceNode) {
+        state.activeCall.remoteAudioSourceNode.disconnect();
+      }
+      const sourceNode = state.audioCtx.createMediaStreamSource(stream);
+      sourceNode.connect(state.audioCtx.destination);
+      state.activeCall.remoteAudioSourceNode = sourceNode;
+      console.log('[WebAudio Route] ✓ Direct audio bridge connected to device output speakers!');
+    } catch (err) {
+      console.warn('[WebAudio Direct Route Notice]:', err.message);
     }
+  }
+
+  // 3. Video Display Management
+  if (callType === 'video' && videoTracks.length > 0) {
     if (remoteVideo) {
       remoteVideo.srcObject = stream;
-      remoteVideo.muted = false;
-      remoteVideo.volume = 1.0;
-      remoteVideo.play().catch(e => {
-        console.warn('[Video play fallback]:', e);
-        remoteVideo.muted = true;
-        remoteVideo.play().catch(() => {});
-      });
+      remoteVideo.muted = true; // Video element muted to guarantee 100% video autoplay without silencing audio track
+      remoteVideo.play().catch(() => {});
       if (fallback) fallback.style.display = 'none';
     }
     if (voicePulse) voicePulse.style.display = 'none';
   } else {
-    // Voice-only call route
     if (remoteVideo) {
       remoteVideo.pause();
       remoteVideo.srcObject = null;
       remoteVideo.muted = true;
-    }
-    if (remoteAudio) {
-      remoteAudio.srcObject = stream;
-      remoteAudio.muted = false;
-      remoteAudio.volume = 1.0;
-      remoteAudio.play().catch(e => console.warn('[Audio play warning]:', e));
     }
     if (fallback) fallback.style.display = 'flex';
     if (voicePulse) voicePulse.style.display = 'flex';
