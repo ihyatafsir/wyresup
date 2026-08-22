@@ -2964,9 +2964,16 @@ function endActiveCall(notifyPeer = true) {
     }));
   }
 
-  // Stop all local tracks
+  // Stop all local and remote media tracks
   if (state.activeCall.localStream) {
-    state.activeCall.localStream.getTracks().forEach(t => t.stop());
+    state.activeCall.localStream.getTracks().forEach(t => {
+      try { t.stop(); } catch(e){}
+    });
+  }
+  if (state.activeCall.remoteStream) {
+    state.activeCall.remoteStream.getTracks().forEach(t => {
+      try { t.stop(); } catch(e){}
+    });
   }
 
   // Close peer connection
@@ -2979,13 +2986,72 @@ function endActiveCall(notifyPeer = true) {
     state.activeCall.syntheticInterval = null;
   }
 
-  // Reset media DOM elements
+  // Stop and remove all background stream video elements
+  ['wyresup-hidden-stream-video', 'wyresup-synthetic-video-source'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      try {
+        el.pause();
+        el.currentTime = 0;
+        el.src = '';
+        el.load();
+        el.remove();
+      } catch(e){}
+    }
+  });
+
+  // Reset & pause all call video and audio DOM elements
   const localVideo = document.getElementById('call-local-video');
   const remoteVideo = document.getElementById('call-remote-video');
   const remoteAudio = document.getElementById('call-remote-audio');
-  if (localVideo) localVideo.srcObject = null;
-  if (remoteVideo) remoteVideo.srcObject = null;
-  if (remoteAudio) remoteAudio.srcObject = null;
+
+  if (localVideo) {
+    try {
+      localVideo.pause();
+      localVideo.src = '';
+      localVideo.srcObject = null;
+      localVideo.load();
+    } catch(e){}
+  }
+  if (remoteVideo) {
+    try {
+      remoteVideo.pause();
+      remoteVideo.src = '';
+      remoteVideo.srcObject = null;
+      remoteVideo.load();
+      remoteVideo.style.display = 'none';
+    } catch(e){}
+  }
+  if (remoteAudio) {
+    try {
+      remoteAudio.pause();
+      remoteAudio.src = '';
+      remoteAudio.srcObject = null;
+      remoteAudio.load();
+    } catch(e){}
+  }
+
+  // Show fallback avatar again for next call
+  const fallback = document.getElementById('remote-avatar-fallback');
+  if (fallback) {
+    fallback.style.display = 'flex';
+  }
+
+  // Stop WebAudio buffer sources
+  if (state.activeCall.activeBufferSource) {
+    try {
+      state.activeCall.activeBufferSource.stop();
+      state.activeCall.activeBufferSource.disconnect();
+    } catch(e){}
+    state.activeCall.activeBufferSource = null;
+  }
+
+  // Suspend AudioContext to guarantee zero background audio leakage
+  if (state.audioCtx && state.audioCtx.state === 'running') {
+    try {
+      state.audioCtx.suspend().catch(() => {});
+    } catch(e){}
+  }
 
   stopCallTimer();
 
@@ -3002,11 +3068,13 @@ function endActiveCall(notifyPeer = true) {
     timerInterval: null,
     isMuted: false,
     isCamOff: false,
-    isScreenSharing: false
+    isScreenSharing: false,
+    activeBufferSource: null
   };
 
   closeModal('modal-active-call');
   closeModal('modal-incoming-call');
+  closeModal('modal-stream-youtube');
 }
 
 function toggleCallMic() {
