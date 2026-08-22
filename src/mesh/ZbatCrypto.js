@@ -506,7 +506,9 @@ class ZbatCrypto {
   }
 
   static fingerprintToDtmfSequence(pubKeyHex, length = 8) {
-    const cleanHex = (pubKeyHex || "").replace(/[^0-9a-fA-F]/g, "").toLowerCase();
+    // Hash the public key with SHA-256 to ensure 256-bit uniform entropy across all 16 DTMF dual-tones
+    const hash = crypto.createHash("sha256").update(pubKeyHex || "").digest("hex");
+    const cleanHex = hash.toLowerCase();
     const hexMap = {
       "0": "0", "1": "1", "2": "2", "3": "3", "4": "4",
       "5": "5", "6": "6", "7": "7", "8": "8", "9": "9",

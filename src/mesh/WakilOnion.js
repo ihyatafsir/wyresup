@@ -2,28 +2,37 @@ const crypto = require("crypto");
 const ZbatCrypto = require("./ZbatCrypto");
 
 /**
- * WyreSup Wakil (وَكِيل) v2.0 - Canonical Sphinx Onion Routing Protocol
+ * WyreSup Wakil (وَكِيل) v2.2 - Hardened Sphinx Onion Routing Protocol
  * Grounded in Ibn Manzur's Lisan al-Arab: "الوَكِيلُ: الحافِظُ الكافِي، ووَكَّلْتُ أَمْرِي إِلى فُلانٍ: اسْتَسْلَمْتُ له وفَوَّضْتُه ليَقُومَ مَقامِي في السَّتْرِ والحِمايَة"
  *
- * Implements:
- * 1. Strict Constant-Length 1152-Byte Sphinx Binary Frames (Fixed across ALL hops on wire)
- * 2. Unified Ephemeral Key ($\alpha$) with Multi-Hop Key Derivation
- * 3. Compact Shifted Routing Sub-Headers with Per-Hop AEAD Authentication
- * 4. Anti-Replay Defense Cache (5-Minute Sliding Window)
- * 5. Deterministic Zero-Trial Decryption (No timing side-channels)
+ * Hardened Features:
+ * 1. Strict Constant-Length 1473-Byte Sphinx Binary Frames (Fixed across ALL hops on wire)
+ * 2. Shifted Routing Sub-Headers with Per-Hop AEAD Authentication
+ * 3. Authenticated Anti-Replay Defense (Inserted only AFTER successful AEAD tag verification)
+ * 4. Periodic Replay Cache Purge & Expired Entry Eviction
+ * 5. Deterministic Payload Padding & HMAC-SHA256 Multi-Hop Derivations
  */
 
 const PAYLOAD_BODY_SIZE = 1024;
-const SUBHEADER_UNIT_SIZE = 128; // 12B IV + 16B Tag + 4B Routing/Pad
+const SUBHEADER_UNIT_SIZE = 128;
 const NUM_HOPS = 3;
-const TOTAL_HEADER_SIZE = 65 + (NUM_HOPS * SUBHEADER_UNIT_SIZE); // 65B PubKey + 96B = 161B
-const SPHINX_TOTAL_FRAME_SIZE = TOTAL_HEADER_SIZE + PAYLOAD_BODY_SIZE; // 1185B (Strictly constant)
+const SUBHEADERS_TOTAL_SIZE = NUM_HOPS * SUBHEADER_UNIT_SIZE; // 384 bytes
+const SPHINX_TOTAL_FRAME_SIZE = 65 + SUBHEADERS_TOTAL_SIZE + PAYLOAD_BODY_SIZE; // 1473 bytes
 
 class WakilOnion {
   static seenReplayTags = new Map(); // Tag -> ExpiryTimestamp
 
+  static purgeExpiredReplayTags() {
+    const now = Date.now();
+    for (const [tag, exp] of WakilOnion.seenReplayTags.entries()) {
+      if (now >= exp) {
+        WakilOnion.seenReplayTags.delete(tag);
+      }
+    }
+  }
+
   /**
-   * Build a Canonical Sphinx Onion Packet
+   * Build a Hardened Sphinx Onion Packet
    * @param {Object|String} payload - The secret message
    * @param {Array<Object>} circuit - 3 relay nodes [{ nodeId, pubKeyHex }]
    */
@@ -39,10 +48,10 @@ class WakilOnion {
       throw new Error(`[Wakil Error] Payload exceeds maximum Sphinx body capacity (${PAYLOAD_BODY_SIZE - 2} bytes)`);
     }
 
-    // 1. Generate single ephemeral ECDH keypair for sender (alpha)
+    // 1. Generate Ephemeral Alpha Keypair for the Circuit
     const ecdh = crypto.createECDH("prime256v1");
     ecdh.generateKeys();
-    const alphaPubKeyBuf = ecdh.getPublicKey(); // 65 bytes
+    const alphaPubKeyBuf = ecdh.getPublicKey(); // 65 bytes uncompressed
 
     // 2. Derive per-hop shared secrets and keys
     const sharedSecrets = [];
@@ -78,38 +87,40 @@ class WakilOnion {
     bodyBuf = Buffer.concat([cipher1.update(bodyBuf), cipher1.final()]);
 
     // 4. Construct Encrypted Routing Sub-Headers for each Hop
-    // Routing commands: Hop 1 -> next is circuit[1], Hop 2 -> next is circuit[2], Hop 3 -> DESTINATION
     const routingInfo = [
       { next: circuit[1].nodeId, hopIndex: 1 },
       { next: circuit[2].nodeId, hopIndex: 2 },
       { next: "DESTINATION", hopIndex: 3 }
     ];
 
-    const subHeadersBuf = Buffer.alloc(NUM_HOPS * 128); // 64B per subheader slot (JSON + IV + Tag)
+    const subHeadersBuf = Buffer.alloc(SUBHEADERS_TOTAL_SIZE);
 
     for (let i = 0; i < NUM_HOPS; i++) {
       const rawMeta = Buffer.from(JSON.stringify(routingInfo[i]), "utf8");
-      const block = Buffer.alloc(128);
+      const block = Buffer.alloc(SUBHEADER_UNIT_SIZE);
       const iv = crypto.randomBytes(12);
       const cipher = crypto.createCipheriv("aes-256-gcm", headerKeys[i], iv);
       const ct = Buffer.concat([cipher.update(rawMeta), cipher.final()]);
       const tag = cipher.getAuthTag();
 
-      // Layout of 64B slot: 12B IV + 16B Tag + 2B Len + ct (padded to 34B)
+      // Layout: 12B IV + 16B Tag + 2B Len + ct + CSPRNG noise
       iv.copy(block, 0);
       tag.copy(block, 12);
       block.writeUInt16BE(ct.length, 28);
       ct.copy(block, 30);
+      if (30 + ct.length < SUBHEADER_UNIT_SIZE) {
+        crypto.randomFillSync(block, 30 + ct.length);
+      }
 
-      block.copy(subHeadersBuf, i * 128);
+      block.copy(subHeadersBuf, i * SUBHEADER_UNIT_SIZE);
     }
 
-    // 5. Assemble Final Constant-Length Wire Frame
+    // 5. Assemble Final Constant-Length Wire Frame (Strictly 1473 Bytes)
     const finalFrame = Buffer.concat([
       alphaPubKeyBuf,  // 65 bytes
-      subHeadersBuf,   // 192 bytes
+      subHeadersBuf,   // 384 bytes
       bodyBuf          // 1024 bytes
-    ]); // Total: 1281 bytes constant
+    ]);
 
     // Zeroize sensitive ephemeral keys
     sharedSecrets.forEach(ss => ZbatCrypto.tamsScrub(ss));
@@ -126,18 +137,20 @@ class WakilOnion {
 
   /**
    * Peel one layer of the Sphinx Onion Packet at a relay node
-   * @param {Buffer} frameBuf - Strict constant-size Sphinx frame
+   * @param {Buffer} frameBuf - Strict constant-size Sphinx frame (1473 bytes)
    * @param {String|Buffer} nodePrivKeyHex - Private key of the current relay
    * @param {Number} hopIndex - 1 (Entry), 2 (Middle), or 3 (Exit)
    */
   static peelOnionLayer(frameBuf, nodePrivKeyHex, hopIndex = 1) {
-    if (!Buffer.isBuffer(frameBuf) || frameBuf.length < 1000) {
-      throw new Error(`[Wakil Error] Invalid Sphinx frame: must be valid buffer`);
+    if (!Buffer.isBuffer(frameBuf) || frameBuf.length !== SPHINX_TOTAL_FRAME_SIZE) {
+      throw new Error(`[Wakil Error] Invalid Sphinx frame: must be exactly ${SPHINX_TOTAL_FRAME_SIZE} bytes`);
     }
 
+    WakilOnion.purgeExpiredReplayTags();
+
     const alphaPubKeyBuf = frameBuf.subarray(0, 65);
-    const subHeadersBuf = frameBuf.subarray(65, 65 + 384);
-    const bodyBuf = frameBuf.subarray(65 + 384);
+    const subHeadersBuf = frameBuf.subarray(65, 65 + SUBHEADERS_TOTAL_SIZE);
+    const bodyBuf = frameBuf.subarray(65 + SUBHEADERS_TOTAL_SIZE);
 
     // 1. Ephemeral Key Agreement
     const ecdh = crypto.createECDH("prime256v1");
@@ -148,22 +161,24 @@ class WakilOnion {
     const headerKey = crypto.createHmac("sha256", ss).update(Buffer.from(`wakil-header-hop-${hopIndex - 1}`)).digest();
 
     // 2. Decrypt this hop's routing sub-header
-    const slotOffset = (hopIndex - 1) * 128;
+    const slotOffset = (hopIndex - 1) * SUBHEADER_UNIT_SIZE;
     const iv = subHeadersBuf.subarray(slotOffset, slotOffset + 12);
     const tag = subHeadersBuf.subarray(slotOffset + 12, slotOffset + 28);
     const ctLen = subHeadersBuf.readUInt16BE(slotOffset + 28);
     const ct = subHeadersBuf.subarray(slotOffset + 30, slotOffset + 30 + ctLen);
 
-    // Anti-Replay Check
+    // Anti-Replay Defense: Check tag existence
     const tagHex = tag.toString("hex");
     const now = Date.now();
     if (WakilOnion.seenReplayTags.has(tagHex)) {
       const exp = WakilOnion.seenReplayTags.get(tagHex);
       if (now < exp) {
+        ZbatCrypto.tamsScrub(ss);
+        ZbatCrypto.tamsScrub(encKey);
+        ZbatCrypto.tamsScrub(headerKey);
         throw new Error("[Wakil Anti-Replay] Detected replayed Sphinx onion tag: DROPPED");
       }
     }
-    WakilOnion.seenReplayTags.set(tagHex, now + 300000); // 5 min TTL window
 
     let routeMeta = null;
     try {
@@ -171,6 +186,9 @@ class WakilOnion {
       decipher.setAuthTag(tag);
       const pt = Buffer.concat([decipher.update(ct), decipher.final()]);
       routeMeta = JSON.parse(pt.toString("utf8"));
+
+      // CRITICAL FIX: Only insert into replay cache AFTER successful authentication!
+      WakilOnion.seenReplayTags.set(tagHex, now + 300000); // 5 min TTL window
     } catch (e) {
       ZbatCrypto.tamsScrub(ss);
       ZbatCrypto.tamsScrub(encKey);
@@ -179,7 +197,7 @@ class WakilOnion {
     }
 
     // 3. Peel one layer of payload body CTR stream
-    const bodyDecipher = crypto.createDecipheriv("aes-256-ctr", encKey, Buffer.alloc(16, hopIndex));
+    const bodyDecipher = crypto.createCipheriv("aes-256-ctr", encKey, Buffer.alloc(16, hopIndex));
     const peeledBody = Buffer.concat([bodyDecipher.update(bodyBuf), bodyDecipher.final()]);
 
     ZbatCrypto.tamsScrub(ss);

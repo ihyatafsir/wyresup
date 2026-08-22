@@ -25,11 +25,13 @@ console.log(`  - DTMF SAS:      ${sas.sequence} (${sas.sasDisplay})`);
 console.log(`  - Frequency Map: ${sas.tones.map(t => `[${t.digit}: ${t.freqs.join("/")}Hz]`).slice(0, 4).join(" ")}...`);
 
 assert.strictEqual(sas.sequence.length, 8, "SAS sequence must be 8 digits long");
-assert.strictEqual(sas.sequence[0], "0", "Char 0 maps to 0");
-assert.strictEqual(sas.sequence[1], "4", "Char 4 maps to 4");
-assert.strictEqual(sas.sequence[2], "*", "Char a maps to *");
-assert.strictEqual(sas.sequence[3], "#", "Char b maps to #");
-assert.strictEqual(sas.sequence[4], "C", "Char e maps to C");
+// Verify deterministic derivation from SHA-256 uniform digest
+const crypto = require("crypto");
+const expectedHash = crypto.createHash("sha256").update(samplePubKey).digest("hex");
+const hexMap = { "0": "0", "1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "7", "8": "8", "9": "9", "a": "*", "b": "#", "c": "A", "d": "B", "e": "C", "f": "D" };
+for (let i = 0; i < 8; i++) {
+  assert.strictEqual(sas.sequence[i], hexMap[expectedHash[i]], `DTMF tone ${i} must match SHA-256 mapped symbol`);
+}
 console.log("  ✅ Deterministic hex-to-DTMF mapping validated.");
 
 // Helper: Generate synthetic dual-tone PCM buffer (Float32Array)

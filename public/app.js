@@ -57,24 +57,31 @@ function generateClientMessageId() {
   return id;
 }
 
-async function getOrDeriveSharedKey(targetPeer) {
-  if (!state.crypto || !state.crypto.keys || !WyreCrypto.isSupported()) return null;
+async function getOrDeriveSharedKey(peer) {
+  if (!state.crypto.isSupported || !state.crypto.keys) return null;
+  const peerId = typeof peer === "string" ? peer : (peer.peerId || peer.fullId);
 
-  const peerId = targetPeer.peerId || targetPeer.fullId || `${targetPeer.prefix}@mesh`;
   if (state.crypto.sharedKeyCache.has(peerId)) {
     return state.crypto.sharedKeyCache.get(peerId);
   }
 
-  let peerPubKeyJwk = targetPeer.ecdhPubKey;
-  if (!peerPubKeyJwk) {
-    const foundPeer = state.peers.find(p => p.peerId === peerId || p.prefix === targetPeer.prefix);
-    peerPubKeyJwk = foundPeer?.ecdhPubKey;
+  let remoteEcdhJwk = peer && peer.ecdhPubKey;
+  if (!remoteEcdhJwk) {
+    const knownPeer = state.peers.find(p => p.peerId === peerId || p.prefix === peerId.split('@')[0]);
+    if (knownPeer && knownPeer.ecdhPubKey) {
+      remoteEcdhJwk = knownPeer.ecdhPubKey;
+    }
   }
 
-  if (peerPubKeyJwk) {
-    const remotePubKey = await WyreCrypto.importRemotePublicKey(peerPubKeyJwk);
+  if (remoteEcdhJwk) {
+    const remotePubKey = await WyreCrypto.importRemotePublicKey(remoteEcdhJwk);
     if (remotePubKey) {
-      const derivedKey = await WyreCrypto.deriveSharedKey(state.crypto.keys.ecdhPair.privateKey, remotePubKey);
+      const derivedKey = await WyreCrypto.deriveSharedKey(
+        state.crypto.keys.ecdhPair.privateKey,
+        remotePubKey,
+        state.identity.fullId,
+        peerId
+      );
       if (derivedKey) {
         state.crypto.sharedKeyCache.set(peerId, derivedKey);
         return derivedKey;
@@ -82,23 +89,8 @@ async function getOrDeriveSharedKey(targetPeer) {
     }
   }
 
-  // Deterministic pairwise key agreement fallback for bots and offline peers
-  try {
-    const sortedIds = [peerId, state.identity.fullId].sort();
-    const deterministicSecret = `${sortedIds[0]}:${sortedIds[1]}:wyresup-miftah-v1`;
-    const enc = new TextEncoder().encode(deterministicSecret);
-    const hash = await window.crypto.subtle.digest("SHA-256", enc);
-    const fallbackKey = await window.crypto.subtle.importKey(
-      "raw", hash,
-      { name: "AES-GCM", length: 256 },
-      false, ["encrypt", "decrypt"]
-    );
-    state.crypto.sharedKeyCache.set(peerId, fallbackKey);
-    return fallbackKey;
-  } catch (e) {
-    console.warn("[WyreCrypto] Shared key fallback error:", e);
-    return null;
-  }
+  console.warn(`[WyreCrypto Strict Policy] No authenticated ECDH public key found for peer ${peerId}.`);
+  return null;
 }
 
 async function sendEncryptedDm(dmChannelId, rawPayload) {
@@ -110,29 +102,47 @@ async function sendEncryptedDm(dmChannelId, rawPayload) {
 
   const sharedKey = await getOrDeriveSharedKey(targetPeer);
   const messageId = generateClientMessageId();
+  const timestamp = Date.now();
 
   if (sharedKey) {
-    // Encrypt Batin with AES-256-GCM (Authenticated Encryption)
-    const encryptedBatin = await WyreCrypto.encryptBatin(rawPayload, sharedKey);
+    // 1. Authenticated Metadata Context (Bound to GCM Tag via additionalData)
+    const authContext = {
+      senderId: state.identity.fullId,
+      targetPeer: targetPeer.peerId,
+      channelId: dmChannelId,
+      messageId,
+      timestamp
+    };
+
+    // 2. Encrypt Batin with AES-256-GCM + Additional Data
+    const encryptedBatin = await WyreCrypto.encryptBatin(rawPayload, sharedKey, authContext);
+
+    // 3. Cryptographic ECDSA Signature over (Ciphertext + Additional Data)
+    const dataToSign = new TextEncoder().encode(
+      `${encryptedBatin.ciphertext}:${encryptedBatin.iv}:${JSON.stringify(authContext)}`
+    );
+    const signature = await WyreCrypto.signPacket(dataToSign, state.crypto.keys?.ecdsaPair?.privateKey);
 
     const packet = {
       zahir: {
-        version: "zbat/1.4.0",
+        version: "zbat/1.5.0",
         messageId,
         senderId: state.identity.fullId,
         spaceId: state.currentSpaceId,
         channelId: dmChannelId,
-        timestamp: Date.now(),
+        timestamp,
         ttl: 5,
         hops: 0,
         routeType: "direct_e2ee",
         priority: "high",
         isVoice: !!rawPayload.voiceData,
         isEncrypted: true,
+        signature,
         encryptionMeta: {
           targetPeer: targetPeer.peerId,
           senderPubKey: state.identity.ecdhPubJwk || null,
-          cipher: "AES-256-GCM/MIFTAH"
+          senderSignPubKey: state.identity.ecdsaPubJwk || null,
+          cipher: "AES-256-GCM/MIFTAH-V2"
         }
       },
       batin: encryptedBatin
@@ -141,13 +151,10 @@ async function sendEncryptedDm(dmChannelId, rawPayload) {
     if (state.activeCall && state.activeCall.dataChannel && state.activeCall.dataChannel.readyState === "open") {
       // Tier 1: Direct Zero-Hop WebRTC DataChannel (Barq Wire-Speed)
       state.activeCall.dataChannel.send(JSON.stringify({ type: "P2P_PACKET", payload: packet }));
-      console.log("[Barq P2P] Message sent over direct WebRTC DataChannel (0 relay hops)");
+      console.log("[Barq P2P] Message sent via zero-hop authenticated DataChannel");
     } else if (state.ws && state.ws.readyState === WebSocket.OPEN) {
       // Tier 2: WebSocket Gossip Mesh Relay
-      state.ws.send(JSON.stringify({
-        type: "SEND_MESSAGE",
-        payload: packet
-      }));
+      state.ws.send(JSON.stringify({ type: "GOSSIP_PACKET", payload: packet }));
     } else {
       // Tier 3: Offline Resilient Tabur Queue
       TaburQueue.enqueue(packet);
@@ -175,108 +182,21 @@ async function sendEncryptedDm(dmChannelId, rawPayload) {
   }
 }
 
-/**
- * WyreCrypto: WebCrypto ECDH & AES-256-GCM Cryptographic Engine (مُحَرِّك التَّعْمِيَة المِفْتَاحِيَّة)
- * Authenticated End-to-End Encryption, Aqd al-Miftah Key Agreement, & ZBAT Framing.
- */
 class WyreCrypto {
   static isSupported() {
-    return typeof window !== "undefined" && window.crypto && !!window.crypto.subtle;
+    return !!(window.crypto && window.crypto.subtle);
   }
 
-
-
-  /**
-   * Al-Sabk (الصَّبْك): Client-side Binary Frame Packing for WebCrypto / WebSockets
-   */
-  static packSabk(ivUint8, tagUint8, ctUint8, messageIndex = 0) {
-    const totalLen = 34 + ctUint8.byteLength;
-    const packed = new Uint8Array(totalLen);
-    const view = new DataView(packed.buffer);
-
-    packed[0] = 0x57; // Magic 'W'
-    packed[1] = 0x01; // Flags (AES-256-GCM)
-    view.setUint32(2, messageIndex, false); // Big-Endian
-    packed.set(ivUint8, 6);
-    packed.set(tagUint8, 18);
-    packed.set(ctUint8, 34);
-
-    return packed;
-  }
-
-  static unpackSabk(packedUint8) {
-    if (packedUint8.byteLength < 34 || packedUint8[0] !== 0x57) {
-      throw new Error("[Al-Sabk] Truncated or invalid binary frame");
-    }
-    const view = new DataView(packedUint8.buffer, packedUint8.byteOffset, packedUint8.byteLength);
-    const messageIndex = view.getUint32(2, false);
-    const iv = packedUint8.subarray(6, 18);
-    const tag = packedUint8.subarray(18, 34);
-    const ciphertext = packedUint8.subarray(34);
-
-    return { messageIndex, iv, tag, ciphertext };
-  }
-
-  static padPayload(plaintext) {
-    const rawStr = typeof plaintext === "string" ? plaintext : JSON.stringify(plaintext);
-    const bucketSizes = [256, 1024, 4096, 16384];
-    let targetSize = bucketSizes[bucketSizes.length - 1];
-    for (const size of bucketSizes) {
-      if (rawStr.length + 16 <= size) {
-        targetSize = size;
-        break;
-      }
-    }
-    const padLen = Math.max(0, targetSize - rawStr.length - 16);
-    const randChars = "0123456789abcdef";
-    let padding = "";
-    for (let i = 0; i < padLen; i++) padding += randChars[Math.floor(Math.random() * randChars.length)];
-    return JSON.stringify({ d: rawStr, p: padding });
-  }
-
-  static unpadPayload(paddedStr) {
-    try {
-      const parsed = JSON.parse(paddedStr);
-      if (parsed && parsed.d) {
-        try { return JSON.parse(parsed.d); } catch { return parsed.d; }
-      }
-      return parsed;
-    } catch {
-      return paddedStr;
-    }
-  }
-
-  static async computeMizanNonce(dataStr, difficulty = 2) {
-    const targetPrefix = "0".repeat(difficulty);
-    const encoder = new TextEncoder();
-    let nonce = 0;
-    while (true) {
-      const dataToHash = encoder.encode(`${dataStr}:${nonce}`);
-      const hashBuf = await window.crypto.subtle.digest("SHA-256", dataToHash);
-      const hashArray = Array.from(new Uint8Array(hashBuf));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-      if (hashHex.startsWith(targetPrefix)) {
-        return { nonce, hash: hashHex, difficulty };
-      }
-      nonce++;
-      if (nonce > 50000) break;
-    }
-    return { nonce, difficulty };
-  }
-
-  static async generateKeyPairs() {
+  static async generateIdentityKeys() {
     if (!this.isSupported()) return null;
     try {
       const ecdhPair = await window.crypto.subtle.generateKey(
         { name: "ECDH", namedCurve: "P-256" },
-        true,
-        ["deriveKey", "deriveBits"]
+        true, ["deriveKey", "deriveBits"]
       );
-
       const ecdsaPair = await window.crypto.subtle.generateKey(
         { name: "ECDSA", namedCurve: "P-256" },
-        true,
-        ["sign", "verify"]
+        true, ["sign", "verify"]
       );
 
       const ecdhPubJwk = await window.crypto.subtle.exportKey("jwk", ecdhPair.publicKey);
@@ -293,7 +213,7 @@ class WyreCrypto {
         ecdsaPrivJwk
       };
     } catch (e) {
-      console.warn("[WyreCrypto] Keygen error:", e);
+      console.error("[WyreCrypto] Key generation failure:", e);
       return null;
     }
   }
@@ -349,30 +269,75 @@ class WyreCrypto {
     }
   }
 
-  static async deriveSharedKey(localPrivKey, remotePubKey) {
+  static async importRemoteSignPublicKey(jwk) {
+    if (!jwk || !this.isSupported()) return null;
+    try {
+      return await window.crypto.subtle.importKey(
+        "jwk", jwk,
+        { name: "ECDSA", namedCurve: "P-256" },
+        true, ["verify"]
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Canonical RFC 5869 HKDF-SHA256 Key Derivation
+  static async deriveSharedKey(localPrivKey, remotePubKey, senderId, targetId) {
     if (!this.isSupported() || !localPrivKey || !remotePubKey) return null;
     try {
-      return await window.crypto.subtle.deriveKey(
+      const rawEcdhBits = await window.crypto.subtle.deriveBits(
         { name: "ECDH", public: remotePubKey },
         localPrivKey,
+        256
+      );
+
+      const hkdfSecret = await window.crypto.subtle.importKey(
+        "raw", rawEcdhBits,
+        { name: "HKDF" },
+        false,
+        ["deriveKey"]
+      );
+
+      const sortedParticipants = [senderId || 'peerA', targetId || 'peerB'].sort().join(':');
+      const salt = new TextEncoder().encode("wyresup-miftah-v2-salt");
+      const info = new TextEncoder().encode(`wyresup-authenticated-session:${sortedParticipants}`);
+
+      return await window.crypto.subtle.deriveKey(
+        {
+          name: "HKDF",
+          hash: "SHA-256",
+          salt,
+          info
+        },
+        hkdfSecret,
         { name: "AES-GCM", length: 256 },
         false,
         ["encrypt", "decrypt"]
       );
     } catch (e) {
-      console.warn("[WyreCrypto] DeriveKey error:", e);
+      console.warn("[WyreCrypto] HKDF DeriveKey error:", e);
       return null;
     }
   }
 
-  static async encryptBatin(payload, sharedCryptoKey) {
+  // Authenticated AEAD Encryption with Cryptographic Additional Data Binding
+  static async encryptBatin(payload, sharedCryptoKey, authContext = null) {
     if (!this.isSupported() || !sharedCryptoKey) return null;
     try {
       const iv = window.crypto.getRandomValues(new Uint8Array(12));
       const paddedJson = WyreCrypto.padPayload(payload);
       const plaintext = new TextEncoder().encode(paddedJson);
+
+      const encryptParams = { name: "AES-GCM", iv, tagLength: 128 };
+      if (authContext) {
+        encryptParams.additionalData = new TextEncoder().encode(
+          typeof authContext === 'string' ? authContext : JSON.stringify(authContext)
+        );
+      }
+
       const ciphertextBuf = await window.crypto.subtle.encrypt(
-        { name: "AES-GCM", iv },
+        encryptParams,
         sharedCryptoKey,
         plaintext
       );
@@ -383,7 +348,7 @@ class WyreCrypto {
       return {
         ciphertext: ciphertextB64,
         iv: ivHex,
-        algorithm: "AES-256-GCM/MIFTAH"
+        algorithm: "AES-256-GCM/MIFTAH-V2"
       };
     } catch (e) {
       console.error("[WyreCrypto] Encryption failure:", e);
@@ -391,7 +356,8 @@ class WyreCrypto {
     }
   }
 
-  static async decryptBatin(encryptedObj, sharedCryptoKey) {
+  // Authenticated AEAD Decryption with Additional Data Verification
+  static async decryptBatin(encryptedObj, sharedCryptoKey, authContext = null) {
     if (!this.isSupported() || !sharedCryptoKey || !encryptedObj || !encryptedObj.ciphertext) return null;
     try {
       const ivHex = encryptedObj.iv;
@@ -400,8 +366,15 @@ class WyreCrypto {
       const cipherBytes = new Uint8Array(binStr.length);
       for (let i = 0; i < binStr.length; i++) cipherBytes[i] = binStr.charCodeAt(i);
 
+      const decryptParams = { name: "AES-GCM", iv, tagLength: 128 };
+      if (authContext) {
+        decryptParams.additionalData = new TextEncoder().encode(
+          typeof authContext === 'string' ? authContext : JSON.stringify(authContext)
+        );
+      }
+
       const decryptedBuf = await window.crypto.subtle.decrypt(
-        { name: "AES-GCM", iv },
+        decryptParams,
         sharedCryptoKey,
         cipherBytes
       );
@@ -414,12 +387,57 @@ class WyreCrypto {
         return { content: decryptedStr };
       }
     } catch (e) {
-      console.warn("[WyreCrypto] Decryption failure (auth tag mismatch or key mismatch):", e.message);
+      console.warn("[WyreCrypto] Decryption / Authentication Tag verification failed:", e.message);
       return null;
     }
   }
-}
 
+  // ECDSA-P256 Digital Signatures for Message Authenticity
+  static async signPacket(dataBytes, privateSignKey) {
+    if (!this.isSupported() || !privateSignKey) return null;
+    try {
+      const sigBuf = await window.crypto.subtle.sign(
+        { name: "ECDSA", hash: { name: "SHA-256" } },
+        privateSignKey,
+        dataBytes
+      );
+      return Array.from(new Uint8Array(sigBuf)).map(b => b.toString(16).padStart(2, "0")).join("");
+    } catch (e) {
+      console.error("[WyreCrypto] ECDSA sign error:", e);
+      return null;
+    }
+  }
+
+  static async verifyPacket(dataBytes, signatureHex, publicSignKey) {
+    if (!this.isSupported() || !publicSignKey || !signatureHex) return false;
+    try {
+      const sigBytes = new Uint8Array(signatureHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+      return await window.crypto.subtle.verify(
+        { name: "ECDSA", hash: { name: "SHA-256" } },
+        publicSignKey,
+        sigBytes,
+        dataBytes
+      );
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Al-Ikhfa (الإِخْفَاء) ISO/IEC 7816-4 Traffic Analysis Padding
+  static padPayload(payload) {
+    const raw = typeof payload === "string" ? payload : JSON.stringify(payload);
+    const targetSizes = [256, 512, 1024, 2048, 4096, 8192];
+    const currentLen = new TextEncoder().encode(raw).length;
+    let target = targetSizes.find(s => s > currentLen + 8) || (Math.ceil((currentLen + 8) / 1024) * 1024);
+    const padLen = target - currentLen - 4;
+    return raw + " " + " ".repeat(Math.max(0, padLen - 2)) + " ";
+  }
+
+  static unpadPayload(paddedStr) {
+    const idx = paddedStr.indexOf(" ");
+    return idx !== -1 ? paddedStr.substring(0, idx) : paddedStr;
+  }
+}
 /**
  * WyreSup Discord-Style Mesh Client App (تَطْبِيق الوَيْب للمَجَالِس)
  * Manages WebSocket Mesh connection, Space/Channel switching,
@@ -680,7 +698,7 @@ function handleServerMessage(msg) {
 
 async function handleIncomingGossipPacket(packet) {
   if (!packet || !packet.zahir || !packet.batin) return;
-  const { channelId, messageId, isEncrypted, encryptionMeta, senderId } = packet.zahir;
+  const { channelId, messageId, isEncrypted, encryptionMeta, senderId, timestamp, signature } = packet.zahir;
 
   if (!state.messages.has(channelId)) {
     state.messages.set(channelId, []);
@@ -689,28 +707,54 @@ async function handleIncomingGossipPacket(packet) {
   const list = state.messages.get(channelId);
   if (list.some(m => m.zahir.messageId === messageId)) return;
 
-  // Real AES-256-GCM Batin Decryption
+  // Real Authenticated AEAD Decryption with ECDSA Signature Verification
   if (isEncrypted && packet.batin && packet.batin.ciphertext) {
     packet.isEncrypted = true;
     if (senderId === state.identity.fullId && packet.isDecrypted) {
-      // Local echo already in plaintext
+      // Local echo already authenticated in plaintext
     } else {
+      const authContext = {
+        senderId,
+        targetPeer: encryptionMeta?.targetPeer || state.identity.fullId,
+        channelId,
+        messageId,
+        timestamp
+      };
+
+      // 1. Verify ECDSA signature if attached
+      let signatureVerified = false;
+      if (signature && encryptionMeta?.senderSignPubKey) {
+        const signPubKey = await WyreCrypto.importRemoteSignPublicKey(encryptionMeta.senderSignPubKey);
+        if (signPubKey) {
+          const dataToVerify = new TextEncoder().encode(
+            `${packet.batin.ciphertext}:${packet.batin.iv}:${JSON.stringify(authContext)}`
+          );
+          signatureVerified = await WyreCrypto.verifyPacket(dataToVerify, signature, signPubKey);
+          if (!signatureVerified) {
+            console.warn(`[WyreCrypto Security Alert] Dropping forged/tampered message ${messageId} from ${senderId}!`);
+            return;
+          }
+        }
+      }
+
       const senderPeer = state.peers.find(p => p.peerId === senderId) || { peerId: senderId, ecdhPubKey: encryptionMeta?.senderPubKey };
       if (encryptionMeta?.senderPubKey) {
         senderPeer.ecdhPubKey = encryptionMeta.senderPubKey;
       }
+
       const sharedKey = await getOrDeriveSharedKey(senderPeer);
       if (sharedKey) {
-        const decryptedBatin = await WyreCrypto.decryptBatin(packet.batin, sharedKey);
+        const decryptedBatin = await WyreCrypto.decryptBatin(packet.batin, sharedKey, authContext);
         if (decryptedBatin) {
           packet.batin = decryptedBatin;
           packet.isDecrypted = true;
+          packet.isSignatureVerified = signatureVerified;
         } else {
-          packet.batin = { content: "🔒 [ZBAT Ciphertext Encrypted via AES-256-GCM]" };
+          packet.batin = { content: "🔒 [ZBAT AEAD Auth Tag Verification Failed — Tampered Packet]" };
           packet.isDecrypted = false;
         }
       } else {
-        packet.batin = { content: "🔒 [ZBAT Ciphertext Encrypted via AES-256-GCM]" };
+        packet.batin = { content: "🔒 [ZBAT Ciphertext Encrypted via AES-256-GCM / Awaiting Key]" };
         packet.isDecrypted = false;
       }
     }
