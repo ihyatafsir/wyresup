@@ -2848,16 +2848,7 @@ const RTC_CONFIG = {
   iceServers: [
     { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302', 'stun:stun3.l.google.com:19302', 'stun:stun4.l.google.com:19302'] },
     { urls: ['stun:stun.cloudflare.com:3478'] },
-    { urls: ['stun:stun.services.mozilla.com'] },
-    {
-      urls: [
-        'turn:openrelay.metered.ca:80',
-        'turn:openrelay.metered.ca:443',
-        'turn:openrelay.metered.ca:443?transport=tcp'
-      ],
-      username: 'openrelay',
-      credential: 'openrelay'
-    }
+    { urls: ['stun:stun.services.mozilla.com'] }
   ],
   iceCandidatePoolSize: 10
 };
@@ -2964,39 +2955,62 @@ function startShafHdVideoStream(targetPeer, localStream) {
   const vTrack = localStream.getVideoTracks()[0];
   if (!vTrack) return;
 
-  const tempVideo = document.createElement('video');
-  tempVideo.muted = true;
-  tempVideo.playsInline = true;
-  tempVideo.srcObject = new MediaStream([vTrack]);
-  tempVideo.play().catch(() => {});
+  // Use the live in-DOM local video element which is active and decoded on mobile hardware
+  let sourceVideo = document.getElementById('call-local-video');
+  if (!sourceVideo || !sourceVideo.srcObject) {
+    let fallbackVideo = document.getElementById('shaf-fallback-local-video');
+    if (!fallbackVideo) {
+      fallbackVideo = document.createElement('video');
+      fallbackVideo.id = 'shaf-fallback-local-video';
+      fallbackVideo.muted = true;
+      fallbackVideo.playsInline = true;
+      fallbackVideo.setAttribute('playsinline', '');
+      fallbackVideo.setAttribute('webkit-playsinline', '');
+      fallbackVideo.setAttribute('muted', '');
+      fallbackVideo.style.position = 'fixed';
+      fallbackVideo.style.bottom = '-9999px';
+      fallbackVideo.style.opacity = '0.001';
+      fallbackVideo.style.pointerEvents = 'none';
+      document.body.appendChild(fallbackVideo);
+    }
+    fallbackVideo.srcObject = localStream;
+    fallbackVideo.play().catch(() => {});
+    sourceVideo = fallbackVideo;
+  }
 
   if (!shafVideoCanvas) {
     shafVideoCanvas = document.createElement('canvas');
-    shafVideoCanvas.width = 640;
-    shafVideoCanvas.height = 480;
+    shafVideoCanvas.width = 480;
+    shafVideoCanvas.height = 360;
     shafVideoCtx = shafVideoCanvas.getContext('2d');
   }
 
+  // Cellular-optimized frame loop with backpressure protection
   shafVideoTimer = setInterval(() => {
     if (!state.activeCall.peer || state.activeCall.isCamOff) return;
-    if (tempVideo.readyState >= 2 && shafVideoCtx) {
+    if (!state.ws || state.ws.readyState !== WebSocket.OPEN) return;
+
+    // Mobile Cellular 4G/5G Backpressure Guard: Drop frame if socket buffer is congested
+    if (state.ws.bufferedAmount > 32768) return;
+
+    const isReady = sourceVideo && (sourceVideo.readyState >= 2 || (sourceVideo.videoWidth > 0 && sourceVideo.videoHeight > 0));
+    if (isReady && shafVideoCtx) {
       try {
-        shafVideoCtx.drawImage(tempVideo, 0, 0, shafVideoCanvas.width, shafVideoCanvas.height);
-        const frameData = shafVideoCanvas.toDataURL('image/webp', 0.65);
-        if (state.ws && state.ws.readyState === WebSocket.OPEN) {
-          state.ws.send(JSON.stringify({
-            type: 'CALL_SIGNAL',
-            payload: {
-              signalType: 'SHAF_HD_FRAME',
-              targetPeer,
-              frame: frameData,
-              ts: Date.now()
-            }
-          }));
-        }
+        shafVideoCtx.drawImage(sourceVideo, 0, 0, shafVideoCanvas.width, shafVideoCanvas.height);
+        // Mobile-tuned JPEG encoding (0.55 quality ~18 KB/frame) for fluid, zero-stall cellular transport
+        const frameData = shafVideoCanvas.toDataURL('image/jpeg', 0.55);
+        state.ws.send(JSON.stringify({
+          type: 'CALL_SIGNAL',
+          payload: {
+            signalType: 'SHAF_HD_FRAME',
+            targetPeer,
+            frame: frameData,
+            ts: Date.now()
+          }
+        }));
       } catch (e) {}
     }
-  }, 75); // ~13.3 FPS HD frame rate (smooth & lightweight over cellular 4G/5G)
+  }, 90); // ~11 FPS - ideal balance between motion fluidity and cellular bandwidth stability
 }
 
 function stopShafHdVideoStream() {
@@ -3015,21 +3029,26 @@ function handleIncomingShafHdFrame(payload) {
   if (fallback) fallback.style.display = 'none';
 
   let remoteCanvas = document.getElementById('call-remote-shaf-canvas');
-  if (!remoteCanvas && remoteVideo && remoteVideo.parentElement) {
-    remoteCanvas = document.createElement('canvas');
-    remoteCanvas.id = 'call-remote-shaf-canvas';
-    remoteCanvas.style.position = 'absolute';
-    remoteCanvas.style.top = '0';
-    remoteCanvas.style.left = '0';
-    remoteCanvas.style.width = '100%';
-    remoteCanvas.style.height = '100%';
-    remoteCanvas.style.objectFit = 'cover';
-    remoteCanvas.style.zIndex = '5';
-    remoteCanvas.style.borderRadius = '16px';
-    remoteVideo.parentElement.appendChild(remoteCanvas);
+  if (!remoteCanvas) {
+    const remoteTile = document.getElementById('remote-video-tile') || (remoteVideo ? remoteVideo.parentElement : null);
+    if (remoteTile) {
+      remoteCanvas = document.createElement('canvas');
+      remoteCanvas.id = 'call-remote-shaf-canvas';
+      remoteCanvas.style.position = 'absolute';
+      remoteCanvas.style.top = '0';
+      remoteCanvas.style.left = '0';
+      remoteCanvas.style.width = '100%';
+      remoteCanvas.style.height = '100%';
+      remoteCanvas.style.objectFit = 'cover';
+      remoteCanvas.style.zIndex = '8';
+      remoteCanvas.style.borderRadius = '16px';
+      remoteCanvas.style.pointerEvents = 'none';
+      remoteTile.appendChild(remoteCanvas);
+    }
   }
 
   if (remoteCanvas) {
+    remoteCanvas.style.display = 'block';
     const ctx = remoteCanvas.getContext('2d');
     const img = new Image();
     img.onload = () => {
@@ -3043,7 +3062,7 @@ function handleIncomingShafHdFrame(payload) {
   }
 
   const statusEl = document.getElementById('call-remote-status-text');
-  if (statusEl && !statusEl.textContent.includes('Shaf')) {
+  if (statusEl && !statusEl.textContent.includes('Shaf') && !statusEl.textContent.includes('Sovereign')) {
     statusEl.textContent = '🟢 HD Sovereign Dual-Conduit Active (نِظَامُ الشَّفْعِ الجَلِيّ)';
   }
 }
@@ -3172,6 +3191,9 @@ function handleIncomingNafaqPcm(payload) {
 
 function startNafaqTunnelStream(targetPeer, localStream, callType) {
   startNafaqPcmStream(targetPeer, localStream);
+  if (callType === 'video') {
+    startShafHdVideoStream(targetPeer, localStream);
+  }
 }
 
 function handleIncomingNafaqFrame(payload) {
@@ -3366,6 +3388,10 @@ async function handleIncomingCallSignal(payload) {
       }, 300);
     }
   } else if (signalType === 'ANSWER') {
+    if (senderPeer) {
+      state.activeCall.peer = senderPeer;
+      if (senderPrefix) state.activeCall.peerPrefix = senderPrefix;
+    }
     if (state.activeCall.pc && sdp && sdp.sdp) {
       try {
         await state.activeCall.pc.setRemoteDescription(new RTCSessionDescription(sdp));
@@ -3401,18 +3427,6 @@ async function handleIncomingCallSignal(payload) {
     }
   } else if (signalType === 'SHAF_HD_FRAME') {
     handleIncomingShafHdFrame(payload);
-    if (candidate) {
-      if (state.activeCall.pc && state.activeCall.pc.remoteDescription) {
-        try {
-          await state.activeCall.pc.addIceCandidate(new RTCIceCandidate(candidate));
-        } catch (e) {
-          console.warn('[ICE error]:', e);
-        }
-      } else {
-        if (!state.activeCall.pendingIceCandidates) state.activeCall.pendingIceCandidates = [];
-        state.activeCall.pendingIceCandidates.push(candidate);
-      }
-    }
   } else if (signalType === 'HANGUP' || signalType === 'REJECT') {
     endActiveCall(false);
   } else if (signalType === 'NAFAQ_FRAME') {

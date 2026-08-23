@@ -29,7 +29,7 @@ async function callDeepSeek(agentName, systemPrompt, userPrompt) {
   console.log(`[Swarm-v3] 🤖 Launching ${agentName}...`);
   return new Promise((resolve) => {
     const data = JSON.stringify({
-      model: 'deepseek-chat',
+      model: 'deepseek-v4-pro',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }

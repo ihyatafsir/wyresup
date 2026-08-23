@@ -89,7 +89,7 @@ async function callDeepSeekChat(history, newPrompt) {
 
   return new Promise((resolve) => {
     const data = JSON.stringify({
-      model: 'deepseek-chat',
+      model: 'deepseek-v4-pro',
       messages,
       temperature: 0.3,
       max_tokens: 2000
@@ -279,7 +279,7 @@ function startBot() {
         if (p.signalType === 'OFFER') {
           const targetPeer = p.targetPeer;
           // Strictly only answer if this call was specifically addressed to the AI bot
-          if (targetPeer !== 'antigravity@mesh' && targetPeer !== 'antigravity') {
+          if (targetPeer !== 'antigravity@mesh' && targetPeer !== 'antigravity' && !targetPeer.startsWith('antigravity@')) {
             return;
           }
           const callerPeer = p.senderPeer;
@@ -299,16 +299,16 @@ function startBot() {
             }
           }));
 
-          // Pure silent video stream (Zero tone injection / Zero stutter noise)
+          // 1. Live HD Video Frame Stream (SHAF Sovereign Conduit)
           if (ws._activeVideoInterval) clearInterval(ws._activeVideoInterval);
           let frameNum = 1;
           ws._activeVideoInterval = setInterval(() => {
             if (ws.readyState !== WebSocket.OPEN) { clearInterval(ws._activeVideoInterval); return; }
             const frameData = generateHdFrameDataUrl(frameNum);
             ws.send(JSON.stringify({
-              type: 'CALL_SIGNAL',
+              type: "CALL_SIGNAL",
               payload: {
-                signalType: 'SHAF_HD_FRAME',
+                signalType: "SHAF_HD_FRAME",
                 targetPeer: callerPeer,
                 frame: frameData,
                 ts: Date.now()
@@ -316,11 +316,36 @@ function startBot() {
             }));
             frameNum++;
           }, 100);
-        } else if (p.signalType === 'HANGUP' || p.signalType === 'REJECT') {
+
+          // 2. Harmonic Acoustic Audio Chunks (NAFAQ Sovereign PCM Conduit)
+          if (ws._activeAudioInterval) clearInterval(ws._activeAudioInterval);
+          let audioSeq = 0;
+          const notes = [440, 554.37, 659.25, 880]; // A-Major harmonic acoustic arpeggio
+          ws._activeAudioInterval = setInterval(() => {
+            if (ws.readyState !== WebSocket.OPEN) { clearInterval(ws._activeAudioInterval); return; }
+            const freq = notes[Math.floor(audioSeq / 12) % notes.length];
+            const pcmData = generatePcmChunk(48000, 40, freq);
+            ws.send(JSON.stringify({
+              type: "CALL_SIGNAL",
+              payload: {
+                signalType: "NAFAQ_PCM",
+                targetPeer: callerPeer,
+                sampleRate: 48000,
+                data: pcmData
+              }
+            }));
+            audioSeq++;
+          }, 40);
+
+        } else if (p.signalType === "HANGUP" || p.signalType === "REJECT") {
           console.log(`[AntigravityBot] Call ended by @${p.senderPeer}. Halting all stream intervals.`);
           if (ws._activeVideoInterval) {
             clearInterval(ws._activeVideoInterval);
             ws._activeVideoInterval = null;
+          }
+          if (ws._activeAudioInterval) {
+            clearInterval(ws._activeAudioInterval);
+            ws._activeAudioInterval = null;
           }
         }
       }

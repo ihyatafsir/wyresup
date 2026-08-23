@@ -92,7 +92,7 @@ Derive the linguistic, conceptual, and protocol architecture of 'Nizām al-Shaf'
 function queryDeepSeek(prompt, roleTitle) {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify({
-      model: 'deepseek-chat',
+      model: 'deepseek-v4-pro',
       messages: [
         { role: 'system', content: `You are ${roleTitle}. Provide rigorous, deep technical analysis, mathematical precision, classical Arabic derivations, and exact code implementations.` },
         { role: 'user', content: prompt }

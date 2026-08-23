@@ -19,6 +19,8 @@ const GossipMesh = require('./src/mesh/GossipMesh');
 const HudurPresence = require('./src/mesh/HudurPresence');
 const YouTubeStreamer = require('./src/mesh/YouTubeStreamer');
 const ImamRaziLibrary = require('./src/mesh/ImamRaziLibrary');
+const { NafaqLisanTunnel, NAFAQ_MAGIC } = require('./src/mesh/NafaqLisanTunnel');
+const ShabahStego = require('./src/mesh/ShabahStego');
 
 const PORT = process.env.PORT || 5195;
 
@@ -27,6 +29,7 @@ const majlisManager = new MajlisManager();
 const presenceManager = new HudurPresence();
 const serverNodeIdentity = ZbatCrypto.generateIdentity('wyresup-hub');
 const gossipMesh = new GossipMesh({ nodeId: serverNodeIdentity.fullId });
+const nafaqTunnel = new NafaqLisanTunnel({ peerId: 'wyresup-hub@nafaq' });
 
 // Track connected WebSocket clients: ws -> { peerId, prefix, shortHash, spaceId, channelId }
 const connectedClients = new Map();
@@ -165,6 +168,7 @@ const server = http.createServer((req, res) => {
       hubNode: serverNodeIdentity,
       connectedClientsCount: connectedClients.size,
       meshStats: gossipMesh.getDiagnostics(),
+      nafaqTunnelStats: nafaqTunnel.stats,
       activeSpaces: majlisManager.getAllSpaces().length,
       allPeers: presenceManager.getAllPeers()
     }));
@@ -264,6 +268,18 @@ wss.on('connection', (ws, req) => {
   let clientPeer = null;
 
   ws.on('message', (messageRaw) => {
+    // 🚇 Check for Nafaq al-Lisan Zero-Copy Binary Shards
+    const buf = Buffer.isBuffer(messageRaw) ? messageRaw : Buffer.from(messageRaw);
+    if (buf.length >= 12 && buf.readUIntBE(0, 3) === NAFAQ_MAGIC) {
+      // Broadcast zero-copy binary shard to peer sockets (Zero-Knowledge Blind Relay)
+      for (const [targetWs] of connectedClients.entries()) {
+        if (targetWs !== ws && targetWs.readyState === WebSocket.OPEN) {
+          targetWs.send(buf);
+        }
+      }
+      return;
+    }
+
     try {
       const msg = JSON.parse(messageRaw.toString());
       handleClientMessage(ws, msg);

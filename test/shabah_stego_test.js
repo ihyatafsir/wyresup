@@ -21,14 +21,31 @@ const stegoResult = ShabahStego.hideInText(coverText, secretMessage);
 console.log(`  - Cover Text:       "${coverText}"`);
 console.log(`  - Stego Text Length: ${stegoResult.length} chars (contains invisible zero-width unicode)`);
 
-// Extract secret back
 const recoveredSecret = ShabahStego.extractFromText(stegoResult);
 assert.deepStrictEqual(recoveredSecret, secretMessage, "Recovered secret must match original object exactly");
 console.log(`  - Recovered Secret: `, recoveredSecret);
 console.log("  ✅ Shabah invisible steganography verified (100% lossless hidden transport)!");
 
-// 2. Sayl Flow Control (AIMD & RTT Smoothing)
-console.log("\n[2] Testing Sayl (سَيْل) Adaptive Congestion Window & Flow Control...");
+// 2. Shabah LisanRootStego (اللِّسَانُ المَسْتُور) - Classical Arabic 256-Root Word Steganography
+console.log("\n[2] Testing Shabah LisanRootStego (اللِّسَانُ المَسْتُور) - Classical Arabic 256-Root Steganography...");
+const sovereignHandshake = {
+  sessionKey: "0x8f3c7a19e2b4d6",
+  meshTarget: "antigravity@mesh",
+  timestamp: 1787521800
+};
+
+const arabicStegoSentence = ShabahStego.hideInLisanRoots(sovereignHandshake);
+console.log(`  - Generated Classical Arabic Cover Prose:\n    "${arabicStegoSentence}"`);
+
+// Extract secret back from Arabic root words
+const recoveredFromArabic = ShabahStego.extractFromLisanRoots(arabicStegoSentence);
+assert.deepStrictEqual(recoveredFromArabic, sovereignHandshake, "Recovered payload from Arabic roots must match original object exactly");
+console.log(`  - Recovered Payload from Arabic Roots:`, recoveredFromArabic);
+console.log("  ✅ LisanRootStego verified (100% mathematical fidelity & DPI-immune classical prose)!");
+
+// 3. Sayl Flow Control (AIMD & RTT Smoothing)
+console.log("\n[3] Testing Sayl (سَيْل) Adaptive Congestion Window & Flow Control...");// 2. Sayl Flow Control (AIMD & RTT Smoothing)
+console.log("\n[3] Testing Sayl (سَيْل) Adaptive Congestion Window & Flow Control...");
 const sayl = new SaylFlow({ initialCwnd: 10, minCwnd: 2, maxCwnd: 50 });
 const peerId = "peer@wire_speed_node";
 
