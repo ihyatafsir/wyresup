@@ -3023,6 +3023,7 @@ function stopShafHdVideoStream() {
 function handleIncomingShafHdFrame(payload) {
   const { frame } = payload;
   if (!frame) return;
+  if (state.activeCall) { state.activeCall.lastFrameTime = performance.now(); }
 
   const remoteVideo = document.getElementById('call-remote-video');
   const fallback = document.getElementById('remote-avatar-fallback');
@@ -3424,6 +3425,23 @@ async function handleIncomingCallSignal(payload) {
         if (!state.activeCall.pendingIceCandidates) state.activeCall.pendingIceCandidates = [];
         state.activeCall.pendingIceCandidates.push(candidate);
       }
+    }
+  } else if (signalType === 'WASAM_PING') {
+    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
+        type: 'CALL_SIGNAL',
+        payload: {
+          signalType: 'WASAM_PONG',
+          targetPeer: senderPeer,
+          senderPeer: state.identity ? state.identity.peerId : 'peer',
+          pingTs: payload.pingTs
+        }
+      }));
+    }
+  } else if (signalType === 'WASAM_PONG') {
+    if (payload.pingTs) {
+      const liveRtt = Math.max(3, Math.round(performance.now() - payload.pingTs));
+      updateCallHudTelemetry(liveRtt, 'LIVE MESH');
     }
   } else if (signalType === 'SHAF_HD_FRAME') {
     handleIncomingShafHdFrame(payload);
@@ -3938,8 +3956,88 @@ function releaseCallWakeLock() {
   }
 }
 
+
+// --- LIVE REAL-TIME TELEMETRY ENGINE (قِيَاسُ التَّدَفُّقِ الحَيّ) ---
+function updateCallHudTelemetry(rttMs, transportType) {
+  const hudLatencyEl = document.getElementById('call-hud-latency');
+  if (!hudLatencyEl) return;
+
+  const now = performance.now();
+  let fpsStr = '';
+  if (state.activeCall && state.activeCall.lastFrameTime) {
+    const delta = (now - state.activeCall.lastFrameTime) / 1000;
+    if (delta > 0 && delta < 2) {
+      const liveFps = (1 / delta).toFixed(1);
+      fpsStr = ` | ${liveFps} FPS`;
+    }
+  }
+
+  const transport = transportType || (state.activeCall && state.activeCall.pc && state.activeCall.pc.iceConnectionState === 'connected' ? 'P2P' : 'LIVE MESH');
+  hudLatencyEl.textContent = `${rttMs}ms (${transport}${fpsStr})`;
+
+  // Dynamic Color Thresholds
+  hudLatencyEl.className = '';
+  if (rttMs < 45) {
+    hudLatencyEl.classList.add('emerald');
+  } else if (rttMs < 120) {
+    hudLatencyEl.classList.add('amber');
+  } else {
+    hudLatencyEl.classList.add('coral');
+  }
+}
+
+function startCallTelemetry(targetPeer) {
+  stopCallTelemetry();
+  if (!targetPeer) return;
+
+  state.activeCall.telemetryInterval = setInterval(async () => {
+    if (!state.activeCall || !state.activeCall.peer) {
+      stopCallTelemetry();
+      return;
+    }
+
+    // 1. Check WebRTC Stats if PC is active
+    let measuredWebRtc = false;
+    if (state.activeCall.pc && state.activeCall.pc.iceConnectionState === 'connected') {
+      try {
+        const stats = await state.activeCall.pc.getStats();
+        stats.forEach(report => {
+          if (report.type === 'candidate-pair' && (report.selected || report.state === 'succeeded')) {
+            if (report.currentRoundTripTime !== undefined) {
+              const liveRtt = Math.max(2, Math.round(report.currentRoundTripTime * 1000));
+              updateCallHudTelemetry(liveRtt, 'P2P DIRECT');
+              measuredWebRtc = true;
+            }
+          }
+        });
+      } catch (e) {}
+    }
+
+    // 2. Ping-Pong Probe over Conduit (Nafaq / WebSocket)
+    if (!measuredWebRtc && state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
+        type: 'CALL_SIGNAL',
+        payload: {
+          signalType: 'WASAM_PING',
+          targetPeer: state.activeCall.peer,
+          senderPeer: state.identity ? state.identity.peerId : 'me',
+          pingTs: performance.now()
+        }
+      }));
+    }
+  }, 1200);
+}
+
+function stopCallTelemetry() {
+  if (state.activeCall && state.activeCall.telemetryInterval) {
+    clearInterval(state.activeCall.telemetryInterval);
+    state.activeCall.telemetryInterval = null;
+  }
+}
+
 function startCallTimer() {
   requestCallWakeLock();
+  startCallTelemetry(state.activeCall.peer);
   if (state.activeCall.timerInterval) return;
   state.activeCall.startTime = Date.now();
   const timerEl = document.getElementById('call-duration-timer');
@@ -3952,6 +4050,7 @@ function startCallTimer() {
 }
 
 function stopCallTimer() {
+  stopCallTelemetry();
   if (state.activeCall.timerInterval) {
     clearInterval(state.activeCall.timerInterval);
     state.activeCall.timerInterval = null;
@@ -3967,7 +4066,7 @@ function simulateBotAnswerCall(botPeerId, callType) {
 
   startCallTimer();
   document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
-  document.getElementById('call-hud-latency').textContent = '8ms (P2P DIRECT)';
+  // Live telemetry handled by startCallTelemetry
 }
 
 function createSyntheticStream(withVideo = true) {

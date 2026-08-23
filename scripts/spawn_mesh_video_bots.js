@@ -159,6 +159,17 @@ class MeshVideoBot {
           // Start Live HD Video & Audio Stream back to caller!
           this.startStreamingToCaller(senderPeer, callType || 'video');
         }, 300);
+      } else if (signalType === 'WASAM_PING') {
+        // Echo WASAM_PONG back to measure genuine live RTT
+        this.ws.send(JSON.stringify({
+          type: 'CALL_SIGNAL',
+          payload: {
+            signalType: 'WASAM_PONG',
+            targetPeer: senderPeer,
+            senderPeer: this.config.id,
+            pingTs: payload.pingTs
+          }
+        }));
       } else if (signalType === 'SHAF_HD_FRAME') {
         // Inbound User Video Frame!
         const call = this.activeCalls.get(senderPeer);
