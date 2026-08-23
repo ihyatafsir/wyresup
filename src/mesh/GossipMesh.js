@@ -200,6 +200,14 @@ class GossipMesh extends EventEmitter {
     return this.channelBacklog.get(channelId) || [];
   }
 
+  clearChannelHistory(channelId) {
+    if (channelId) {
+      this.channelBacklog.set(channelId, []);
+    } else {
+      this.channelBacklog.clear();
+    }
+  }
+
   getDiagnostics() {
     return {
       nodeId: this.nodeId,

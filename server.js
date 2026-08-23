@@ -133,6 +133,26 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (pathname === '/api/channels/clear' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body || '{}');
+        const channelId = data.channelId || 'chan-general';
+        gossipMesh.clearChannelHistory(channelId);
+        broadcastSystemEvent('MESSAGES_CLEARED', { channelId });
+        console.log(`[Mesh Admin] 🧹 Channel ${channelId} history wiped clean.`);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, channelId, message: `Channel ${channelId} wiped clean` }));
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
   if (pathname === '/api/peers' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(presenceManager.getAllPeers()));

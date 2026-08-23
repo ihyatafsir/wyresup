@@ -835,6 +835,19 @@ function handleServerMessage(msg) {
     case 'CALL_SIGNAL':
       handleIncomingCallSignal(payload);
       break;
+
+    case 'MESSAGES_CLEARED':
+      const targetChan = payload.channelId;
+      if (targetChan) {
+        state.messages.set(targetChan, []);
+        if (state.currentChannelId === targetChan) {
+          renderMessages();
+        }
+      } else {
+        state.messages.clear();
+        renderMessages();
+      }
+      break;
   }
 }
 
@@ -1881,6 +1894,20 @@ function initEventListeners() {
 
   const sendMessage = async () => {
     const text = input.value.trim();
+    if (text === '/clear' || text === '/wipe' || text.startsWith('/clear ') || text.startsWith('/wipe ')) {
+      input.value = '';
+      const chan = state.currentChannelId || 'chan-general';
+      try {
+        await fetch('/api/channels/clear', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channelId: chan })
+        });
+        state.messages.set(chan, []);
+        renderMessages();
+      } catch (e) {}
+      return;
+    }
     if (text.startsWith('/vcwyvl ') || text.startsWith('/stream ') || text === '/vcwyvl' || text === '/stream') {
       const query = text.replace(/^\/(vcwyvl|stream)\s*/, '').trim();
       input.value = '';
