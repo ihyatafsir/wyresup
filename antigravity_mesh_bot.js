@@ -277,6 +277,11 @@ function startBot() {
       if (msg.type === 'CALL_SIGNAL') {
         const p = msg.payload || {};
         if (p.signalType === 'OFFER') {
+          const targetPeer = p.targetPeer;
+          // Strictly only answer if this call was specifically addressed to the AI bot
+          if (targetPeer !== 'antigravity@mesh' && targetPeer !== 'antigravity') {
+            return;
+          }
           const callerPeer = p.senderPeer;
           console.log(`[AntigravityBot] 📹 Received incoming call from @${callerPeer}! Acknowledging without background tone noise...`);
 

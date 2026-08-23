@@ -55,7 +55,7 @@ function setupHub(hubUrl) {
               p && p.status === 'hadir' &&
               p.peerId !== CALLER_ID &&
               !p.peerId.startsWith('yasiin') &&
-              !p.peerId.startsWith('sovereign_caller')
+              !p.peerId.startsWith('sovereign_caller') && p.peerId !== 'antigravity@mesh' && p.peerId !== 'caller_companion@mesh' && p.peerId !== 'umi_says@mesh'
             );
 
             targets.forEach(t => {
@@ -86,7 +86,7 @@ function setupHub(hubUrl) {
       const msg = JSON.parse(raw.toString());
       if (msg.type === 'CALL_SIGNAL') {
         const p = msg.payload || {};
-        if (p.signalType === 'ANSWER') {
+        if (p.signalType === 'ANSWER' && p.senderPeer !== 'antigravity@mesh' && p.senderPeer !== 'umi_says@mesh') {
           isCallConnected = true;
           hubSessions.forEach(s => {
             if (s.interval) clearInterval(s.interval);
