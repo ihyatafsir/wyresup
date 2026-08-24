@@ -21,6 +21,7 @@ const YouTubeStreamer = require('./src/mesh/YouTubeStreamer');
 const ImamRaziLibrary = require('./src/mesh/ImamRaziLibrary');
 const { NafaqLisanTunnel, NAFAQ_MAGIC } = require('./src/mesh/NafaqLisanTunnel');
 const ShabahStego = require('./src/mesh/ShabahStego');
+const WyreNetGateway = require('./src/mesh/WyreNetGateway');
 
 const PORT = process.env.PORT || 5195;
 
@@ -30,6 +31,7 @@ const presenceManager = new HudurPresence();
 const serverNodeIdentity = ZbatCrypto.generateIdentity('wyresup-hub');
 const gossipMesh = new GossipMesh({ nodeId: serverNodeIdentity.fullId });
 const nafaqTunnel = new NafaqLisanTunnel({ peerId: 'wyresup-hub@nafaq' });
+const wyreNetGateway = new WyreNetGateway({ chainId: 51950, nodeHost: '127.0.0.1', nodePort: 9656 });
 
 // Track connected WebSocket clients: ws -> { peerId, prefix, shortHash, spaceId, channelId }
 const connectedClients = new Map();
@@ -71,6 +73,113 @@ const server = http.createServer((req, res) => {
   }
 
   // --- API Endpoints ---
+  // --- WyreNet Sovereign L1 Blockchain API ---
+  if (pathname === '/api/wyrenet/status' && req.method === 'GET') {
+    wyreNetGateway.getStatus().then(status => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(status));
+    }).catch(err => {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    });
+    return;
+  }
+
+  if (pathname.startsWith('/api/wyrenet/balance/') && req.method === 'GET') {
+    const address = pathname.replace('/api/wyrenet/balance/', '').trim();
+    wyreNetGateway.getBalance(address).then(bal => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(bal));
+    }).catch(err => {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    });
+    return;
+  }
+
+  if (pathname === '/api/wyrenet/notarize' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const { channelId, msgContent, senderDid, hash } = JSON.parse(body);
+        const proof = wyreNetGateway.notarizeMessage(channelId, msgContent, senderDid, hash);
+        broadcastSystemEvent('WYRENET_NOTARIZATION', proof);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, proof }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
+  if (pathname === '/api/wyrenet/verify' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const { hash } = JSON.parse(body);
+        const result = wyreNetGateway.verifyMessageProof(hash);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(result));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
+  if (pathname === '/api/wyrenet/did/register' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const { did, address, pubKey } = JSON.parse(body);
+        const result = wyreNetGateway.registerDid(did, address, pubKey);
+        broadcastSystemEvent('DID_REGISTERED', result);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(result));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
+  if (pathname.startsWith('/api/wyrenet/did/') && req.method === 'GET') {
+    const did = decodeURIComponent(pathname.replace('/api/wyrenet/did/', ''));
+    const rec = wyreNetGateway.getDid(did);
+    if (rec) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ found: true, record: rec }));
+    } else {
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ found: false, error: 'DID not found' }));
+    }
+    return;
+  }
+
+  if (pathname === '/api/wyrenet/rpc' && (req.method === 'POST' || req.method === 'GET')) {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const rpcRes = await wyreNetGateway.forwardRpc(payload);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(rpcRes));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error' } }));
+      }
+    });
+    return;
+  }
+
   // --- Lisan al-Arab Linguistic Engine API ---
   if (pathname === '/api/lisan' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });

@@ -3440,3 +3440,32 @@ html, body {
   margin: 0 !important;
   padding: 0 !important;
 }
+
+/* WyreNet L1 Blockchain Custom Styles */
+.wyrenet-badge {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  background: rgba(229, 62, 62, 0.15) !important;
+  border: 1px solid rgba(229, 62, 62, 0.5) !important;
+  color: #fc8181 !important;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.wyrenet-badge:hover {
+  background: rgba(229, 62, 62, 0.25) !important;
+  border-color: #fc8181 !important;
+  transform: translateY(-1px);
+}
+@media (max-width: 768px) {
+  .wyrenet-badge {
+    display: inline-flex !important;
+    padding: 3px 8px !important;
+    font-size: 10px !important;
+  }
+}

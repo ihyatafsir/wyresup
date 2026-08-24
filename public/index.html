@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1787425667">
+  <link rel="stylesheet" href="style.css?v=1787529636014">
 </head>
 <body>
   <div id="app-container" class="app-layout">
@@ -45,6 +45,7 @@
         <button class="rail-icon spawn-bot-btn" id="btn-spawn-bot" title="Spawn Simulated Mesh Bot (Al-Kindi, Ibn-Sina...)">
           <span>🤖</span>
         </button>
+        <button class="rail-icon wyrenet-rail-btn" id="btn-open-wyrenet-rail" title="WyreNet Sovereign L1 Blockchain Gateway (Chain 51950)" style="background: rgba(229, 62, 62, 0.2); border: 1px solid rgba(229, 62, 62, 0.5); color: #fc8181;"><span style="font-size: 1.15rem;">🔺</span></button>
         <button class="rail-icon diag-btn" id="btn-open-diagnostics" title="Mesh Network Diagnostics (المُؤَشِّر)">
           <span>📊</span>
         </button>
@@ -126,6 +127,7 @@
           <button class="icon-action-btn" id="btn-toggle-mic" title="Toggle Mic / Sawt">🎙️</button>
           <button class="icon-action-btn" id="btn-lisan-modal" title="Lisan al-Arab Lexicon & Protocol Engine (مُعْجَم لِسَان العَرَب)">📖</button>
           <button class="icon-action-btn" id="btn-nagham-modal" title="Nagham DTMF Keypad">🎵</button>
+          <button class="icon-action-btn" id="btn-wyrenet-modal" title="WyreNet Sovereign Blockchain Gateway (Chain 51950)" style="color: #fc8181;">🔺</button>
           <button class="icon-action-btn" id="btn-user-settings" title="Identity Settings">⚙️</button>
         </div>
       </div>
@@ -151,6 +153,13 @@
           <button class="topbar-btn topbar-call-btn" id="btn-topbar-call-video" title="Start Video Call (مُكَالَمَة مَرْئِيَّة)" style="display: none;">📹</button>
           <button class="topbar-btn topbar-call-btn" id="btn-topbar-stream-youtube" title="VCWYVL // Video Call With YouTube Video Link (بَثّ اليوتيوب)" style="display: none;">📺</button>
           <!-- Live Network Indicator Badge -->
+          
+          <!-- WyreNet Blockchain Sovereign L1 Badge -->
+          <div class="mesh-badge wyrenet-badge" id="topbar-wyrenet-badge" title="WyreNet Sovereign Avalanche L1 (Chain 51950) - Click to Open Blockchain Gateway" style="background: rgba(229, 62, 62, 0.15); border: 1px solid rgba(229, 62, 62, 0.5); color: #fc8181; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; font-family: 'JetBrains Mono', monospace;">
+            <span class="pulse-dot" style="background: #fc8181; box-shadow: 0 0 8px #fc8181; width: 7px; height: 7px; border-radius: 50%;"></span>
+            <span class="badge-text" id="topbar-wyrenet-status">🔺 WYRENET L1 // FUJI (51950)</span>
+          </div>
+
           <div class="mesh-badge" id="topbar-mesh-badge" title="P2P Connection Status">
             <span class="pulse-dot"></span>
             <span class="badge-text" id="topbar-mesh-status">P2P MESH // MUTTASIL</span>
@@ -809,7 +818,70 @@
   </div>
   </div>
 
+  
+    <!-- WyreNet Sovereign Blockchain Modal -->
+    <div class="modal-overlay" id="modal-wyrenet" style="display: none;">
+      <div class="modal-card modal-wyrenet-card" style="max-width: 650px; background: #0f141c; border: 1px solid rgba(229, 62, 62, 0.4); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 14px;">
+        <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+          <div class="modal-title-wrap" style="display: flex; align-items: center; gap: 10px;">
+            <span class="modal-icon" style="font-size: 1.5rem;">🔺</span>
+            <div>
+              <h3 style="margin: 0; color: #fff; font-size: 1.15rem; font-weight: 700;">WyreNet Sovereign L1 // Blockchain Gateway</h3>
+              <p style="margin: 0; font-size: 0.8rem; color: #a0aec0;">Avalanche Fuji Testnet Subnet • Chain ID: 51950 • Snowman++</p>
+            </div>
+          </div>
+          <button class="modal-close" data-close="modal-wyrenet" style="background: none; border: none; color: #a0aec0; font-size: 1.2rem; cursor: pointer;">✕</button>
+        </div>
+        <div class="modal-body" style="padding: 20px; color: #e2e8f0;">
+          <div class="wyrenet-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 18px;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 8px;">
+              <span style="font-size: 0.75rem; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.05em;">Blockchain ID</span>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #63b3ed; word-break: break-all; margin-top: 4px;" id="wn-blockchain-id">HcvxfHgJ42d5L47MLJzMdNDJiN46BLpX1HQwMMrhMyCTB6v86</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 8px;">
+              <span style="font-size: 0.75rem; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.05em;">Subnet ID</span>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #68d391; word-break: break-all; margin-top: 4px;" id="wn-subnet-id">25YmiRdbaHPV65c8HFZPgTQssSrSRfaJBJgLuFDQi1pn2cG4ZC</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 8px;">
+              <span style="font-size: 0.75rem; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.05em;">EVM Chain ID</span>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; color: #f6e05e; font-weight: 700; margin-top: 4px;" id="wn-chain-id">51950 (0xCAEE)</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 8px;">
+              <span style="font-size: 0.75rem; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.05em;">Public Web3 RPC Endpoint</span>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #fc8181; margin-top: 4px;" id="wn-rpc-url">/api/wyrenet/rpc</div>
+            </div>
+          </div>
+
+          <!-- Web3 Wallet Connection -->
+          <div style="background: rgba(229, 62, 62, 0.08); border: 1px solid rgba(229, 62, 62, 0.3); border-radius: 10px; padding: 16px; margin-bottom: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="margin: 0; color: #fff; font-size: 0.95rem;">Connect Web3 Wallet (MetaMask / Core)</h4>
+                <p style="margin: 2px 0 0 0; font-size: 0.8rem; color: #cbd5e0;">Link your EVM account to authenticate on WyreNet & inspect  /  balances.</p>
+              </div>
+              <button class="btn btn-primary" id="btn-wn-connect-wallet" style="background: #e53e3e; border: none; padding: 8px 16px; font-weight: 700; border-radius: 8px; cursor: pointer;">🦊 Connect Wallet</button>
+            </div>
+            <div id="wn-wallet-details" style="margin-top: 12px; display: none; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px;">
+              <div>Address: <span id="wn-wallet-addr" style="color: #63b3ed;">0x...</span></div>
+              <div style="margin-top: 4px;">ZBAT Balance: <span id="wn-wallet-zbat" style="color: #68d391; font-weight: 700;">1,000,000 ZBAT</span></div>
+            </div>
+          </div>
+
+          <!-- On-Chain Message Notarization & Proofs -->
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 16px;">
+            <h4 style="margin: 0 0 8px 0; color: #fff; font-size: 0.95rem;">📜 Cryptographic Message Notarization & Ledger</h4>
+            <p style="margin: 0 0 12px 0; font-size: 0.8rem; color: #a0aec0;">Every P2P message transmitted across WyreSup can be cryptographically anchored to WyreNet L1 blocks for immutable proof of existence.</p>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="wn-verify-hash-input" class="form-control" placeholder="Enter message SHA-256 state hash to verify on-chain..." style="flex: 1; background: #1a202c; border: 1px solid #4a5568; color: #fff; padding: 8px 12px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
+              <button class="btn btn-secondary" id="btn-wn-verify-hash" style="padding: 8px 16px; border-radius: 6px; cursor: pointer;">🔍 Verify Proof</button>
+            </div>
+            <div id="wn-verify-result" style="margin-top: 10px; font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; display: none;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   <!-- Main JavaScript Bundle with Cache-Buster -->
-  <script src="app.js?v=1787425667"></script>
+  <script src="app.js?v=1787529636014"></script>
 </body>
 </html>

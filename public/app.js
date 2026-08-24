@@ -4241,3 +4241,120 @@ window.openStreamYoutubeModal = openStreamYoutubeModal;
 window.acceptIncomingCall = acceptIncomingCall;
 window.rejectIncomingCall = rejectIncomingCall;
 window.endActiveCall = endActiveCall;
+// ==========================================
+// 🔺 WyreNet Sovereign L1 Blockchain UI Bridge
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+  const wyrenetBadge = document.getElementById('topbar-wyrenet-badge');
+  const wyrenetModal = document.getElementById('modal-wyrenet');
+  const closeBtn = document.querySelector('[data-close="modal-wyrenet"]');
+  const connectWalletBtn = document.getElementById('btn-wn-connect-wallet');
+  const walletDetails = document.getElementById('wn-wallet-details');
+  const walletAddrSpan = document.getElementById('wn-wallet-addr');
+  const walletZbatSpan = document.getElementById('wn-wallet-zbat');
+  const verifyBtn = document.getElementById('btn-wn-verify-hash');
+  const verifyInput = document.getElementById('wn-verify-hash-input');
+  const verifyResult = document.getElementById('wn-verify-result');
+
+  // Open WyreNet modal
+  
+  const railWnBtn = document.getElementById('btn-open-wyrenet-rail');
+  const barWnBtn = document.getElementById('btn-wyrenet-modal');
+  const openWnModal = async () => {
+    if (wyrenetModal) {
+      wyrenetModal.style.display = 'flex';
+      try {
+        const res = await fetch('/api/wyrenet/status');
+        const data = await res.json();
+        if (data.network) {
+          const statusText = document.getElementById('topbar-wyrenet-status');
+          if (statusText) statusText.textContent = '🔺 WYRENET L1 // BLOCK #' + (data.network.blockHeight || 1);
+        }
+      } catch (e) {}
+    }
+  };
+  if (railWnBtn) railWnBtn.addEventListener('click', openWnModal);
+  if (barWnBtn) barWnBtn.addEventListener('click', openWnModal);
+
+  if (wyrenetBadge && wyrenetModal) {
+    wyrenetBadge.addEventListener('click', async () => {
+      wyrenetModal.style.display = 'flex';
+      try {
+        const res = await fetch('/api/wyrenet/status');
+        const data = await res.json();
+        if (data.network) {
+          const statusText = document.getElementById('topbar-wyrenet-status');
+          if (statusText) statusText.textContent = '🔺 WYRENET L1 // BLOCK #' + (data.network.blockHeight || 1);
+        }
+      } catch (e) {
+        console.warn('WyreNet status fetch error:', e);
+      }
+    });
+  }
+
+  if (closeBtn && wyrenetModal) {
+    closeBtn.addEventListener('click', () => {
+      wyrenetModal.style.display = 'none';
+    });
+  }
+
+  // Connect Web3 Wallet
+  if (connectWalletBtn) {
+    connectWalletBtn.addEventListener('click', async () => {
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          connectWalletBtn.textContent = 'Connecting...';
+          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          if (accounts && accounts.length > 0) {
+            const userAddr = accounts[0];
+            if (walletDetails) walletDetails.style.display = 'block';
+            if (walletAddrSpan) walletAddrSpan.textContent = userAddr;
+
+            // Fetch balance from WyreNet
+            const balRes = await fetch('/api/wyrenet/balance/' + userAddr);
+            const balData = await balRes.json();
+            if (walletZbatSpan) {
+              walletZbatSpan.textContent = (balData.balanceWYRE || '1,000,000') + ' ZBAT';
+            }
+            connectWalletBtn.textContent = '🦊 Connected';
+            connectWalletBtn.style.background = '#38a169';
+          }
+        } catch (err) {
+          console.error('Wallet connection error:', err);
+          connectWalletBtn.textContent = '🦊 Connect Wallet';
+        }
+      } else {
+        alert('MetaMask / Web3 wallet not detected in browser. You can still use the public RPC endpoint at /api/wyrenet/rpc');
+      }
+    });
+  }
+
+  // Verify Proof
+  if (verifyBtn && verifyInput && verifyResult) {
+    verifyBtn.addEventListener('click', async () => {
+      const hash = verifyInput.value.trim();
+      if (!hash) return;
+
+      verifyResult.style.display = 'block';
+      verifyResult.innerHTML = '<span style="color: #a0aec0;">Querying WyreNet immutable ledger...</span>';
+
+      try {
+        const res = await fetch('/api/wyrenet/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hash })
+        });
+        const data = await res.json();
+        if (data.verified) {
+          verifyResult.innerHTML = '<div style="color: #68d391; margin-bottom: 4px;">✅ Verified on WyreNet Blockchain!</div>' +
+            '<div style="color: #a0aec0;">Tx Hash: <span style="color: #63b3ed;">' + data.proof.txHash + '</span></div>' +
+            '<div style="color: #a0aec0;">Block: #' + data.proof.blockHeight + ' • Confirmations: ' + data.confirmations + '</div>';
+        } else {
+          verifyResult.innerHTML = '<div style="color: #fc8181;">❌ State hash not anchored in current ledger snapshot.</div>';
+        }
+      } catch (err) {
+        verifyResult.innerHTML = '<div style="color: #fc8181;">Error verifying proof: ' + err.message + '</div>';
+      }
+    });
+  }
+});
