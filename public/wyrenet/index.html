@@ -737,7 +737,7 @@
 
 
         <!-- 1. MetaMask -->
-        <button class="wallet-btn-card" onclick="connectWalletFlow('metamask')">
+        <button class="wallet-btn-card" onclick="window.connectMetaMaskDirect()">
           <div style="display: flex; align-items: center; gap: 14px;">
             <div class="wallet-icon-box">🦊</div>
             <div>
@@ -749,7 +749,7 @@
         </button>
 
         <!-- 2. Core Wallet (Ava Labs Avalanche) -->
-        <button class="wallet-btn-card" onclick="connectWalletFlow('core')" style="background: rgba(229, 62, 62, 0.08); border-color: var(--border-active);">
+        <button class="wallet-btn-card" onclick="window.connectCoreDirect()" style="background: rgba(229, 62, 62, 0.08); border-color: var(--border-active);">
           <div style="display: flex; align-items: center; gap: 14px;">
             <div class="wallet-icon-box" style="background: rgba(229,62,62,0.2);">🔺</div>
             <div>
@@ -761,7 +761,7 @@
         </button>
 
         <!-- 3. Trust Wallet -->
-        <button class="wallet-btn-card" onclick="connectWalletFlow('trust')">
+        <button class="wallet-btn-card" onclick="window.connectTrustDirect()">
           <div style="display: flex; align-items: center; gap: 14px;">
             <div class="wallet-icon-box">🛡️</div>
             <div>
@@ -925,6 +925,91 @@
     if (!currentWcUri) generateWcUri();
     navigator.clipboard?.writeText(currentWcUri);
     alert('⚡ WalletConnect URI copied to clipboard!\n\nOpen MetaMask / Core, tap Scanner, and paste this code.');
+  };
+
+  
+  let mmsdk = null;
+  let metamaskProvider = null;
+
+  function getMetaMaskProvider() {
+    if (!metamaskProvider) {
+      if (typeof window.MetaMaskSDK !== 'undefined') {
+        try {
+          mmsdk = new window.MetaMaskSDK.MetaMaskSDK({
+            dappMetadata: {
+              name: "WyreNet Sovereign L1",
+              url: "https://wyresup.com/wyrenet",
+            },
+            logging: { developerMode: false }
+          });
+          metamaskProvider = mmsdk.getProvider();
+        } catch (e) {
+          console.error('MetaMaskSDK init error:', e);
+        }
+      }
+    }
+    return metamaskProvider || window.avalanche || window.ethereum;
+  }
+
+  // 1-Tap MetaMask Mobile Handshake (NO in-app browser redirection)
+  window.connectMetaMaskDirect = async function() {
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    const provider = getMetaMaskProvider();
+
+    if (provider && (!isMobile || typeof window.ethereum !== 'undefined')) {
+      try {
+        const accounts = await provider.request({ method: 'eth_requestAccounts' });
+        if (accounts && accounts.length > 0) {
+          userWallet = accounts[0];
+          localStorage.setItem('wyresup_user_wallet', userWallet);
+          window.closeUniswapModal();
+          updateTelemetry();
+          alert('🛡️ Connected with MetaMask!\n\nAccount: ' + userWallet);
+          return;
+        }
+      } catch (err) {
+        console.warn('Provider request error:', err);
+      }
+    }
+
+    if (isMobile) {
+      if (!currentWcUri) generateWcUri();
+      // Use wc?uri scheme: ONLY opens the MetaMask session approval prompt, NOT internal browser
+      window.location.href = 'metamask://wc?uri=' + encodeURIComponent(currentWcUri);
+      return;
+    }
+
+    // Default fallback
+    window.copyWcUri();
+  };
+
+  // Launch Core Wallet App
+  window.connectCoreDirect = function() {
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    if (typeof window.avalanche !== 'undefined' || typeof window.ethereum !== 'undefined') {
+      window.connectInjectedNow();
+      return;
+    }
+    if (isMobile) {
+      if (!currentWcUri) generateWcUri();
+      window.location.href = 'core://wc?uri=' + encodeURIComponent(currentWcUri);
+      setTimeout(() => {
+        window.location.href = 'intent://wc?uri=' + encodeURIComponent(currentWcUri) + '#Intent;package=com.avax.wallet;scheme=core;end';
+      }, 1000);
+      return;
+    }
+    window.copyWcUri();
+  };
+
+  // Launch Trust Wallet
+  window.connectTrustDirect = function() {
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    if (isMobile) {
+      if (!currentWcUri) generateWcUri();
+      window.location.href = 'trust://wc?uri=' + encodeURIComponent(currentWcUri);
+      return;
+    }
+    window.copyWcUri();
   };
 
   // Launch Mobile Wallet Apps
@@ -1284,5 +1369,6 @@
   setInterval(updateTelemetry, 5000);
 </script>
 
+  <script src="/wyrenet/metamask-sdk.js"></script>
 </body>
 </html>
