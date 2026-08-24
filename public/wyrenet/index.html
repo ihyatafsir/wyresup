@@ -899,15 +899,19 @@
           return;
         }
 
+        // Close our custom modal so official WalletConnect modal appears clean & unobstructed
+        closeUniswapModal();
+
         if (!wcProvider) {
           wcProvider = await window.WalletConnectEthereumProvider.init({
             projectId: '2f05ae7f44360a7da7a44f0872ff4c5e',
-            chains: [51950],
-            optionalChains: [43113, 1],
+            chains: [1], // Standard EVM base namespace
+            optionalChains: [51950, 43113], // WyreNet L1 & Fuji Subnet
             showQrModal: true,
             rpcMap: {
               51950: 'https://wyresup.com/api/wyrenet/rpc',
-              43113: 'https://api.avax-test.network/ext/bc/C/rpc'
+              43113: 'https://api.avax-test.network/ext/bc/C/rpc',
+              1: 'https://cloudflare-eth.com'
             },
             metadata: {
               name: 'WyreNet Sovereign L1',
@@ -938,16 +942,16 @@
         if (wcProvider.accounts && wcProvider.accounts.length > 0) {
           userWallet = wcProvider.accounts[0];
           localStorage.setItem('wyresup_user_wallet', userWallet);
-          closeUniswapModal();
           updateTelemetry();
           alert('🛡️ Connected to WyreNet L1 via WalletConnect!\n\nAccount: ' + userWallet);
         }
       } catch (err) {
         console.error('WalletConnect error:', err);
-        if (!err.message?.includes('User rejected')) {
+        if (!err.message?.includes('User rejected') && !err.message?.includes('Modal closed')) {
           alert('WalletConnect notice: ' + (err.message || err));
         }
       }
+    }
     }
 
     // Uniswap Multi-Platform Wallet Flow
