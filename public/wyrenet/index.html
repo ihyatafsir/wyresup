@@ -967,9 +967,13 @@
   }
 
   // 1-Tap Wallet Launch
+  
+  // 1-Tap Mobile Wallet App Launch (Using Native Android Package Intents)
   function launchWalletApp(walletType) {
     const host = window.location.host || 'wyresup.com';
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    const currentUrl = 'https://' + host + '/wyrenet';
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     // If provider is already injected in this browser, connect right away
     if (typeof window.ethereum !== 'undefined' || typeof window.avalanche !== 'undefined') {
@@ -977,27 +981,40 @@
       return;
     }
 
-    if (isMobile) {
+    if (isAndroid) {
       if (walletType === 'metamask') {
-        window.location.href = 'https://metamask.app.link/dapp/' + host + '/wyrenet';
+        // Direct Android Intent to launch io.metamask internal browser
+        window.location.href = 'intent://' + host + '/wyrenet#Intent;scheme=https;package=io.metamask;action=android.intent.action.VIEW;end';
+        setTimeout(() => {
+          window.location.href = 'metamask://dapp/' + host + '/wyrenet';
+        }, 1000);
         return;
       } else if (walletType === 'core') {
-        window.location.href = 'intent://#Intent;package=com.avax.wallet;action=android.intent.action.VIEW;end';
+        window.location.href = 'intent://' + host + '/wyrenet#Intent;scheme=https;package=com.avax.wallet;action=android.intent.action.VIEW;end';
         setTimeout(() => {
           window.location.href = 'https://play.google.com/store/apps/details?id=com.avax.wallet';
-        }, 1500);
+        }, 1200);
         return;
       } else if (walletType === 'trust') {
-        window.location.href = 'https://link.trustwallet.com/open_url?coin_id=60&url=https://' + host + '/wyrenet';
-        return;
-      } else if (walletType === 'coinbase') {
-        window.location.href = 'https://go.cb-w.com/dapp?cb_url=https://' + host + '/wyrenet';
+        window.location.href = 'intent://' + host + '/wyrenet#Intent;scheme=https;package=com.wallet.crypto.trustapp;action=android.intent.action.VIEW;end';
         return;
       }
     }
 
-    alert('🦊 Please install MetaMask or Core Wallet browser extension, or open this URL inside your mobile wallet dApp browser!');
+    if (isIos) {
+      if (walletType === 'metamask') {
+        window.location.href = 'metamask://dapp/' + host + '/wyrenet';
+        return;
+      } else if (walletType === 'trust') {
+        window.location.href = 'https://link.trustwallet.com/open_url?coin_id=60&url=' + encodeURIComponent(currentUrl);
+        return;
+      }
+    }
+
+    // Default fallback
+    window.location.href = 'metamask://dapp/' + host + '/wyrenet';
   }
+
 
   // Injected Provider Flow
   async function connectInjectedNow() {
