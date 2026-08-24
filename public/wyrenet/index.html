@@ -931,15 +931,17 @@
   let mmsdk = null;
   let metamaskProvider = null;
 
-  function getMetaMaskProvider() {
+  function initMetaMaskSDK() {
     if (!metamaskProvider) {
       if (typeof window.MetaMaskSDK !== 'undefined') {
         try {
           mmsdk = new window.MetaMaskSDK.MetaMaskSDK({
             dappMetadata: {
               name: "WyreNet Sovereign L1",
-              url: "https://wyresup.com/wyrenet",
+              url: window.location.origin + "/wyrenet",
             },
+            useDeeplink: true,
+            checkInstallationImmediately: false,
             logging: { developerMode: false }
           });
           metamaskProvider = mmsdk.getProvider();
@@ -951,36 +953,35 @@
     return metamaskProvider || window.avalanche || window.ethereum;
   }
 
-  // 1-Tap MetaMask Mobile Handshake (NO in-app browser redirection)
+  // 1-Tap Official MetaMask Mobile Handshake
   window.connectMetaMaskDirect = async function() {
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    const provider = getMetaMaskProvider();
+    const btn = document.querySelector('button[onclick*="connectMetaMaskDirect"]');
+    if (btn) btn.style.opacity = '0.6';
 
-    if (provider && (!isMobile || typeof window.ethereum !== 'undefined')) {
-      try {
-        const accounts = await provider.request({ method: 'eth_requestAccounts' });
-        if (accounts && accounts.length > 0) {
-          userWallet = accounts[0];
-          localStorage.setItem('wyresup_user_wallet', userWallet);
-          window.closeUniswapModal();
-          updateTelemetry();
-          alert('🛡️ Connected with MetaMask!\n\nAccount: ' + userWallet);
-          return;
-        }
-      } catch (err) {
-        console.warn('Provider request error:', err);
+    try {
+      const provider = initMetaMaskSDK();
+      if (!provider) {
+        alert('MetaMask SDK initializing, please try again in 1 second...');
+        return;
       }
-    }
 
-    if (isMobile) {
-      if (!currentWcUri) generateWcUri();
-      // Use wc?uri scheme: ONLY opens the MetaMask session approval prompt, NOT internal browser
-      window.location.href = 'metamask://wc?uri=' + encodeURIComponent(currentWcUri);
-      return;
+      // Automatically switches/adds WyreNet L1 and requests account
+      const accounts = await provider.request({ method: 'eth_requestAccounts' });
+      if (accounts && accounts.length > 0) {
+        userWallet = accounts[0];
+        localStorage.setItem('wyresup_user_wallet', userWallet);
+        window.closeUniswapModal();
+        updateTelemetry();
+        alert('🛡️ Connected with MetaMask!\n\nAccount: ' + userWallet);
+      }
+    } catch (err) {
+      console.error('MetaMask SDK error:', err);
+      if (!err.message?.includes('User rejected')) {
+        alert('MetaMask notice: ' + (err.message || err));
+      }
+    } finally {
+      if (btn) btn.style.opacity = '1';
     }
-
-    // Default fallback
-    window.copyWcUri();
   };
 
   // Launch Core Wallet App
