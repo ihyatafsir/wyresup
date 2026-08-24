@@ -514,7 +514,7 @@
         <div class="network-dot"></div>
         <span>51950</span>
       </div>
-      <button class="btn-connect-uniswap" id="btn-uniswap-connect" onclick="openUniswapModal()">
+      <button class="btn-connect-uniswap" id="btn-uniswap-connect" onclick="window.openUniswapModal()">
         <span>Connect Wallet</span>
       </button>
     </div>
@@ -841,6 +841,25 @@
   <script>
     let manifestData = null;
     let userWallet = localStorage.getItem('wyresup_user_wallet') || null;
+
+  window.openUniswapModal = function() {
+    if (userWallet) {
+      openAccountModal();
+      return;
+    }
+    const modal = document.getElementById('uniswap-wallet-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      checkInjectedProvider();
+      if (typeof requestEip6963Providers === 'function') requestEip6963Providers();
+    }
+  };
+
+  window.closeUniswapModal = function() {
+    const modal = document.getElementById('uniswap-wallet-modal');
+    if (modal) modal.style.display = 'none';
+  };
+
 
     function openUniswapModal() {
       requestEip6963Providers();
