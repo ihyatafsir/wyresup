@@ -97,21 +97,40 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (pathname === '/api/wyrenet/notarize' && req.method === 'POST') {
+    if (pathname === '/api/wyrenet/notarize' && req.method === 'POST') {
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
       try {
-        const { channelId, msgContent, senderDid, hash } = JSON.parse(body);
-        const proof = wyreNetGateway.notarizeMessage(channelId, msgContent, senderDid, hash);
+        const payload = JSON.parse(body);
+        const channelId = payload.channelId || payload.type || 'GLOBAL_REGISTRY';
+        const msgContent = payload.msgContent || payload.title || payload.name || payload.filename || 'CONTENT_PROOF';
+        const senderDid = payload.senderDid || payload.creatorDid || payload.publisherDid || 'did:wyre:anonymous';
+        const targetHash = payload.hash || payload.messageHash || null;
+
+        const proof = wyreNetGateway.notarizeMessage(channelId, msgContent, senderDid, targetHash);
+        if (payload.title) proof.title = payload.title;
+        if (payload.type) proof.type = payload.type;
+        if (payload.filename) proof.filename = payload.filename;
+        if (payload.author) proof.author = payload.author;
+
         broadcastSystemEvent('WYRENET_NOTARIZATION', proof);
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: true, proof }));
+        res.end(JSON.stringify({ success: true, status: 'CONFIRMED', proof, txHash: proof.txHash, blockNumber: proof.blockHeight }));
       } catch (err) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: err.message }));
       }
     });
+    return;
+  }
+
+  
+  if (pathname.startsWith('/api/wyrenet/verify/') && req.method === 'GET') {
+    const hash = pathname.replace('/api/wyrenet/verify/', '').trim();
+    const result = wyreNetGateway.verifyMessageProof(hash);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(result));
     return;
   }
 
