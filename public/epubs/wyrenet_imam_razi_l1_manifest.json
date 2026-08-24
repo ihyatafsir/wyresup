@@ -1,0 +1,774 @@
+{
+  "space": {
+    "spaceId": "space_imam_razi",
+    "channelId": "chan_imam_razi_library",
+    "name": "مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِي (Imam Razi Digital Library)",
+    "description": "The Complete Philosophical, Theological & Exegetical Corpus of Imam Fakhr al-Din al-Razi (544–606 AH / 1149–1209 CE)",
+    "creatorDid": "did:wyre:0x471c852d254a67f36c129f2386ca21c31840dea4",
+    "encryption": "ZBAT_THAQB_L1_SEALED",
+    "blockchain": "WyreNet Sovereign L1 (Chain ID: 51950)",
+    "createdAt": 1787535183872
+  },
+  "totalBooks": 84,
+  "totalSizeMb": "113.85",
+  "publisherDid": "did:wyre:0x471c852d254a67f36c129f2386ca21c31840dea4",
+  "anchoredAt": "2026-08-24T01:33:06.715Z",
+  "books": [
+    {
+      "index": 1,
+      "filename": "al_futuhat_al_makkiyya_en.epub",
+      "category": "Al-Futuhat al-Makkiyya (الفُتُوحَات المَكِّيَّة)",
+      "sha256": "c5fade79dbf44eaab2261430692812fdd5a2995df2c2b43681c597a065b8d4c2",
+      "sizeMb": "22.48 MB",
+      "txHash": "0x22f3f53a36521d9b8543a40d781739401a25dcd6a048118790e34115071145b6",
+      "blockHeight": 98
+    },
+    {
+      "index": 2,
+      "filename": "al_futuhat_al_makkiyya_sq.epub",
+      "category": "Al-Futuhat al-Makkiyya (الفُتُوحَات المَكِّيَّة)",
+      "sha256": "73361dd1287082839f48c6f8a44f9ad743641894eea0bfe4192845937f677c4f",
+      "sizeMb": "4.56 MB",
+      "txHash": "0x28026aacb203150b1963faf4569a9bf016d77acedfcb99d4b87050b7f6f04d17",
+      "blockHeight": 98
+    },
+    {
+      "index": 3,
+      "filename": "al_mahsul_fi_usul_al_fiqh_v3_ar_lex_en.epub",
+      "category": "Al-Mahsul fi Usul al-Fiqh (المَحْصُول فِي عِلْم أُصُول الفِقْه)",
+      "sha256": "b45504a03e4314b704dd8bd9092e360eb55403529c588102e4fd576d53232a50",
+      "sizeMb": "2.31 MB",
+      "txHash": "0x478932b7e9548e423a0afd28cba94cb869cdd7ed2bc88885659925e8f6eed5e3",
+      "blockHeight": 98
+    },
+    {
+      "index": 4,
+      "filename": "al_matalib_al_aliyah_complete_9_volumes_omnibus_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "a2707fcbf8be5105801ad1ca3aaacd42f581a3484ae4357e3349d42f8194f653",
+      "sizeMb": "3.62 MB",
+      "txHash": "0x96d092e07e5a6c601e4898c7b538b2def94c1427af3605eae46cb3832be8a364",
+      "blockHeight": 98
+    },
+    {
+      "index": 5,
+      "filename": "al_matalib_al_aliyah_complete_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "04380103ffdc38629062b4311fc274246391558623664ccc1dfa5830d94b7c33",
+      "sizeMb": "5.47 MB",
+      "txHash": "0xd29ab54d5e728716a2b217a5796404f2b8766a0fb20417282cc2561d233f0a2a",
+      "blockHeight": 98
+    },
+    {
+      "index": 6,
+      "filename": "al_matalib_al_aliyah_complete_v3_ar_lex_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "0b593c69fb6877aa97871b7f53626344aac3b63f8bce789b9575b679f054054a",
+      "sizeMb": "5.36 MB",
+      "txHash": "0xfb725a5c639a9b0ecc3a056a8d5981e899a13940a4420d16a2d9f1e87bb182ba",
+      "blockHeight": 98
+    },
+    {
+      "index": 7,
+      "filename": "al_matalib_al_aliyah_vol_01_v2_pure_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "f2f3b0fff774dd8755242d647655a50865b445a1ff76a54ec36df34968e2ac2d",
+      "sizeMb": "0.54 MB",
+      "txHash": "0x3c54889efe85882d21397a99d456d40d7304de0363f4d5d7810f49cb9d878d55",
+      "blockHeight": 98
+    },
+    {
+      "index": 8,
+      "filename": "al_matalib_al_aliyah_vol_01_v3_ar_lex_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "721561507af368f69c883d1c556a0375ecae1251a5f36c72fa2694f3de1cc50c",
+      "sizeMb": "0.75 MB",
+      "txHash": "0x48a12b286d433828dea0adc271fcb4921d6fe34921901d855588f2255518d727",
+      "blockHeight": 98
+    },
+    {
+      "index": 9,
+      "filename": "al_matalib_al_aliyah_vol_02_v2_pure_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "1786330dfb5934db7ffd159c7055f66de403a777cebff1d79a1d46e03004742c",
+      "sizeMb": "0.23 MB",
+      "txHash": "0x3fba39696188cf92b002e2b257b17e05c0da011e81fb98f53d359c60ad0bc99c",
+      "blockHeight": 98
+    },
+    {
+      "index": 10,
+      "filename": "al_matalib_al_aliyah_vol_02_v3_ar_lex_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "f3dbd98b022c64b1ece93317f1a34e0b2c65be648ad74bd54341336cfdc991e2",
+      "sizeMb": "0.33 MB",
+      "txHash": "0x4492debdb9393cab0e48b43b1b4c06a7ac88268b5ea38aa558b82f7798b4c862",
+      "blockHeight": 98
+    },
+    {
+      "index": 11,
+      "filename": "al_matalib_al_aliyah_vol_03_v2_pure_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "51e5596cee880d9d23b01bb87a970d504d15874d987a3f88030b372cfb35deef",
+      "sizeMb": "0.49 MB",
+      "txHash": "0x4d2dee5ea1dfd8dc1f3973d29eeced13d57ced6cd39f619918e25656923215de",
+      "blockHeight": 98
+    },
+    {
+      "index": 12,
+      "filename": "al_matalib_al_aliyah_vol_03_v3_ar_lex_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "36ffeb3ea4e4867cdf6f80fff43389a1a675c1d650f784a0e5e8ce255b491920",
+      "sizeMb": "0.72 MB",
+      "txHash": "0xf40575bd098959d47b1be3590f9f9c79c474359b0f64f677fcc0dc5b6ced582e",
+      "blockHeight": 98
+    },
+    {
+      "index": 13,
+      "filename": "al_matalib_al_aliyah_vol_04_v2_pure_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "1c5d3b0ebbda4ff0c9012bbe9713f782a2bb50f3b4dcb6d2fcab0166a7f4c8ee",
+      "sizeMb": "0.52 MB",
+      "txHash": "0xbc0b4c73a6096cbe3639f1b130876f362de98918ad3908c9b94eef064e477283",
+      "blockHeight": 98
+    },
+    {
+      "index": 14,
+      "filename": "al_matalib_al_aliyah_vol_04_v3_ar_lex_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "c8ec976aac451ce5926a349695a65386d428327dd22b7d7adffc0ea1d93955db",
+      "sizeMb": "0.77 MB",
+      "txHash": "0x611fac4e762e32a0120a1ed32df1bd827491a4ce12b2741b8e07550adcc962ea",
+      "blockHeight": 98
+    },
+    {
+      "index": 15,
+      "filename": "al_matalib_al_aliyah_vol_05_v2_pure_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "e6aab4a322ef9891b8313d79f34ef5a586c817308b90e9779b7949aa337f9776",
+      "sizeMb": "0.24 MB",
+      "txHash": "0x89653407dbf1512564ecb64fd07c38248373ee932004698a66828162ea5cf128",
+      "blockHeight": 98
+    },
+    {
+      "index": 16,
+      "filename": "al_matalib_al_aliyah_vol_05_v3_ar_lex_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "d2f0bade28f3b2393e2bbda9f8a1f2166ca1c1c12d072c38ab2260cb5bb30658",
+      "sizeMb": "0.36 MB",
+      "txHash": "0x26eb3c3e6bdfffd332508635cfab2414308f09f3eb8a53675978136e203cb99b",
+      "blockHeight": 98
+    },
+    {
+      "index": 17,
+      "filename": "al_matalib_al_aliyah_vol_06_v2_pure_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "8fddb29218d3326de8ac7e829433e0c32ec4c2c8105c4e3c28c10ceb55fdb586",
+      "sizeMb": "0.28 MB",
+      "txHash": "0x8e0976ab969dacf863bbdb5f98d03f7876615a8123ec4ebabdaec7929e62aba1",
+      "blockHeight": 98
+    },
+    {
+      "index": 18,
+      "filename": "al_matalib_al_aliyah_vol_06_v3_ar_lex_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "123c550e6dc23c9e8b700310784876ed615255b5f1f51c64bd5ba2e0213e885f",
+      "sizeMb": "0.42 MB",
+      "txHash": "0xd0e7794b0e8f69e098add48936aefeacf1bb3f571272063c788f8e38b3320342",
+      "blockHeight": 98
+    },
+    {
+      "index": 19,
+      "filename": "al_matalib_al_aliyah_vol_07_v2_pure_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "d62e9bb5d2dcb6753441206a4ba8054f8f85e03c8f0eeb6c4050e92709d6e802",
+      "sizeMb": "0.57 MB",
+      "txHash": "0x2ffd276d109e5ccb972de377ca8223ac83627fb578142ba04f2d695dac96b7ce",
+      "blockHeight": 98
+    },
+    {
+      "index": 20,
+      "filename": "al_matalib_al_aliyah_vol_07_v3_ar_lex_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "119f34cf5804059539bd37cf8f1347c6775c76b6ecfe6ec64bb5a40d1662fe89",
+      "sizeMb": "0.85 MB",
+      "txHash": "0x8c3adf5cee265ecc0a4e3054a064a5ebb89b3bc95bb8284400ea64fbf8b32618",
+      "blockHeight": 98
+    },
+    {
+      "index": 21,
+      "filename": "al_matalib_al_aliyah_vol_08_v2_pure_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "660cd6893d701d9c4a87c19200a22effd622b70d55bea5c2a426d2d6445badee",
+      "sizeMb": "0.26 MB",
+      "txHash": "0x71d4174672c02d3d55e82fc0015b40d3a24444d861ecb6fe809d3644483e8b21",
+      "blockHeight": 98
+    },
+    {
+      "index": 22,
+      "filename": "al_matalib_al_aliyah_vol_08_v3_ar_lex_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "a980ddae24efb3b6fac08be8f33198c7b12fcbdba1c292f453e475b447217010",
+      "sizeMb": "0.38 MB",
+      "txHash": "0x8f417633032e00263d92d5d10e1f7625b6683b080312cde02d4744eb24644fdf",
+      "blockHeight": 98
+    },
+    {
+      "index": 23,
+      "filename": "al_matalib_al_aliyah_vol_09_v2_pure_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "ec3c92e2c09903dfd55bab3bbc36e74e875c65e1b7d7643f41a9b7d9674e13b5",
+      "sizeMb": "0.55 MB",
+      "txHash": "0x1a4b16dd08167331ae94123325c31b7d7476fc7acc15a10a0b622a16483695ff",
+      "blockHeight": 98
+    },
+    {
+      "index": 24,
+      "filename": "al_matalib_al_aliyah_vol_09_v3_ar_lex_en.epub",
+      "category": "Al-Matalib al-Aliyah (المَطَالِب العَالِيَة مِن العِلْم الإِلَهِي)",
+      "sha256": "d330ad24a21e179dfa5d12dfad0612afa0d5d62e26783712da49f7b20ed93618",
+      "sizeMb": "0.80 MB",
+      "txHash": "0x502067ad64f9622683e2d04dddc35e8889830701289eb87b2dee61af786b60d8",
+      "blockHeight": 98
+    },
+    {
+      "index": 25,
+      "filename": "al_qada_wal_qadar_v3_ar_lex_en.epub",
+      "category": "Theological Treatises (عِلْم الكَلَام)",
+      "sha256": "7bfec1f503bceddc65807bf3179f7208248076f67ff384cc8fbf027b91673687",
+      "sizeMb": "0.67 MB",
+      "txHash": "0xcffff5db26afaeee21bc1157449887b2bc81b09df249456f68c0993c2603047f",
+      "blockHeight": 98
+    },
+    {
+      "index": 26,
+      "filename": "al_shifa_qadi_iyad_en.epub",
+      "category": "Al-Shifa bi Tarif Huquq al-Mustafa - Qadi Iyad (كِتَاب الشِّفَاء)",
+      "sha256": "4f8fc69473771b38725b5b9e65791bd89b8e80d89c5d48b7b2482845e8ff4bd3",
+      "sizeMb": "2.00 MB",
+      "txHash": "0xe68cef0192ff249e1a7a573701e379c24129415540f3d93289dcbb1948ae4f36",
+      "blockHeight": 98
+    },
+    {
+      "index": 27,
+      "filename": "al_shifa_qadi_iyad_sq.epub",
+      "category": "Al-Shifa bi Tarif Huquq al-Mustafa - Qadi Iyad (كِتَاب الشِّفَاء)",
+      "sha256": "ff9044cc786f51841c1ffd8e97d104df938f0245efad4f59834a75e0bfc09d3d",
+      "sizeMb": "2.05 MB",
+      "txHash": "0x08e79c5d80ed4c918d6f0888aa7d30e6f9925f9afd636e41bcad96997b68d638",
+      "blockHeight": 98
+    },
+    {
+      "index": 28,
+      "filename": "arbain_en.epub",
+      "category": "Al-Arbain fi Usul al-Din (الأَرْبَعِين فِي أُصُول الدِّين)",
+      "sha256": "22d35118ec4ba5035644529cde2b18a3f59ca6f5e6cc966b7b5722806b55b0c0",
+      "sizeMb": "1.16 MB",
+      "txHash": "0x28bf68a1d05248d1dff3c6f044121676d2f686514ed7e8b2d7af7b67cc34978e",
+      "blockHeight": 98
+    },
+    {
+      "index": 29,
+      "filename": "arbain_fi_usul_al_din_v3_ar_lex_en.epub",
+      "category": "Al-Arbain fi Usul al-Din (الأَرْبَعِين فِي أُصُول الدِّين)",
+      "sha256": "4a555bbf2bc233edb4b3499e39640aeda4d6ae42d0cf5465fc03217b2db8cad3",
+      "sizeMb": "1.33 MB",
+      "txHash": "0xeddeab5c7c29ff5e0e9e666cdb0f0bd1a51313ffed03dc1c2949391afdd28de9",
+      "blockHeight": 98
+    },
+    {
+      "index": 30,
+      "filename": "asas_al_taqdis_v3_ar_lex_en.epub",
+      "category": "Asas al-Taqdis (أَسَاس التَّقْدِيس)",
+      "sha256": "549fe3e3f1f8a02b4eca204bf79d8b90dbcdde43ceac4dada649afb4e70dc00a",
+      "sizeMb": "0.38 MB",
+      "txHash": "0xe680ef34b9af394f19e3bf265546bec2d27724fdad83f5b43b8c7aa2ac96fb5b",
+      "blockHeight": 98
+    },
+    {
+      "index": 31,
+      "filename": "asas_taqdis_en.epub",
+      "category": "Asas al-Taqdis (أَسَاس التَّقْدِيس)",
+      "sha256": "cf8f35524586731ec240032b2aef0603f6c939854c5c1c040c79b88da8f5adb8",
+      "sizeMb": "0.32 MB",
+      "txHash": "0xcb2daeeb3df071008a2a39ee631fa68d9e1e5d285fc69107a0567c9b7e587832",
+      "blockHeight": 98
+    },
+    {
+      "index": 32,
+      "filename": "asas_v2_guided_en.epub",
+      "category": "Asas al-Taqdis (أَسَاس التَّقْدِيس)",
+      "sha256": "3abd05d5e39401980c2632a81d2a5797782eac92f958ce5c7baed673fe093eac",
+      "sizeMb": "0.34 MB",
+      "txHash": "0xa8cb93dd6365d16995e194e68945edb70da4fc86d199c2d333b18429f8f15ce9",
+      "blockHeight": 98
+    },
+    {
+      "index": 33,
+      "filename": "asrar_al_tanzil_v3_ar_lex_en.epub",
+      "category": "Theological Treatises (عِلْم الكَلَام)",
+      "sha256": "d54ce5617797b8394b706c97bf245846d791b8edd07a19e436aedd0c45e34b52",
+      "sizeMb": "0.22 MB",
+      "txHash": "0xfa49cbe91e2c14c44e9ca0a44e93382289d863122a15daaa2085babbf77f36df",
+      "blockHeight": 98
+    },
+    {
+      "index": 34,
+      "filename": "asrar_tanzil_en.epub",
+      "category": "Theological Treatises (عِلْم الكَلَام)",
+      "sha256": "e94a8fc122d0726d659fee1f5e0785437821896cbbb3a1e7a47ad7297a68436b",
+      "sizeMb": "0.19 MB",
+      "txHash": "0x00e4b30c104499bf7af9a28af8c2c290515d5b0b2d74376151ebc15a46642464",
+      "blockHeight": 98
+    },
+    {
+      "index": 35,
+      "filename": "ismat_anbiya_en.epub",
+      "category": "Ismat al-Anbiya (عِصْمَة الأَنْبِيَاء)",
+      "sha256": "e165b7b55f64f5c48e22afb7faf1958f6ffce4a70e4edb8f4bee56ccb299d42f",
+      "sizeMb": "0.17 MB",
+      "txHash": "0x8aee17c8cb3b96385d677294a3788e8eeaa57b03da9f1918b0a755490ee515dc",
+      "blockHeight": 98
+    },
+    {
+      "index": 36,
+      "filename": "ismat_anbiya_v2_guided_en.epub",
+      "category": "Ismat al-Anbiya (عِصْمَة الأَنْبِيَاء)",
+      "sha256": "e165b7b55f64f5c48e22afb7faf1958f6ffce4a70e4edb8f4bee56ccb299d42f",
+      "sizeMb": "0.17 MB",
+      "txHash": "0x3754511e9ae7a5413e599824610a68fa42772e61d7c4e2be6e133d4e85bad1e3",
+      "blockHeight": 98
+    },
+    {
+      "index": 37,
+      "filename": "ismat_anbiya_v3_ar_lex_en.epub",
+      "category": "Ismat al-Anbiya (عِصْمَة الأَنْبِيَاء)",
+      "sha256": "ab90b38dbd9b9bd7ae6ca886eecad8b3d7d606c7db848b505ff4dc3953628b33",
+      "sizeMb": "0.21 MB",
+      "txHash": "0x77cc0ec44fc3f2ac366562ea7f4c57fddef82e090a60c4d29a231eccd85328f9",
+      "blockHeight": 99
+    },
+    {
+      "index": 38,
+      "filename": "ismat_anbiya_v3_guided_en.epub",
+      "category": "Ismat al-Anbiya (عِصْمَة الأَنْبِيَاء)",
+      "sha256": "e165b7b55f64f5c48e22afb7faf1958f6ffce4a70e4edb8f4bee56ccb299d42f",
+      "sizeMb": "0.17 MB",
+      "txHash": "0x8bc487e0235d7db76544a0769f53b3ee6d098e4109b5eb1f92240094413d1f4e",
+      "blockHeight": 99
+    },
+    {
+      "index": 39,
+      "filename": "ismat_anbiya_v4_pro_7roots_en.epub",
+      "category": "Ismat al-Anbiya (عِصْمَة الأَنْبِيَاء)",
+      "sha256": "a93e02ca69be6c7618b12fc7ba5cdd06a6cc71847d7791719035eddf06c961e8",
+      "sizeMb": "0.14 MB",
+      "txHash": "0xc6bcfb42cd802bce446305a21732d7239d4e40293faa13440dfbf6cddb2446e5",
+      "blockHeight": 99
+    },
+    {
+      "index": 40,
+      "filename": "ismat_anbiya_v5_complete_en.epub",
+      "category": "Ismat al-Anbiya (عِصْمَة الأَنْبِيَاء)",
+      "sha256": "e165b7b55f64f5c48e22afb7faf1958f6ffce4a70e4edb8f4bee56ccb299d42f",
+      "sizeMb": "0.17 MB",
+      "txHash": "0xb65116d93af642cb654f270cf9beb95db04db4d6fba468259eb3e676a0c6def6",
+      "blockHeight": 99
+    },
+    {
+      "index": 41,
+      "filename": "ismat_anbiya_v5_zero_truncation_en.epub",
+      "category": "Ismat al-Anbiya (عِصْمَة الأَنْبِيَاء)",
+      "sha256": "a93e02ca69be6c7618b12fc7ba5cdd06a6cc71847d7791719035eddf06c961e8",
+      "sizeMb": "0.14 MB",
+      "txHash": "0xc99400aa915acd98e726fcb7e8c06f0d4a4f47d74ab3661777bdc9b3676ae919",
+      "blockHeight": 99
+    },
+    {
+      "index": 42,
+      "filename": "itiqadat_firaq_al_muslimin.epub",
+      "category": "Theological Treatises (عِلْم الكَلَام)",
+      "sha256": "f59dbef75a3a19fe999ce81778cae1f6847dfe97d4a2eafa0ca400cfdfc32ff2",
+      "sizeMb": "0.40 MB",
+      "txHash": "0xd3a64355886c640129de633d50f4de81d3dd08ffa95270eb7299400e5e760895",
+      "blockHeight": 99
+    },
+    {
+      "index": 43,
+      "filename": "itiqadat_firaq_al_muslimin_v3_ar_lex_en.epub",
+      "category": "Theological Treatises (عِلْم الكَلَام)",
+      "sha256": "d77ceef6e99f3c8c7b6692ba9688aaa8cad7ff5d53039a554bccfc656ac545f8",
+      "sizeMb": "0.13 MB",
+      "txHash": "0x0a1c714d208077db906af78639fcabe82a9e0a611f5507dca87ccf3802cf9557",
+      "blockHeight": 99
+    },
+    {
+      "index": 44,
+      "filename": "itiqadat_v2_guided_en.epub",
+      "category": "Theological Treatises (عِلْم الكَلَام)",
+      "sha256": "f96160362191e12d6cbf45d129ee9f28649c0d02a341db5684c35a04700ec1fd",
+      "sizeMb": "0.12 MB",
+      "txHash": "0x13120ef57935faef4c7c44734550eec2c38e56e30fed2fa5b2eaba1ee5a66e21",
+      "blockHeight": 99
+    },
+    {
+      "index": 45,
+      "filename": "lawami_al_bayyinat_v3_ar_lex_en.epub",
+      "category": "Lawami al-Bayyinat (لَوَامِع البَيِّنَات شَرْح أَسْمَاء الله الحُسْنَى)",
+      "sha256": "348a508a4fa63e00314773f231221b1faa216f57c0d7bdd54b5da3fe0a5f0c7d",
+      "sizeMb": "0.75 MB",
+      "txHash": "0x5337934c772630ea4b5a380b5335dc412ebc9350e618a671533df0103d6eee48",
+      "blockHeight": 99
+    },
+    {
+      "index": 46,
+      "filename": "lawami_bayyinat_en.epub",
+      "category": "Lawami al-Bayyinat (لَوَامِع البَيِّنَات شَرْح أَسْمَاء الله الحُسْنَى)",
+      "sha256": "5cb8036590782bf4f305a233752c790b18b78a5cfb219059a8cabcbad205ba38",
+      "sizeMb": "0.53 MB",
+      "txHash": "0xffef696b6de1ea236e83bc374e38b71ce7aacfcb69edc75e4d23771212e036ad",
+      "blockHeight": 99
+    },
+    {
+      "index": 47,
+      "filename": "lawami_v2_guided_en.epub",
+      "category": "Lawami al-Bayyinat (لَوَامِع البَيِّنَات شَرْح أَسْمَاء الله الحُسْنَى)",
+      "sha256": "e4a384afdaf05fa977f4a04518d9db87b0aeeb116148d9e87aa66294d21c21eb",
+      "sizeMb": "0.68 MB",
+      "txHash": "0xa3b5466cf371e0f1ed5440ed64d52f191090bcacdc26e7b8a94e79de440358b2",
+      "blockHeight": 99
+    },
+    {
+      "index": 48,
+      "filename": "macalim_usul_al_din_v3_ar_lex_en.epub",
+      "category": "Theological Treatises (عِلْم الكَلَام)",
+      "sha256": "e8401564527ffa5ffba177515dc9b6ba18f40ba3254bf1879777f508f10551a9",
+      "sizeMb": "0.37 MB",
+      "txHash": "0x61d4d8319ee720f24f1301dcbdf6ac724a8b706e2a0277d3d183397121c4125b",
+      "blockHeight": 99
+    },
+    {
+      "index": 49,
+      "filename": "macalim_usul_aldin_en.epub",
+      "category": "Theological Treatises (عِلْم الكَلَام)",
+      "sha256": "b4e16498af4faa9183f3767959fd797cff99da7e0ade776aeb686e1c9a5d9848",
+      "sizeMb": "0.17 MB",
+      "txHash": "0x31c6712c4c446bff35ebbeb48bbe6816586f458b356f1b81125d54c4fb33d548",
+      "blockHeight": 99
+    },
+    {
+      "index": 50,
+      "filename": "macalim_v2_guided_en.epub",
+      "category": "Theological Treatises (عِلْم الكَلَام)",
+      "sha256": "27a850a897b7c4bb0abe82286f697e4dc9b88b8b9254bdf8992c861d517eb01d",
+      "sizeMb": "0.33 MB",
+      "txHash": "0xc6cdd5857d44abfce4d8722c247a2358cf32779625c77af71227c2b8a04a1221",
+      "blockHeight": 99
+    },
+    {
+      "index": 51,
+      "filename": "qada_qadar_en.epub",
+      "category": "Theological Treatises (عِلْم الكَلَام)",
+      "sha256": "4e6f698f2cf3324576610933498d4a40573d806c818f1612e23982d98ffd1b3e",
+      "sizeMb": "0.61 MB",
+      "txHash": "0xba146054f02e6f64a1673fd5b4fb36450df8ed59c45911986aa1fdb4fa1adc51",
+      "blockHeight": 99
+    },
+    {
+      "index": 52,
+      "filename": "qada_qadar_v2_guided_en.epub",
+      "category": "Theological Treatises (عِلْم الكَلَام)",
+      "sha256": "773a63c03c5459bc039037dcba08406fde39db3a41ef08a3897997e27efde84d",
+      "sizeMb": "0.61 MB",
+      "txHash": "0xb56be804af9df673834b214b0860ed24b75ee399614159b48afd8043b6a97880",
+      "blockHeight": 99
+    },
+    {
+      "index": 53,
+      "filename": "tafsir_kabir_v2_vol_01_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "c48958b6503ae7eab68ccacb05663e9e4dcd524467f61b8d30c6bee90afcb88b",
+      "sizeMb": "1.43 MB",
+      "txHash": "0xf71d4201d168661e2f0f07e4f5c540d34945af9e38d4b0cbb1031e3b7c321591",
+      "blockHeight": 99
+    },
+    {
+      "index": 54,
+      "filename": "tafsir_kabir_v2_vol_02_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "8f5b365ebde5433153a5308a7a7ecde9533ae0fe0682f72e355a48258d81d649",
+      "sizeMb": "1.42 MB",
+      "txHash": "0x8fef5a89e05450b69bb368475e50af7a1ca364492357198b9cd791ba7e58ac1a",
+      "blockHeight": 99
+    },
+    {
+      "index": 55,
+      "filename": "tafsir_kabir_v2_vol_03_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "b982f40602f2c613ee34b1b0b1952153ff947733573978a2f0fc19cfa2b95784",
+      "sizeMb": "1.43 MB",
+      "txHash": "0x6a1a96c67e77d7fc4506c136d5494f9d30d5e80dac6589fa9f3c9993549e3aac",
+      "blockHeight": 99
+    },
+    {
+      "index": 56,
+      "filename": "tafsir_kabir_v2_vol_04_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "d6641261738d10fbd2d29431354e9715380d65146ad031610fc8122779f65c9b",
+      "sizeMb": "1.46 MB",
+      "txHash": "0xb251597ee1311c17e48efdc752bb48b411cc1cde9d8198b710dc2880590376ea",
+      "blockHeight": 99
+    },
+    {
+      "index": 57,
+      "filename": "tafsir_kabir_v2_vol_05_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "51703862814c99e223f2cb832ab7cb3e1e194ebb88b90f7b07fb37fba1a569ef",
+      "sizeMb": "1.44 MB",
+      "txHash": "0x9efda314aa133154fc877c43cd7b2a12c40f51eb753f060e384313453982e37c",
+      "blockHeight": 99
+    },
+    {
+      "index": 58,
+      "filename": "tafsir_kabir_v2_vol_06_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "2ec6e94d1c81e7afe9b51b3ba0abb13e3ab34fe96e4a6cb56a09c7ee4505a1dd",
+      "sizeMb": "1.46 MB",
+      "txHash": "0xc8959aa49674b920a9d18ad608973a49ed63f9fc28f8023a6788e0f6bca21e0e",
+      "blockHeight": 99
+    },
+    {
+      "index": 59,
+      "filename": "tafsir_kabir_v2_vol_07_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "f05dd4add9b5140bdae4bdf0655107cfbe4429646b4c9ffcfa16257096b1eae0",
+      "sizeMb": "1.43 MB",
+      "txHash": "0xed016d324a34aef71458164872631f768e65b09d447476a76c070882801ab76a",
+      "blockHeight": 99
+    },
+    {
+      "index": 60,
+      "filename": "tafsir_kabir_v2_vol_08_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "871e4c61978243846e173bc642e30b9fe2b57be74bb546c40cafa4f8503d5f9c",
+      "sizeMb": "1.44 MB",
+      "txHash": "0xd095ce9e69634ea346eb530a2f8d9c7fb93fa8c75a7f8491c369d9ae2489a713",
+      "blockHeight": 99
+    },
+    {
+      "index": 61,
+      "filename": "tafsir_kabir_v2_vol_09_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "65480002076eb066bd0a0960079669bd3abdcf273d4c7975cf37434b8695ceeb",
+      "sizeMb": "1.48 MB",
+      "txHash": "0x6a84d0c9acaafc2f9fc74d5021fcfed405b032f64431048fcfb8d5e42cd1a843",
+      "blockHeight": 99
+    },
+    {
+      "index": 62,
+      "filename": "tafsir_kabir_v2_vol_10_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "164b105c02044fe26972376e4362cd8ca4ae7e7792aa1ce19296a95232c3ece4",
+      "sizeMb": "1.45 MB",
+      "txHash": "0x57c03f9ad9edd7d7d25f0b2c771a58d1a62c7360c665f831249dabf76522b2cf",
+      "blockHeight": 99
+    },
+    {
+      "index": 63,
+      "filename": "tafsir_kabir_v2_vol_11_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "cb11f6dacf327e836812742eb215461487246e8fd5a2c6c37a5bfd23f13e229e",
+      "sizeMb": "1.49 MB",
+      "txHash": "0x0b7fc47042fcaa0c097260c970b8a7be088b64852c668ee2b90f90d7dac740a9",
+      "blockHeight": 99
+    },
+    {
+      "index": 64,
+      "filename": "tafsir_kabir_v2_vol_12_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "9e8a9dcd959b15653953ffaf6c29cd245f40a3e03c7d82a22d827788e7845877",
+      "sizeMb": "1.47 MB",
+      "txHash": "0x14f60ac54b4f43dbac2a3b4ca8d51b8ee38a90375df1cbf74e80d21e8ef595a4",
+      "blockHeight": 99
+    },
+    {
+      "index": 65,
+      "filename": "tafsir_kabir_v2_vol_13_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "a46a134b4b810e491211be18869a439e8b61da1d360cdf65852694de8f6f00ea",
+      "sizeMb": "1.41 MB",
+      "txHash": "0xebf4e1cdfd2d9e0bbf8b4c64f0b7fd94b6f3bcffef513c7b98f1a5da0a6ed86a",
+      "blockHeight": 99
+    },
+    {
+      "index": 66,
+      "filename": "tafsir_kabir_v2_vol_14_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "ea67cdce98e65bc14e577dda3d41c7fb5db32edee1ece336191ed5481cdc54c0",
+      "sizeMb": "1.43 MB",
+      "txHash": "0x1eb18764cdf737c8d806b231ef8855c3042d774d262f9cf705c3efab363de131",
+      "blockHeight": 99
+    },
+    {
+      "index": 67,
+      "filename": "tafsir_kabir_v2_vol_15_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "10e8358032c3d1cc8ec80f043e731204cce655ed789e0e47148251d8ec8c235f",
+      "sizeMb": "1.43 MB",
+      "txHash": "0x62d6561208e891ccdfd5a0b377963ae065f30cfecec71276cfd038c997b08cd3",
+      "blockHeight": 99
+    },
+    {
+      "index": 68,
+      "filename": "tafsir_kabir_v2_vol_16_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "5b0bbe3e6def57460b3da792d347022dc903e585911bd760ae02317fbe20e0a8",
+      "sizeMb": "1.43 MB",
+      "txHash": "0x713aac77b272060668c0060d6cbcfc76f544a0ab6d8050559eee8c644e08a200",
+      "blockHeight": 99
+    },
+    {
+      "index": 69,
+      "filename": "tafsir_kabir_v2_vol_17_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "fd355532230b28fae59102577861ab571071b70ff3a71532a0c158068a75c981",
+      "sizeMb": "1.45 MB",
+      "txHash": "0x3149c4c42ea4e80e049cb285ceeed421f681eab4b0912fe2235ff65e02f278ee",
+      "blockHeight": 99
+    },
+    {
+      "index": 70,
+      "filename": "tafsir_kabir_v2_vol_18_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "debc0632237bb73476c03fe341edfd55de9561f398933344122471ff160ab30c",
+      "sizeMb": "1.44 MB",
+      "txHash": "0x31636e655d1652dbce2a3decb133b1f2455445952e5409506aabe6d0c46c18ab",
+      "blockHeight": 99
+    },
+    {
+      "index": 71,
+      "filename": "tafsir_kabir_v2_vol_19_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "9e38322b2e7952684d284d21e4c35432c103ef0c7becf3b0c3f3ef543aa00c72",
+      "sizeMb": "1.44 MB",
+      "txHash": "0x124d2db0cd811d18dc04be42846b6c3f77a0a28d0902ccb9355c2fd5d15ecfbf",
+      "blockHeight": 99
+    },
+    {
+      "index": 72,
+      "filename": "tafsir_kabir_v2_vol_20_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "6a784f20929fdcc9c2866d214225ae89bc3d8b8ef71c652c691dec650010524b",
+      "sizeMb": "1.47 MB",
+      "txHash": "0xc15b9335e898df2101ef2c3a32ee4484e0e9256ea9cfd89140c70b14a059f397",
+      "blockHeight": 99
+    },
+    {
+      "index": 73,
+      "filename": "tafsir_kabir_v2_vol_21_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "ac0803eb0bb3ab9e657b1d91d753e6e7ec6389561f2525e17a8d5b2095ee6c70",
+      "sizeMb": "1.48 MB",
+      "txHash": "0x2a5699029206afa35d427222016b5d7cc1edc44d5d1f4e5285b4413f61064ad9",
+      "blockHeight": 99
+    },
+    {
+      "index": 74,
+      "filename": "tafsir_kabir_v2_vol_22_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "e8f1482f6c136dc31710ce4479115f010e27d80b3556dc38232386c3bce4f044",
+      "sizeMb": "1.48 MB",
+      "txHash": "0xe9725c3b1a1aa652cbb4741c40dc36432c0ff9e44fa4f0ccc186382ca2cedb1b",
+      "blockHeight": 99
+    },
+    {
+      "index": 75,
+      "filename": "tafsir_kabir_v2_vol_23_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "4c4e844fb3cca2f391d374c4310187459643628ab74413d331a18f7703d9009d",
+      "sizeMb": "1.47 MB",
+      "txHash": "0xb16e9e5cb2cb0916d57d91032c03bf235a30b3ab7be0a3612d0db4df0947239e",
+      "blockHeight": 99
+    },
+    {
+      "index": 76,
+      "filename": "tafsir_kabir_v2_vol_24_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "a2f5d9f1a3412719292909133c52741fefb09d58a403c277dae3bd43f56ac3ae",
+      "sizeMb": "1.48 MB",
+      "txHash": "0xca5424a103fee4be8fed43bc5d15205faa4c9cc2aca1faf203b271f7c70148ba",
+      "blockHeight": 99
+    },
+    {
+      "index": 77,
+      "filename": "tafsir_kabir_v2_vol_25_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "adb1ac7f34916a9806986d2921a56fb98ef73c0655cae2cc509889e72ee9cc9a",
+      "sizeMb": "1.45 MB",
+      "txHash": "0x9a0fd278bee922e193ebb4aba86165a50cd235d968aa92a6f5a65c7513e1f365",
+      "blockHeight": 99
+    },
+    {
+      "index": 78,
+      "filename": "tafsir_kabir_v2_vol_26_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "90120c9eebd34cc5ee18ff691100a98da38b42ee931d2ddf224f40797c1d51e5",
+      "sizeMb": "1.42 MB",
+      "txHash": "0xbc974d221e2012152369744e9d587e9959b654147600b12dea61fb81cb37cfe8",
+      "blockHeight": 99
+    },
+    {
+      "index": 79,
+      "filename": "tafsir_kabir_v2_vol_27_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "d72689528e24b8f1924358d3c21a650a22ec1f479452204947e40b0cf74e3809",
+      "sizeMb": "1.45 MB",
+      "txHash": "0x9951f32c39d4cdaccbd032c9638ab3b51ea7c8097822c4de5e4132d9550cea0a",
+      "blockHeight": 99
+    },
+    {
+      "index": 80,
+      "filename": "tafsir_kabir_v2_vol_28_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "cf711a80e8e7f4038afb0f27011071b645ee3c6d91557b2d736ebf6ea8c01c49",
+      "sizeMb": "1.47 MB",
+      "txHash": "0xe6a8c93b069b66f0522fcd00c907e24798fef32f10b9093a6b9deb3422a7cda1",
+      "blockHeight": 99
+    },
+    {
+      "index": 81,
+      "filename": "tafsir_kabir_v2_vol_29_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "3bd75bc4c6d5f41f79106c8834a7d0ac54368e414d5be9b7662edf073562cc28",
+      "sizeMb": "1.49 MB",
+      "txHash": "0x0c3b18ee493d84884f8a594517289919ee7b04b118b851f44ad9ee824738ac62",
+      "blockHeight": 99
+    },
+    {
+      "index": 82,
+      "filename": "tafsir_kabir_v2_vol_30_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "3eff666f45c3d68fa8d94310091cfca935379d5881ec1a5e77d4880c298699e7",
+      "sizeMb": "1.46 MB",
+      "txHash": "0xa155ed2715414d8ee09029053b3d202744b053a147a3fd93d80046898368b91d",
+      "blockHeight": 99
+    },
+    {
+      "index": 83,
+      "filename": "tafsir_kabir_v2_vol_31_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "d4977fa0dbfd09ed797cc4240cbc5194a664e1716e44dbcd5093ef57387850d2",
+      "sizeMb": "1.46 MB",
+      "txHash": "0x943dfa39a93869755e82a481de73cdfc01eb4dfa76f0de5bcb64f498ef1852bf",
+      "blockHeight": 99
+    },
+    {
+      "index": 84,
+      "filename": "tafsir_kabir_v2_vol_32_en.epub",
+      "category": "Mafatih al-Ghayb / Tafsir al-Kabir (مَفَاتِيح الغَيْب - التَّفْسِير الكَبِير)",
+      "sha256": "6de271a18085789e9de1093ef6fe4044ba621b14c219d431eecdc64c608d3ad4",
+      "sizeMb": "1.46 MB",
+      "txHash": "0x121a0c47902b901afc0f062537964566dcbca497ccd853243ad8427299342a33",
+      "blockHeight": 99
+    }
+  ]
+}
