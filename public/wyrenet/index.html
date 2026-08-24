@@ -493,6 +493,7 @@
     .wallet-title { font-weight: 800; font-size: 0.95rem; color: #fff; }
     .wallet-desc { font-size: 0.74rem; color: var(--text-secondary); margin-top: 2px; }
   </style>
+  <script src="/wyrenet/wc-bundle.js"></script>
 </head>
 <body>
 
@@ -717,8 +718,22 @@
       <!-- Discovered EIP-6963 Wallets Container -->
       <div id="discovered-wallets-list" style="display: none; flex-direction: column; gap: 8px;"></div>
 
+      
       <!-- Uniswap Style Wallet Option Cards -->
       <div style="display: flex; flex-direction: column; gap: 8px;">
+
+        <!-- ⚡ Official WalletConnect (Real Modal & Mobile Deep Links) -->
+        <button class="wallet-btn-card" onclick="connectWalletConnectProduction()" style="background: linear-gradient(135deg, rgba(59, 153, 252, 0.18), rgba(27, 100, 218, 0.18)); border-color: rgba(59, 153, 252, 0.5);">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div class="wallet-icon-box" style="background: rgba(59, 153, 252, 0.25); color: #60a5fa; font-size: 22px;">⚡</div>
+            <div>
+              <div class="wallet-title">WalletConnect (Official)</div>
+              <div class="wallet-desc">MetaMask, Core, Trust, Rainbow, 400+ Mobile Apps</div>
+            </div>
+          </div>
+          <span class="uni-card-badge" style="background: rgba(59, 153, 252, 0.25); color: #60a5fa; border-color: rgba(59, 153, 252, 0.4);">CONNECT</span>
+        </button>
+
 
         <!-- 1. MetaMask -->
         <button class="wallet-btn-card" onclick="connectWalletFlow('metamask')">
@@ -871,6 +886,67 @@
       const banner = document.getElementById('uni-injected-banner');
       if (provider && banner) {
         banner.style.display = 'flex';
+      }
+    }
+
+    
+    let wcProvider = null;
+
+    async function connectWalletConnectProduction() {
+      try {
+        if (!window.WalletConnectEthereumProvider) {
+          alert('WalletConnect bundle is initializing, please try again in 1 second...');
+          return;
+        }
+
+        if (!wcProvider) {
+          wcProvider = await window.WalletConnectEthereumProvider.init({
+            projectId: '2f05ae7f44360a7da7a44f0872ff4c5e',
+            chains: [51950],
+            optionalChains: [43113, 1],
+            showQrModal: true,
+            rpcMap: {
+              51950: 'https://wyresup.com/api/wyrenet/rpc',
+              43113: 'https://api.avax-test.network/ext/bc/C/rpc'
+            },
+            metadata: {
+              name: 'WyreNet Sovereign L1',
+              description: 'WyreSup Decentralized Sovereign L1',
+              url: 'https://wyresup.com',
+              icons: ['https://wyresup.com/favicon.ico']
+            }
+          });
+
+          wcProvider.on('accountsChanged', (accounts) => {
+            if (accounts && accounts.length > 0) {
+              userWallet = accounts[0];
+              localStorage.setItem('wyresup_user_wallet', userWallet);
+              updateTelemetry();
+            }
+          });
+
+          wcProvider.on('disconnect', () => {
+            userWallet = null;
+            localStorage.removeItem('wyresup_user_wallet');
+            updateTelemetry();
+          });
+        }
+
+        // Open official WalletConnect modal
+        await wcProvider.connect();
+
+        if (wcProvider.accounts && wcProvider.accounts.length > 0) {
+          userWallet = wcProvider.accounts[0];
+          localStorage.setItem('wyresup_user_wallet', userWallet);
+          closeUniswapModal();
+          updateTelemetry();
+          alert('🛡️ Connected to WyreNet L1 via WalletConnect!\n\nAccount: ' + userWallet);
+        }
+      } catch (err) {
+        console.error('WalletConnect error:', err);
+        if (!err.message?.includes('User rejected')) {
+          alert('WalletConnect notice: ' + (err.message || err));
+        }
       }
     }
 
