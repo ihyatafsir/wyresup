@@ -1,7 +1,7 @@
 {
   "name": "wyresup-mesh-app",
-  "version": "1.9.2",
-  "description": "WyreSup Decentralized P2P Cryptographic Mesh Messenger (v1.8.1) - Mobile-First Precision & Lisan Arabic-Crypto Engine",
+  "version": "1.9.3",
+  "description": "WyreSup Decentralized P2P Mesh & WyreNet Sovereign L1 Portal (v1.9.3) - Mobile Chrome MetaMask Handshake & Gasless Sovereign Paymaster",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
