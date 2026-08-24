@@ -713,6 +713,10 @@
         <button onclick="connectInjectedNow()" class="btn-pill btn-pill-green" style="padding: 8px 14px; font-weight: 800;">Connect Now</button>
       </div>
 
+      
+      <!-- Discovered EIP-6963 Wallets Container -->
+      <div id="discovered-wallets-list" style="display: none; flex-direction: column; gap: 8px;"></div>
+
       <!-- Uniswap Style Wallet Option Cards -->
       <div style="display: flex; flex-direction: column; gap: 8px;">
 
@@ -824,12 +828,14 @@
     let userWallet = localStorage.getItem('wyresup_user_wallet') || null;
 
     function openUniswapModal() {
+      requestEip6963Providers();
       if (userWallet) {
         openAccountModal();
         return;
       }
       document.getElementById('uniswap-wallet-modal').style.display = 'flex';
       checkInjectedProvider();
+    requestEip6963Providers();
     }
 
     function closeUniswapModal() {
@@ -1018,6 +1024,101 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     });
+
+    
+    // =========================================================================
+    // 🦄 EIP-6963 Multi-Injected Provider Discovery (Uniswap Standard)
+    // =========================================================================
+    const announcedWallets = new Map();
+
+    window.addEventListener('eip6963:announceProvider', (event) => {
+      const { info, provider } = event.detail;
+      announcedWallets.set(info.rdns, { info, provider });
+      renderDiscoveredWallets();
+    });
+
+    function requestEip6963Providers() {
+      window.dispatchEvent(new Event('eip6963:requestProvider'));
+    }
+
+    function renderDiscoveredWallets() {
+      const container = document.getElementById('discovered-wallets-list');
+      if (!container) return;
+
+      if (announcedWallets.size > 0) {
+        container.style.display = 'flex';
+        container.innerHTML = '<div style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 2px;">⚡ Detected Wallets (EIP-6963)</div>';
+        
+        announcedWallets.forEach(({ info, provider }) => {
+          const btn = document.createElement('button');
+          btn.className = 'wallet-btn-card';
+          btn.style.borderColor = 'var(--border-green)';
+          btn.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <img src="${info.icon}" alt="${info.name}" style="width: 40px; height: 40px; border-radius: 12px;">
+              <div>
+                <div class="wallet-title">${info.name}</div>
+                <div class="wallet-desc">Installed & Ready (1-Tap Connect)</div>
+              </div>
+            </div>
+            <span class="uni-card-badge" style="background: rgba(0,245,155,0.18);">INSTALLED</span>
+          `;
+          btn.onclick = () => connectWithCustomProvider(provider, info.name);
+          container.appendChild(btn);
+        });
+      }
+    }
+
+    async function connectWithCustomProvider(provider, walletName = 'Wallet') {
+      try {
+        const wyreNetConfig = {
+          chainId: '0xCAEE',
+          chainName: 'WyreNet Sovereign L1',
+          nativeCurrency: { name: 'WyreNet Token', symbol: 'WYRE', decimals: 18 },
+          rpcUrls: ['https://wyresup.com/api/wyrenet/rpc'],
+          blockExplorerUrls: ['https://wyresup.com/api/wyrenet/status']
+        };
+
+        try {
+          await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xCAEE' }] });
+        } catch (switchErr) {
+          if (switchErr.code === 4902 || (switchErr.message && switchErr.message.includes('Unrecognized chain'))) {
+            await provider.request({ method: 'wallet_addEthereumChain', params: [wyreNetConfig] });
+          }
+        }
+
+        const accounts = await provider.request({ method: 'eth_requestAccounts' });
+        if (accounts && accounts.length > 0) {
+          userWallet = accounts[0];
+          localStorage.setItem('wyresup_user_wallet', userWallet);
+
+          // EIP-191 Challenge Signature
+          try {
+            const chalRes = await fetch('/api/wyrenet/auth/challenge/' + userWallet);
+            const chalData = await chalRes.json();
+            let signature = null;
+            try {
+              signature = await provider.request({ method: 'personal_sign', params: [chalData.message, userWallet] });
+            } catch (e) {
+              signature = await provider.request({ method: 'personal_sign', params: [userWallet, chalData.message] });
+            }
+            if (signature) {
+              await fetch('/api/wyrenet/auth/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address: userWallet, signature })
+              });
+            }
+          } catch (e) {}
+
+          closeUniswapModal();
+          updateTelemetry();
+          alert('🛡️ Connected with ' + walletName + '!\n\nAccount: ' + userWallet);
+        }
+      } catch (err) {
+        alert('Connection error: ' + (err.message || err));
+      }
+    }
 
     // Telemetry & Account State
     async function updateTelemetry() {
