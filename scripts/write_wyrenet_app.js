@@ -1,4 +1,6 @@
-// ============================================================
+const fs = require('fs');
+
+const jsContent = `// ============================================================
 // 🔺 WYRENET SOVEREIGN L1 // WYRESUP CHAT & WEB3 MESH ENGINE
 // ============================================================
 
@@ -96,18 +98,18 @@ function showToast(msg, icon = "🔔") {
 // Generative Identicon (Deterministic from 0x Address)
 function generateIdenticonSvg(address) {
   if (!address || !address.startsWith("0x")) {
-    return `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #2d3748; color: #a0aec0; border-radius: 50%;">?</div>`;
+    return \`<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #2d3748; color: #a0aec0; border-radius: 50%;">?</div>\`;
   }
   const clean = address.slice(2).toLowerCase();
   const c1 = "#" + (clean.slice(0, 6) || "e53e3e");
   const c2 = "#" + (clean.slice(6, 12) || "00f59b");
   const c3 = "#" + (clean.slice(12, 18) || "f6ad55");
-  return `<svg width="100%" height="100%" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius: 50%;">
-      <rect width="32" height="32" fill="${c1}"/>
-      <circle cx="16" cy="16" r="10" fill="${c2}" fill-opacity="0.85"/>
-      <polygon points="16,6 26,24 6,24" fill="${c3}" fill-opacity="0.75"/>
+  return \`<svg width="100%" height="100%" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius: 50%;">
+      <rect width="32" height="32" fill="\${c1}"/>
+      <circle cx="16" cy="16" r="10" fill="\${c2}" fill-opacity="0.85"/>
+      <polygon points="16,6 26,24 6,24" fill="\${c3}" fill-opacity="0.75"/>
       <circle cx="16" cy="16" r="4" fill="#ffffff" fill-opacity="0.9"/>
-    </svg>`;
+    </svg>\`;
 }
 
 // Modal State Manager
@@ -226,7 +228,7 @@ function updateIdentityUI() {
     
     if (btnConnect) {
       btnConnect.classList.add("connected");
-      btnConnect.innerHTML = `<span class="live-dot" style="background: var(--matrix-green); width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span> 🛡️ ${shortAddr}`;
+      btnConnect.innerHTML = \`<span class="live-dot" style="background: var(--matrix-green); width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span> 🛡️ \${shortAddr}\`;
     }
   } else {
     if (avatarEl) avatarEl.innerHTML = "🦊";
@@ -383,7 +385,7 @@ async function initWcRelayProvider() {
         const type = currentSelectedWalletType || "metamask";
 
         let scheme = "metamask://wc?uri=" + encoded;
-        let universal = "https://metamask.app.link/dapp/wyresup.com/wyrenet?wc=" + encoded;
+        let universal = "https://metamask.app.link/wc?uri=" + encoded;
 
         if (type === "core") {
           scheme = "core://wc?uri=" + encoded;
@@ -672,13 +674,13 @@ function createMessageElement(msg) {
 
   const timeStr = new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-  let contentHtml = `<div style="color: var(--text-normal); font-size: 0.92rem; line-height: 1.5; word-break: break-word;">${escapeHtml(msg.text || "")}</div>`;
+  let contentHtml = \`<div style="color: var(--text-normal); font-size: 0.92rem; line-height: 1.5; word-break: break-word;">\${escapeHtml(msg.text || "")}</div>\`;
 
   if (msg.audioUrl) {
-    contentHtml = `<div style="display: flex; align-items: center; gap: 10px; background: rgba(0, 245, 155, 0.08); border: 1px solid var(--border-emerald); padding: 8px 12px; border-radius: 12px; max-width: 320px;">
+    contentHtml = \`<div style="display: flex; align-items: center; gap: 10px; background: rgba(0, 245, 155, 0.08); border: 1px solid var(--border-emerald); padding: 8px 12px; border-radius: 12px; max-width: 320px;">
         <span style="font-size: 18px;">🎵</span>
-        <audio controls src="${msg.audioUrl}" style="height: 32px; max-width: 220px;"></audio>
-      </div>`;
+        <audio controls src="\${msg.audioUrl}" style="height: 32px; max-width: 220px;"></audio>
+      </div>\`;
   }
 
   const anchorBadge = document.createElement("div");
@@ -700,16 +702,16 @@ function createMessageElement(msg) {
 
   const bodyDiv = document.createElement("div");
   bodyDiv.style.cssText = "flex: 1; display: flex; flex-direction: column; gap: 2px;";
-  bodyDiv.innerHTML = `
+  bodyDiv.innerHTML = \`
     <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-      <strong style="color: #fff; font-size: 0.88rem; font-family: var(--font-mono); cursor: pointer;" onclick="prompt('User Public Address:', '${msg.senderAddress}')">
-        ${shortAddr}
+      <strong style="color: #fff; font-size: 0.88rem; font-family: var(--font-mono); cursor: pointer;" onclick="prompt('User Public Address:', '\${msg.senderAddress}')">
+        \${shortAddr}
       </strong>
-      <span class="l1-did-badge ${msg.l1Verified ? 'verified' : ''}">${msg.l1Verified ? '🛡️ L1 DID' : 'PEER'}</span>
-      <span style="color: var(--text-muted); font-size: 0.72rem;">${timeStr}</span>
+      <span class="l1-did-badge \${msg.l1Verified ? 'verified' : ''}">\${msg.l1Verified ? '🛡️ L1 DID' : 'PEER'}</span>
+      <span style="color: var(--text-muted); font-size: 0.72rem;">\${timeStr}</span>
     </div>
-    ${contentHtml}
-  `;
+    \${contentHtml}
+  \`;
   bodyDiv.appendChild(anchorBadge);
 
   card.appendChild(avatarDiv);
@@ -937,9 +939,9 @@ function renderChannelsSidebarList() {
     const item = document.createElement("div");
     item.className = "channel-item" + (ch.id === currentChannelId ? " active" : "");
     item.onclick = () => selectChannel(ch.id, ch.topic);
-    item.innerHTML = `<span class="hash-icon">#</span>
-      <span class="channel-name">${ch.name}</span>
-      <span class="channel-badge" style="background: rgba(0, 245, 155, 0.15); color: #00f59b; font-size: 0.65rem;">${ch.badge || 'L1'}</span>`;
+    item.innerHTML = \`<span class="hash-icon">#</span>
+      <span class="channel-name">\${ch.name}</span>
+      <span class="channel-badge" style="background: rgba(0, 245, 155, 0.15); color: #00f59b; font-size: 0.65rem;">\${ch.badge || 'L1'}</span>\`;
     container.appendChild(item);
   });
 }
@@ -1045,8 +1047,8 @@ function renderEpubGrid(books) {
     
     const headDiv = document.createElement("div");
     headDiv.style.cssText = "display: flex; justify-content: space-between; align-items: flex-start;";
-    headDiv.innerHTML = `<span class="l1-did-badge verified">${b.category || 'Corpus'}</span>
-      <span style="font-size: 0.72rem; color: var(--matrix-green); font-family: var(--font-mono);">${b.sizeMb || '4 MB'}</span>`;
+    headDiv.innerHTML = \`<span class="l1-did-badge verified">\${b.category || 'Corpus'}</span>
+      <span style="font-size: 0.72rem; color: var(--matrix-green); font-family: var(--font-mono);">\${b.sizeMb || '4 MB'}</span>\`;
 
     const titleDiv = document.createElement("div");
     titleDiv.className = "epub-card-title";
@@ -1059,7 +1061,7 @@ function renderEpubGrid(books) {
 
     const footDiv = document.createElement("div");
     footDiv.className = "epub-card-footer";
-    footDiv.innerHTML = `<a href="/epubs/${b.filename}" download class="btn-pill btn-pill-green" style="padding: 4px 10px; font-size: 0.72rem;">⬇ Download</a>`;
+    footDiv.innerHTML = \`<a href="/epubs/\${b.filename}" download class="btn-pill btn-pill-green" style="padding: 4px 10px; font-size: 0.72rem;">⬇ Download</a>\`;
 
     const verifyBtn = document.createElement("button");
     verifyBtn.className = "btn-pill";
@@ -1132,10 +1134,10 @@ window.executeCustomNotarization = async function() {
     if (data.success) {
       if (rec) {
         rec.style.display = "block";
-        rec.innerHTML = `✅ <strong style="color: var(--matrix-green);">IMMUTABLY SEALED ON WYRENET L1!</strong><br>
-          Tx Hash: <span style="color: #60a5fa;">${data.txHash}</span><br>
-          Block Height: <strong>#${data.blockNumber || 484}</strong><br>
-          Publisher DID: <span style="color: var(--l1-gold);">did:wyre:${userWallet || 'anonymous'}</span>`;
+        rec.innerHTML = \`✅ <strong style="color: var(--matrix-green);">IMMUTABLY SEALED ON WYRENET L1!</strong><br>
+          Tx Hash: <span style="color: #60a5fa;">\${data.txHash}</span><br>
+          Block Height: <strong>#\${data.blockNumber || 484}</strong><br>
+          Publisher DID: <span style="color: var(--l1-gold);">did:wyre:\${userWallet || 'anonymous'}</span>\`;
       }
       showToast("Document sealed permanently on L1!", "✅");
     }
@@ -1157,10 +1159,10 @@ window.executeHashVerify = async function() {
     const data = await res.json();
     if (data.verified) {
       resEl.style.color = "#68d391";
-      resEl.innerHTML = `✅ <strong>LEDGER VERIFIED IMMUTABLE</strong><br>
-        Record: ${data.record.title || data.record.filename || 'Anchored Entry'}<br>
-        Block: #${data.record.blockNumber || 484}<br>
-        Tx: ${data.record.txHash}`;
+      resEl.innerHTML = \`✅ <strong>LEDGER VERIFIED IMMUTABLE</strong><br>
+        Record: \${data.record.title || data.record.filename || 'Anchored Entry'}<br>
+        Block: #\${data.record.blockNumber || 484}<br>
+        Tx: \${data.record.txHash}\`;
     } else {
       resEl.style.color = "#fc8181";
       resEl.innerHTML = "❌ Hash not registered on WyreNet Sovereign L1";
@@ -1196,7 +1198,7 @@ window.addWyreNetChain = async function() {
 
 window.copyRpcDetails = function() {
   const origin = window.location.origin || "https://wyresup.com";
-  const text = "Network Name: WyreNet Sovereign L1\nRPC URL: " + origin + "/api/wyrenet/rpc\nChain ID: 51950 (0xCAEE)\nSymbol: WYRE\nExplorer: " + origin + "/api/wyrenet/status";
+  const text = "Network Name: WyreNet Sovereign L1\\nRPC URL: " + origin + "/api/wyrenet/rpc\\nChain ID: 51950 (0xCAEE)\\nSymbol: WYRE\\nExplorer: " + origin + "/api/wyrenet/status";
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
       showToast("Copied WyreNet RPC configuration!", "📋");
@@ -1323,3 +1325,7 @@ if (typeof window !== "undefined") {
     });
   });
 }
+`;
+
+fs.writeFileSync('./public/wyrenet/wyrenet-app.js', jsContent, 'utf8');
+console.log('✅ Generated public/wyrenet/wyrenet-app.js successfully');

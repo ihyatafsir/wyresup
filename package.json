@@ -1,7 +1,7 @@
 {
   "name": "wyresup-mesh-app",
-  "version": "1.9.3",
-  "description": "WyreSup Decentralized P2P Mesh & WyreNet Sovereign L1 Portal (v1.9.3) - Mobile Chrome MetaMask Handshake & Gasless Sovereign Paymaster",
+  "version": "1.9.4",
+  "description": "WyreSup Decentralized P2P Mesh & WyreNet Sovereign L1 Portal (v1.9.4) - Unified WyreSup Cyber-Mesh Theme with L1 Public Address DID Identity & Real-Time Chat Engine",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

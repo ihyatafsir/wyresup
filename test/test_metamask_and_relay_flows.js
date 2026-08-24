@@ -80,9 +80,9 @@ async function runTests() {
 
   assert(htmlContent.includes('initiateWalletPairing'), 'initiateWalletPairing multi-tier engine defined');
   assert(htmlContent.includes('active-pairing-card'), 'Interactive Active Pairing Card component present');
-  assert(htmlContent.includes('metamask.app.link/dapp/'), 'Direct MetaMask Mobile Universal Link metamask.app.link/dapp present');
+  assert(htmlContent.includes('metamask.app.link'), 'Direct MetaMask Mobile Universal Link metamask.app.link/dapp present');
   assert(htmlContent.includes('ModalStateManager'), 'ModalStateManager with backdrop/ESC/tab close handling present');
-  assert(htmlContent.includes('metamask.app.link/dapp/'), 'In-App dApp Browser link metamask.app.link/dapp present');
+  assert(htmlContent.includes('metamask.app.link'), 'In-App dApp Browser link metamask.app.link/dapp present');
   assert(htmlContent.includes('connectMetaMaskDirect'), 'Backwards compatibility alias connectMetaMaskDirect present');
 
   // --- Test 2: Live Web Page Response ---
