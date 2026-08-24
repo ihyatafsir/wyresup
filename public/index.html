@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1787534769483">
+  <link rel="stylesheet" href="style.css?v=1787535614740">
 </head>
 <body>
   <div id="app-container" class="app-layout">
@@ -65,9 +65,31 @@
         <button class="space-menu-btn" id="btn-space-menu" title="Space Options">▾</button>
       </div>
 
+      
+      <!-- Channel Mode Switcher Tab Bar (Mesh vs 🔺 WyreNet) -->
+      <div class="channel-mode-tabs" style="display: flex; padding: 8px 12px 6px; gap: 6px; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.25);">
+        <button class="channel-tab-btn active" id="tab-channels-mesh" onclick="switchChannelTab('mesh')" style="flex: 1; padding: 8px 8px; border: 1px solid rgba(0, 245, 155, 0.3); border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer; background: rgba(0, 245, 155, 0.15); color: #00f59b; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
+          <span>⚡ Mesh</span>
+        </button>
+        <button class="channel-tab-btn" id="tab-channels-onchain" onclick="switchChannelTab('onchain')" style="flex: 1; padding: 8px 8px; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer; background: rgba(255, 255, 255, 0.03); color: #a0aec0; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
+          <span>🔺 WyreNet</span>
+        </button>
+      </div>
+
       <!-- Channels List Categories -->
       <div class="channels-scroller" id="channels-scroller">
         <!-- Text Channels Category -->
+        
+        <!-- Sovereign WyreNet L1 Channels Category (Visible on L1 Tab) -->
+        <div class="channel-category" id="cat-onchain-channels" style="display: none;">
+          <div class="category-header" onclick="toggleCategory('cat-onchain-channels')">
+            <span class="category-title" style="color: #fc8181;"><span class="chevron">▾</span> 🔺 SOVEREIGN L1 CHANNELS</span>
+          </div>
+          <div class="category-channels" id="onchain-channels-list">
+            <!-- Dynamic On-Chain Channels -->
+          </div>
+        </div>
+
         <div class="channel-category" id="cat-text-channels">
           <div class="category-header" onclick="toggleCategory('cat-text-channels')">
             <span class="category-title"><span class="chevron">▾</span> 💬 TEXT CHANNELS</span>
@@ -123,11 +145,11 @@
           <div class="user-id" id="current-user-id">peer@00000000</div>
         </div>
         <div class="user-actions">
-          <button class="icon-action-btn" id="btn-connect-wyrenet-wallet" onclick="openModal('modal-wallet-connect')" title="Connect Core / MetaMask & Auto-Add WyreNet L1 RPC (🔺)" style="color: #fc8181; font-size: 13px; font-weight: bold;">🔺</button>
+          <button class="icon-action-btn" id="btn-connect-wyrenet-wallet" onclick="openModal('modal-wallet-connect')" title="WyreNet L1 (🔺)" style="color: #fc8181; font-size: 13px; font-weight: bold;">🔺</button>
           <button class="icon-action-btn" id="btn-toggle-mic" title="Toggle Mic / Sawt">🎙️</button>
           <button class="icon-action-btn" id="btn-lisan-modal" title="Lisan al-Arab Lexicon & Protocol Engine (مُعْجَم لِسَان العَرَب)">📖</button>
           <button class="icon-action-btn" id="btn-nagham-modal" title="Nagham DTMF Keypad">🎵</button>
-          
+          <button class="icon-action-btn" id="btn-user-settings" title="Identity Settings">⚙️</button>
         </div>
       </div>
     </aside>
@@ -808,163 +830,8 @@
       </div>
     </div>
   </div>
-  </div>
-
-  
-  <!-- WyreNet Wallet & RPC Modal -->
-  
-  <!-- WyreNet Sovereign L1 Wallet Modal (Ultra-Simple & Direct) -->
-  
-  <!-- WyreNet Sovereign L1 Wallet Modal (Ultimate Mobile & Desktop Web3 Bridge) -->
-  
-  <!-- WyreNet Sovereign L1 Wallet Modal (Android & Mobile Optimized) -->
-  
-  <!-- =========================================================================
-       🔺 Professional Web3Modal / RainbowKit Style Wallet Connector
-       ========================================================================= -->
-  <div class="modal-overlay" id="modal-wallet-connect" style="display: none;">
-    <div class="modal-card" style="max-width: 420px; width: 95%; background: #0f141d; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; box-shadow: 0 24px 70px rgba(0,0,0,0.85); overflow: hidden; padding: 0;">
-      
-      <!-- Top Modal Header -->
-      <div style="padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <div style="width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #e53e3e, #9b2c2c); display: flex; align-items: center; justify-content: center; font-size: 16px;">🔺</div>
-          <div>
-            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: #fff; letter-spacing: -0.01em;">Connect Wallet</h3>
-            <span style="font-size: 0.73rem; color: #718096;">WyreNet Sovereign L1 • Chain 51950</span>
-          </div>
-        </div>
-        <button class="modal-close" data-close="modal-wallet-connect" style="background: rgba(255,255,255,0.06); border: none; color: #a0aec0; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; transition: all 0.2s;">✕</button>
-      </div>
-
-      <div class="modal-body" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; max-height: 80vh; overflow-y: auto;">
-
-        <!-- Persona Switcher Pill -->
-        <div class="persona-switch-bar" style="display: flex; background: rgba(0,0,0,0.45); padding: 4px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 4px;">
-          <button class="persona-tab active" id="tab-persona-mesh" style="flex: 1; padding: 8px; border: none; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; background: rgba(0, 245, 155, 0.15); color: #00f59b; transition: all 0.2s;">
-            ⚡ Anonymous Mesh
-          </button>
-          <button class="persona-tab" id="tab-persona-wallet" style="flex: 1; padding: 8px; border: none; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; background: transparent; color: #a0aec0; transition: all 0.2s;">
-            🔺 Sovereign Web3
-          </button>
-        </div>
-
-        <!-- Professional Wallet List (RainbowKit / Web3Modal Style) -->
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-
-          <!-- 1. MetaMask -->
-          <button class="wallet-option-item" id="btn-wallet-metamask" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 14px; cursor: pointer; transition: all 0.2s; width: 100%; text-align: left;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <span style="font-size: 1.5rem;">🦊</span>
-              <div>
-                <div style="font-weight: 700; font-size: 0.92rem; color: #fff;">MetaMask</div>
-                <div style="font-size: 0.72rem; color: #718096;">Mobile App & Browser Extension</div>
-              </div>
-            </div>
-            <span style="font-size: 0.7rem; font-weight: 700; background: rgba(246, 133, 27, 0.15); color: #f6851b; padding: 3px 8px; border-radius: 6px;">POPULAR</span>
-          </button>
-
-          <!-- 2. Core Wallet (Official Avalanche) -->
-          <button class="wallet-option-item" id="btn-wallet-core" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 14px; cursor: pointer; transition: all 0.2s; width: 100%; text-align: left;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <span style="font-size: 1.5rem;">🔺</span>
-              <div>
-                <div style="font-weight: 700; font-size: 0.92rem; color: #fff;">Core Wallet</div>
-                <div style="font-size: 0.72rem; color: #718096;">Ava Labs Avalanche Native</div>
-              </div>
-            </div>
-            <span style="font-size: 0.7rem; font-weight: 700; background: rgba(229, 62, 62, 0.15); color: #fc8181; padding: 3px 8px; border-radius: 6px;">AVALANCHE</span>
-          </button>
-
-          <!-- 3. Rainbow Wallet -->
-          <button class="wallet-option-item" id="btn-wallet-rainbow" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 14px; cursor: pointer; transition: all 0.2s; width: 100%; text-align: left;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <span style="font-size: 1.5rem;">🌈</span>
-              <div>
-                <div style="font-weight: 700; font-size: 0.92rem; color: #fff;">Rainbow</div>
-                <div style="font-size: 0.72rem; color: #718096;">Ethereum & Avalanche Mobile</div>
-              </div>
-            </div>
-            <span style="font-size: 0.7rem; font-weight: 700; background: rgba(14, 118, 253, 0.15); color: #60a5fa; padding: 3px 8px; border-radius: 6px;">MOBILE</span>
-          </button>
-
-          <!-- 4. Trust Wallet -->
-          <button class="wallet-option-item" id="btn-wallet-trust" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 14px; cursor: pointer; transition: all 0.2s; width: 100%; text-align: left;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <span style="font-size: 1.5rem;">🛡️</span>
-              <div>
-                <div style="font-weight: 700; font-size: 0.92rem; color: #fff;">Trust Wallet</div>
-                <div style="font-size: 0.72rem; color: #718096;">Multi-Chain Web3 Mobile</div>
-              </div>
-            </div>
-            <span style="font-size: 0.7rem; font-weight: 700; background: rgba(5, 0, 255, 0.15); color: #93c5fd; padding: 3px 8px; border-radius: 6px;">POPULAR</span>
-          </button>
-
-          <!-- 5. Coinbase Wallet -->
-          <button class="wallet-option-item" id="btn-wallet-coinbase" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 14px; cursor: pointer; transition: all 0.2s; width: 100%; text-align: left;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <span style="font-size: 1.5rem;">📱</span>
-              <div>
-                <div style="font-weight: 700; font-size: 0.92rem; color: #fff;">Coinbase Wallet</div>
-                <div style="font-size: 0.72rem; color: #718096;">Smart Wallet & Mobile App</div>
-              </div>
-            </div>
-            <span style="font-size: 0.7rem; font-weight: 700; background: rgba(0, 82, 255, 0.15); color: #60a5fa; padding: 3px 8px; border-radius: 6px;">SMART</span>
-          </button>
-        </div>
-
-        <!-- Direct Manual Address Binding Section -->
-        <div style="margin-top: 4px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);">
-          <div style="display: flex; gap: 8px;">
-            <input type="text" id="input-manual-wallet-addr" class="form-control" placeholder="Or paste public 0x... address" style="flex: 1; background: #141a24; border: 1px solid #2d3748; color: #fff; padding: 10px 12px; border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;">
-            <button class="btn btn-secondary" id="btn-save-manual-wallet" style="background: #2b6cb0; color: #fff; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Save</button>
-          </div>
-        </div>
-
-        
-        <!-- Network RPC & 1-Click Auto-Add Card -->
-        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.73rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 700; color: #fff;">⚙️ WyreNet L1 Network Config</span>
-            <button id="btn-auto-add-network" style="background: rgba(0, 245, 155, 0.15); border: 1px solid rgba(0, 245, 155, 0.4); color: #00f59b; font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; cursor: pointer;">
-              ➕ Add to Wallet (1-Click)
-            </button>
-          </div>
-          <div style="display: flex; justify-content: space-between; color: #a0aec0; margin-bottom: 3px;">
-            <span>Network:</span> <strong style="color: #fff;">WyreNet Sovereign L1</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; color: #a0aec0; margin-bottom: 3px;">
-            <span>RPC URL:</span> <strong style="color: #63b3ed;">https://wyresup.com/api/wyrenet/rpc</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; color: #a0aec0; margin-bottom: 3px;">
-            <span>Chain ID:</span> <strong style="color: #f6e05e;">51950 (0xCAEE)</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; color: #a0aec0; margin-bottom: 6px;">
-            <span>Symbol:</span> <strong style="color: #68d391;">WYRE</strong>
-          </div>
-          <button id="btn-copy-rpc-config" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e0; font-size: 0.72rem; padding: 6px; border-radius: 6px; cursor: pointer;">
-            📋 Copy RPC Config for MetaMask Manual Setup
-          </button>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-    </div>
-  </div>
-
-    </div>
-  </div>
-
-    </div>
-  </div>
-
-
-    </div>
-  </div>
 
   <!-- Main JavaScript Bundle with Cache-Buster -->
-  <script src="app.js?v=1787534769483"></script>
+  <script src="app.js?v=1787535614740"></script>
 </body>
 </html>

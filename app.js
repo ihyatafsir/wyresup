@@ -2351,6 +2351,139 @@ function initEventListeners() {
   document.getElementById('btn-nagham-modal').addEventListener('click', () => openModal('modal-nagham'));
 
   // =========================================================================
+  // 🔺 Sovereign WyreNet L1 Channels & Tab Switcher System
+  // =========================================================================
+  window.onchainChannels = [
+    {
+      id: 'chan_imam_razi_library',
+      name: '📖-imam-razi-library',
+      arabicName: 'مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِي',
+      topic: 'Official On-Chain Corpus: 84 Verified EPUB Manuscripts (Tafsir Kabir, Matalib, Mahsul)',
+      icon: '📖',
+      isL1: true,
+      txHash: '0xdd6c9adca0a0fb628ef03c3b233175370cd9a69cebdb13790c643aa6206b0ec8',
+      blockHeight: 86
+    },
+    {
+      id: 'chan_wyrenet_gov',
+      name: '🏛️-wyrenet-governance',
+      arabicName: 'مَجْلِس حَوْكَمَة وَايِرْنِت',
+      topic: 'Avalanche Fuji Subnet 51950: Validator Consensus & Gas Economics',
+      icon: '🏛️',
+      isL1: true,
+      txHash: '0x6be0a9c7f7e6874d2cfc263dc4264cfeb00ebe8e7928250d39e81b6932661d17',
+      blockHeight: 88
+    },
+    {
+      id: 'chan_tafsir_study',
+      name: '📜-tafsir-kabir-study',
+      arabicName: 'دِرَاسَات مَفَاتِيح الغَيْب',
+      topic: '32 Volumes Mafatih al-Ghayb Analysis & Linguistic Hermeneutics',
+      icon: '📜',
+      isL1: true,
+      txHash: '0xab30ae689d29b6e3c56b5ac899b7097d9b6bc8007eacea2134649fd3f9a834e6',
+      blockHeight: 86
+    },
+    {
+      id: 'chan_tokenomics_faucet',
+      name: '🪙-wyre-tokenomics',
+      arabicName: 'اقْتِصَادِيَّات رَمْز وَايِر',
+      topic: '1,000,000 WYRE Genesis Supply & Gas Settlement Records',
+      icon: '🪙',
+      isL1: true,
+      txHash: '0x63d219018d59d715cdff1fa85976286838679dfd4a8fdfd869a3cb48a855275f',
+      blockHeight: 86
+    }
+  ];
+
+  window.renderOnchainChannels = function() {
+    const list = document.getElementById('onchain-channels-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    window.onchainChannels.forEach(chan => {
+      const el = document.createElement('div');
+      el.className = 'channel-item onchain-chan-item' + (state.currentChannelId === chan.id ? ' active' : '');
+      el.dataset.channelId = chan.id;
+      el.style.display = 'flex';
+      el.style.alignItems = 'center';
+      el.style.justifyContent = 'space-between';
+      el.style.padding = '9px 12px';
+      el.style.borderRadius = '8px';
+      el.style.cursor = 'pointer';
+      el.style.marginBottom = '5px';
+      el.style.border = state.currentChannelId === chan.id ? '1px solid rgba(229, 62, 62, 0.6)' : '1px solid rgba(255, 255, 255, 0.05)';
+      el.style.background = state.currentChannelId === chan.id ? 'rgba(229, 62, 62, 0.22)' : 'rgba(255, 255, 255, 0.02)';
+
+      el.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+          <span style="font-size: 1.1rem;">${chan.icon}</span>
+          <div style="display: flex; flex-direction: column; overflow: hidden;">
+            <span style="font-weight: 700; font-size: 0.85rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${chan.name}</span>
+            <span style="font-size: 0.7rem; color: #a0aec0; font-family: 'Amiri', serif;">${chan.arabicName}</span>
+          </div>
+        </div>
+        <span style="font-size: 0.65rem; font-weight: 800; background: rgba(229, 62, 62, 0.25); color: #fc8181; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(229, 62, 62, 0.4);">L1</span>
+      `;
+
+      el.addEventListener('click', () => window.selectOnchainChannel(chan));
+      list.appendChild(el);
+    });
+  };
+
+  window.selectOnchainChannel = function(chan) {
+    state.currentChannelId = chan.id;
+    const nameEl = document.getElementById('current-channel-name');
+    const topicEl = document.getElementById('current-channel-topic');
+    if (nameEl) nameEl.textContent = chan.name;
+    if (topicEl) {
+      topicEl.innerHTML = `${chan.topic} <span style="color: #00f59b; font-weight: bold; margin-left: 6px;">[Verified Block #${chan.blockHeight}]</span>`;
+    }
+    window.renderOnchainChannels();
+
+    const banner = document.getElementById('call-video-title-banner');
+    const bannerText = document.getElementById('call-video-title-text');
+    if (chan.id === 'chan_imam_razi_library') {
+      if (banner && bannerText) {
+        banner.style.display = 'flex';
+        bannerText.innerHTML = '📖 <strong>Imam Razi Library:</strong> 84 EPUB Volumes Verified on WyreNet L1 <a href="/epubs/wyrenet_imam_razi_l1_manifest.json" target="_blank" style="color: #00f59b; text-decoration: underline; margin-left: 8px;">View Manifest</a>';
+      }
+    }
+  };
+
+  window.switchChannelTab = function(mode) {
+    const tabMesh = document.getElementById('tab-channels-mesh');
+    const tabOnchain = document.getElementById('tab-channels-onchain');
+    const catOnchain = document.getElementById('cat-onchain-channels');
+    const catText = document.getElementById('cat-text-channels');
+    const catVoice = document.getElementById('cat-voice-channels');
+    const dmCat = document.getElementById('dm-category');
+
+    if (mode === 'onchain') {
+      if (tabMesh) { tabMesh.style.background = 'rgba(255, 255, 255, 0.03)'; tabMesh.style.color = '#a0aec0'; tabMesh.style.borderColor = 'rgba(255,255,255,0.08)'; }
+      if (tabOnchain) { tabOnchain.style.background = 'rgba(229, 62, 62, 0.2)'; tabOnchain.style.color = '#fc8181'; tabOnchain.style.borderColor = 'rgba(229, 62, 62, 0.5)'; }
+      if (catOnchain) catOnchain.style.display = 'block';
+      if (catText) catText.style.display = 'none';
+      if (catVoice) catVoice.style.display = 'none';
+      if (dmCat) dmCat.style.display = 'none';
+      window.renderOnchainChannels();
+      if (!state.currentChannelId || !state.currentChannelId.startsWith('chan_')) {
+        window.selectOnchainChannel(window.onchainChannels[0]);
+      }
+    } else {
+      if (tabMesh) { tabMesh.style.background = 'rgba(0, 245, 155, 0.15)'; tabMesh.style.color = '#00f59b'; tabMesh.style.borderColor = 'rgba(0, 245, 155, 0.3)'; }
+      if (tabOnchain) { tabOnchain.style.background = 'rgba(255, 255, 255, 0.03)'; tabOnchain.style.color = '#a0aec0'; tabOnchain.style.borderColor = 'rgba(255,255,255,0.08)'; }
+      if (catOnchain) catOnchain.style.display = 'none';
+      if (catText) catText.style.display = 'block';
+      if (catVoice) catVoice.style.display = 'block';
+      if (dmCat) dmCat.style.display = 'block';
+    }
+  };
+
+  document.getElementById('tab-channels-mesh')?.addEventListener('click', () => window.switchChannelTab('mesh'));
+  document.getElementById('tab-channels-onchain')?.addEventListener('click', () => window.switchChannelTab('onchain'));
+
+  // =========================================================================
   // 🔺 Professional Web3Modal / RainbowKit Multi-Wallet Bridge
   // =========================================================================
   function getWeb3Provider(preferred = null) {
@@ -2459,11 +2592,9 @@ function initEventListeners() {
     if (!provider) {
       if (isMobile) {
         if (walletType === 'core') {
-          // Native Android Intent for Ava Labs Core Wallet (com.avax.wallet)
           window.location.href = 'intent://#Intent;package=com.avax.wallet;action=android.intent.action.VIEW;end';
           return;
         } else if (walletType === 'metamask') {
-          // Native MetaMask App Launch to WyreSup
           window.location.href = 'https://metamask.app.link/dapp/' + (window.location.host || 'wyresup.com');
           return;
         } else if (walletType === 'rainbow') {
