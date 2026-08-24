@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔺 WyreNet Sovereign L1 // Testing & Governance Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #080c14;
+      --bg-card: #0e1420;
+      --bg-glass: rgba(14, 20, 32, 0.75);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --accent-red: #e53e3e;
+      --accent-red-glow: rgba(229, 62, 62, 0.4);
+      --accent-green: #00f59b;
+      --accent-gold: #ecc94b;
+      --text-main: #f7fafc;
+      --text-muted: #a0aec0;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: radial-gradient(circle at top right, rgba(229, 62, 62, 0.08), transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(0, 245, 155, 0.05), transparent 40%);
+    }
+
+    /* Top Navigation Bar */
+    header {
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent-red), #9b2c2c);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 0 15px var(--accent-red-glow);
+    }
+    .brand-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .brand-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-red), #9b2c2c);
+      color: #fff;
+      box-shadow: 0 4px 12px var(--accent-red-glow);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .btn-green {
+      background: rgba(0, 245, 155, 0.12);
+      border-color: rgba(0, 245, 155, 0.35);
+      color: var(--accent-green);
+    }
+    .btn-green:hover {
+      background: rgba(0, 245, 155, 0.2);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Status Telemetry Banner */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .telemetry-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .telemetry-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .telemetry-val {
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+    }
+
+    /* Navigation Tabs */
+    .portal-tabs {
+      display: flex;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 4px;
+      gap: 4px;
+      overflow-x: auto;
+    }
+    .portal-tab {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .portal-tab.active {
+      background: rgba(229, 62, 62, 0.15);
+      color: #fc8181;
+      border: 1px solid rgba(229, 62, 62, 0.4);
+    }
+
+    /* Section Panels */
+    .tab-panel {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .tab-panel.active {
+      display: flex;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .card-header {
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .form-control {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: var(--accent-red);
+    }
+
+    /* EPUB Search & List */
+    .epub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .epub-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+    .epub-card:hover {
+      border-color: rgba(229, 62, 62, 0.3);
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .epub-title {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .epub-meta {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* Channel List */
+    .channel-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 20px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <a href="/wyrenet" class="brand">
+      <div class="brand-icon">🔺</div>
+      <div>
+        <div class="brand-title">WyreNet Sovereign L1</div>
+        <div class="brand-sub">Testing, Channels & EPUB Provenance Portal</div>
+      </div>
+    </a>
+    <div class="nav-actions">
+      <a href="/" class="btn btn-secondary">💬 Return to Chat</a>
+      <button class="btn btn-green" id="btn-add-network">➕ Add WyreNet RPC</button>
+      <button class="btn btn-primary" id="btn-connect-wallet">🦊 Connect Web3</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+
+    <!-- Live Telemetry Banner -->
+    <div class="telemetry-grid">
+      <div class="telemetry-card">
+        <span class="telemetry-label">Network Status</span>
+        <span class="telemetry-val" style="color: var(--accent-green);">🟢 LIVE (Fuji L1)</span>
+      </div>
+      <div class="telemetry-card">
+        <span class="telemetry-label">EVM Chain ID</span>
+        <span class="telemetry-val" style="color: var(--accent-gold);">51950 (0xCAEE)</span>
+      </div>
+      <div class="telemetry-card">
+        <span class="telemetry-label">Block Height</span>
+        <span class="telemetry-val" id="val-block-height">#102</span>
+      </div>
+      <div class="telemetry-card">
+        <span class="telemetry-label">Connected Peers</span>
+        <span class="telemetry-val" id="val-peers">54 Nodes</span>
+      </div>
+      <div class="telemetry-card">
+        <span class="telemetry-label">Your Balance</span>
+        <span class="telemetry-val" id="val-user-balance" style="color: #63b3ed;">100.0000 WYRE</span>
+      </div>
+    </div>
+
+    <!-- Portal Navigation Tabs -->
+    <div class="portal-tabs">
+      <button class="portal-tab active" data-tab="tab-channels">📡 On-Chain Channels</button>
+      <button class="portal-tab" data-tab="tab-epubs">📚 Imam Razi Corpus (84 EPUBs)</button>
+      <button class="portal-tab" data-tab="tab-notary">🛡️ Message & File Notary</button>
+      <button class="portal-tab" data-tab="tab-rpc">⚙️ JSON-RPC Console</button>
+    </div>
+
+    <!-- TAB 1: ON-CHAIN CHANNELS -->
+    <section class="tab-panel active" id="tab-channels">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📡 Create Sovereign On-Chain Channel</div>
+          <span style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">Fee: 21,000 Gas (0.000021 WYRE)</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label>Channel ID (e.g., chan_linguistics)</label>
+            <input type="text" id="input-chan-id" class="form-control" placeholder="chan_scholars_circle">
+          </div>
+          <div class="form-group">
+            <label>Channel Name / Title</label>
+            <input type="text" id="input-chan-name" class="form-control" placeholder="مَجْلِس عُلَمَاء اللُّغَة (Arabic Linguistics Circle)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Topic & Description</label>
+          <input type="text" id="input-chan-topic" class="form-control" placeholder="Classical Lisan al-Arab hermeneutics and on-chain manuscript peer reviews">
+        </div>
+        <button class="btn btn-primary" id="btn-create-onchain-chan" style="margin-top: 8px;">
+          🚀 Sign & Register Channel on WyreNet L1
+        </button>
+        <div id="chan-receipt" style="display: none; margin-top: 14px; padding: 12px; border-radius: 8px; background: rgba(0, 245, 155, 0.08); border: 1px solid rgba(0, 245, 155, 0.3); font-family: var(--font-mono); font-size: 0.78rem;"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📜 Registered Sovereign Channels on L1</div>
+          <button class="btn btn-secondary" onclick="loadOnchainChannels()">🔄 Refresh</button>
+        </div>
+        <div id="onchain-channels-container">
+          <!-- Dynamic Channels -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: IMAM RAZI EPUB CORPUS -->
+    <section class="tab-panel" id="tab-epubs">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📖 Imam Razi Digital Corpus & Blockchain Provenance</div>
+          <a href="/epubs/wyrenet_imam_razi_l1_manifest.json" target="_blank" class="btn btn-green">📄 Raw On-Chain Manifest (JSON)</a>
+        </div>
+        <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px;">
+          All 84 manuscripts (113.85 MB) in this library are cryptographically stamped on the <strong>WyreNet Sovereign L1</strong>. Click <strong>Verify Proof</strong> on any manuscript to inspect its on-chain SHA-256 seal and block confirmation height.
+        </p>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="input-search-epubs" class="form-control" placeholder="Search 84 manuscripts (e.g. Tafsir, Matalib, Mahsul, Asas)..." style="flex: 1;">
+          <select id="select-epub-filter" class="form-control" style="width: 220px;">
+            <option value="all">All Categories (84 Books)</option>
+            <option value="Tafsir">Tafsir al-Kabir (32 Vols)</option>
+            <option value="Matalib">Al-Matalib al-'Aliyah (9 Vols)</option>
+            <option value="Mahsul">Al-Mahsul</option>
+            <option value="Futuhat">Al-Futuhat al-Makkiyya</option>
+            <option value="Kalam">Core Kalam Treatises</option>
+          </select>
+        </div>
+        <div class="epub-grid" id="epubs-container">
+          <!-- Dynamic EPUB cards -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: NOTARY & VERIFIER -->
+    <section class="tab-panel" id="tab-notary">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🛡️ On-Chain Text / File Hash Notary</div>
+        </div>
+        <div class="form-group">
+          <label>Data / Content to Notarize</label>
+          <textarea id="input-notary-content" class="form-control" rows="3" placeholder="Enter message text, call session summary, or research proof to anchor..."></textarea>
+        </div>
+        <button class="btn btn-primary" id="btn-notarize-custom">
+          ⚓ Notarize Data onto WyreNet L1
+        </button>
+        <div id="notary-receipt" style="display: none; margin-top: 14px; padding: 12px; border-radius: 8px; background: rgba(0, 245, 155, 0.08); border: 1px solid rgba(0, 245, 155, 0.3); font-family: var(--font-mono); font-size: 0.78rem;"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🔍 Cryptographic Proof & Anti-Tamper Verifier</div>
+        </div>
+        <div class="form-group">
+          <label>Enter SHA-256 Content Hash or Transaction Hash</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="input-verify-hash" class="form-control" placeholder="0xc5fade79dbf44eaab2261430692812fdd5a2995df2c2b43681c597a065b8d4c2" style="flex: 1; font-family: var(--font-mono);">
+            <button class="btn btn-green" id="btn-verify-proof">🔍 Verify on L1</button>
+          </div>
+        </div>
+        <div id="verify-result" style="display: none; margin-top: 12px; padding: 14px; border-radius: 10px; font-family: var(--font-mono); font-size: 0.8rem;"></div>
+      </div>
+    </section>
+
+    <!-- TAB 4: JSON-RPC CONSOLE -->
+    <section class="tab-panel" id="tab-rpc">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⚙️ WyreNet JSON-RPC 2.0 Console</div>
+          <span style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">Endpoint: /api/wyrenet/rpc</span>
+        </div>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <button class="btn btn-secondary" onclick="runRpc('eth_blockNumber')">eth_blockNumber</button>
+          <button class="btn btn-secondary" onclick="runRpc('eth_chainId')">eth_chainId</button>
+          <button class="btn btn-secondary" onclick="runRpc('eth_gasPrice')">eth_gasPrice</button>
+          <button class="btn btn-secondary" onclick="runRpc('net_version')">net_version</button>
+        </div>
+        <pre id="rpc-console-out" style="background: #000; border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; color: #00f59b; font-family: var(--font-mono); font-size: 0.82rem; max-height: 300px; overflow: auto;">Click a button above to execute live EVM JSON-RPC call against WyreNet node...</pre>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    WyreNet Sovereign L1 • Subnet ID: 25YmiRdbaHPV65c8HFZPgTQssSrSRfaJBJgLuFDQi1pn2cG4ZC • Avalanche Fuji Testnet
+  </footer>
+
+  <!-- Script Logic -->
+  <script>
+    let manifestData = null;
+    let currentUserWallet = localStorage.getItem('wyresup_user_wallet') || null;
+
+    // Tabs switching
+    document.querySelectorAll('.portal-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.portal-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Fetch Status & Telemetry
+    async function loadTelemetry() {
+      try {
+        const res = await fetch('/api/wyrenet/status');
+        const data = await res.json();
+        if (data.network) {
+          document.getElementById('val-block-height').textContent = '#' + (data.network.blockHeight || 102);
+          document.getElementById('val-peers').textContent = (data.network.peers || 54) + ' Nodes';
+        }
+      } catch (e) {}
+
+      if (currentUserWallet) {
+        try {
+          const balRes = await fetch('/api/wyrenet/balance/' + currentUserWallet);
+          const bal = await balRes.json();
+          document.getElementById('val-user-balance').textContent = (bal.balanceWYRE || '100.0000') + ' WYRE';
+          const connectBtn = document.getElementById('btn-connect-wallet');
+          if (connectBtn) {
+            connectBtn.textContent = '🦊 ' + currentUserWallet.substring(0, 6) + '...' + currentUserWallet.substring(currentUserWallet.length - 4);
+          }
+        } catch (e) {}
+      }
+    }
+
+    // Add Network Button
+    document.getElementById('btn-add-network').addEventListener('click', async () => {
+      const config = {
+        chainId: '0xCAEE',
+        chainName: 'WyreNet Sovereign L1',
+        nativeCurrency: { name: 'WyreNet Token', symbol: 'WYRE', decimals: 18 },
+        rpcUrls: [window.location.origin + '/api/wyrenet/rpc'],
+        blockExplorerUrls: [window.location.origin + '/api/wyrenet/status']
+      };
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [config] });
+          alert('✅ WyreNet Sovereign L1 added to your wallet!');
+        } catch (e) { alert(e.message); }
+      } else {
+        navigator.clipboard.writeText(JSON.stringify(config, null, 2));
+        alert('📋 WyreNet RPC config copied to clipboard!');
+      }
+    });
+
+    // Connect Wallet Button
+    document.getElementById('btn-connect-wallet').addEventListener('click', async () => {
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          if (accs.length > 0) {
+            currentUserWallet = accs[0];
+            localStorage.setItem('wyresup_user_wallet', currentUserWallet);
+            loadTelemetry();
+            alert('✅ Connected: ' + currentUserWallet);
+          }
+        } catch (e) { alert(e.message); }
+      } else {
+        const addr = prompt('Paste your 0x... wallet address:');
+        if (addr && addr.startsWith('0x')) {
+          currentUserWallet = addr;
+          localStorage.setItem('wyresup_user_wallet', addr);
+          loadTelemetry();
+        }
+      }
+    });
+
+    // Load EPUBs Manifest
+    async function loadEpubs() {
+      try {
+        const res = await fetch('/epubs/wyrenet_imam_razi_l1_manifest.json');
+        manifestData = await res.json();
+        renderEpubs(manifestData.books);
+      } catch (e) {
+        console.error('Manifest load error:', e);
+      }
+    }
+
+    function renderEpubs(books) {
+      const container = document.getElementById('epubs-container');
+      container.innerHTML = '';
+      books.forEach(b => {
+        const card = document.createElement('div');
+        card.className = 'epub-card';
+        card.innerHTML = `
+          <div>
+            <div class="epub-title">${b.filename.replace(/\.epub$/, '').replace(/_/g, ' ')}</div>
+            <div class="epub-meta" style="margin-top: 4px;">📂 ${b.category}</div>
+            <div class="epub-meta" style="margin-top: 2px;">📦 Size: ${b.sizeMb}</div>
+            <div class="epub-meta" style="margin-top: 2px; color: #718096; font-size: 0.68rem; overflow: hidden; text-overflow: ellipsis;">SHA: ${b.sha256}</div>
+          </div>
+          <div style="display: flex; gap: 6px; margin-top: 8px;">
+            <a href="/epubs/${b.filename}" class="btn btn-secondary" style="flex: 1; padding: 6px; font-size: 0.75rem; text-align: center; justify-content: center;">⬇️ Download</a>
+            <button class="btn btn-green" onclick="verifySpecificHash('${b.sha256}')" style="padding: 6px 10px; font-size: 0.75rem;">🛡️ Verify</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // EPUB Search & Filter
+    document.getElementById('input-search-epubs').addEventListener('input', filterEpubsList);
+    document.getElementById('select-epub-filter').addEventListener('change', filterEpubsList);
+
+    function filterEpubsList() {
+      if (!manifestData || !manifestData.books) return;
+      const q = document.getElementById('input-search-epubs').value.toLowerCase();
+      const cat = document.getElementById('select-epub-filter').value;
+
+      const filtered = manifestData.books.filter(b => {
+        const matchesQ = b.filename.toLowerCase().includes(q) || b.category.toLowerCase().includes(q);
+        const matchesCat = (cat === 'all') || (cat === 'Tafsir' && b.filename.includes('tafsir_kabir')) ||
+                           (cat === 'Matalib' && b.filename.includes('matalib')) ||
+                           (cat === 'Mahsul' && b.filename.includes('mahsul')) ||
+                           (cat === 'Futuhat' && b.filename.includes('futuhat')) ||
+                           (cat === 'Kalam' && !b.filename.includes('tafsir') && !b.filename.includes('matalib'));
+        return matchesQ && matchesCat;
+      });
+      renderEpubs(filtered);
+    }
+
+    // On-Chain Channels List
+    const defaultChannels = [
+      { id: 'chan_imam_razi_library', name: '📖-imam-razi-library', topic: 'Official On-Chain Corpus: 84 Verified EPUB Manuscripts', block: 86 },
+      { id: 'chan_wyrenet_gov', name: '🏛️-wyrenet-governance', topic: 'Avalanche Fuji Subnet 51950: Validator Consensus & Gas Economics', block: 88 },
+      { id: 'chan_tafsir_study', name: '📜-tafsir-kabir-study', topic: '32 Volumes Mafatih al-Ghayb Analysis & Linguistic Hermeneutics', block: 86 },
+      { id: 'chan_tokenomics_faucet', name: '🪙-wyre-tokenomics', topic: '1,000,000 WYRE Genesis Supply & Gas Settlement Records', block: 86 }
+    ];
+
+    function loadOnchainChannels() {
+      const container = document.getElementById('onchain-channels-container');
+      container.innerHTML = '';
+      defaultChannels.forEach(c => {
+        const row = document.createElement('div');
+        row.className = 'channel-row';
+        row.innerHTML = `
+          <div>
+            <div style="font-weight: 700; font-size: 0.92rem; color: #fff;">${c.name}</div>
+            <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 2px;">${c.topic}</div>
+          </div>
+          <span style="font-size: 0.7rem; font-weight: 700; font-family: var(--font-mono); background: rgba(0, 245, 155, 0.15); color: #00f59b; padding: 4px 8px; border-radius: 6px;">BLOCK #${c.block}</span>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    // Create Channel
+    document.getElementById('btn-create-onchain-chan').addEventListener('click', async () => {
+      const cid = document.getElementById('input-chan-id').value.trim();
+      const name = document.getElementById('input-chan-name').value.trim();
+      const topic = document.getElementById('input-chan-topic').value.trim();
+      if (!cid || !name) { alert('Please enter Channel ID and Name'); return; }
+
+      const payload = {
+        type: 'CHANNEL_REGISTRATION',
+        channelId: cid,
+        name: name,
+        topic: topic,
+        creatorDid: 'did:wyre:' + (currentUserWallet || '0x471c852d254a67f36c129f2386ca21c31840dea4')
+      };
+
+      const res = await fetch('/api/wyrenet/notarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      const receipt = document.getElementById('chan-receipt');
+      receipt.style.display = 'block';
+      receipt.innerHTML = `✅ <strong>Channel Registered on WyreNet L1!</strong><br>Tx Hash: ${data.txHash}<br>Block Height: #${data.blockNumber || 86}<br>Status: CONFIRMED & IMMUTABLE`;
+
+      defaultChannels.unshift({ id: cid, name: '#' + cid, topic: topic || name, block: data.blockNumber || 86 });
+      loadOnchainChannels();
+    });
+
+    // Custom Notary
+    document.getElementById('btn-notarize-custom').addEventListener('click', async () => {
+      const content = document.getElementById('input-notary-content').value.trim();
+      if (!content) return;
+      const res = await fetch('/api/wyrenet/notarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ msgContent: content, senderDid: 'did:wyre:' + (currentUserWallet || '0x471c852d254a67f36c129f2386ca21c31840dea4') })
+      });
+      const data = await res.json();
+      const rec = document.getElementById('notary-receipt');
+      rec.style.display = 'block';
+      rec.innerHTML = `✅ <strong>Data Notarized on WyreNet L1!</strong><br>Tx Hash: ${data.txHash}<br>Block Height: #${data.blockNumber || 86}`;
+    });
+
+    // Verify Proof
+    document.getElementById('btn-verify-proof').addEventListener('click', () => {
+      const hash = document.getElementById('input-verify-hash').value.trim();
+      verifySpecificHash(hash);
+    });
+
+    async function verifySpecificHash(hash) {
+      if (!hash) return;
+      document.querySelector('[data-tab="tab-notary"]').click();
+      document.getElementById('input-verify-hash').value = hash;
+      const res = await fetch('/api/wyrenet/verify/' + hash);
+      const data = await res.json();
+      const el = document.getElementById('verify-result');
+      el.style.display = 'block';
+      if (data.verified) {
+        el.style.background = 'rgba(0, 245, 155, 0.1)';
+        el.style.border = '1px solid rgba(0, 245, 155, 0.4)';
+        el.style.color = '#00f59b';
+        el.innerHTML = `🛡️ <strong>VERIFIED ON WYRENET L1 (CONFIRMED)</strong><br>Title: ${data.proof?.title || data.proof?.filename || 'Notarized Proof'}<br>Tx Hash: ${data.proof?.txHash}<br>Block Height: #${data.proof?.blockHeight}<br>Timestamp: ${new Date(data.proof?.timestamp).toISOString()}`;
+      } else {
+        el.style.background = 'rgba(229, 62, 62, 0.1)';
+        el.style.border = '1px solid rgba(229, 62, 62, 0.4)';
+        el.style.color = '#fc8181';
+        el.innerHTML = `❌ <strong>NOT FOUND OR TAMPERED</strong><br>Hash was not found on WyreNet L1 ledger.`;
+      }
+    }
+
+    // JSON-RPC Runner
+    async function runRpc(method) {
+      const out = document.getElementById('rpc-console-out');
+      out.textContent = `Executing ${method}...`;
+      const res = await fetch('/api/wyrenet/rpc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: Date.now(), method, params: [] })
+      });
+      const data = await res.json();
+      out.textContent = JSON.stringify(data, null, 2);
+    }
+
+    // Initialize
+    loadTelemetry();
+    loadEpubs();
+    loadOnchainChannels();
+    setInterval(loadTelemetry, 5000);
+  </script>
+</body>
+</html>

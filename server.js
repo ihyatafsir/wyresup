@@ -386,6 +386,9 @@ const server = http.createServer((req, res) => {
 
   // --- Static Files ---
   let filePath = path.join(__dirname, 'public', pathname === '/' ? 'index.html' : pathname);
+  if (pathname === '/wyrenet' || pathname === '/wyrenet/') {
+    filePath = path.join(__dirname, 'public', 'wyrenet', 'index.html');
+  }
   const extname = path.extname(filePath).toLowerCase();
   const contentType = MIME_TYPES[extname] || 'application/octet-stream';
 
