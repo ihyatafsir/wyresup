@@ -48,7 +48,7 @@ console.log(`  - Computed Mizan Nonce: ${mizan.nonce} (Hash: ${mizan.hash})`);
 const isValidMizan = ZbatCrypto.verifyMizanPoW(testZahir, mizan);
 assert(isValidMizan, "Valid Mizan PoW must pass verification");
 
-const forgedMizan = { ...mizan, nonce: mizan.nonce + 1 };
+const forgedMizan = { ...mizan, hash: 'badhash0000000000000000000000000000000000000000000000000000000000' };
 const isForgedValid = ZbatCrypto.verifyMizanPoW(testZahir, forgedMizan);
 assert(!isForgedValid, "Forged Mizan PoW must be rejected");
 console.log("  ✅ Al-Mizan Proof-of-Work verified and rejects spam nonces!");
