@@ -3,10 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>🔺 WyreNet Sovereign L1 // Uniswap-Standard Web3 Portal</title>
+  <title>🔺 WyreNet Sovereign L1 // Web3 Portal & Wallet Connect</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Web3 and QRCode Bundles -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="/wyrenet/metamask-sdk.js"></script>
+  <script src="/wyrenet/wc-bundle.js"></script>
+
   <style>
     :root {
       --bg-dark: #080b11;
@@ -362,6 +368,11 @@
       border-color: rgba(229, 62, 62, 0.35);
       color: #fc8181;
     }
+    .btn-pill-blue {
+      background: rgba(59, 130, 246, 0.12);
+      border-color: rgba(59, 130, 246, 0.35);
+      color: #60a5fa;
+    }
 
     /* Fixed Bottom Nav (Uniswap Mobile Standard) */
     .bottom-nav {
@@ -400,17 +411,20 @@
     .nav-tab.active .icon { filter: drop-shadow(0 0 8px rgba(229, 62, 62, 0.5)); transform: translateY(-2px); }
 
     /* =========================================================================
-       UNISWAP STYLE WALLET MODAL (Bottom Sheet on Mobile / Centered on Desktop)
+       UNISWAP / RAINBOWKIT STYLE WALLET MODAL
        ========================================================================= */
     .uni-modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(12px);
-      z-index: 1000;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(14px);
+      z-index: 99999;
       align-items: flex-end;
       justify-content: center;
+    }
+    .uni-modal-overlay.active {
+      display: flex !important;
     }
     @media (min-width: 640px) {
       .uni-modal-overlay { align-items: center; }
@@ -422,11 +436,11 @@
       border-radius: 24px 24px 0 0;
       width: 100%;
       max-width: 440px;
-      padding: 22px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      max-height: 88vh;
+      gap: 12px;
+      max-height: 90vh;
       overflow-y: auto;
       box-shadow: 0 -12px 50px rgba(0,0,0,0.9);
       animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -444,9 +458,9 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-color);
-      padding-bottom: 14px;
+      padding-bottom: 12px;
     }
-    .uni-modal-title { font-size: 1.1rem; font-weight: 800; color: #fff; }
+    .uni-modal-title { font-size: 1.08rem; font-weight: 800; color: #fff; }
     .uni-close-btn {
       background: rgba(255, 255, 255, 0.08);
       border: none;
@@ -465,7 +479,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px;
+      padding: 12px 14px;
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 16px;
@@ -480,23 +494,53 @@
       transform: translateY(-1px);
     }
     .wallet-icon-box {
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       border-radius: 12px;
       background: rgba(255, 255, 255, 0.05);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 22px;
       flex-shrink: 0;
     }
-    .wallet-title { font-weight: 800; font-size: 0.95rem; color: #fff; }
-    .wallet-desc { font-size: 0.74rem; color: var(--text-secondary); margin-top: 2px; }
-  </style>
+    .wallet-title { font-weight: 800; font-size: 0.92rem; color: #fff; }
+    .wallet-desc { font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px; }
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    /* Toast Notification */
+    #wyre-toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(15, 20, 30, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-green);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      z-index: 2000;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 90vw;
+    }
+    #wyre-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
 </head>
 <body>
+
+  <!-- Toast Element -->
+  <div id="wyre-toast"><span id="wyre-toast-icon">🔔</span> <div id="wyre-toast-msg">Notification</div></div>
 
   <!-- Top Navigation Header -->
   <header class="app-header">
@@ -515,7 +559,7 @@
         <div class="network-dot"></div>
         <span>51950</span>
       </div>
-      <button class="btn-connect-uniswap" id="btn-uniswap-connect" onclick="window.openUniswapModal()">
+      <button class="btn-connect-uniswap" id="btn-uniswap-connect" onclick="openUniswapModal()" style="cursor: pointer;">
         <span>Connect Wallet</span>
       </button>
     </div>
@@ -524,86 +568,92 @@
   <!-- Telemetry Banner Strip -->
   <div class="telemetry-strip">
     <div class="tele-item">
-      <div class="network-dot"></div>
-      <span class="tele-label">Consensus</span>
-      <span class="tele-value" style="color: var(--accent-green);">SNOWMAN++</span>
+      <span class="tele-label">Network</span>
+      <span class="tele-value" style="color: var(--accent-gold);" id="tele-net-name">WyreNet Sovereign L1</span>
     </div>
     <div class="tele-item">
       <span class="tele-label">Chain ID</span>
-      <span class="tele-value" style="color: var(--accent-gold);">51950 (0xCAEE)</span>
+      <span class="tele-value">51950 (0xCAEE)</span>
     </div>
     <div class="tele-item">
       <span class="tele-label">Height</span>
-      <span class="tele-value" id="val-block-height">#102</span>
+      <span class="tele-value" id="val-block-height">#289</span>
     </div>
     <div class="tele-item">
       <span class="tele-label">Peers</span>
       <span class="tele-value" id="val-peers">54 Nodes</span>
     </div>
     <div class="tele-item">
-      <span class="tele-label">Supply</span>
-      <span class="tele-value" id="val-user-bal" style="color: #60a5fa;">100.0000 WYRE</span>
+      <span class="tele-label">حَالَةُ الوَصْل (Wasl)</span>
+      <span class="tele-value" id="val-lisan-wasl" style="color: #60a5fa;">بِانْتِظَارِ الرَّبْط</span>
+    </div>
+    <div class="tele-item">
+      <span class="tele-label">Gas Currency</span>
+      <span class="tele-value" style="color: var(--accent-green);">WYRE</span>
+    </div>
+    <div class="tele-item">
+      <span class="tele-label">Your Balance</span>
+      <span class="tele-value" id="val-user-bal" style="color: var(--accent-green);">0.0000 WYRE</span>
     </div>
   </div>
 
-  <!-- Main App Content -->
+  <!-- Main View Container -->
   <main class="main-content">
 
     <!-- 1. CHANNELS TAB -->
     <section class="tab-section active" id="sec-channels">
       <div class="uni-card">
         <div class="uni-card-header">
-          <div class="uni-card-title">📡 Open Sovereign Channel</div>
-          <span class="uni-card-badge">21,000 GAS</span>
+          <div class="uni-card-title">📡 Sovereign L1 On-Chain Channels</div>
+          <span class="uni-card-badge">LIVE MESH</span>
+        </div>
+        <div id="channels-list-container" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <div class="uni-card">
+        <div class="uni-card-header">
+          <div class="uni-card-title">➕ Register Channel on Ledger</div>
         </div>
         <div class="form-group">
           <label class="form-label">Channel Identifier (Slug)</label>
-          <input type="text" id="input-chan-id" class="form-input" placeholder="chan_tafsir_scholars">
+          <input type="text" id="input-chan-id" class="form-input" placeholder="e.g. chan_philosophy_circle">
         </div>
         <div class="form-group">
-          <label class="form-label">Channel Name & Arabic Inscription</label>
-          <input type="text" id="input-chan-name" class="form-input" placeholder="مَجْلِس عُلَمَاء التَّفْسِير (Scholarly Tafsir Majlis)">
+          <label class="form-label">Channel Title (Arabic / English)</label>
+          <input type="text" id="input-chan-name" class="form-input" placeholder="e.g. حَلْقَة الفَلْسَفَة وَالكَلَام">
         </div>
         <div class="form-group">
-          <label class="form-label">Topic / Academic Description</label>
-          <input type="text" id="input-chan-topic" class="form-input" placeholder="Hermeneutics, CTC Quranic Alignment & Classical Razi Studies">
+          <label class="form-label">Description & Manifest Topic</label>
+          <input type="text" id="input-chan-topic" class="form-input" placeholder="Brief statement of academic focus...">
         </div>
         <button class="btn-action-primary" id="btn-submit-channel">
-          <span>🚀 Sign & Register on WyreNet L1</span>
+          <span>📜 Mint & Anchor Channel on WyreNet</span>
         </button>
-        <div id="receipt-channel" style="display: none; margin-top: 10px; padding: 12px; border-radius: 12px; background: rgba(0, 245, 155, 0.08); border: 1px solid var(--border-green); font-family: var(--font-mono); font-size: 0.76rem;"></div>
-      </div>
-
-      <div class="uni-card">
-        <div class="uni-card-header">
-          <div class="uni-card-title">📜 Sovereign Channels on L1</div>
-          <button class="btn-pill btn-pill-green" onclick="renderChannelsList()">🔄 Refresh</button>
-        </div>
-        <div id="channels-list-container" style="display: flex; flex-direction: column; gap: 8px;">
-          <!-- Dynamic Channels -->
-        </div>
+        <div id="receipt-channel" style="display: none; padding: 12px; border-radius: 12px; background: rgba(0, 245, 155, 0.08); border: 1px solid var(--border-green); font-family: var(--font-mono); font-size: 0.76rem;"></div>
       </div>
     </section>
 
-    <!-- 2. IMAM RAZI EPUB LIBRARY TAB -->
+    <!-- 2. LIBRARY TAB -->
     <section class="tab-section" id="sec-library">
       <div class="uni-card">
         <div class="uni-card-header">
-          <div class="uni-card-title">📖 Imam Razi Corpus (84 Volumes)</div>
-          <a href="/epubs/wyrenet_imam_razi_l1_manifest.json" target="_blank" class="uni-card-badge" style="text-decoration: none;">JSON MANIFEST</a>
+          <div class="uni-card-title">📚 Imam al-Razi 84-EPUB Library</div>
+          <span class="uni-card-badge">SUB-GRAPH HASHES</span>
         </div>
         <div class="search-bar">
-          <input type="text" id="search-epubs" class="form-input" placeholder="🔍 Search Tafsir, Matalib, Mahsul, Asas..." style="flex: 1;">
+          <input type="text" id="search-epubs" class="form-input" placeholder="Search 84 volumes (Tafsir, Matalib, Mahsul, Kalam)..." style="flex: 1;">
         </div>
         <div class="filter-chips">
           <div class="chip active" data-cat="all">All (84)</div>
-          <div class="chip" data-cat="Tafsir">Tafsir al-Kabir (32)</div>
-          <div class="chip" data-cat="Matalib">Al-Matalib (9)</div>
-          <div class="chip" data-cat="Mahsul">Al-Mahsul</div>
-          <div class="chip" data-cat="Futuhat">Al-Futuhat</div>
-          <div class="chip" data-cat="Kalam">Kalam Treatises</div>
+          <div class="chip" data-cat="Tafsir">Tafsir Kabir (32)</div>
+          <div class="chip" data-cat="Matalib">Matalib Aliya (9)</div>
+          <div class="chip" data-cat="Mahsul">Al-Mahsul (6)</div>
+          <div class="chip" data-cat="Futuhat">Futuhat (8)</div>
+          <div class="chip" data-cat="Kalam">Kalam & Hikmah (29)</div>
         </div>
-        <div id="epubs-list-container" style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+        <div id="epubs-list-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 480px; overflow-y: auto; padding-right: 4px;">
           <!-- Dynamic EPUB cards -->
         </div>
       </div>
@@ -645,7 +695,7 @@
     <section class="tab-section" id="sec-node">
       <div class="uni-card">
         <div class="uni-card-header">
-          <div class="uni-card-title">⚙️ WyreNet Fuji L1 Telemetry</div>
+          <div class="uni-card-title">⚙️ WyreNet Sovereign L1 Telemetry</div>
           <button class="btn-pill btn-pill-green" onclick="addWyreNetChain()">➕ Add to Wallet</button>
         </div>
         <div style="font-family: var(--font-mono); font-size: 0.78rem; display: flex; flex-direction: column; gap: 8px; color: var(--text-secondary);">
@@ -695,111 +745,164 @@
   </nav>
 
   <!-- =========================================================================
-       UNISWAP STYLE "CONNECT A WALLET" MODAL
+       UNISWAP / APPKIT STYLE "CONNECT A WALLET" MODAL
        ========================================================================= -->
   <div class="uni-modal-overlay" id="uniswap-wallet-modal">
     <div class="uni-modal-sheet">
       
       <!-- Header -->
       <div class="uni-modal-header">
-        <div class="uni-modal-title">Connect a wallet</div>
+        <div class="uni-modal-title" id="modal-dynamic-title">Connect a wallet</div>
         <button class="uni-close-btn" onclick="closeUniswapModal()">✕</button>
       </div>
 
-      <!-- Injected Provider Quick Connect (If inside MetaMask / Core Browser) -->
+      <!-- Injected Provider Quick Connect (MetaMask / Core / Brave / In-App Browser) -->
       <div id="uni-injected-banner" style="display: none; background: rgba(0, 245, 155, 0.12); border: 1px solid var(--border-green); border-radius: 14px; padding: 12px; align-items: center; justify-content: space-between;">
-        <div>
-          <div style="font-weight: 800; color: #fff; font-size: 0.88rem;">🟢 Injected Wallet Ready</div>
-          <div style="font-size: 0.72rem; color: var(--accent-green);">Detected in current browser session</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="font-size: 24px;" id="injected-banner-icon">🦊</div>
+          <div>
+            <div style="font-weight: 800; color: #fff; font-size: 0.88rem;" id="injected-banner-title">Web3 Extension Detected</div>
+            <div style="font-size: 0.72rem; color: var(--accent-green);">Ready in current browser session</div>
+          </div>
         </div>
-        <button onclick="connectInjectedNow()" class="btn-pill btn-pill-green" style="padding: 8px 14px; font-weight: 800;">Connect Now</button>
+        <button onclick="connectInjectedNow()" class="btn-pill btn-pill-green" style="padding: 8px 14px; font-weight: 800;">⚡ Connect</button>
       </div>
 
-      
       <!-- Discovered EIP-6963 Wallets Container -->
       <div id="discovered-wallets-list" style="display: none; flex-direction: column; gap: 8px;"></div>
 
-      
-      <!-- Uniswap Style Wallet Option Cards -->
-      <div style="display: flex; flex-direction: column; gap: 8px;">
+      <!-- Primary Wallet Options List -->
+      <div id="wallet-options-list" style="display: flex; flex-direction: column; gap: 8px;">
 
-        <!-- ⚡ Official WalletConnect (Real Modal & Mobile Deep Links) -->
-        <button class="wallet-btn-card" onclick="connectWalletConnectProduction()" style="background: linear-gradient(135deg, rgba(59, 153, 252, 0.18), rgba(27, 100, 218, 0.18)); border-color: rgba(59, 153, 252, 0.5);">
-          <div style="display: flex; align-items: center; gap: 14px;">
-            <div class="wallet-icon-box" style="background: rgba(59, 153, 252, 0.25); color: #60a5fa; font-size: 22px;">⚡</div>
-            <div>
-              <div class="wallet-title">WalletConnect (Official)</div>
-              <div class="wallet-desc">MetaMask, Core, Trust, Rainbow, 400+ Mobile Apps</div>
-            </div>
-          </div>
-          <span class="uni-card-badge" style="background: rgba(59, 153, 252, 0.25); color: #60a5fa; border-color: rgba(59, 153, 252, 0.4);">CONNECT</span>
-        </button>
+        <!-- Mobile Info Banner -->
+        <div id="mobile-info-banner" style="display: none; background: rgba(59, 153, 252, 0.1); border: 1px solid rgba(59, 153, 252, 0.3); border-radius: 12px; padding: 10px 14px; font-size: 0.76rem; color: #93c5fd; line-height: 1.5;">
+          📱 <strong>Mobile:</strong> Tapping a wallet below opens our site <em>inside</em> that wallet's secure browser. Once loaded, tap <strong>⚡ Connect</strong> to link your account instantly.
+        </div>
 
-
-        <!-- 1. MetaMask -->
-        <button class="wallet-btn-card" onclick="window.connectMetaMaskDirect()">
+        <!-- 1. MetaMask — Connect via WalletConnect Relay -->
+        <button onclick="connectMetaMaskDirect()" class="wallet-btn-card" style="background: var(--bg-card); border-color: var(--border-color);">
           <div style="display: flex; align-items: center; gap: 14px;">
             <div class="wallet-icon-box">🦊</div>
             <div>
               <div class="wallet-title">MetaMask</div>
-              <div class="wallet-desc">Mobile App & Browser Extension</div>
+              <div class="wallet-desc">Connect Chrome ↔ MetaMask App</div>
             </div>
           </div>
           <span class="uni-card-badge">POPULAR</span>
         </button>
 
-        <!-- 2. Core Wallet (Ava Labs Avalanche) -->
-        <button class="wallet-btn-card" onclick="window.connectCoreDirect()" style="background: rgba(229, 62, 62, 0.08); border-color: var(--border-active);">
+        <!-- 2. Core Wallet -->
+        <button onclick="connectCoreDirect()" class="wallet-btn-card" style="background: rgba(229, 62, 62, 0.06); border-color: var(--border-active);">
           <div style="display: flex; align-items: center; gap: 14px;">
             <div class="wallet-icon-box" style="background: rgba(229,62,62,0.2);">🔺</div>
             <div>
               <div class="wallet-title">Core Wallet</div>
-              <div class="wallet-desc">Ava Labs Avalanche Native</div>
+              <div class="wallet-desc">Ava Labs Avalanche Subnet Native</div>
             </div>
           </div>
-          <span class="uni-card-badge" style="background: rgba(229,62,62,0.25); color: #fc8181; border-color: rgba(229,62,62,0.4);">AVALANCHE</span>
+          <span class="uni-card-badge" style="background: rgba(229,62,62,0.25); color: #fc8181; border-color: rgba(229,62,62,0.4);">AVALANCHE L1</span>
         </button>
 
-        <!-- 3. Trust Wallet -->
-        <button class="wallet-btn-card" onclick="window.connectTrustDirect()">
+        <!-- 3. WalletConnect (Universal Relay) -->
+        <button class="wallet-btn-card" onclick="initiateWalletPairing('walletconnect')" style="background: linear-gradient(135deg, rgba(59, 153, 252, 0.14), rgba(27, 100, 218, 0.14)); border-color: rgba(59, 153, 252, 0.4);">
           <div style="display: flex; align-items: center; gap: 14px;">
-            <div class="wallet-icon-box">🛡️</div>
+            <div class="wallet-icon-box" style="background: rgba(59, 153, 252, 0.25); color: #60a5fa; font-size: 22px;">⚡</div>
             <div>
-              <div class="wallet-title">Trust Wallet</div>
-              <div class="wallet-desc">Multi-Chain Web3 Mobile</div>
+              <div class="wallet-title">WalletConnect</div>
+              <div class="wallet-desc">Trust, Rainbow, 400+ Mobile Wallets</div>
             </div>
           </div>
+          <span class="uni-card-badge" style="background: rgba(59, 153, 252, 0.25); color: #60a5fa; border-color: rgba(59, 153, 252, 0.4);">UNIVERSAL</span>
         </button>
 
-        <!-- 4. Coinbase / Rainbow -->
-        <button class="wallet-btn-card" onclick="connectWalletFlow('coinbase')">
-          <div style="display: flex; align-items: center; gap: 14px;">
-            <div class="wallet-icon-box">📱</div>
-            <div>
-              <div class="wallet-title">Coinbase & Rainbow</div>
-              <div class="wallet-desc">Smart Mobile Web3 Wallets</div>
+        <!-- 4. Trust Wallet & Coinbase -->
+        <div style="display: flex; gap: 8px;">
+          <button class="wallet-btn-card" onclick="initiateWalletPairing('trust')" style="flex: 1; padding: 10px 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="wallet-icon-box" style="width: 32px; height: 32px; font-size: 16px;">🛡️</div>
+              <div>
+                <div class="wallet-title" style="font-size: 0.82rem;">Trust Wallet</div>
+              </div>
             </div>
-          </div>
-        </button>
+          </button>
+          <button class="wallet-btn-card" onclick="initiateWalletPairing('coinbase')" style="flex: 1; padding: 10px 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="wallet-icon-box" style="width: 32px; height: 32px; font-size: 16px;">🔵</div>
+              <div>
+                <div class="wallet-title" style="font-size: 0.82rem;">Coinbase</div>
+              </div>
+            </div>
+          </button>
+        </div>
 
+      </div>
+
+      <!-- Active Pairing Sheet (Shown when user clicks Pair) -->
+      <div id="active-pairing-card" style="display: none; flex-direction: column; align-items: center; gap: 14px; padding: 8px 0;">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;">
+          <div id="pairing-wallet-icon" style="font-size: 36px;">🦊</div>
+          <div id="pairing-wallet-name" style="font-size: 1.1rem; font-weight: 800; color: #fff;">MetaMask Pairing</div>
+          <p style="color: #a0aec0; font-size: 0.78rem; max-width: 280px; margin: 0;">Scan QR with your wallet scanner or tap the direct launch button below.</p>
+        </div>
+
+        <div style="background: #fff; padding: 10px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+          <div id="active-pairing-qrcode" style="width: 140px; height: 140px;"></div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; width: 100%; gap: 8px;">
+          <!-- Primary Direct Link -->
+          <a id="pairing-launch-btn" href="#" target="_blank" class="btn-pill btn-pill-blue" style="width: 100%; justify-content: center; text-decoration: none; padding: 10px; font-size: 0.9rem; font-weight: 800;">
+            <span id="pairing-btn-icon">🦊</span> <span id="pairing-btn-text">Open in MetaMask App</span>
+          </a>
+
+          <!-- Copy URI Button -->
+          <button onclick="copyWcUri()" class="btn-pill btn-pill-green" style="width: 100%; justify-content: center; padding: 9px; font-size: 0.82rem;">
+            📋 Copy Pairing URI to Clipboard
+          </button>
+
+          <!-- Universal Fallback Link -->
+          <a id="pairing-universal-btn" href="#" target="_blank" style="text-align: center; color: #94a3b8; font-size: 0.75rem; text-decoration: underline; padding: 4px;">
+            Open via Universal Web Link
+          </a>
+
+          <div id="pairing-inapp-box" style="width: 100%; text-align: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px; margin-top: 4px;">
+            <a id="pairing-inapp-link" href="#" style="color: #a0aec0; font-size: 0.75rem; text-decoration: underline;">
+              🌐 Open website inside In-App Browser instead
+            </a>
+          </div>
+        </div>
+
+        <button onclick="closePairingCard()" style="background: none; border: none; color: #fc8181; font-size: 0.82rem; font-weight: 700; cursor: pointer; padding: 4px 8px;">
+          ← Back to All Wallets
+        </button>
       </div>
 
       <!-- Network 1-Click Auto Add & RPC Copy -->
-      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px; font-family: var(--font-mono); font-size: 0.72rem; display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <strong style="color: #fff;">WyreNet L1 RPC:</strong> <span style="color: #60a5fa;">https://wyresup.com/api/wyrenet/rpc</span>
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 14px; padding: 10px 12px; font-family: var(--font-mono); font-size: 0.72rem; display: flex; justify-content: space-between; align-items: center;">
+        <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 8px;">
+          <strong style="color: #fff;">WyreNet L1:</strong> <span style="color: #60a5fa;">Chain ID 51950 (0xCAEE)</span>
         </div>
-        <button onclick="copyRpcDetails()" class="btn-pill btn-pill-green" style="padding: 4px 8px; font-size: 0.68rem;">📋 Copy</button>
+        <button onclick="addWyreNetChain()" class="btn-pill btn-pill-green" style="padding: 4px 8px; font-size: 0.68rem; flex-shrink: 0;">➕ Add Chain</button>
       </div>
 
-      <!-- Direct Public Address Fallback -->
-      <div style="border-top: 1px solid var(--border-color); padding-top: 10px;">
-        <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px;">
-          🔑 Public 0x... Address Direct Entry
+      <!-- Direct Public Address Entry & Demo Accounts -->
+      <div style="border-top: 1px solid var(--border-color); padding-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">
+            🔑 Direct 0x Address Entry
+          </span>
+          <div style="display: flex; gap: 4px;">
+            <button onclick="quickSetWallet('0x471c852D254A67F36c129F2386cA21c31840dEa4')" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: var(--accent-gold); font-size: 0.65rem; border-radius: 6px; padding: 2px 6px; cursor: pointer;">
+              Genesis Node
+            </button>
+            <button onclick="quickSetWallet('0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7')" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: #60a5fa; font-size: 0.65rem; border-radius: 6px; padding: 2px 6px; cursor: pointer;">
+              Validator
+            </button>
+          </div>
         </div>
         <div style="display: flex; gap: 6px;">
-          <input type="text" id="manual-wallet-input" class="form-input" placeholder="Paste 0x... address" style="flex: 1; font-size: 0.78rem; font-family: var(--font-mono); padding: 10px;">
-          <button class="btn-pill btn-pill-green" onclick="saveManualWallet()" style="padding: 10px 16px; font-weight: 800;">Save</button>
+          <input type="text" id="manual-wallet-input" class="form-input" placeholder="Paste 0x... address (e.g. 0x471c...)" style="flex: 1; font-size: 0.78rem; font-family: var(--font-mono); padding: 8px 10px;">
+          <button class="btn-pill btn-pill-green" onclick="saveManualWallet()" style="padding: 8px 14px; font-weight: 800;">Save</button>
         </div>
       </div>
 
@@ -827,7 +930,7 @@
         </div>
         <div style="border-top: 1px solid var(--border-color); padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
           <span style="font-size: 0.8rem; color: var(--text-secondary);">Balance</span>
-          <span id="drawer-account-bal" style="font-size: 1.05rem; font-weight: 800; color: #fff; font-family: var(--font-mono);">100.0000 WYRE</span>
+          <span id="drawer-account-bal" style="font-size: 1.05rem; font-weight: 800; color: #fff; font-family: var(--font-mono);">1,000,000.0000 WYRE</span>
         </div>
       </div>
 
@@ -838,448 +941,789 @@
     </div>
   </div>
 
-  <!-- Client-Side Engine -->
-  
-<script>
-  let manifestData = null;
-  let userWallet = localStorage.getItem('wyresup_user_wallet') || null;
-  let currentWcUri = null;
+  <!-- Client-Side Web3 & Application Engine -->
 
-  // Global Modal Open/Close Handlers
-  window.openUniswapModal = function() {
-    if (userWallet) {
-      window.openAccountModal();
-      return;
-    }
-    const modal = document.getElementById('uniswap-wallet-modal');
+
+  
+
+  <!-- Unified WyreNet Web3 Engine -->
+  <script>
+// ============================================================
+// 🔺 WYRENET SOVEREIGN L1 // UNISWAP-STYLE WEB3 RELAY ENGINE
+// ============================================================
+
+const WYRENET_CHAIN_ID_DEC = 51950;
+const WYRENET_CHAIN_ID_HEX = '0xCAEE';
+const WC_PROJECT_ID = '3a8170812b534d0ff9d794f19a901d64';
+
+function getWyreNetConfig() {
+  const origin = (typeof window !== 'undefined' && window.location.origin) ? window.location.origin : 'http://10.10.10.10:5195';
+  let primaryRpc = origin + '/api/wyrenet/rpc';
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    primaryRpc = 'http://10.10.10.10:5195/api/wyrenet/rpc';
+  }
+  return {
+    chainId: WYRENET_CHAIN_ID_HEX,
+    chainName: 'WyreNet Sovereign L1',
+    nativeCurrency: { name: 'WyreNet Token', symbol: 'WYRE', decimals: 18 },
+    rpcUrls: [
+      primaryRpc,
+      'http://10.10.10.10:5195/api/wyrenet/rpc',
+      'http://localhost:5195/api/wyrenet/rpc',
+      'https://wyresup.com/api/wyrenet/rpc'
+    ],
+    blockExplorerUrls: [origin + '/api/wyrenet/status']
+  };
+}
+const WYRENET_CONFIG = getWyreNetConfig();
+
+let userWallet = (typeof localStorage !== 'undefined' && localStorage.getItem('wyresup_user_wallet')) || null;
+let activeProvider = null;
+let wcProvider = null;
+let currentWcUri = null;
+let currentSelectedWalletType = 'metamask';
+let manifestData = null;
+
+// Lisan Diagnostic Engine State
+window.getLisanDiagnosticStatus = function() {
+  return {
+    connected: !!userWallet,
+    userWallet: userWallet || 'NOT_CONNECTED',
+    chain: 'WyreNet Sovereign L1 (Chain ID 51950 / 0xCAEE)',
+    protocol: 'Barq+ZBAT P2P Lisan Gateway',
+    version: 'v1.3.0',
+    timestamp: new Date().toISOString()
+  };
+};
+
+// Toast Notification System
+function showToast(msg, icon = '🔔') {
+  const toast = document.getElementById('wyre-toast');
+  const msgEl = document.getElementById('wyre-toast-msg');
+  const iconEl = document.getElementById('wyre-toast-icon');
+  if (!toast || !msgEl) return;
+  msgEl.textContent = msg;
+  if (iconEl) iconEl.textContent = icon;
+  toast.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 4000);
+}
+
+// Modal State Manager
+const ModalStateManager = {
+  activeModal: null,
+  openModal(modalId) {
+    this.closeAllModals();
+    let modal = document.getElementById(modalId);
+    if (!modal && modalId === "uniswap-connect-modal") modal = document.getElementById("uniswap-wallet-modal");
+    if (!modal && modalId === "uniswap-wallet-modal") modal = document.getElementById("uniswap-connect-modal");
     if (modal) {
       modal.style.display = 'flex';
-      checkInjectedProvider();
-      generateWcUri();
+      modal.classList.add("active");
+      document.body.style.overflow = "hidden";
+      this.activeModal = modal.id;
     }
-  };
-
-  window.closeUniswapModal = function() {
-    const modal = document.getElementById('uniswap-wallet-modal');
-    if (modal) modal.style.display = 'none';
-  };
-
-  window.openAccountModal = function() {
-    if (!userWallet) return;
-    const addrEl = document.getElementById('drawer-account-addr');
-    if (addrEl) addrEl.textContent = userWallet.substring(0, 6) + '...' + userWallet.substring(userWallet.length - 4);
-    const modal = document.getElementById('uniswap-account-modal');
-    if (modal) modal.style.display = 'flex';
-  };
-
-  window.closeAccountModal = function() {
-    const modal = document.getElementById('uniswap-account-modal');
-    if (modal) modal.style.display = 'none';
-  };
-
-  window.copyCurrentAddress = function() {
-    if (userWallet) {
-      navigator.clipboard?.writeText(userWallet);
-      alert('📋 Copied address: ' + userWallet);
+  },
+  closeModal(modalId) {
+    const targetId = modalId || this.activeModal;
+    if (targetId) {
+      let modal = document.getElementById(targetId);
+      if (!modal && targetId === "uniswap-connect-modal") modal = document.getElementById("uniswap-wallet-modal");
+      if (!modal && targetId === "uniswap-wallet-modal") modal = document.getElementById("uniswap-connect-modal");
+      if (modal) {
+        modal.classList.remove("active");
+        modal.style.display = 'none';
+      }
+      if (this.activeModal === targetId || (modal && this.activeModal === modal.id)) this.activeModal = null;
+      if (!document.querySelector(".uni-modal-overlay.active")) {
+        document.body.style.overflow = "";
+      }
     }
-  };
+    this.resetPairingCard();
+  },
+  closeAllModals() {
+    document.querySelectorAll(".uni-modal-overlay").forEach(m => {
+      m.classList.remove("active");
+      m.style.display = 'none';
+    });
+    document.body.style.overflow = "";
+    this.activeModal = null;
+    this.resetPairingCard();
+  },
+  resetPairingCard() {
+    const card = document.getElementById("active-pairing-card");
+    const optionsList = document.getElementById("wallet-options-list");
+    const title = document.getElementById("modal-dynamic-title");
+    if (card) card.style.display = "none";
+    if (optionsList) optionsList.style.display = "flex";
+    if (title) title.textContent = "Connect a wallet";
+  }
+};
 
-  window.disconnectWallet = function() {
-    userWallet = null;
+window.openUniswapModal = function() {
+  if (userWallet) {
+    window.openAccountModal();
+    return;
+  }
+  ModalStateManager.openModal("uniswap-wallet-modal");
+  checkInjectedProvider();
+};
+
+window.closeUniswapModal = function() {
+  ModalStateManager.closeModal("uniswap-wallet-modal");
+};
+
+window.openAccountModal = function() {
+  const addrEl = document.getElementById('drawer-account-addr');
+  if (addrEl && userWallet) {
+    addrEl.textContent = userWallet.substring(0, 6) + '...' + userWallet.substring(userWallet.length - 4);
+  }
+  ModalStateManager.openModal('uniswap-account-modal');
+};
+
+window.closeAccountModal = function() {
+  ModalStateManager.closeModal('uniswap-account-modal');
+};
+
+window.closePairingCard = function() {
+  ModalStateManager.resetPairingCard();
+};
+
+window.copyCurrentAddress = function() {
+  if (!userWallet) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(userWallet).then(() => {
+      showToast('Address copied to clipboard!', '📋');
+    }).catch(() => {
+      prompt('Copy address:', userWallet);
+    });
+  } else {
+    prompt('Copy address:', userWallet);
+  }
+};
+
+window.disconnectWallet = async function() {
+  userWallet = null;
+  window.userWallet = null;
+  activeProvider = null;
+  if (typeof localStorage !== 'undefined') {
     localStorage.removeItem('wyresup_user_wallet');
-    window.closeAccountModal();
-    updateTelemetry();
-  };
+  }
+  if (wcProvider && wcProvider.disconnect) {
+    try { await wcProvider.disconnect(); } catch (e) {}
+  }
+  ModalStateManager.closeAllModals();
+  updateTelemetry();
+  showToast('Wallet disconnected', '🔌');
+};
 
-  function checkInjectedProvider() {
-    const provider = window.avalanche || window.ethereum;
-    const banner = document.getElementById('uni-injected-banner');
-    if (provider && banner) {
-      banner.style.display = 'flex';
+// Check Injected Web3 Provider (EIP-6963 / window.ethereum / window.avalanche)
+function checkInjectedProvider() {
+  const provider = window.avalanche || window.ethereum;
+  const banner = document.getElementById('uni-injected-banner');
+  const bannerTitle = document.getElementById('injected-banner-title');
+  const bannerIcon = document.getElementById('injected-banner-icon');
+  if (provider && banner) {
+    banner.style.display = 'flex';
+    if (window.avalanche && bannerTitle) {
+      bannerTitle.textContent = 'Detected Core Wallet';
+      if (bannerIcon) bannerIcon.textContent = '🔺';
+    } else if (provider.isMetaMask && bannerTitle) {
+      bannerTitle.textContent = 'Detected MetaMask Extension';
+      if (bannerIcon) bannerIcon.textContent = '🦊';
+    } else if (bannerTitle) {
+      bannerTitle.textContent = 'Detected Browser Wallet';
+      if (bannerIcon) bannerIcon.textContent = '⚡';
+    }
+  } else if (banner) {
+    banner.style.display = 'none';
+  }
+}
+
+// EIP-6963 Multi-Injected Provider Discovery
+const discoveredEip6963Providers = new Map();
+if (typeof window !== 'undefined') {
+  window.addEventListener('eip6963:announceProvider', (event) => {
+    const { info, provider } = event.detail || {};
+    if (info && provider && !discoveredEip6963Providers.has(info.uuid)) {
+      discoveredEip6963Providers.set(info.uuid, { info, provider });
+      renderDiscoveredWallets();
+    }
+  });
+  window.dispatchEvent(new Event('eip6963:requestProvider'));
+}
+
+function renderDiscoveredWallets() {
+  const container = document.getElementById('discovered-wallets-list');
+  if (!container || discoveredEip6963Providers.size === 0) return;
+  container.innerHTML = '';
+  container.style.display = 'flex';
+  discoveredEip6963Providers.forEach((entry) => {
+    const btn = document.createElement('button');
+    btn.className = 'wallet-btn-card';
+    btn.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <img src="${entry.info.icon}" alt="${entry.info.name}" style="width: 32px; height: 32px; border-radius: 8px; object-fit: contain;">
+        <div>
+          <div class="wallet-title">${entry.info.name}</div>
+          <div class="wallet-desc">Browser Extension (EIP-6963)</div>
+        </div>
+      </div>
+      <span class="uni-card-badge">READY</span>
+    `;
+    btn.onclick = () => window.connectInjectedNow(entry.provider);
+    container.appendChild(btn);
+  });
+}
+
+// QR Code Renderer
+function renderQrCode(containerId, text) {
+  const qrEl = document.getElementById(containerId);
+  if (!qrEl) return;
+  qrEl.innerHTML = '';
+  if (typeof QRCode !== 'undefined') {
+    try {
+      new QRCode(qrEl, {
+        text: text,
+        width: 140,
+        height: 140,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: (typeof QRCode !== 'undefined' && QRCode.CorrectLevel) ? QRCode.CorrectLevel.M : undefined
+      });
+    } catch (e) {
+      console.warn('QRCode render error:', e);
     }
   }
+}
 
-  // Generate WalletConnect Pairing URI
-  function generateWcUri() {
-    const topic = Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2, '0')).join('');
-    const symKey = Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2, '0')).join('');
-    currentWcUri = `wc:${topic}@2?relay-protocol=irn&symKey=${symKey}&chains=eip155:51950`;
+// Handle Connected Account (Universal)
+function handleConnectedAccount(address, provider) {
+  if (!address) return;
+  userWallet = address;
+  window.userWallet = address;
+  activeProvider = provider || window.ethereum || window.avalanche;
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('wyresup_user_wallet', userWallet);
+  }
+  ModalStateManager.closeAllModals();
+  updateTelemetry();
+  showToast('Connected: ' + userWallet.substring(0, 6) + '...' + userWallet.substring(userWallet.length - 4), '✅');
 
-    const qrEl = document.getElementById('wc-qrcode-box');
-    if (qrEl && typeof QRCode !== 'undefined') {
-      qrEl.innerHTML = '';
-      try {
-        new QRCode(qrEl, {
-          text: currentWcUri,
-          width: 130,
-          height: 130,
-          colorDark: "#000000",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.M
+  // Auto-prompt WyreNet L1 Network switch/addition in background
+  setTimeout(async () => {
+    try {
+      if (activeProvider && activeProvider.request) {
+        await activeProvider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: WYRENET_CHAIN_ID_HEX }]
         });
-      } catch (e) {}
-    }
-  }
-
-  window.copyWcUri = function() {
-    if (!currentWcUri) generateWcUri();
-    navigator.clipboard?.writeText(currentWcUri);
-    alert('⚡ WalletConnect URI copied to clipboard!\n\nOpen MetaMask / Core, tap Scanner, and paste this code.');
-  };
-
-  
-  let mmsdk = null;
-  let metamaskProvider = null;
-
-  function initMetaMaskSDK() {
-    if (!metamaskProvider) {
-      if (typeof window.MetaMaskSDK !== 'undefined') {
-        try {
-          mmsdk = new window.MetaMaskSDK.MetaMaskSDK({
-            dappMetadata: {
-              name: "WyreNet Sovereign L1",
-              url: window.location.origin + "/wyrenet",
-            },
-            useDeeplink: true,
-            checkInstallationImmediately: false,
-            logging: { developerMode: false }
+      }
+    } catch (switchErr) {
+      try {
+        if (activeProvider && activeProvider.request) {
+          await activeProvider.request({
+            method: 'wallet_addEthereumChain',
+            params: [WYRENET_CONFIG]
           });
-          metamaskProvider = mmsdk.getProvider();
-        } catch (e) {
-          console.error('MetaMaskSDK init error:', e);
         }
+      } catch (addErr) {
+        console.log('Chain add note:', addErr);
       }
     }
-    return metamaskProvider || window.avalanche || window.ethereum;
+  }, 600);
+}
+
+// Direct Injected Provider Connect (Desktop / In-App Browser)
+window.connectInjectedNow = async function(customProvider) {
+  const provider = customProvider || window.avalanche || window.ethereum;
+  if (!provider) {
+    showToast('No Web3 wallet extension detected.', '⚠️');
+    return;
   }
 
-  // 1-Tap Official MetaMask Mobile Handshake
-  window.connectMetaMaskDirect = async function() {
-    const btn = document.querySelector('button[onclick*="connectMetaMaskDirect"]');
-    if (btn) btn.style.opacity = '0.6';
+  try {
+    showToast('Requesting wallet authorization...', '⚡');
+    const accounts = await provider.request({ method: 'eth_requestAccounts' });
+    if (!accounts || accounts.length === 0) {
+      showToast('No accounts returned by wallet.', '⚠️');
+      return;
+    }
+    handleConnectedAccount(accounts[0], provider);
+  } catch (err) {
+    console.error('Wallet connection error:', err);
+    if (!err.message?.includes('User rejected')) {
+      showToast('Notice: ' + (err.message || err), '⚠️');
+    }
+  }
+};
 
+// ============================================================
+// EXACT UNISWAP MOBILE ↔ METAMASK WALLETCONNECT V2 RELAY ENGINE
+// ============================================================
+
+async function initWcRelayProvider() {
+  if (typeof window.WalletConnectEthereumProvider === 'undefined') {
+    console.warn('WalletConnect EthereumProvider bundle not found');
+    return null;
+  }
+
+  if (!wcProvider) {
     try {
-      const provider = initMetaMaskSDK();
-      if (!provider) {
-        alert('MetaMask SDK initializing, please try again in 1 second...');
-        return;
-      }
-
-      // Automatically switches/adds WyreNet L1 and requests account
-      const accounts = await provider.request({ method: 'eth_requestAccounts' });
-      if (accounts && accounts.length > 0) {
-        userWallet = accounts[0];
-        localStorage.setItem('wyresup_user_wallet', userWallet);
-        window.closeUniswapModal();
-        updateTelemetry();
-        alert('🛡️ Connected with MetaMask!\n\nAccount: ' + userWallet);
-      }
-    } catch (err) {
-      console.error('MetaMask SDK error:', err);
-      if (!err.message?.includes('User rejected')) {
-        alert('MetaMask notice: ' + (err.message || err));
-      }
-    } finally {
-      if (btn) btn.style.opacity = '1';
-    }
-  };
-
-  // Launch Core Wallet App
-  window.connectCoreDirect = function() {
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    if (typeof window.avalanche !== 'undefined' || typeof window.ethereum !== 'undefined') {
-      window.connectInjectedNow();
-      return;
-    }
-    if (isMobile) {
-      if (!currentWcUri) generateWcUri();
-      window.location.href = 'core://wc?uri=' + encodeURIComponent(currentWcUri);
-      setTimeout(() => {
-        window.location.href = 'intent://wc?uri=' + encodeURIComponent(currentWcUri) + '#Intent;package=com.avax.wallet;scheme=core;end';
-      }, 1000);
-      return;
-    }
-    window.copyWcUri();
-  };
-
-  // Launch Trust Wallet
-  window.connectTrustDirect = function() {
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    if (isMobile) {
-      if (!currentWcUri) generateWcUri();
-      window.location.href = 'trust://wc?uri=' + encodeURIComponent(currentWcUri);
-      return;
-    }
-    window.copyWcUri();
-  };
-
-  // Launch Mobile Wallet Apps
-  window.connectWalletFlow = function(walletType) {
-    const host = window.location.host || 'wyresup.com';
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-
-    // If inside Web3 Injected Browser, connect directly
-    if (typeof window.ethereum !== 'undefined' || typeof window.avalanche !== 'undefined') {
-      window.connectInjectedNow();
-      return;
-    }
-
-    if (isMobile) {
-      if (walletType === 'metamask') {
-        window.location.href = 'https://metamask.app.link/dapp/' + host + '/wyrenet';
-        return;
-      } else if (walletType === 'core') {
-        window.location.href = 'intent://' + host + '/wyrenet#Intent;scheme=https;package=com.avax.wallet;action=android.intent.action.VIEW;end';
-        setTimeout(() => {
-          window.location.href = 'https://play.google.com/store/apps/details?id=com.avax.wallet';
-        }, 1200);
-        return;
-      } else if (walletType === 'trust') {
-        window.location.href = 'https://link.trustwallet.com/open_url?coin_id=60&url=https://' + host + '/wyrenet';
-        return;
-      }
-    }
-
-    // Default: copy pairing URI
-    window.copyWcUri();
-  };
-
-  // Injected Provider Connect & EIP-191 Sign
-  window.connectInjectedNow = async function() {
-    const provider = window.avalanche || window.ethereum;
-    if (!provider) {
-      alert('Web3 extension not detected in this browser.');
-      return;
-    }
-
-    try {
-      const wyreNetConfig = {
-        chainId: '0xCAEE',
-        chainName: 'WyreNet Sovereign L1',
-        nativeCurrency: { name: 'WyreNet Token', symbol: 'WYRE', decimals: 18 },
-        rpcUrls: ['https://wyresup.com/api/wyrenet/rpc'],
-        blockExplorerUrls: ['https://wyresup.com/api/wyrenet/status']
-      };
-
-      try {
-        await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xCAEE' }] });
-      } catch (switchErr) {
-        if (switchErr.code === 4902 || (switchErr.message && switchErr.message.includes('Unrecognized chain'))) {
-          await provider.request({ method: 'wallet_addEthereumChain', params: [wyreNetConfig] });
+      wcProvider = await window.WalletConnectEthereumProvider.init({
+        projectId: WC_PROJECT_ID,
+        chains: [1],
+        optionalChains: [WYRENET_CHAIN_ID_DEC, 43114],
+        showQrModal: false,
+        rpcMap: {
+          51950: window.location.origin + '/api/wyrenet/rpc',
+          43114: 'https://api.avax.network/ext/bc/C/rpc',
+          1: 'https://cloudflare-eth.com'
+        },
+        metadata: {
+          name: 'WyreNet Sovereign L1',
+          description: 'WyreNet Sovereign L1 Portal',
+          url: 'https://wyresup.com',
+          icons: ['https://wyresup.com/favicon.ico']
         }
-      }
+      });
 
-      const accounts = await provider.request({ method: 'eth_requestAccounts' });
-      if (accounts && accounts.length > 0) {
-        userWallet = accounts[0];
-        localStorage.setItem('wyresup_user_wallet', userWallet);
+      // EXACT UNISWAP EVENT: Live wc:... pairing URI from relay
+      wcProvider.on('display_uri', (uri) => {
+        console.log('⚡ [WalletConnect Relay] Live WC Pairing URI:', uri);
+        currentWcUri = uri;
+        
+        // Render Live QR Code
+        renderQrCode('active-pairing-qrcode', uri);
 
-        // Challenge signature
-        try {
-          const chalRes = await fetch('/api/wyrenet/auth/challenge/' + userWallet);
-          const chalData = await chalRes.json();
-          let signature = null;
-          try {
-            signature = await provider.request({ method: 'personal_sign', params: [chalData.message, userWallet] });
-          } catch (e) {
-            signature = await provider.request({ method: 'personal_sign', params: [userWallet, chalData.message] });
-          }
-          if (signature) {
-            await fetch('/api/wyrenet/auth/verify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ address: userWallet, signature })
-            });
-          }
-        } catch (e) {}
+        const encoded = encodeURIComponent(uri);
+        const type = currentSelectedWalletType || 'metamask';
 
-        window.closeUniswapModal();
-        updateTelemetry();
-        alert('🛡️ Connected to WyreNet L1!\n\nAccount: ' + userWallet);
-      }
+        let scheme = 'metamask://wc?uri=' + encoded;
+        let universal = 'https://metamask.app.link/wc?uri=' + encoded;
+
+        if (type === 'core') {
+          scheme = 'core://wc?uri=' + encoded;
+          universal = 'https://core.app/wc?uri=' + encoded;
+        } else if (type === 'trust') {
+          scheme = 'trust://wc?uri=' + encoded;
+          universal = 'https://link.trustwallet.com/wc?uri=' + encoded;
+        } else if (type === 'rainbow') {
+          scheme = 'rainbow://wc?uri=' + encoded;
+          universal = 'https://rnbwapp.com/wc?uri=' + encoded;
+        } else if (type === 'walletconnect') {
+          scheme = uri;
+          universal = uri;
+        }
+
+        const launchBtn = document.getElementById('pairing-launch-btn');
+        const universalBtn = document.getElementById('pairing-universal-btn');
+        if (launchBtn) launchBtn.href = scheme;
+        if (universalBtn) universalBtn.href = universal;
+
+        // On mobile browsers, auto-navigate to native universal link
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+        if (isMobile) {
+          showToast('Opening ' + (type === 'core' ? 'Core' : 'MetaMask') + '...', '📱');
+          setTimeout(() => {
+            window.location.href = universal;
+          }, 100);
+        }
+      });
+
+      wcProvider.on('connect', (session) => {
+        console.log('⚡ [WalletConnect Relay] Session Approved:', session);
+        if (wcProvider.accounts && wcProvider.accounts.length > 0) {
+          handleConnectedAccount(wcProvider.accounts[0], wcProvider);
+        }
+      });
+
+      wcProvider.on('accountsChanged', (accs) => {
+        if (accs && accs.length > 0) {
+          handleConnectedAccount(accs[0], wcProvider);
+        } else {
+          window.disconnectWallet();
+        }
+      });
+
+      wcProvider.on('disconnect', () => {
+        console.log('⚡ [WalletConnect Relay] Session Disconnected');
+        window.disconnectWallet();
+      });
+
     } catch (err) {
-      alert('Connection notice: ' + (err.message || err));
+      console.warn('WalletConnect Provider init error:', err);
     }
-  };
+  }
+  return wcProvider;
+}
 
-  window.addWyreNetChain = async function() {
-    const provider = window.avalanche || window.ethereum;
-    const cfg = {
-      chainId: '0xCAEE',
-      chainName: 'WyreNet Sovereign L1',
-      nativeCurrency: { name: 'WyreNet Token', symbol: 'WYRE', decimals: 18 },
-      rpcUrls: ['https://wyresup.com/api/wyrenet/rpc'],
-      blockExplorerUrls: ['https://wyresup.com/api/wyrenet/status']
-    };
+// Unified Pairing Initiator for all Wallet cards
+window.initiateWalletPairing = async function(walletType = 'metamask') {
+  currentSelectedWalletType = walletType;
+  const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  const host = window.location.host || '10.10.10.10:5195';
+  const currentUrl = window.location.origin + '/wyrenet';
 
+  // 1. If Desktop Extension is present and user isn't on mobile, connect instantly
+  const injected = (walletType === 'core' && window.avalanche) ? window.avalanche : (window.ethereum || window.avalanche);
+  if (injected && !isMobile) {
+    showToast('Connecting via detected browser wallet...', '⚡');
+    window.connectInjectedNow(injected);
+    return;
+  }
+
+  // 2. Setup Pairing Sheet UI
+  const card = document.getElementById('active-pairing-card');
+  const optionsList = document.getElementById('wallet-options-list');
+  const title = document.getElementById('modal-dynamic-title');
+  const launchBtn = document.getElementById('pairing-launch-btn');
+  const universalBtn = document.getElementById('pairing-universal-btn');
+  const inappLink = document.getElementById('pairing-inapp-link');
+  const nameEl = document.getElementById('pairing-wallet-name');
+  const iconEl = document.getElementById('pairing-wallet-icon');
+  const btnIconEl = document.getElementById('pairing-btn-icon');
+  const btnTextEl = document.getElementById('pairing-btn-text');
+
+  let walletName = 'MetaMask';
+  let walletIcon = '🦊';
+  let inappDeepLink = 'https://metamask.app.link/dapp/' + host + '/wyrenet';
+
+  if (walletType === 'core') {
+    walletName = 'Core Wallet';
+    walletIcon = '🔺';
+    inappDeepLink = 'https://core.app/dapp/' + host + '/wyrenet';
+  } else if (walletType === 'trust') {
+    walletName = 'Trust Wallet';
+    walletIcon = '🛡️';
+    inappDeepLink = 'https://link.trustwallet.com/open_url?coin_id=60&url=' + encodeURIComponent(currentUrl);
+  } else if (walletType === 'coinbase') {
+    walletName = 'Coinbase Wallet';
+    walletIcon = '🔵';
+    inappDeepLink = 'https://go.cb-w.com/dapp?cb_url=' + encodeURIComponent(currentUrl);
+  } else if (walletType === 'walletconnect') {
+    walletName = 'WalletConnect';
+    walletIcon = '⚡';
+  }
+
+  if (title) title.textContent = 'Pairing ' + walletName;
+  if (nameEl) nameEl.textContent = walletName + ' Pairing';
+  if (iconEl) iconEl.textContent = walletIcon;
+  if (btnIconEl) btnIconEl.textContent = walletIcon;
+  if (btnTextEl) btnTextEl.textContent = 'Open in ' + walletName + ' App';
+  if (inappLink) inappLink.href = inappDeepLink;
+
+  if (optionsList) optionsList.style.display = 'none';
+  if (card) {
+    card.style.display = 'flex';
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // Temporary placeholder QR code while relay prepares pairing URI
+  renderQrCode('active-pairing-qrcode', currentUrl);
+
+  // 3. Request Live WalletConnect Relay Pairing URI
+  try {
+    showToast('Contacting WalletConnect Relay...', '⚡');
+    const provider = await initWcRelayProvider();
     if (provider) {
+      provider.connect().catch(e => {
+        console.log('Relay connect note:', e.message);
+      });
+    }
+  } catch (e) {
+    console.warn('Pairing trigger note:', e);
+  }
+};
+
+// Individual Wallet Shortcuts
+window.connectMetaMaskDirect = () => window.initiateWalletPairing('metamask');
+window.connectCoreDirect = () => window.initiateWalletPairing('core');
+window.connectTrustDirect = () => window.initiateWalletPairing('trust');
+window.connectWalletFlow = (type) => window.initiateWalletPairing(type);
+window.connectWalletConnectProduction = () => window.initiateWalletPairing('walletconnect');
+
+// Copy Pairing URI Button Helper
+window.copyWcUri = function() {
+  if (!currentWcUri) {
+    showToast('Waiting for pairing URI from relay...', '⏳');
+    return;
+  }
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(currentWcUri).then(() => {
+      showToast('Copied WalletConnect URI! Paste in your wallet.', '📋');
+    }).catch(() => {
+      prompt('Copy WalletConnect URI:', currentWcUri);
+    });
+  } else {
+    prompt('Copy WalletConnect URI:', currentWcUri);
+  }
+};
+
+// Quick Account Selection for Testing / Genesis
+window.quickSetWallet = function(addr) {
+  userWallet = addr;
+  window.userWallet = addr;
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('wyresup_user_wallet', addr);
+  }
+  ModalStateManager.closeAllModals();
+  updateTelemetry();
+  showToast('Loaded account: ' + addr.substring(0, 6) + '...' + addr.substring(addr.length - 4), '🔑');
+};
+
+window.saveManualWallet = function() {
+  const input = document.getElementById('manual-wallet-input');
+  if (!input) return;
+  const addr = input.value.trim();
+  if (addr && addr.startsWith('0x') && addr.length >= 40) {
+    window.quickSetWallet(addr);
+  } else {
+    showToast('Please enter a valid 0x... EVM address', '⚠️');
+  }
+};
+
+// Network Switcher / Helper (EIP-3085 & EIP-3326)
+window.addWyreNetChain = async function() {
+  const provider = activeProvider || window.avalanche || window.ethereum;
+  if (!provider || !provider.request) {
+    showToast('Connect a wallet or copy RPC settings below', 'ℹ️');
+    window.copyRpcDetails();
+    return;
+  }
+
+  try {
+    showToast('Adding WyreNet Sovereign L1 to wallet...', '🔺');
+    await provider.request({
+      method: 'wallet_addEthereumChain',
+      params: [WYRENET_CONFIG]
+    });
+    showToast('WyreNet Sovereign L1 added successfully!', '✅');
+  } catch (err) {
+    console.warn('Add chain error:', err);
+    if (err.code === 4902 || err.message?.includes('Unrecognized chain')) {
       try {
-        await provider.request({ method: 'wallet_addEthereumChain', params: [cfg] });
-        alert('✅ WyreNet Sovereign L1 added to your wallet!');
-      } catch (e) { alert(e.message); }
+        await provider.request({
+          method: 'wallet_addEthereumChain',
+          params: [WYRENET_CONFIG]
+        });
+      } catch (e2) {
+        showToast('Failed to add chain: ' + (e2.message || e2), '⚠️');
+      }
     } else {
       window.copyRpcDetails();
     }
-  };
+  }
+};
 
-  window.copyRpcDetails = function() {
-    const rpcText = 'Network Name: WyreNet Sovereign L1\nRPC URL: https://wyresup.com/api/wyrenet/rpc\nChain ID: 51950\nSymbol: WYRE\nExplorer: https://wyresup.com/api/wyrenet/status';
-    navigator.clipboard?.writeText(rpcText);
-    alert('📋 WyreNet RPC config copied to clipboard!');
-  };
+window.copyRpcDetails = function() {
+  const currentOrigin = (typeof window !== "undefined" && window.location.origin) ? window.location.origin : "http://10.10.10.10:5195";
+  const details = `Network Name: WyreNet Sovereign L1\nRPC URL: ${currentOrigin}/api/wyrenet/rpc\nChain ID: 51950 (0xCAEE)\nCurrency: WYRE\nExplorer: ${currentOrigin}/api/wyrenet/status`;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(details).then(() => {
+      showToast("Copied WyreNet RPC configuration!", "📋");
+    }).catch(() => {
+      prompt("WyreNet RPC Config:", details);
+    });
+  } else {
+    prompt("WyreNet RPC Config:", details);
+  }
+};
 
-  window.saveManualWallet = function() {
-    const input = document.getElementById('manual-wallet-input');
-    const addr = input.value.trim();
-    if (addr && addr.startsWith('0x') && addr.length > 10) {
-      userWallet = addr;
-      localStorage.setItem('wyresup_user_wallet', addr);
-      window.closeUniswapModal();
-      updateTelemetry();
-      alert('✅ Saved public wallet: ' + addr);
-    } else {
-      alert('Please enter a valid Ethereum / Avalanche 0x... hex address');
+// ============================================================
+// EVENT LISTENERS: BACKDROP CLICKS, ESC KEY, TABS
+// ============================================================
+
+if (typeof document !== 'undefined') {
+  document.querySelectorAll('.uni-modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (event) => {
+      if (event.target === overlay) {
+        ModalStateManager.closeModal(overlay.id);
+      }
+    });
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      ModalStateManager.closeAllModals();
     }
-  };
+  });
 
-  // Bottom Navigation Switcher
   document.querySelectorAll('.nav-tab').forEach(btn => {
     btn.addEventListener('click', () => {
+      ModalStateManager.closeAllModals();
       document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById(btn.dataset.target).classList.add('active');
+      const targetSec = document.getElementById(btn.dataset.target);
+      if (targetSec) targetSec.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
 
-  // Direct Button Event Listener
   document.getElementById('btn-uniswap-connect')?.addEventListener('click', () => {
     window.openUniswapModal();
   });
+}
 
-  // Telemetry & State
-  async function updateTelemetry() {
-    try {
-      const res = await fetch('/api/wyrenet/status');
-      const data = await res.json();
-      if (data.network) {
-        document.getElementById('val-block-height').textContent = '#' + (data.network.blockHeight || 102);
-        document.getElementById('val-peers').textContent = (data.network.peers || 54) + ' Nodes';
-      }
-    } catch (e) {}
-
-    const btnConnect = document.getElementById('btn-uniswap-connect');
-    if (userWallet) {
-      try {
-        const balRes = await fetch('/api/wyrenet/balance/' + userWallet);
-        const bal = await balRes.json();
-        const balText = (bal.balanceWYRE || '100.0000') + ' WYRE';
-        document.getElementById('val-user-bal').textContent = balText;
-        if (document.getElementById('drawer-account-bal')) {
-          document.getElementById('drawer-account-bal').textContent = balText;
-        }
-        if (btnConnect) {
-          btnConnect.className = 'btn-connect-uniswap connected';
-          btnConnect.innerHTML = '🛡️ ' + userWallet.substring(0, 4) + '...' + userWallet.substring(userWallet.length - 3) + ' <span style="color: #00f59b; font-size: 0.75rem; margin-left: 4px;">' + balText.split('.')[0] + ' WYRE</span>';
-        }
-      } catch (e) {}
-    } else {
-      if (btnConnect) {
-        btnConnect.className = 'btn-connect-uniswap';
-        btnConnect.innerHTML = '<span>Connect Wallet</span>';
-      }
+// Telemetry & State Polling
+async function updateTelemetry() {
+  try {
+    const res = await fetch('/api/wyrenet/status');
+    const data = await res.json();
+    if (data.network) {
+      const hEl = document.getElementById('val-block-height');
+      const pEl = document.getElementById('val-peers');
+      const waslEl = document.getElementById('val-lisan-wasl');
+      if (hEl) hEl.textContent = '#' + (data.network.blockHeight || 289);
+      if (pEl) pEl.textContent = (data.network.peers || 54) + ' Nodes';
+      if (waslEl) waslEl.textContent = userWallet ? 'مَوْصُولٌ سَيِّدِيّ 🛡️' : 'بِانْتِظَارِ الرَّبْط ⏳';
     }
+  } catch (e) {}
+
+  const btnConnect = document.getElementById('btn-uniswap-connect');
+  if (userWallet) {
+    if (btnConnect) {
+      btnConnect.classList.add('connected');
+      btnConnect.innerHTML = `<span class="live-dot" style="background: var(--accent-green);"></span> 🛡️ ${userWallet.substring(0, 6)}...${userWallet.substring(userWallet.length - 4)}`;
+    }
+    try {
+      const balRes = await fetch('/api/wyrenet/balance/' + userWallet);
+      const bal = await balRes.json();
+      const balText = (bal.balanceWYRE || '1,000,000.0000') + ' WYRE';
+      const uBalEl = document.getElementById('val-user-bal');
+      const dBalEl = document.getElementById('drawer-account-bal');
+      if (uBalEl) uBalEl.textContent = balText;
+      if (dBalEl) dBalEl.textContent = balText;
+    } catch (e) {}
+  } else {
+    if (btnConnect) {
+      btnConnect.classList.remove('connected');
+      btnConnect.innerHTML = '⚡ Connect Wallet';
+    }
+    const uBalEl = document.getElementById('val-user-bal');
+    if (uBalEl) uBalEl.textContent = '0.0000 WYRE';
   }
+}
 
-  // Channels List
-  const defaultChannels = [
-    { id: 'chan_imam_razi_library', name: '📖-imam-razi-library', arabic: 'مَكْتَبَة الإِمَام الرَّازِي', topic: '84 Verified EPUB Volumes on WyreNet L1', block: 86 },
-    { id: 'chan_wyrenet_gov', name: '🏛️-wyrenet-governance', arabic: 'مَجْلِس حَوْكَمَة وَايِرْنِت', topic: 'Validator Consensus & Gas Economics', block: 88 },
-    { id: 'chan_tafsir_study', name: '📜-tafsir-kabir-study', arabic: 'دِرَاسَات مَفَاتِيح الغَيْب', topic: '32 Volumes Tafsir al-Kabir Analysis', block: 86 },
-    { id: 'chan_tokenomics_faucet', name: '🪙-wyre-tokenomics', arabic: 'اقْتِصَادِيَّات رَمْز وَايِر', topic: 'Genesis Allocation & Gas Settlement Ledger', block: 86 }
-  ];
+// Channels List & Minting
+const defaultChannels = [
+  { id: 'general', name: '#general', arabic: 'العامّة', topic: 'Mesh-wide broadcasts', block: 289 },
+  { id: 'imam-razi', name: '#imam-razi', arabic: 'مكتبة الإمام الرازي', topic: 'Quranic Lexicon & Tafsir Ledger', block: 289 },
+  { id: 'p2p-ops', name: '#p2p-ops', arabic: 'عمليات النظير', topic: 'ZBAT & Nafaq route metrics', block: 289 }
+];
 
-  window.renderChannelsList = function() {
-    const container = document.getElementById('channels-list-container');
-    if (!container) return;
-    container.innerHTML = '';
-    defaultChannels.forEach(c => {
-      const el = document.createElement('div');
-      el.className = 'channel-row';
-      el.innerHTML = `
-        <div>
-          <div class="chan-title">
-            <span>${c.name}</span>
-            <span class="uni-card-badge">#${c.block}</span>
-          </div>
-          <div class="chan-desc">${c.arabic} • ${c.topic}</div>
-        </div>
-        <span style="color: var(--accent-green); font-size: 1.2rem; font-weight: bold;">›</span>
-      `;
-      container.appendChild(el);
-    });
-  };
+window.renderChannelsList = function() {
+  const container = document.getElementById('channels-list-container');
+  if (!container) return;
+  container.innerHTML = '';
+  defaultChannels.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'channel-card';
+    el.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+        <div style="font-weight: 800; font-size: 0.95rem; color: #fff;">${c.name} <span class="arabic-subtext" style="color: var(--accent-gold); font-size: 0.9rem; margin-left: 6px;">${c.arabic}</span></div>
+        <span class="uni-card-badge" style="font-size: 0.65rem;">BLOCK #${c.block}</span>
+      </div>
+      <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">${c.topic}</div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.72rem; color: var(--accent-green); font-family: var(--font-mono);">● Live Sovereign State</span>
+        <button class="btn-pill btn-pill-green" style="padding: 4px 10px; font-size: 0.72rem;" onclick="showToast('Subscribed to ${c.name}', '📡')">Join Channel</button>
+      </div>
+    `;
+    container.appendChild(el);
+  });
+};
 
-  document.getElementById('btn-submit-channel')?.addEventListener('click', async () => {
+if (typeof document !== 'undefined') {
+  (document.getElementById("btn-submit-channel") || document.getElementById("btn-mint-channel"))?.addEventListener('click', async () => {
     const cid = document.getElementById('input-chan-id').value.trim();
     const name = document.getElementById('input-chan-name').value.trim();
     const topic = document.getElementById('input-chan-topic').value.trim();
-    if (!cid || !name) { alert('Please enter Channel Identifier and Name'); return; }
+    if (!cid || !name) { showToast('Please enter Channel Identifier and Name', '⚠️'); return; }
 
     const res = await fetch('/api/wyrenet/notarize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        type: 'CHANNEL_REGISTRATION',
+        type: 'CHANNEL_CREATION',
         channelId: cid,
-        name: name,
+        channelName: name,
         topic: topic,
-        creatorDid: 'did:wyre:' + (userWallet || '0x471c852d254a67f36c129f2386ca21c31840dea4')
+        creator: userWallet || '0x471c852D254A67F36c129F2386cA21c31840dEa4'
       })
     });
     const data = await res.json();
     const rec = document.getElementById('receipt-channel');
-    rec.style.display = 'block';
-    rec.innerHTML = `✅ <strong>Anchored on WyreNet L1!</strong><br>Tx: ${data.txHash}<br>Block: #${data.blockNumber || 86}`;
+    if (rec) {
+      rec.style.display = 'block';
+      rec.innerHTML = `✅ <strong>Anchored on WyreNet L1!</strong><br>Tx: ${data.txHash}<br>Block: #${data.blockNumber || 289}`;
+    }
 
-    defaultChannels.unshift({ id: cid, name: '#' + cid, arabic: name, topic: topic || name, block: data.blockNumber || 86 });
+    defaultChannels.unshift({ id: cid, name: '#' + cid, arabic: name, topic: topic || name, block: data.blockNumber || 289 });
     window.renderChannelsList();
+    showToast('Channel successfully minted on WyreNet L1!', '✅');
   });
+}
 
-  // EPUB Library Loader
-  async function loadEpubs() {
-    try {
-      const res = await fetch('/epubs/wyrenet_imam_razi_l1_manifest.json');
+// EPUB Library Loader
+async function loadEpubs() {
+  try {
+    const res = await fetch('/epubs/wyrenet_imam_razi_l1_manifest.json');
+    if (res.ok) {
       manifestData = await res.json();
       renderEpubCards(manifestData.books);
-    } catch (e) { console.error(e); }
-  }
+    }
+  } catch (e) { console.error('EPUB manifest error:', e); }
+}
 
-  function renderEpubCards(books) {
-    const container = document.getElementById('epubs-list-container');
-    if (!container) return;
-    container.innerHTML = '';
-    books.forEach(b => {
-      const el = document.createElement('div');
-      el.className = 'epub-item';
-      el.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-          <div class="epub-name">${b.filename.replace(/\.epub$/, '').replace(/_/g, ' ')}</div>
-          <span class="uni-card-badge" style="font-size: 0.65rem;">${b.sizeMb}</span>
-        </div>
-        <div style="font-size: 0.72rem; color: var(--text-secondary); font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis;">
-          SHA: ${b.sha256.substring(0, 24)}...
-        </div>
-        <div class="epub-actions">
-          <a href="/epubs/${b.filename}" class="btn-pill btn-pill-green" style="flex: 1; justify-content: center;">⬇️ Download</a>
-          <button class="btn-pill btn-pill-red" onclick="verifyHashDirect('${b.sha256}')">🛡️ Verify</button>
-        </div>
-      `;
-      container.appendChild(el);
-    });
-  }
+function renderEpubCards(books) {
+  const container = document.getElementById('epubs-list-container');
+  if (!container || !books) return;
+  container.innerHTML = '';
+  books.forEach(b => {
+    const el = document.createElement('div');
+    el.className = 'epub-card';
+    el.innerHTML = `
+      <div class="epub-title">${b.title}</div>
+      <div class="epub-arabic">${b.arabicTitle}</div>
+      <div class="epub-meta">
+        <span>📚 ${b.category}</span>
+        <span>⚖️ ${(b.fileSizeBytes / (1024 * 1024)).toFixed(2)} MB</span>
+        <span>⛓️ Block #${b.blockNumber || 289}</span>
+      </div>
+      <div style="font-family: var(--font-mono); font-size: 0.65rem; color: #718096; word-break: break-all; margin-bottom: 12px; background: rgba(0,0,0,0.3); padding: 4px 6px; border-radius: 6px;">
+        SHA: ${b.sha256.substring(0, 24)}...
+      </div>
+      <div class="epub-actions">
+        <a href="/epubs/${b.filename}" class="btn-pill btn-pill-green" style="flex: 1; justify-content: center; text-decoration: none;">⬇️ Download</a>
+        <button class="btn-pill btn-pill-red" onclick="verifyHashDirect('${b.sha256}')">🛡️ Verify</button>
+      </div>
+    `;
+    container.appendChild(el);
+  });
+}
 
+function filterEpubs() {
+  if (!manifestData || !manifestData.books) return;
+  const q = (document.getElementById('search-epubs')?.value || '').toLowerCase();
+  const activeCat = document.querySelector('.chip.active')?.dataset.cat || 'all';
+
+  const filtered = manifestData.books.filter(b => {
+    const matchesQ = b.filename.toLowerCase().includes(q) || b.category.toLowerCase().includes(q) || b.title.toLowerCase().includes(q);
+    const matchesCat = (activeCat === 'all') || (activeCat === 'Tafsir' && b.filename.includes('tafsir_kabir')) ||
+                       (activeCat === 'Matalib' && b.filename.includes('matalib')) ||
+                       (activeCat === 'Mahsul' && b.filename.includes('mahsul')) ||
+                       (activeCat === 'Futuhat' && b.filename.includes('futuhat')) ||
+                       (activeCat === 'Lisan' && b.filename.includes('lisan'));
+    return matchesQ && matchesCat;
+  });
+  renderEpubCards(filtered);
+}
+
+if (typeof document !== 'undefined') {
   document.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -1289,87 +1733,98 @@
   });
   document.getElementById('search-epubs')?.addEventListener('input', filterEpubs);
 
-  function filterEpubs() {
-    if (!manifestData || !manifestData.books) return;
-    const q = document.getElementById('search-epubs').value.toLowerCase();
-    const activeCat = document.querySelector('.chip.active')?.dataset.cat || 'all';
-
-    const filtered = manifestData.books.filter(b => {
-      const matchesQ = b.filename.toLowerCase().includes(q) || b.category.toLowerCase().includes(q);
-      const matchesCat = (activeCat === 'all') || (activeCat === 'Tafsir' && b.filename.includes('tafsir_kabir')) ||
-                         (activeCat === 'Matalib' && b.filename.includes('matalib')) ||
-                         (activeCat === 'Mahsul' && b.filename.includes('mahsul')) ||
-                         (activeCat === 'Futuhat' && b.filename.includes('futuhat')) ||
-                         (activeCat === 'Kalam' && !b.filename.includes('tafsir') && !b.filename.includes('matalib'));
-      return matchesQ && matchesCat;
-    });
-    renderEpubCards(filtered);
-  }
-
   // Notary & Proof Verifier
   document.getElementById('btn-anchor-custom')?.addEventListener('click', async () => {
     const text = document.getElementById('notary-content-input').value.trim();
-    if (!text) return;
+    if (!text) { showToast('Please enter text or manuscript proof to anchor', '⚠️'); return; }
     const res = await fetch('/api/wyrenet/notarize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ msgContent: text, senderDid: 'did:wyre:' + (userWallet || '0x471c852d254a67f36c129f2386ca21c31840dea4') })
+      body: JSON.stringify({
+        content: text,
+        signer: userWallet || '0x471c852D254A67F36c129F2386cA21c31840dEa4',
+        type: 'CUSTOM_NOTARIZATION'
+      })
     });
     const data = await res.json();
     const rec = document.getElementById('receipt-notary');
-    rec.style.display = 'block';
-    rec.innerHTML = `✅ <strong>Notarized on WyreNet L1!</strong><br>Tx: ${data.txHash}<br>Block: #${data.blockNumber || 86}`;
-  });
-
-  async function verifyHashDirect(hash) {
-    if (!hash) return;
-    document.querySelector('[data-target="sec-notary"]')?.click();
-    document.getElementById('verify-hash-input').value = hash;
-
-    const res = await fetch('/api/wyrenet/verify/' + hash);
-    const data = await res.json();
-    const el = document.getElementById('result-verify');
-    el.style.display = 'block';
-    if (data.verified) {
-      el.style.background = 'rgba(0, 245, 155, 0.1)';
-      el.style.border = '1px solid var(--border-green)';
-      el.style.color = '#00f59b';
-      el.innerHTML = `🛡️ <strong>VERIFIED ON WYRENET L1</strong><br>Title: ${data.proof?.title || data.proof?.filename || 'Authentic Record'}<br>Tx: ${data.proof?.txHash}<br>Block: #${data.proof?.blockHeight}`;
-    } else {
-      el.style.background = 'rgba(229, 62, 62, 0.1)';
-      el.style.border = '1px solid rgba(229, 62, 62, 0.4)';
-      el.style.color = '#fc8181';
-      el.innerHTML = `❌ <strong>TAMPERED OR NOT FOUND ON LEDGER</strong>`;
+    if (rec) {
+      rec.style.display = 'block';
+      rec.innerHTML = `✅ <strong>Notarized on WyreNet L1!</strong><br>Tx: ${data.txHash}<br>Block: #${data.blockNumber || 289}`;
     }
-  }
+    showToast('Notarization permanently recorded on WyreNet!', '⚓');
+  });
 
   document.getElementById('btn-run-verify')?.addEventListener('click', () => {
     const h = document.getElementById('verify-hash-input').value.trim();
-    verifyHashDirect(h);
+    if (h) verifyHashDirect(h);
   });
+}
 
-  async function testRpc(method) {
-    const out = document.getElementById('rpc-output');
-    out.textContent = 'Executing ' + method + '...';
-    try {
-      const res = await fetch('/api/wyrenet/rpc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jsonrpc: '2.0', id: Date.now(), method, params: [] })
-      });
-      const data = await res.json();
-      out.textContent = JSON.stringify(data, null, 2);
-    } catch (e) { out.textContent = 'Error: ' + e.message; }
+async function verifyHashDirect(hash) {
+  const el = document.getElementById("result-verify") || document.getElementById("verify-result");
+  if (!el) return;
+  el.style.display = 'block';
+  el.innerHTML = '⏳ Verifying hash on WyreNet Sovereign L1 Ledger...';
+  try {
+    const res = await fetch('/api/wyrenet/verify/' + hash);
+    const data = await res.json();
+    if (data.verified) {
+      el.style.color = '#68d391';
+      el.innerHTML = `✅ <strong>LEDGER VERIFIED IMMUTABLE</strong><br>Record: ${data.record.title || data.record.filename}<br>Anchor Block: #${data.record.blockNumber}<br>Tx: ${data.record.txHash}`;
+    } else {
+      el.style.color = '#fc8181';
+      el.innerHTML = `❌ <strong>TAMPERED OR NOT FOUND ON LEDGER</strong>`;
+    }
+  } catch (e) {
+    el.style.color = '#fc8181';
+    el.innerHTML = 'Error: ' + e.message;
   }
+}
 
-  // Auto-run on load
+async function testRpc(method) {
+  const out = document.getElementById('rpc-output');
+  if (!out) return;
+  out.textContent = 'Executing ' + method + '...';
+  try {
+    const res = await fetch('/api/wyrenet/rpc', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: Date.now(), method, params: [] })
+    });
+    const data = await res.json();
+    out.textContent = JSON.stringify(data, null, 2);
+  } catch (e) { out.textContent = 'Error: ' + e.message; }
+}
+
+// Auto-run on load
+if (typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) {
+  const mib = document.getElementById('mobile-info-banner');
+  if (mib) mib.style.display = 'block';
+}
+
+if (typeof window !== 'undefined') {
   updateTelemetry();
   window.renderChannelsList();
   loadEpubs();
   checkInjectedProvider();
   setInterval(updateTelemetry, 5000);
+
+  // Auto-connect inside in-app wallet browsers (MetaMask, Core, Trust)
+  if (window.ethereum || window.avalanche) {
+    const provider = window.ethereum || window.avalanche;
+    if (provider && provider.request) {
+      provider.request({ method: 'eth_accounts' }).then(accs => {
+        if (accs && accs.length > 0) {
+          handleConnectedAccount(accs[0], provider);
+          console.log('⚡ Auto-restored Web3 session:', userWallet);
+        }
+      }).catch(e => {});
+    }
+  }
+}
+
 </script>
 
-  <script src="/wyrenet/metamask-sdk.js"></script>
 </body>
 </html>
