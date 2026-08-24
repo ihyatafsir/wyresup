@@ -132,6 +132,38 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  
+  if (pathname.startsWith('/api/wyrenet/auth/challenge/') && req.method === 'GET') {
+    const address = pathname.replace('/api/wyrenet/auth/challenge/', '').trim();
+    const challenge = wyreNetGateway.generateChallenge(address);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(challenge));
+    return;
+  }
+
+  if (pathname === '/api/wyrenet/auth/verify' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const { address, signature } = JSON.parse(body);
+        const result = wyreNetGateway.verifySignature(address, signature);
+        if (result.verified) {
+          broadcastSystemEvent('DID_VERIFIED_KEYHOLDER', result.record);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(result));
+        } else {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(result));
+        }
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
   if (pathname === '/api/wyrenet/did/register' && req.method === 'POST') {
     let body = '';
     req.on('data', chunk => body += chunk);
@@ -168,13 +200,16 @@ const server = http.createServer((req, res) => {
     req.on('data', chunk => body += chunk);
     req.on('end', async () => {
       try {
-        const payload = JSON.parse(body || '{}');
-        const rpcRes = await wyreNetGateway.forwardRpc(payload);
+        let payload = null;
+        if (body && body.trim().length > 0) {
+          try { payload = JSON.parse(body); } catch (e) { payload = null; }
+        }
+        const rpcRes = await wyreNetGateway.forwardRpc(payload, req.method);
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(rpcRes));
+        res.end(JSON.stringify(rpcRes, null, 2));
       } catch (err) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error' } }));
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error: ' + err.message } }));
       }
     });
     return;
