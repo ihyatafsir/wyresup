@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1787535614740">
+  <link rel="stylesheet" href="style.css?v=1787425667">
 </head>
 <body>
   <div id="app-container" class="app-layout">
@@ -65,31 +65,9 @@
         <button class="space-menu-btn" id="btn-space-menu" title="Space Options">▾</button>
       </div>
 
-      
-      <!-- Channel Mode Switcher Tab Bar (Mesh vs 🔺 WyreNet) -->
-      <div class="channel-mode-tabs" style="display: flex; padding: 8px 12px 6px; gap: 6px; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.25);">
-        <button class="channel-tab-btn active" id="tab-channels-mesh" onclick="switchChannelTab('mesh')" style="flex: 1; padding: 8px 8px; border: 1px solid rgba(0, 245, 155, 0.3); border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer; background: rgba(0, 245, 155, 0.15); color: #00f59b; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
-          <span>⚡ Mesh</span>
-        </button>
-        <button class="channel-tab-btn" id="tab-channels-onchain" onclick="switchChannelTab('onchain')" style="flex: 1; padding: 8px 8px; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer; background: rgba(255, 255, 255, 0.03); color: #a0aec0; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
-          <span>🔺 WyreNet</span>
-        </button>
-      </div>
-
       <!-- Channels List Categories -->
       <div class="channels-scroller" id="channels-scroller">
         <!-- Text Channels Category -->
-        
-        <!-- Sovereign WyreNet L1 Channels Category (Visible on L1 Tab) -->
-        <div class="channel-category" id="cat-onchain-channels" style="display: none;">
-          <div class="category-header" onclick="toggleCategory('cat-onchain-channels')">
-            <span class="category-title" style="color: #fc8181;"><span class="chevron">▾</span> 🔺 SOVEREIGN L1 CHANNELS</span>
-          </div>
-          <div class="category-channels" id="onchain-channels-list">
-            <!-- Dynamic On-Chain Channels -->
-          </div>
-        </div>
-
         <div class="channel-category" id="cat-text-channels">
           <div class="category-header" onclick="toggleCategory('cat-text-channels')">
             <span class="category-title"><span class="chevron">▾</span> 💬 TEXT CHANNELS</span>
@@ -145,7 +123,6 @@
           <div class="user-id" id="current-user-id">peer@00000000</div>
         </div>
         <div class="user-actions">
-          <button class="icon-action-btn" id="btn-connect-wyrenet-wallet" onclick="openModal('modal-wallet-connect')" title="WyreNet L1 (🔺)" style="color: #fc8181; font-size: 13px; font-weight: bold;">🔺</button>
           <button class="icon-action-btn" id="btn-toggle-mic" title="Toggle Mic / Sawt">🎙️</button>
           <button class="icon-action-btn" id="btn-lisan-modal" title="Lisan al-Arab Lexicon & Protocol Engine (مُعْجَم لِسَان العَرَب)">📖</button>
           <button class="icon-action-btn" id="btn-nagham-modal" title="Nagham DTMF Keypad">🎵</button>
@@ -830,8 +807,9 @@
       </div>
     </div>
   </div>
+  </div>
 
   <!-- Main JavaScript Bundle with Cache-Buster -->
-  <script src="app.js?v=1787535614740"></script>
+  <script src="app.js?v=1787425667"></script>
 </body>
 </html>
