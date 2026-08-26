@@ -590,25 +590,44 @@
           </div>
         </div>
 
-        <!-- Chat Composer Wrap -->
-        <div class="chat-composer-wrap" id="chat-composer-wrap">
-          <div class="composer-inner">
-            <div class="composer-actions-left">
-              <button class="composer-icon-btn" onclick="triggerFileUpload()" title="Attach File / Document">📎</button>
-              <button class="composer-icon-btn" onclick="toggleSawtRecording()" title="Record Sawt Voice Note" id="btn-record-sawt">🎙️</button>
-            </div>
+        <!-- Message Composer Area (WyreSup Unified Standard) -->
+        <footer class="composer-footer" id="chat-composer-wrap">
+          <!-- Attachment Staging Tray -->
+          <div class="attachment-staging-tray" id="attachment-staging-tray" style="display: none;"></div>
+
+          <div class="composer-box">
+            <!-- Hidden File Input -->
+            <input type="file" id="file-upload-input" style="display: none;" onchange="handleFileSelected(event)">
             
-            <textarea id="chat-input" class="chat-input" placeholder="Message on WyreNet L1 (signed with your 0x address)..." rows="1"></textarea>
+            <!-- Attachment Button -->
+            <button class="composer-btn attach-file-btn" onclick="triggerFileUpload()" title="Upload File / P2P Transfer (إِرْفَاق مَلَفّ)">
+              <span>➕</span>
+            </button>
+
+            <!-- Voice Record Button -->
+            <button class="composer-btn voice-record-btn" onclick="toggleSawtRecording()" title="Record Sawt Voice Note (تسجيل صَوْت)" id="btn-record-sawt">
+              <span>🎙️</span>
+            </button>
             
-            <div class="composer-actions-right">
-              <button class="composer-icon-btn" onclick="insertEmoji('🛡️')" title="Emoji">🛡️</button>
-              <button class="send-btn" onclick="sendChatMessage()" id="btn-send-chat" title="Send Message (Enter)">
-                <span class="send-icon">➤</span>
+            <textarea 
+              id="chat-input" 
+              class="message-textarea" 
+              placeholder="Broadcast encrypted message on WyreNet L1..." 
+              rows="1"
+            ></textarea>
+
+            <div class="composer-actions">
+              <button class="composer-btn quick-reaction-btn" onclick="insertEmoji('⚡')" title="React Lightning">⚡</button>
+              <button class="composer-btn quick-reaction-btn" onclick="insertEmoji('🛡️')" title="React Shield">🛡️</button>
+              <button class="composer-btn dtmf-quick-btn" onclick="insertEmoji('🎵')" title="Send DTMF Acoustic Tones (نَغَم)">
+                <span>🎵</span>
+              </button>
+              <button class="composer-btn send-btn" onclick="sendChatMessage()" id="btn-send-chat" title="Send (إِرْسَال)">
+                <span>➤</span>
               </button>
             </div>
           </div>
-          <input type="file" id="file-upload-input" style="display: none;" onchange="handleFileSelected(event)">
-        </div>
+        </footer>
 
       </section>
 

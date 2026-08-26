@@ -782,6 +782,7 @@ window.sendChatMessage = function() {
   }
 
   input.value = "";
+  input.style.height = "auto";
 };
 
 // 1-Click Message Ledger Notarization
@@ -1308,13 +1309,20 @@ if (typeof window !== "undefined") {
   connectWebSocketMesh();
   setInterval(updateTelemetry, 4000);
 
-  // Chat Input Keyboard Listener (Enter to send, Shift+Enter for newline)
-  document.getElementById("chat-input")?.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      window.sendChatMessage();
-    }
-  });
+  // Chat Input Auto-Resize & Keyboard Listener
+  const chatInputEl = document.getElementById("chat-input");
+  if (chatInputEl) {
+    chatInputEl.addEventListener("input", function() {
+      this.style.height = "auto";
+      this.style.height = Math.min(this.scrollHeight, 120) + "px";
+    });
+    chatInputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        window.sendChatMessage();
+      }
+    });
+  }
 
   // Modal Backdrop click listener
   document.querySelectorAll(".uni-modal-overlay").forEach(overlay => {
