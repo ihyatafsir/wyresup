@@ -810,46 +810,44 @@ function seedImamGhazaliLibrary() {
   const spaceId = 'space-public-mesh';
   const catalog = ImamGhazaliLibrary.getCatalog();
 
-  const channelMsgs = gossipMesh.getChannelHistory(channelId);
-  if (channelMsgs && channelMsgs.length > 0) {
-    gossipMesh.messages.set(channelId, []);
-  }
+  // Reset channel history to clean, updated library layout
+  gossipMesh.messages.set(channelId, []);
 
   // 1. Welcome Message
   gossipMesh.publish(spaceId, channelId, {
-    content: "📖 **مَكْتَبَة حُجَّة الإِسْلَام الإِمَام أَبِي حَامِد الغَزَالِي (450–505 هـ / 1058–1111 م)**\n\nWelcome to the official digital library of **Imam Abu Hamid al-Ghazali's** translated corpus and spiritual masterworks. All volumes are available below as standalone EPUB e-books sealed and verified on **WyreNet Sovereign L1** for offline reading and direct P2P mesh distribution."
+    content: "📜 **مَكْتَبَة حُجَّة الإِسْلَام الإِمَام أَبِي حَامِد الغَزَالِي (450–505 هـ / 1058–1111 م)**\n\nWelcome to the complete digitized classical library of **Imam Abu Hamid al-Ghazali**. All 26 masterworks are available below in **Two Distinct Publishing Editions**:\n1. **Pure English Scholarly Editions**: 100% verbatim 1st-person authorial voice without commentary.\n2. **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + Quad-Lexical linguistic apparatus (*Al-Mufradat*, *Asas al-Balaghah*, *Lisan al-Arab*, *Sibawayh*) + English translation."
   }, { senderId: 'ibn-manzur@lisan' });
 
-  // 2. Ihya 'Ulum al-Din (Volumes 1-4 / Books 1-40)
-  if (catalog.ihyaVolumes && catalog.ihyaVolumes.length > 0) {
-    const atts = catalog.ihyaVolumes.map(item => ({
+  // 2. Pure English Scholarly Editions
+  if (catalog.pureEditions && catalog.pureEditions.length > 0) {
+    const atts = catalog.pureEditions.map(item => ({
       name: item.filename,
       type: 'application/epub+zip',
-      size: 1400000,
+      size: 500000,
       data: item.downloadUrl,
       title: item.title,
       arabicTitle: item.arabicTitle
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "🌟 **Ihya 'Ulum al-Din (The Revival of the Religious Sciences) — Volumes 1 to 4 (Complete 40 Books)**\n*The foundational spiritual masterpiece spanning Acts of Devotion ('Ibadat), Norms of Daily Life ('Adat), Ways to Perdition (Muhlikat), and Ways to Salvation (Munjiyat).* ",
+      content: "📖 **Edition 1: Pure English Scholarly Corpus (" + catalog.pureEditions.length + " Volumes)**\n*Kindle-optimized, direct 1st-person authorial translations of Ihya 'Ulum al-Din, Al-Munqidh, Tahafut, Mishkat, Al-Mustasfa, Bidayat al-Hidayah, and all 26 masterworks.*",
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // 3. Classical Spiritual & Philosophical Treatises
-  if (catalog.spiritualTreatises && catalog.spiritualTreatises.length > 0) {
-    const atts = catalog.spiritualTreatises.map(item => ({
+  // 3. Bilingual Apparatus Editions
+  if (catalog.bilingualEditions && catalog.bilingualEditions.length > 0) {
+    const atts = catalog.bilingualEditions.map(item => ({
       name: item.filename,
       type: 'application/epub+zip',
-      size: 600000,
+      size: 800000,
       data: item.downloadUrl,
       title: item.title,
       arabicTitle: item.arabicTitle
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "📜 **Core Spiritual, Epistemological & Philosophical Treatises**\n*Including Al-Munqidh min al-Dalal (Deliverance from Error), Mishkat al-Anwar (The Niche of Lights), Bidayat al-Hidayah (The Beginning of Guidance), Tahafut al-Falasifa (Incoherence of Philosophers), and Kimiya-yi Sa'adat (The Alchemy of Happiness).* ",
+      content: "🏛️ **Edition 2: Bilingual Scholarly Apparatus Corpus (" + catalog.bilingualEditions.length + " Volumes)**\n*Complete classical Arabic text alongside Quad-Lexical semantic anchors (Al-Raghib, Al-Zamakhshari, Ibn Manzur, Sibawayh) and verified English translations.*",
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
@@ -861,36 +859,34 @@ function seedImamNawawiLibrary() {
   const spaceId = 'space-public-mesh';
   const catalog = ImamNawawiLibrary.getCatalog();
 
-  const channelMsgs = gossipMesh.getChannelHistory(channelId);
-  if (channelMsgs && channelMsgs.length > 0) {
-    gossipMesh.messages.set(channelId, []);
-  }
+  // Reset channel history to clean, updated library layout
+  gossipMesh.messages.set(channelId, []);
 
   // 1. Welcome Message
   gossipMesh.publish(spaceId, channelId, {
-    content: "📜 **مَكْتَبَة الإِمَام مُحْيِي الدِّين يَحْيَى بْن شَرَف النَّوَوِي (631–676 هـ / 1233–1277 م)**\n\nWelcome to the digital classical library of **Imam al-Nawawi's** revered hadith, devotional, and legal masterworks. Sealed and authenticated on **WyreNet Sovereign L1** for direct offline P2P download."
+    content: "📜 **مَكْتَبَة الإِمَام مُحْيِي الدِّين يَحْيَى بْن شَرَف النَّوَوِي (631–676 هـ / 1233–1277 م)**\n\nWelcome to the complete digital classical library of **Imam Abu Zakariyya Yahya ibn Sharaf al-Nawawi**. All 22 revered Hadith, devotional, and legal masterworks are available below in **Two Distinct Publishing Editions**:\n1. **Pure English Scholarly Editions**: Direct authorial translations.\n2. **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + Quad-Lexical apparatus + English translation."
   }, { senderId: 'ibn-manzur@lisan' });
 
-  // 2. Hadith & Creed
-  if (catalog.hadithAndCreed && catalog.hadithAndCreed.length > 0) {
-    const atts = catalog.hadithAndCreed.map(item => ({
+  // 2. Pure English Scholarly Editions
+  if (catalog.pureEditions && catalog.pureEditions.length > 0) {
+    const atts = catalog.pureEditions.map(item => ({
       name: item.filename,
       type: 'application/epub+zip',
-      size: 1100000,
+      size: 500000,
       data: item.downloadUrl,
       title: item.title,
       arabicTitle: item.arabicTitle
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "📚 **Hadith Collections & Prophetic Traditions**\n*Al-Arba'in al-Nawawiyyah (The 40 Hadith with commentary), Riyad al-Salihin (Gardens of the Righteous — Complete Collection), and Sharh Sahih Muslim (Al-Minhaj Commentary).* ",
+      content: "📚 **Edition 1: Pure English Scholarly Corpus (" + catalog.pureEditions.length + " Volumes)**\n*The Forty Hadith (Al-Arba'in), Riyad al-Salihin, Al-Tibyan, Kitab al-Adhkar, Minhaj al-Talibin, Sharh Sahih Muslim, Al-Majmu', and all 22 masterworks.*",
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // 3. Devotional Adhkar, Quranic Adab & Fiqh
-  if (catalog.devotionalAndFiqh && catalog.devotionalAndFiqh.length > 0) {
-    const atts = catalog.devotionalAndFiqh.map(item => ({
+  // 3. Bilingual Apparatus Editions
+  if (catalog.bilingualEditions && catalog.bilingualEditions.length > 0) {
+    const atts = catalog.bilingualEditions.map(item => ({
       name: item.filename,
       type: 'application/epub+zip',
       size: 800000,
@@ -900,7 +896,7 @@ function seedImamNawawiLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "🕊️ **Devotional Invocations, Quranic Etiquette & Shafi'i Jurisprudence**\n*Kitab al-Adhkar (The Book of Remembrances), Al-Tibyan fi Adab Hamalat al-Quran (Etiquette with the Quran), and Minhaj al-Talibin (Manual of Shafi'i Law).* ",
+      content: "🏛️ **Edition 2: Bilingual Scholarly Apparatus Corpus (" + catalog.bilingualEditions.length + " Volumes)**\n*Full Arabic text with classical Hadith, Fiqh, and Quad-Lexical semantic annotations alongside English translations.*",
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }

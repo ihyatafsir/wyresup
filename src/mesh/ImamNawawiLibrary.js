@@ -8,87 +8,69 @@ class ImamNawawiLibrary {
 
   static getCatalog() {
     const dir = this.getLibraryDir();
-    if (!fs.existsSync(dir)) return [];
+    if (!fs.existsSync(dir)) return { pureEditions: [], bilingualEditions: [] };
 
     const files = fs.readdirSync(dir).filter(f => f.endsWith('.epub'));
     
     const catalog = {
-      hadithAndCreed: [],
-      devotionalAndFiqh: []
+      pureEditions: [],
+      bilingualEditions: []
+    };
+
+    const nawawiTitles = {
+      "al_arbaun_al_nawawiyya": { en: "The Forty Hadith (Al-Arba'in al-Nawawiyyah)", ar: "الأربعون النووية" },
+      "riyad_al_salihin": { en: "Gardens of the Righteous (Riyad al-Salihin)", ar: "رياض الصالحين من كلام سيد المرسلين" },
+      "al_tibyan_fi_adab_hamalat_al_quran": { en: "Etiquette with the Quran (Al-Tibyan)", ar: "التبيان في آداب حملة القرآن" },
+      "kitab_al_adhkar": { en: "The Book of Remembrances (Kitab al-Adhkar)", ar: "الأذكار المنتخبة من كلام سيد الأبرار" },
+      "minhaj_al_talibin": { en: "The Path of the Seekers (Minhaj al-Talibin)", ar: "منهاج الطالبين وعمدة المفتين" },
+      "bustan_al_arifin": { en: "Garden of the Gnostics (Bustan al-'Arifin)", ar: "بستان العارفين" },
+      "sharh_sahih_muslim": { en: "Commentary on Sahih Muslim (Al-Minhaj)", ar: "المنهاج شرح صحيح مسلم بن الحجاج" },
+      "al_majmu_sharh_al_muhadhdhab": { en: "The Vast Compendium in Fiqh (Al-Majmu')", ar: "المجموع شرح المهذب" },
+      "rawdat_al_talibin": { en: "The Meadow of the Seekers (Rawdat al-Talibin)", ar: "روضة الطالبين وعمدة المفتين" },
+      "tahdhib_al_asma_wa_al_lughat": { en: "Refinement of Names and Lexicon", ar: "تهذيب الأسماء واللغات" },
+      "al_taqrib_wa_al_taysir": { en: "Introduction to Hadith Sciences (Al-Taqrib)", ar: "التقريب والتيسير لمعرفة سنن البشير النذير" },
+      "al_idah_fi_manasik_al_hajj": { en: "Clarification of Rites of Hajj (Al-Idah)", ar: "الإيضاح في مناسك الحج والعمرة" },
+      "adab_al_fatwa_wa_al_mufti": { en: "The Decorum of Legal Rulings (Adab al-Fatwa)", ar: "أدب الفتوى والمفتي والمستفتي" },
+      "daqaiq_al_minhaj": { en: "Subtleties of the Minhaj (Daqaiq al-Minhaj)", ar: "دقائق المنهاج" },
+      "khulasat_al_ahkam": { en: "Epitome of Legal Judgments (Khulasat al-Ahkam)", ar: "خلاصة الأحكام في مهمات السنن" },
+      "irshad_tullab_al_haqaiq": { en: "Guiding the Seekers of Truth (Irshad Tullab)", ar: "إرشاد طلاب الحقائق" },
+      "tahrir_alfaz_al_tanbih": { en: "Lexical Gloss on Al-Tanbih (Tahrir Alfaz)", ar: "تحرير ألفاظ التنبيه" },
+      "al_masail_al_manthurah": { en: "Collected Legal Edicts (Fatawa al-Nawawi)", ar: "الفتاوى أو المسائل المنثورة" },
+      "al_ijaz_fi_sharh_sunan_abi_dawud": { en: "Commentary on Sunan Abi Dawud (Al-Ijaz)", ar: "الإيجاز في شرح سنن أبي داود" },
+      "risalah_fi_al_itiqad": { en: "Treatise on the Creed of the Forebears", ar: "رسالة في الاعتقاد وأهل السنة" },
+      "al_usul_wa_al_dawabit": { en: "Legal Principles and Maxims (Al-Usul)", ar: "الأصول والضوابط" },
+      "takhmis_al_ghanima": { en: "Quintipartition of Spoils (Takhmis al-Ghanima)", ar: "تخميس الغنيمة" }
     };
 
     files.sort().forEach(file => {
       const fullPath = path.join(dir, file);
       const stats = fs.statSync(fullPath);
-      const sizeStr = (stats.size / (1024 * 1024)).toFixed(2) + ' MB';
+      const sizeStr = (stats.size / 1024).toFixed(1) + ' KB';
       const downloadUrl = `/epubs/${file}`;
 
-      if (
-        file.startsWith('al_arbain_') ||
-        file.startsWith('riyad_') ||
-        file.startsWith('sharh_sahih_')
-      ) {
-        let title = file.replace('.epub', '').replace(/_/g, ' ');
-        let arabicTitle = 'كتب الحديث للإمام النووي';
-        let category = 'Hadith & Sunnah (الحديث النبوي الشريف)';
+      for (const [slug, info] of Object.entries(nawawiTitles)) {
+        if (file.startsWith(slug)) {
+          const isBilingual = file.includes('_bilingual_lexical_en.epub');
+          const isPure = file.includes('_pure_en.epub') || file.endsWith('_en.epub');
 
-        if (file.startsWith('al_arbain')) {
-          title = "The Forty Hadith of Imam al-Nawawi (Al-Arba'in al-Nawawiyyah)";
-          arabicTitle = 'الأربعون النووية مع الشرح والفوائد';
-          category = 'Foundational Hadith & Islamic Creed (أصول الحديث والعقيدة)';
-        } else if (file.startsWith('riyad')) {
-          title = "Gardens of the Righteous (Riyad al-Salihin — Complete Edition)";
-          arabicTitle = 'رياض الصالحين من كلام سيد المرسلين';
-          category = 'Prophetic Ethics & Righteous Conduct (الأخلاق والآداب النبوية)';
-        } else if (file.startsWith('sharh_sahih')) {
-          title = "Al-Minhaj: Commentary on Sahih Muslim (Sharh Sahih Muslim)";
-          arabicTitle = 'المنهاج شرح صحيح مسلم بن الحجاج';
-          category = 'Comprehensive Hadith Commentary (شروح كتب السنة)';
+          const item = {
+            id: file.replace('.epub', ''),
+            slug,
+            filename: file,
+            title: isBilingual ? `${info.en} (Bilingual Apparatus Edition)` : `${info.en} (Pure English Edition)`,
+            arabicTitle: info.ar,
+            author: 'Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي)',
+            size: sizeStr,
+            downloadUrl
+          };
+
+          if (isBilingual) {
+            catalog.bilingualEditions.push(item);
+          } else if (isPure) {
+            catalog.pureEditions.push(item);
+          }
+          break;
         }
-
-        catalog.hadithAndCreed.push({
-          id: file.replace('.epub', ''),
-          filename: file,
-          title,
-          arabicTitle,
-          author: 'Imam Muhyi al-Din Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي)',
-          category,
-          size: sizeStr,
-          downloadUrl
-        });
-      } else if (
-        file.startsWith('kitab_al_adhkar_') ||
-        file.startsWith('al_tibyan_') ||
-        file.startsWith('minhaj_al_talibin_')
-      ) {
-        let title = file.replace('.epub', '').replace(/_/g, ' ');
-        let arabicTitle = 'مصنفات الإمام النووي';
-        let category = 'Fiqh, Adab & Invocations (الفقه والآداب والأذكار)';
-
-        if (file.startsWith('kitab_al_adhkar')) {
-          title = "The Book of Remembrances (Kitab al-Adhkar)";
-          arabicTitle = 'حلية الأبرار وشعار الأخيار في تلخيص الدعوات والأذكار (الأذكار النووية)';
-          category = 'Supplications & Daily Litanies (الأذكار والأوراد النبوية)';
-        } else if (file.startsWith('al_tibyan')) {
-          title = "Etiquette with the Quran (Al-Tibyan fi Adab Hamalat al-Quran)";
-          arabicTitle = 'التبيان في آداب حملة القرآن';
-          category = 'Quranic Etiquette & Sacred Sciences (آداب تلاوة وحملة القرآن)';
-        } else if (file.startsWith('minhaj_al_talibin')) {
-          title = "The Path of Seekers (Minhaj al-Talibin wa 'Umdat al-Muftin)";
-          arabicTitle = 'منهاج الطالبين وعمدة المفتين في فقه الإمام الشافعي';
-          category = 'Shafi\'i Jurisprudence & Legal Rulings (الفقه الشافعي المعتمد)';
-        }
-
-        catalog.devotionalAndFiqh.push({
-          id: file.replace('.epub', ''),
-          filename: file,
-          title,
-          arabicTitle,
-          author: 'Imam Muhyi al-Din Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي)',
-          category,
-          size: sizeStr,
-          downloadUrl
-        });
       }
     });
 
