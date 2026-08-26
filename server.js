@@ -815,10 +815,27 @@ function seedImamGhazaliLibrary() {
 
   // 1. Welcome Message
   gossipMesh.publish(spaceId, channelId, {
-    content: "📜 **مَكْتَبَة حُجَّة الإِسْلَام الإِمَام أَبِي حَامِد الغَزَالِي (450–505 هـ / 1058–1111 م)**\n\nWelcome to the complete digitized classical library of **Imam Abu Hamid al-Ghazali**. All 26 masterworks are available below in **Two Distinct Publishing Editions**:\n1. **Pure English Scholarly Editions**: 100% verbatim 1st-person authorial voice without commentary.\n2. **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + Quad-Lexical linguistic apparatus (*Al-Mufradat*, *Asas al-Balaghah*, *Lisan al-Arab*, *Sibawayh*) + English translation."
+    content: "📜 **مَكْتَبَة حُجَّة الإِسْلَام الإِمَام أَبِي حَامِد الغَزَالِي (450–505 هـ / 1058–1111 م)**\n\nWelcome to the complete digitized classical library of **Imam Abu Hamid al-Ghazali (رحمه الله)**.\n\nIncluded below are the complete full-text unabridged editions:\n🌟 **Ihya 'Ulum al-Din (إحياء علوم الدين)**: The Monumental 4-Volume Master Corpus (All 40 Books Complete).\n📖 **Pure English Scholarly Editions**: Direct 1st-person authorial translations.\n🏛️ **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + Quad-Lexical semantic apparatus (*Al-Raghib, Asas al-Balaghah, Lisan al-Arab, Sibawayh*)."
   }, { senderId: 'ibn-manzur@lisan' });
 
-  // 2. Pure English Scholarly Editions
+  // 2. Ihya 'Ulum al-Din Complete 4-Volume Masterwork
+  if (catalog.ihyaVolumes && catalog.ihyaVolumes.length > 0) {
+    const atts = catalog.ihyaVolumes.map(item => ({
+      name: item.filename,
+      type: 'application/epub+zip',
+      size: 700000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, channelId, {
+      content: "🌟 **IHYA 'ULUM AL-DIN (إحياء علوم الدين) — THE MONUMENTAL 4-VOLUME MAGNUM OPUS (COMPLETE 40 BOOKS)**\n*The definitive English translation of the 4 quarters: Acts of Devotion (العبادات), Norms of Daily Life (العادات), Ways to Perdition (المهلكات), and Ways to Salvation (المنجيات).*\n\n• **Vol 1**: *Rub' al-'Ibadat* (Books 1–10)\n• **Vol 2**: *Rub' al-'Adat* (Books 11–20)\n• **Vol 3**: *Rub' al-Muhlikat* (Books 21–30)\n• **Vol 4**: *Rub' al-Munjiyat* (Books 31–40)",
+      attachments: atts
+    }, { senderId: 'ibn-manzur@lisan' });
+  }
+
+  // 3. Pure English Scholarly Editions (All Other Masterworks)
   if (catalog.pureEditions && catalog.pureEditions.length > 0) {
     const atts = catalog.pureEditions.map(item => ({
       name: item.filename,
@@ -830,12 +847,12 @@ function seedImamGhazaliLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "📖 **Edition 1: Pure English Scholarly Corpus (" + catalog.pureEditions.length + " Volumes)**\n*Kindle-optimized, direct 1st-person authorial translations of Ihya 'Ulum al-Din, Al-Munqidh, Tahafut, Mishkat, Al-Mustasfa, Bidayat al-Hidayah, and all 26 masterworks.*",
+      content: "📖 **Edition 1: Pure English Scholarly Corpus (" + catalog.pureEditions.length + " Volumes)**\n*Direct, unabridged English translations of Al-Munqidh min al-Dalal, Tahafut al-Falasifa, Mishkat al-Anwar, Al-Mustasfa, Bidayat al-Hidayah, Kimiya-yi Sa'adat, and the entire philosophical, ethical, and legal corpus.*",
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // 3. Bilingual Apparatus Editions
+  // 4. Bilingual Apparatus Editions (All Other Masterworks)
   if (catalog.bilingualEditions && catalog.bilingualEditions.length > 0) {
     const atts = catalog.bilingualEditions.map(item => ({
       name: item.filename,
@@ -847,7 +864,7 @@ function seedImamGhazaliLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "🏛️ **Edition 2: Bilingual Scholarly Apparatus Corpus (" + catalog.bilingualEditions.length + " Volumes)**\n*Complete classical Arabic text alongside Quad-Lexical semantic anchors (Al-Raghib, Al-Zamakhshari, Ibn Manzur, Sibawayh) and verified English translations.*",
+      content: "🏛️ **Edition 2: Bilingual Scholarly Apparatus Corpus (" + catalog.bilingualEditions.length + " Volumes)**\n*Full classical Arabic text with Quad-Lexical semantic anchors and aligned English translations for research, memorization, and scholarly study.*",
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
