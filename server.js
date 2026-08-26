@@ -702,7 +702,7 @@ function seedImamRaziLibrary() {
   // Clear existing messages to apply clean restored layout
   const channelMsgs = gossipMesh.getChannelHistory(channelId);
   if (channelMsgs && channelMsgs.length > 0) {
-    gossipMesh.messages.set(channelId, []);
+    gossipMesh.clearChannelHistory(channelId);
   }
 
   // 1. Welcome Message
@@ -811,7 +811,7 @@ function seedImamGhazaliLibrary() {
   const catalog = ImamGhazaliLibrary.getCatalog();
 
   // Reset channel history to clean, updated library layout
-  gossipMesh.messages.set(channelId, []);
+  gossipMesh.clearChannelHistory(channelId);
 
   // 1. Welcome Message
   gossipMesh.publish(spaceId, channelId, {
@@ -860,7 +860,7 @@ function seedImamNawawiLibrary() {
   const catalog = ImamNawawiLibrary.getCatalog();
 
   // Reset channel history to clean, updated library layout
-  gossipMesh.messages.set(channelId, []);
+  gossipMesh.clearChannelHistory(channelId);
 
   // 1. Welcome Message
   gossipMesh.publish(spaceId, channelId, {
