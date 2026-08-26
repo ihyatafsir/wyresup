@@ -46,28 +46,28 @@ class MajlisManager {
           id: 'chan-announcements',
           name: 'announcements-nashr',
           type: 'text',
-          icon: '📢',
+          icon: '#',
           topic: 'Decentralized broadcast channel (Nashr al-Akhbar).'
         },
         {
           id: 'chan-imam-razi',
           name: 'imam-razi',
           type: 'text',
-          icon: '📚',
+          icon: '#',
           topic: "Library of Imam Fakhr al-Din al-Razi's Masterworks — Complete English EPUB Translations (Tafsir al-Kabir Vols 1-32, Al-Matalib Vols 1-9, Asas al-Taqdis, Lawami', etc.)"
         },
         {
           id: 'chan-imam-abuhami',
           name: 'imam-abuhami',
           type: 'text',
-          icon: '📖',
+          icon: '#',
           topic: "Library of Imam Abu Hamid al-Ghazali — Complete English EPUB Translations (Ihya 'Ulum al-Din Books 1-40, Al-Munqidh min al-Dalal, Mishkat al-Anwar, Bidayat al-Hidayah, etc.)"
         },
         {
           id: 'chan-imam-nawawi',
           name: 'imam-nawawi',
           type: 'text',
-          icon: '📜',
+          icon: '#',
           topic: "Library of Imam Yahya ibn Sharaf al-Nawawi — Complete English EPUB Translations (Al-Arba'in al-Nawawiyyah, Riyad al-Salihin, Al-Tibyan, Kitab al-Adhkar, Minhaj al-Talibin, etc.)"
         },
         {

@@ -1020,7 +1020,7 @@ function renderChannelsSidebar() {
     const el = document.createElement('div');
     el.className = `channel-item ${ch.id === state.currentChannelId ? 'active' : ''}`;
     el.innerHTML = `
-      <span class="channel-icon">${ch.icon || (ch.id.startsWith('dm-') ? '🔒' : (ch.type === 'voice' ? '🔊' : '#'))}</span>
+      <span class="channel-icon">${ch.type === 'voice' ? '🔊' : (ch.id.startsWith('dm-') ? '🔒' : '#')}</span>
       <span class="channel-name">${ch.name}</span>
     `;
     el.onclick = () => selectChannel(ch.id);
