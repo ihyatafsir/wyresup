@@ -804,9 +804,9 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
 }
 
 
-// Seed Imam Abu Hamid al-Ghazali EPUB Library Catalog into #imam-abuhami channel
+// Seed Imam Abu Hamid al-Ghazali EPUB Library Catalog into #imam-abuhamid channel
 function seedImamGhazaliLibrary() {
-  const channelId = 'chan-imam-abuhami';
+  const channelId = 'chan-imam-abuhamidd';
   const spaceId = 'space-public-mesh';
   const catalog = ImamGhazaliLibrary.getCatalog();
 

@@ -57,8 +57,8 @@ class MajlisManager {
           topic: "Library of Imam Fakhr al-Din al-Razi's Masterworks — Complete English EPUB Translations (Tafsir al-Kabir Vols 1-32, Al-Matalib Vols 1-9, Asas al-Taqdis, Lawami', etc.)"
         },
         {
-          id: 'chan-imam-abuhami',
-          name: 'imam-abuhami',
+          id: 'chan-imam-abuhamidd',
+          name: 'imam-abuhamid',
           type: 'text',
           icon: '#',
           topic: "Library of Imam Abu Hamid al-Ghazali — Complete English EPUB Translations (Ihya 'Ulum al-Din Books 1-40, Al-Munqidh min al-Dalal, Mishkat al-Anwar, Bidayat al-Hidayah, etc.)"

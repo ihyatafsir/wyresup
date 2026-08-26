@@ -69,7 +69,7 @@ async function anchorAllCorpus() {
     ) {
       author = 'Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)';
       category = 'Ihya, Tasawwuf, Ethics & Epistemology';
-      channelId = 'chan-imam-abuhami';
+      channelId = 'chan-imam-abuhamidd';
     } else if (
       file.startsWith('al_arbain_') ||
       file.startsWith('riyad_') ||
@@ -134,7 +134,7 @@ async function anchorAllCorpus() {
   const manifest = {
     space: {
       spaceId: 'space-public-mesh',
-      channels: ['chan-imam-razi', 'chan-imam-abuhami', 'chan-imam-nawawi'],
+      channels: ['chan-imam-razi', 'chan-imam-abuhamidd', 'chan-imam-nawawi'],
       name: 'WyreSup Classical Digital Corpus (مَكْتَبَة التُّرَاث الإِسْلَامِي اللَّامَرْكَزِيَّة)',
       description: 'Sovereign on-chain corpus of Imam Fakhr al-Din al-Razi, Imam Abu Hamid al-Ghazali, and Imam al-Nawawi',
       creatorDid: ADMIN_DID,
