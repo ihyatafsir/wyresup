@@ -1256,7 +1256,18 @@ function appendMessageToDOM(packet) {
         const isMatalib = att.name.startsWith('al_matalib_');
         const isFiraq = att.name.includes('itiqadat') || att.name.includes('firaq') || att.name.includes('firqa') || att.name.includes('mahsul');
         const isSpiritual = att.name.startsWith('al_futuhat_') || att.name.startsWith('al_shifa_');
-        const badgeTag = isFiraq ? "Firaq & Usul" : (isSpiritual ? "Irfan & Shama'il" : (isTafsir ? "Tafsir al-Kabir" : (isMatalib ? "Al-Matalib al-'Aliyyah" : "Kalam Masterwork")));
+        const isIhya = att.name.startsWith('ihya_ulum_');
+        const isGhazali = isIhya || att.name.startsWith('al_munqidh_') || att.name.startsWith('mishkat_') || att.name.startsWith('bidayat_') || att.name.startsWith('tahafut_') || att.name.startsWith('kimiya_');
+        const isNawawi = att.name.startsWith('al_arbain_') || att.name.startsWith('riyad_') || att.name.startsWith('kitab_al_adhkar_') || att.name.startsWith('al_tibyan_') || att.name.startsWith('minhaj_') || att.name.startsWith('sharh_sahih_');
+        
+        let badgeTag = 'Kalam Masterwork';
+        if (isIhya) badgeTag = "Ihya 'Ulum al-Din";
+        else if (isGhazali) badgeTag = 'Ghazali Masterwork';
+        else if (isNawawi) badgeTag = 'Nawawi Masterwork';
+        else if (isFiraq) badgeTag = 'Firaq & Usul';
+        else if (isSpiritual) badgeTag = "Irfan & Shama'il";
+        else if (isTafsir) badgeTag = 'Tafsir al-Kabir';
+        else if (isMatalib) badgeTag = "Al-Matalib al-'Aliyyah";
         bodyHtml += `
           <a href="${att.data}" download="${escapeHtml(att.name)}" class="msg-epub-card" title="Click to download ${escapeHtml(cleanName)}">
             <div class="epub-card-header">
