@@ -310,7 +310,7 @@ const server = http.createServer((req, res) => {
         const channelId = data.channelId || 'chan-general';
         gossipMesh.clearChannelHistory(channelId);
         broadcastSystemEvent('MESSAGES_CLEARED', { channelId });
-        console.log(`[Mesh Admin] 🧹 Channel ${channelId} history wiped clean.`);
+        console.log(`[Mesh Admin]  Channel ${channelId} history wiped clean.`);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: true, channelId, message: `Channel ${channelId} wiped clean` }));
       } catch (err) {
@@ -460,7 +460,7 @@ wss.on('connection', (ws, req) => {
   let clientPeer = null;
 
   ws.on('message', (messageRaw) => {
-    // 🚇 Check for Nafaq al-Lisan Zero-Copy Binary Shards
+    //  Check for Nafaq al-Lisan Zero-Copy Binary Shards
     const buf = Buffer.isBuffer(messageRaw) ? messageRaw : Buffer.from(messageRaw);
     if (buf.length >= 12 && buf.readUIntBE(0, 3) === NAFAQ_MAGIC) {
       // Broadcast zero-copy binary shard to peer sockets (Zero-Knowledge Blind Relay)
@@ -707,7 +707,7 @@ function seedImamRaziLibrary() {
 
   // 1. Welcome Message
   gossipMesh.publish(spaceId, channelId, {
-    content: `📚 **مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِيّ // COMPLETE EPUB TRANSLATIONS LIBRARY**
+    content: ` **مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِيّ // COMPLETE EPUB TRANSLATIONS LIBRARY**
 
 Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–606 AH / 1149–1209 CE)** translated masterworks. All volumes are available below as standalone EPUB e-books for offline reading and direct P2P download.`
   }, { senderId: 'ibn-manzur@lisan' });
@@ -724,7 +724,7 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: `📖 **Tafsir al-Kabir (Mafatih al-Ghayb) — Volumes 1 to 32 (Complete)**
+      content: ` **Tafsir al-Kabir (Mafatih al-Ghayb) — Volumes 1 to 32 (Complete)**
 *The monumental commentary on the Holy Quran by Imam Fakhr al-Din al-Razi. Complete 32-volume English translation.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
@@ -742,7 +742,7 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: `🌟 **Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi (The Sublime Quests in Divine Science)**
+      content: ` **Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi (The Sublime Quests in Divine Science)**
 *Imam al-Razi's final philosophical and theological magnum opus (Vols 1–9 + Complete Compendium in Pure English & Arabic Lexical Editions).*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
@@ -760,7 +760,7 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: `⚖️ **Comparative Heresiography (Firaq) & Usul al-Fiqh**
+      content: `️ **Comparative Heresiography (Firaq) & Usul al-Fiqh**
 *Imam al-Razi's famous treatise on world religions & Islamic sects (I'tiqadat Firaq al-Muslimin wa'l-Mushrikin in 3 translations) along with his magnum opus on legal methodology (Al-Mahsul fi 'Ilm Usul al-Fiqh).*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
@@ -778,7 +778,7 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: `📜 **Core Kalam & Philosophical Theology Treatises**
+      content: ` **Core Kalam & Philosophical Theology Treatises**
 *Including Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, 'Ismat al-Anbiya', Ma'alim Usul al-Din, and Al-Qada' wa'l-Qadar.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
@@ -796,7 +796,7 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: `💎 **Classical Spiritual & Prophetic Masterworks (Tasawwuf, 'Irfan & Shama'il)**
+      content: ` **Classical Spiritual & Prophetic Masterworks (Tasawwuf, 'Irfan & Shama'il)**
 *Al-Futuhat al-Makkiyya (Shaykh al-Akbar Ibn 'Arabi — Islamic Metaphysics & Spiritual Illumination) and Al-Shifa bi-Ta'rif Huquq al-Mustafa (Qadi 'Iyad — Prophetic Biography & Shama'il).*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
@@ -806,23 +806,20 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
 
 // Seed Imam Abu Hamid al-Ghazali EPUB Library Catalog into #imam-abuhamid channel
 function seedImamGhazaliLibrary() {
-  const channelId = 'chan-imam-abuhamidd';
-  const spaceId = 'space-public-mesh';
+  const channelId = "chan-imam-abuhamidd";
+  const spaceId = "space-public-mesh";
   const catalog = ImamGhazaliLibrary.getCatalog();
 
-  // Reset channel history to clean, updated library layout
   gossipMesh.clearChannelHistory(channelId);
 
-  // 1. Welcome Message
   gossipMesh.publish(spaceId, channelId, {
-    content: "📜 **مَكْتَبَة حُجَّة الإِسْلَام الإِمَام أَبِي حَامِد الغَزَالِي (450–505 هـ / 1058–1111 م)**\n\nWelcome to the complete digitized classical library of **Imam Abu Hamid al-Ghazali (رحمه الله)**.\n\nIncluded below are the complete full-text unabridged editions:\n🌟 **Ihya 'Ulum al-Din (إحياء علوم الدين)**: The Monumental 4-Volume Master Corpus (All 40 Books Complete).\n📖 **Pure English Scholarly Editions**: Direct 1st-person authorial translations.\n🏛️ **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + Quad-Lexical semantic apparatus (*Al-Raghib, Asas al-Balaghah, Lisan al-Arab, Sibawayh*)."
-  }, { senderId: 'ibn-manzur@lisan' });
+    content: "**Maktabat Hujjat al-Islam al-Imam Abi Hamid al-Ghazali (450-505 AH / 1058-1111 CE)**\n\nWelcome to the complete digitized classical library of **Imam Abu Hamid al-Ghazali**.\n\nIncluded below are the complete full-text unabridged editions:\n- **Ihya Ulum al-Din**: The Monumental 4-Volume Master Corpus (All 40 Books Complete).\n- **Pure English Scholarly Editions**: Direct 1st-person authorial translations.\n- **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + Quad-Lexical semantic apparatus (Al-Raghib, Asas al-Balaghah, Lisan al-Arab, Sibawayh)."
+  }, { senderId: "ibn-manzur@lisan" });
 
-  // 2. Ihya 'Ulum al-Din Complete 4-Volume Masterwork
   if (catalog.ihyaVolumes && catalog.ihyaVolumes.length > 0) {
     const atts = catalog.ihyaVolumes.map(item => ({
       name: item.filename,
-      type: 'application/epub+zip',
+      type: "application/epub+zip",
       size: 700000,
       data: item.downloadUrl,
       title: item.title,
@@ -830,16 +827,15 @@ function seedImamGhazaliLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "🌟 **IHYA 'ULUM AL-DIN (إحياء علوم الدين) — THE MONUMENTAL 4-VOLUME MAGNUM OPUS (COMPLETE 40 BOOKS)**\n*The definitive English translation of the 4 quarters: Acts of Devotion (العبادات), Norms of Daily Life (العادات), Ways to Perdition (المهلكات), and Ways to Salvation (المنجيات).*\n\n• **Vol 1**: *Rub' al-'Ibadat* (Books 1–10)\n• **Vol 2**: *Rub' al-'Adat* (Books 11–20)\n• **Vol 3**: *Rub' al-Muhlikat* (Books 21–30)\n• **Vol 4**: *Rub' al-Munjiyat* (Books 31–40)",
+      content: "**IHYA ULUM AL-DIN - THE MONUMENTAL 4-VOLUME MAGNUM OPUS (COMPLETE 40 BOOKS)**\n*The definitive English translation of the 4 quarters: Acts of Devotion, Norms of Daily Life, Ways to Perdition, and Ways to Salvation.*\n\n- **Vol 1**: *Rub al-Ibadat* (Books 1-10)\n- **Vol 2**: *Rub al-Adat* (Books 11-20)\n- **Vol 3**: *Rub al-Muhlikat* (Books 21-30)\n- **Vol 4**: *Rub al-Munjiyat* (Books 31-40)",
       attachments: atts
-    }, { senderId: 'ibn-manzur@lisan' });
+    }, { senderId: "ibn-manzur@lisan" });
   }
 
-  // 3. Pure English Scholarly Editions (All Other Masterworks)
   if (catalog.pureEditions && catalog.pureEditions.length > 0) {
     const atts = catalog.pureEditions.map(item => ({
       name: item.filename,
-      type: 'application/epub+zip',
+      type: "application/epub+zip",
       size: 500000,
       data: item.downloadUrl,
       title: item.title,
@@ -847,16 +843,15 @@ function seedImamGhazaliLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "📖 **Edition 1: Pure English Scholarly Corpus (" + catalog.pureEditions.length + " Volumes)**\n*Direct, unabridged English translations of Al-Munqidh min al-Dalal, Tahafut al-Falasifa, Mishkat al-Anwar, Al-Mustasfa, Bidayat al-Hidayah, Kimiya-yi Sa'adat, and the entire philosophical, ethical, and legal corpus.*",
+      content: "**Edition 1: Pure English Scholarly Corpus (" + catalog.pureEditions.length + " Volumes)**\n*Direct, unabridged English translations of Al-Munqidh min al-Dalal, Tahafut al-Falasifa, Mishkat al-Anwar, Al-Mustasfa, Bidayat al-Hidayah, Kimiya-yi Saadat, and the entire philosophical, ethical, and legal corpus.*",
       attachments: atts
-    }, { senderId: 'ibn-manzur@lisan' });
+    }, { senderId: "ibn-manzur@lisan" });
   }
 
-  // 4. Bilingual Apparatus Editions (All Other Masterworks)
   if (catalog.bilingualEditions && catalog.bilingualEditions.length > 0) {
     const atts = catalog.bilingualEditions.map(item => ({
       name: item.filename,
-      type: 'application/epub+zip',
+      type: "application/epub+zip",
       size: 800000,
       data: item.downloadUrl,
       title: item.title,
@@ -864,31 +859,27 @@ function seedImamGhazaliLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "🏛️ **Edition 2: Bilingual Scholarly Apparatus Corpus (" + catalog.bilingualEditions.length + " Volumes)**\n*Full classical Arabic text with Quad-Lexical semantic anchors and aligned English translations for research, memorization, and scholarly study.*",
+      content: "**Edition 2: Bilingual Scholarly Apparatus Corpus (" + catalog.bilingualEditions.length + " Volumes)**\n*Full classical Arabic text with Quad-Lexical semantic anchors and aligned English translations for research, memorization, and scholarly study.*",
       attachments: atts
-    }, { senderId: 'ibn-manzur@lisan' });
+    }, { senderId: "ibn-manzur@lisan" });
   }
 }
 
-// Seed Imam al-Nawawi EPUB Library Catalog into #imam-nawawi channel
 function seedImamNawawiLibrary() {
-  const channelId = 'chan-imam-nawawi';
-  const spaceId = 'space-public-mesh';
+  const channelId = "chan-imam-nawawi";
+  const spaceId = "space-public-mesh";
   const catalog = ImamNawawiLibrary.getCatalog();
 
-  // Reset channel history to clean, updated library layout
   gossipMesh.clearChannelHistory(channelId);
 
-  // 1. Welcome Message
   gossipMesh.publish(spaceId, channelId, {
-    content: "📜 **مَكْتَبَة الإِمَام مُحْيِي الدِّين يَحْيَى بْن شَرَف النَّوَوِي (631–676 هـ / 1233–1277 م)**\n\nWelcome to the complete digital classical library of **Imam Abu Zakariyya Yahya ibn Sharaf al-Nawawi**. All 22 revered Hadith, devotional, and legal masterworks are available below in **Two Distinct Publishing Editions**:\n1. **Pure English Scholarly Editions**: Direct authorial translations.\n2. **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + Quad-Lexical apparatus + English translation."
-  }, { senderId: 'ibn-manzur@lisan' });
+    content: "**Maktabat al-Imam Muhyi al-Din Yahya ibn Sharaf al-Nawawi (631-676 AH / 1233-1277 CE)**\n\nWelcome to the complete digital classical library of **Imam Abu Zakariyya Yahya ibn Sharaf al-Nawawi**.\n\nAll 22 revered Hadith, devotional, and legal masterworks are available below in **Two Distinct Publishing Editions**:\n1. **Pure English Scholarly Editions**: Direct authorial translations.\n2. **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + Quad-Lexical apparatus + English translation."
+  }, { senderId: "ibn-manzur@lisan" });
 
-  // 2. Pure English Scholarly Editions
   if (catalog.pureEditions && catalog.pureEditions.length > 0) {
     const atts = catalog.pureEditions.map(item => ({
       name: item.filename,
-      type: 'application/epub+zip',
+      type: "application/epub+zip",
       size: 500000,
       data: item.downloadUrl,
       title: item.title,
@@ -896,16 +887,15 @@ function seedImamNawawiLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "📚 **Edition 1: Pure English Scholarly Corpus (" + catalog.pureEditions.length + " Volumes)**\n*The Forty Hadith (Al-Arba'in), Riyad al-Salihin, Al-Tibyan, Kitab al-Adhkar, Minhaj al-Talibin, Sharh Sahih Muslim, Al-Majmu', and all 22 masterworks.*",
+      content: "**Edition 1: Pure English Scholarly Corpus (" + catalog.pureEditions.length + " Volumes)**\n*The Forty Hadith (Al-Arbain), Riyad al-Salihin, Al-Tibyan, Kitab al-Adhkar, Minhaj al-Talibin, Sharh Sahih Muslim, Al-Majmu, and all 22 masterworks.*",
       attachments: atts
-    }, { senderId: 'ibn-manzur@lisan' });
+    }, { senderId: "ibn-manzur@lisan" });
   }
 
-  // 3. Bilingual Apparatus Editions
   if (catalog.bilingualEditions && catalog.bilingualEditions.length > 0) {
     const atts = catalog.bilingualEditions.map(item => ({
       name: item.filename,
-      type: 'application/epub+zip',
+      type: "application/epub+zip",
       size: 800000,
       data: item.downloadUrl,
       title: item.title,
@@ -913,9 +903,9 @@ function seedImamNawawiLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "🏛️ **Edition 2: Bilingual Scholarly Apparatus Corpus (" + catalog.bilingualEditions.length + " Volumes)**\n*Full Arabic text with classical Hadith, Fiqh, and Quad-Lexical semantic annotations alongside English translations.*",
+      content: "**Edition 2: Bilingual Scholarly Apparatus Corpus (" + catalog.bilingualEditions.length + " Volumes)**\n*Full Arabic text with classical Hadith, Fiqh, and Quad-Lexical semantic annotations alongside English translations.*",
       attachments: atts
-    }, { senderId: 'ibn-manzur@lisan' });
+    }, { senderId: "ibn-manzur@lisan" });
   }
 }
 

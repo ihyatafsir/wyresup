@@ -51,7 +51,8 @@ class ImamNawawiLibrary {
       for (const [slug, info] of Object.entries(nawawiTitles)) {
         if (file.startsWith(slug)) {
           const isBilingual = file.includes('_bilingual_lexical_en.epub');
-          const isPure = file.includes('_pure_en.epub') || file.endsWith('_en.epub');
+          const isPure = file.includes('_pure_en.epub');
+          if (!isBilingual && !isPure) continue;
 
           const item = {
             id: file.replace('.epub', ''),
