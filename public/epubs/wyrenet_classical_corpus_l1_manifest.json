@@ -11,11 +11,11 @@
     "creatorDid": "did:wyre:0x471c852d254a67f36c129f2386ca21c31840dea4",
     "encryption": "ZBAT_THAQB_L1_SEALED",
     "blockchain": "WyreNet Sovereign L1 (Chain ID: 51950)",
-    "totalBooks": 196
+    "totalBooks": 198
   },
-  "totalBooks": 196,
+  "totalBooks": 198,
   "publisherDid": "did:wyre:0x471c852d254a67f36c129f2386ca21c31840dea4",
-  "anchoredAt": "2026-08-28T17:54:54.821Z",
+  "anchoredAt": "2026-08-28T18:49:28.534Z",
   "books": [
     {
       "index": 1,
@@ -133,9 +133,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "71380b22e87dfd5fb2b77110b51778e70af1c4db648e54c96aa26d94b06e7c10",
-      "sizeMb": "0.32 MB",
-      "txHash": "0xb2c28693aef4f78ec0993e9dc7a47739f2cb7bd7ee84f86f4a4ff6a86d941c50",
+      "sha256": "4f26346428d109f20cf412e7a6b56d843baeb17774f9c3a46f0100e026eb2305",
+      "sizeMb": "0.38 MB",
+      "txHash": "0x89d5cbb69fbc4e8b61f9f22dba3d136bec52436219bea87be9c0568d10ab953c",
       "blockHeight": 711
     },
     {
@@ -144,9 +144,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "d46dcfa31fd6152dfc9c1d2f61dd0cd95b181853abfc5a2cec6c144bae914eb6",
-      "sizeMb": "0.15 MB",
-      "txHash": "0x4c5a3d2fd59e6fbb400b2d18587dd00b68acba52872a1527a1b2979843889b19",
+      "sha256": "bbd542d08d7c062a4b815da90c92a4cb61bfa96036cfff79f3afda8c6e34aaf2",
+      "sizeMb": "0.16 MB",
+      "txHash": "0xe66e92faa3ba8505cc3056fe8176751faf3999e421a1fb322a2028a3e4b0fbed",
       "blockHeight": 712
     },
     {
@@ -188,9 +188,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "69398f494a177c42fb945f21028a1d1aa2bc6c96311b7776b120b472683dac01",
-      "sizeMb": "0.51 MB",
-      "txHash": "0x1b34ad3803ef1b3f81f5d51f2c090120276a63b2aa578dc63eb633ff5a9a4e3c",
+      "sha256": "c3e943ad0992e92f75b84efbe5f6c8f19fbf61070ef1cfe2d4de961c7600d007",
+      "sizeMb": "0.55 MB",
+      "txHash": "0x5f2d70a759b4af56e5901bd0589df81ffb47ce8cd4d30011ad42f5d4cdb16713",
       "blockHeight": 716
     },
     {
@@ -199,9 +199,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "4f5b0f32e5aa1c5818a2f163b0c02c500dceb6384d636666825cad20316a50d3",
+      "sha256": "89cce93a54a89f52928973ba40bf3454fe56378de4212f70934ea46aa82e3684",
       "sizeMb": "0.28 MB",
-      "txHash": "0x4c6ad8fd244df257d589982792a5ff0ffc21ed055e6074f3dff6453c05ec5b70",
+      "txHash": "0x157efb756fd4c67152d20077f022ea13328c8f65164788f590a0d2ca5daa95fd",
       "blockHeight": 717
     },
     {
@@ -210,9 +210,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "50f5a397a650acae60d70de105591ec420fb819360c17e6f215148c7c3a24e87",
-      "sizeMb": "0.30 MB",
-      "txHash": "0xcb58e7d4401a7e1e6f463c49b6afd4189091d908a0a4fe1aa0390cbb477b2556",
+      "sha256": "60c94182c1025ebd3574087fa9c05f5e00a2b0242e9ab8689ce20de102c195bc",
+      "sizeMb": "0.31 MB",
+      "txHash": "0x627644b54493aea632f0d1b54347a4af8810ef8a5f10bcbc96fe64830d676837",
       "blockHeight": 718
     },
     {
@@ -221,9 +221,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "af797477e69904839a39dc268ac5d6fc75e0fdabf0586055ad0edb10a7105f2e",
+      "sha256": "094bc7033f5ff2ee9cd33d8be95520539850915b67864d661f3d0c70c75fc4e7",
       "sizeMb": "0.16 MB",
-      "txHash": "0x6ac9a4a839a8d3dda83c6821d5850f994fb05df333c673f981dbe253ad84640a",
+      "txHash": "0xe6aa5f5b5296881c58e41ebab37d47b19b190fdee052f3366414cb453ed5773b",
       "blockHeight": 719
     },
     {
@@ -507,9 +507,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "d8b46b519586d8b2a8f780563c3e1ed3a9213edbdbc74ece394dd585c7a0eab7",
-      "sizeMb": "1.62 MB",
-      "txHash": "0x9e547e2c07f596ee5c20849f9f5a9a7603c511c1976277e09c8d93093b3aeeaf",
+      "sha256": "5fa2f5d41fe404377d2957cdb898114aa1ee685b5213dd836f7c166cc22f37ad",
+      "sizeMb": "1.79 MB",
+      "txHash": "0x251e75b56ce8df9003a5a1eb53378d09d03a7716c88144998c46f2e0edf8bd81",
       "blockHeight": 745
     },
     {
@@ -518,9 +518,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "3975957fdf67703debd5fde39ae848f04f89fc0fb9c644f622b8c3e916013315",
-      "sizeMb": "0.84 MB",
-      "txHash": "0xd182f1589dc032e2319b4b66018d87acff88250c2f2de1242e6b4c95f6748343",
+      "sha256": "d54a644eeafb164c798ce569d1b0db73f26d10e7a95f7430977ad0e23019cf2b",
+      "sizeMb": "0.87 MB",
+      "txHash": "0x4f06a051f88f5a435fb32c86b4615a7b1bcbcb554e0975f36f36ec3fc18e9e86",
       "blockHeight": 746
     },
     {
@@ -562,9 +562,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "22cd72234a220e43b262e894d91fbdce25202b48d2fbd978b8a7b1bc368fc8d4",
-      "sizeMb": "0.11 MB",
-      "txHash": "0x34dce206e1c7a382ce8ea9578808976d8c2f8648187b586e6d78bfe7f07ab2bd",
+      "sha256": "f3f97cf3b75e864df773f3a775db0c90a37082f2aa16bf0f2ea5f6198852325d",
+      "sizeMb": "0.14 MB",
+      "txHash": "0x8aa8958ed68dfc544ed9f9014aacdf2e58c53997fdfa64aa00010c151aeb3273",
       "blockHeight": 750
     },
     {
@@ -573,9 +573,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "982571a8268a235f52c52df6a41ab1e32878a4008f27e1345699838126325a4a",
+      "sha256": "d7083db8eeced68aa21b1f2804311cb4dd09aac5c983ee06405beccabd77b825",
       "sizeMb": "0.06 MB",
-      "txHash": "0x2a368dac968bbb7a8f793d052c28c28333836c82685135aa7750fe3ae7d4fbc3",
+      "txHash": "0x12cbb220a1272288405176153d87d01bad9335cfe3f8d0f66e962fabdeada9b0",
       "blockHeight": 751
     },
     {
@@ -628,9 +628,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "f902ce7e1580343bc5b6e982bf97fbb7fd1070d2952e2904a8ca25eacacb28ae",
-      "sizeMb": "0.24 MB",
-      "txHash": "0x3cad40ca5cdd972c2dd7eea66bc1f8752b9168d6023cb6ae8e74d196b6016ad9",
+      "sha256": "5e4e8d7e611339cc00b0f9d35f025d87bc30ea2d9f0379dea2ad38121c37e4fc",
+      "sizeMb": "0.27 MB",
+      "txHash": "0x27ab438cdc6a2833f57f4c797447f8ed86b4c79dfb5263b33432f70888f5c328",
       "blockHeight": 756
     },
     {
@@ -639,9 +639,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "f5bc34fe457516779ed6b36e7017348aa622c1544a0a7812c97c094233a8ad32",
+      "sha256": "65c80da38d0a6ae57b0ddf6bac31adde11c2d99e1aee5a2abb00d1f9051de3ef",
       "sizeMb": "0.12 MB",
-      "txHash": "0xb44ce0233b8b10bd6213701033bca7751f11114e90cc4dfc33a37b35de550250",
+      "txHash": "0xea5be713c98fff6f4875406aa9a30f3b3f499b9bd376bcbe21acaec586c1b0fb",
       "blockHeight": 757
     },
     {
@@ -694,9 +694,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "f84ebc2934a026213f56beb0cc196f20a28753a30255eb7607f1704dc6601a4b",
-      "sizeMb": "3.83 MB",
-      "txHash": "0xe3c274088ab80fac8c3566958228ce26ea14eb0898bb8615f8a308dd0372f6bc",
+      "sha256": "5e872f8c4f306b5cca4cc6b9faf0b34404d2c50333357f5642a318b059ddc4c2",
+      "sizeMb": "3.88 MB",
+      "txHash": "0x628a5505a786cefc0e8988264c5bfdc41cc95a144170cb6a688a8306e5fc1f47",
       "blockHeight": 762
     },
     {
@@ -705,9 +705,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "5f39a3c67c05e50aaddecba944646798608eb86fd6562f7c8d8745c0a67ef5ce",
-      "sizeMb": "2.04 MB",
-      "txHash": "0x2ffb2f8f151200ecc1eefd62e7e473e35e13401e0cfc28e4618b2665dbf1fddf",
+      "sha256": "5506066f0a55791e1fc141baa7a42c5f2a848a6d30d299a61acdb76965803129",
+      "sizeMb": "2.05 MB",
+      "txHash": "0x8323b41ceedbe8e75a262de6967417580c757a0462c975cb59fdb48f663373ab",
       "blockHeight": 763
     },
     {
@@ -892,9 +892,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "f857073f63ccc3553a0ef8ca3d68d4d27421da70bcb90c60ca2330aafc2e567c",
-      "sizeMb": "0.32 MB",
-      "txHash": "0xe8f6ca9a8fe34197543f7ccffe247b119b6421335b7e6ec5c1008a27763e63a7",
+      "sha256": "bb8464aca13901e149389bba395702968ac9f329c36d1064fd2a6074fc0af7b7",
+      "sizeMb": "0.44 MB",
+      "txHash": "0x069cbb9e5b32041039edb10d0e35b42ba1c531477f858d2ae9e7bf2e968e2ba5",
       "blockHeight": 780
     },
     {
@@ -903,9 +903,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "748d34ad3c3744896229410ec80027e6a34179a55e2b349cc8c639c7f01250ad",
-      "sizeMb": "0.15 MB",
-      "txHash": "0x0cfeb937cd219f13a01866699e567e0760b880154a500b94ff2bf32a0e7dbc7c",
+      "sha256": "133849fbd2ab99eba7f2e09d527bd84aac434f710ade2c5f41118de429f0f88c",
+      "sizeMb": "0.16 MB",
+      "txHash": "0x530b3b8a4dcba0a4492ea87468ab10efd4ccd1fcb8a018e8ad17989cebd3aae9",
       "blockHeight": 781
     },
     {
@@ -925,9 +925,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "104e5ee9f6e6fb488188e183fa5228545b146022dbad5709647ca79f77ad5c74",
-      "sizeMb": "6.44 MB",
-      "txHash": "0x0b580f9435e20b28d5e73d71437d86c950eab28972b01c9c37e6fac0dc0e5e83",
+      "sha256": "64ab1a136c7035cc855b1550e90b0acf1a213e9eb82064fdcd3b01eac81129c0",
+      "sizeMb": "7.90 MB",
+      "txHash": "0x68078c8cb923f520ac93bb8a048d31fe086c73386154b7c483c8d38496e14465",
       "blockHeight": 783
     },
     {
@@ -936,9 +936,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "5b2fd82c445f0f44e0a4d3d0eadfb688852c2ccc68b3928c38b265fa1b0e979d",
-      "sizeMb": "3.22 MB",
-      "txHash": "0x236c4dc117a9a9808719fe24dacfcd4221203e6ed738ac61d832f676105d3583",
+      "sha256": "4a5c8a5cec7de1589e3ec9a30dd6d097d3483d850443c329dd824e4848c34d4f",
+      "sizeMb": "3.46 MB",
+      "txHash": "0x367633bbaa2c43cfa4bf0947ca00f0cc81f2fbc5ee971e383afd96fc8c1d4810",
       "blockHeight": 784
     },
     {
@@ -1145,9 +1145,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "e2cd964842ec356c8660a4b9fdf2adfe59b3127e4435e40c5269251cb08c203c",
-      "sizeMb": "0.23 MB",
-      "txHash": "0xa24b15882229fe2efea22238ae2602fda71b2fa55208c37dec81153997ceddc2",
+      "sha256": "2f3a7b779430a96ec481bb8ea305ef3e3e8b0d9b7b3743e5e6edf74090516524",
+      "sizeMb": "0.30 MB",
+      "txHash": "0x574b4d616f0018ebbbb07ae61770dc8add3c35b09d87af154744f9e3370f1e56",
       "blockHeight": 803
     },
     {
@@ -1156,9 +1156,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "6c81cd708edcb6db3bf96df6a39759e01d320e909cb3040ec0f9b0010e8ec700",
-      "sizeMb": "0.11 MB",
-      "txHash": "0x26cc33823cdb7dece545b4d1012d7ba283a2c889929c64e1cc3ee5350d7f9602",
+      "sha256": "f0d1469dec116aaa81c167cba3cd1b4667f78470583055cd641f96515f538260",
+      "sizeMb": "0.12 MB",
+      "txHash": "0xe1d895288b014af42c49fddcd34f56fafa3bf677cf51c803950d8207007e418b",
       "blockHeight": 804
     },
     {
@@ -1266,9 +1266,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "2e0480e4b942dc7595e102641984b997489f3f8fdd82e8948635e0c8b960d399",
-      "sizeMb": "0.32 MB",
-      "txHash": "0x73a694d584a405c4cfdd2d65d1eb29110d0f9b3dbe99fdbf4cdc1779a8994c7c",
+      "sha256": "0866cdc45e1ba44fc34bc7bf4c59c111a9994a5487544ad7297d004a6eb2c5f0",
+      "sizeMb": "0.35 MB",
+      "txHash": "0xe88a57385c0bee6f887838857afdc575258f03c2308d20484a53e52849f05f3f",
       "blockHeight": 814
     },
     {
@@ -1277,9 +1277,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "bcba98979c5e7f3ae7e42f0aa691aac88f3feede45b3feaf2b740bcd47191782",
+      "sha256": "19669b255bd9b004a57cf8cb122723c69d451a33e5a9daa8213d9f15f3d9aafb",
       "sizeMb": "0.16 MB",
-      "txHash": "0xc3f76c84f7d81a2ff5e07183df8887c54965eacb0821d5043bc8e9c606eab1b5",
+      "txHash": "0x8996d35570ae8f6f543ebd76ace39e397ff01c962642aafbec6652d56fb4d0fd",
       "blockHeight": 815
     },
     {
@@ -1321,9 +1321,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "f6668a2529392b0708d01109f9be4f6ae7a2caf77b8d23007173123289c1fec5",
-      "sizeMb": "0.33 MB",
-      "txHash": "0x81f0011724ea1ed10010867274caca0ec90f2bc7d6cb6e37f516202144c2c2a7",
+      "sha256": "4955ba5a853b2134f34ff3cc27f59af830224bf8d233041188f030f660daa0b7",
+      "sizeMb": "0.39 MB",
+      "txHash": "0x21cf63f808fb44a17244053724d15c6acf1151891446348adbe1ee6e2c97a9ba",
       "blockHeight": 819
     },
     {
@@ -1332,9 +1332,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "449da0d230aff17f3661fc552789222ef0292a6eaf6a80f260499a29bceb94dc",
-      "sizeMb": "0.16 MB",
-      "txHash": "0x62dea8027becba4afc7ac157b47041458a12488fb59af2cfc797bcf127595c37",
+      "sha256": "7e62df956036842628f038b6fd9cd715117d3f1bf56d7e9fe5a8f1cdfb22be50",
+      "sizeMb": "0.17 MB",
+      "txHash": "0xc7580af053f798ed52978c629ff4782fa10ca68e2823087e764e4887db90a7e5",
       "blockHeight": 820
     },
     {
@@ -1343,9 +1343,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "9dbdb866ba43fc0b67c469ce6821aa71e08bdfa8298905e44150546f23512165",
-      "sizeMb": "0.15 MB",
-      "txHash": "0x581f10ed090f34aac91bb77cd43a43bc704049cbfeed0c4a85789e5290cbeb53",
+      "sha256": "ac2fc7f3cdd4d164d30cb7593f19674f33647f69497981902cd86b80b97e7bef",
+      "sizeMb": "0.23 MB",
+      "txHash": "0x054375e3a877a0e3eb1e30515b8e0f61849420a976281ac06326a2c619e02d08",
       "blockHeight": 821
     },
     {
@@ -1354,9 +1354,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "0a252b404c061449e070b774abfaf6227bdd9fb12fdf1e10eb342930ed257d47",
-      "sizeMb": "0.01 MB",
-      "txHash": "0xd67963f674ca3308227e82a5125ec08ca1e703c527beac3b38348a86ad9791ee",
+      "sha256": "ca35ee37120edffda89b854a70221de713a30de1211811355a0e7dbadee2b8ca",
+      "sizeMb": "0.04 MB",
+      "txHash": "0x1d10f6c1ed25c5ac6d493c0b7b13680d24913e65f0b478f987615552ec0cedda",
       "blockHeight": 822
     },
     {
@@ -1365,9 +1365,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "2aadbfece9514313de3be825080f3573422cdd77825eca4e87bf864358599fab",
-      "sizeMb": "0.21 MB",
-      "txHash": "0xa027e906591e80ebca8b38f0c0d62ccc9430f4ff03e7670ecc28c6a572df2284",
+      "sha256": "3a3b708de594638282ed8de7d60cbf3f0fe8925d44a7796657e062c8f0035dda",
+      "sizeMb": "0.25 MB",
+      "txHash": "0x303c45ef5ca91c62f92c7bed0361920292d5a168c819776d1ddfe799322d94e2",
       "blockHeight": 823
     },
     {
@@ -1376,9 +1376,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "6c7bdf24ce0f79599b21ce7aef482c57ba326b59a5d64d0d94d8f70d6aefc77e",
-      "sizeMb": "0.10 MB",
-      "txHash": "0xc5c293529d20e25b68438a0a50a2884f5313aad40b7e4548ad4e0f8ca2028b09",
+      "sha256": "6f2d69d7053e43e7cc3d4998bec78eb2894b4b07e02704c603120c23e5dfe3b4",
+      "sizeMb": "0.11 MB",
+      "txHash": "0xacb0952ea36dc05c47b2f4d12234cbdc6b44ed7f81db9f6c28efda858d50df27",
       "blockHeight": 824
     },
     {
@@ -1387,9 +1387,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "9627a25288e03faaaadb81faf2edc37d37a8e65f2e1aaa3d30082ca9525e69e7",
-      "sizeMb": "0.18 MB",
-      "txHash": "0xa3520cf062f8dc3182574d36b894dcf8ad277ce762149acd406c392485498c77",
+      "sha256": "b4a00d9f7c2e80b1f27d8d9df6914aa24f3de068f5ce8114718da344deda4bf5",
+      "sizeMb": "0.28 MB",
+      "txHash": "0x39570b461dc76e806d0ad8d217de453e55242d239e08d27a00796692fd687dc7",
       "blockHeight": 825
     },
     {
@@ -1398,9 +1398,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "2adbf470e7d0e8653b655f54a36c305734070c8f2249d3af7b3a8ded8899a48f",
-      "sizeMb": "0.01 MB",
-      "txHash": "0xeebc0ccd020102140ab2f3f3275e13a10012af0786548481be7c001f05fcf2dc",
+      "sha256": "2b752cbe74548be04d3a4bcbeef48ffab058592add76281b09b40da1f9b738ac",
+      "sizeMb": "0.05 MB",
+      "txHash": "0xd1d9c93f201ec298b112c97aad57d37822d20830709f35633ba6897db7b21b86",
       "blockHeight": 826
     },
     {
@@ -1431,9 +1431,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "8fbc7cb11cf4fc6ba1f1eba3dbe1b8f8e695cc2a24e0c438684439f6a062bbc9",
-      "sizeMb": "0.15 MB",
-      "txHash": "0x49f323eca06d370d7230978104c8fbebe74e86559bec24ab59a5e57a635d3dbc",
+      "sha256": "1151bcadd170c5064f0a01d1d2e853dded4cd46a990c3cecc1c3d2f0639440a3",
+      "sizeMb": "0.16 MB",
+      "txHash": "0x9af379bedb2502bd7acf65bb3c271599ae6fe74c995e4386ae9e9b34bf94d5a5",
       "blockHeight": 829
     },
     {
@@ -1442,9 +1442,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "ace101716eabfda055b07f12ae5a16cc9fd30ae4f875c26e7f80cee5d283fb23",
+      "sha256": "88aee9590bdcd528877247d27500914db6271a4cff6a62fd05b5f30d1b62fe3b",
       "sizeMb": "0.08 MB",
-      "txHash": "0x019fde381e26fcf3092b2d2ce7d63d1e67451704c600ec3d320bbe9e71a321a2",
+      "txHash": "0x1b670b35243ff09ec0654000a5db9e007b8dde6a11ef2b576de9d329fda1f850",
       "blockHeight": 830
     },
     {
@@ -1453,9 +1453,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "7cbe8eb1d7ab9eadee1d61cb2e99675f8d4c307a4a01cffb0912609edc94dbbd",
-      "sizeMb": "0.42 MB",
-      "txHash": "0x50c87339e524f785bb8b83609f04d67ddff5cb470a1f66ab50d27eb25f9a8905",
+      "sha256": "da4627968650311c2a5a1367ed6667ae39ac52ed3f0e01dfb62767f1c51df93a",
+      "sizeMb": "0.46 MB",
+      "txHash": "0xe4571ac52eeda406addc284faafd6802f1ef57de02402b09d096c7353ed2da7a",
       "blockHeight": 831
     },
     {
@@ -1464,9 +1464,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "cf37318e17629919242a866e9102cc4cae552b5d61898c2ac03a79920467b25c",
-      "sizeMb": "0.21 MB",
-      "txHash": "0x84691c689300bc8ccdee0681c3944bcc8ffc9abf58e6e1241d0e326276cd9c9e",
+      "sha256": "4386fb432a384931106a0a6a1c34e5867067174b2c53a1edee42d02b5233bedf",
+      "sizeMb": "0.22 MB",
+      "txHash": "0xcf3a1e7bafab5c3950d4c7f2e106727dab9afba1eac7bfa7ec04cbd1361bf14b",
       "blockHeight": 832
     },
     {
@@ -1475,9 +1475,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "265f57b5766b8a323b3be24c41080769d4a9b2f9207fe7220333c6bf6eee6d67",
-      "sizeMb": "0.31 MB",
-      "txHash": "0xc8ab343138cb5b3ce343dc73d68396dbbb83ebc853c520cbf6789370023405fe",
+      "sha256": "48a9a48226abdf44ca2d3f098be15d17ab6235d30b849e6f37b0e3211dc79670",
+      "sizeMb": "0.33 MB",
+      "txHash": "0x642f7067a1cf08fbb0b7b7ad24b50a8c0878296ddb345306a0c4092bd65791c8",
       "blockHeight": 833
     },
     {
@@ -1486,9 +1486,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "a95012f4bb47eaf17b40b1e8f74946210025f07051528900f94516bcebeb62bc",
+      "sha256": "0a9ae910a3f496551a7a2cdde242795983f5e27926ecfc0d8023dd696350c774",
       "sizeMb": "0.16 MB",
-      "txHash": "0x28840b8c3dd6f3afb4f31b687c7142f70aa47bc8e0cd97c2cf634f1e9ad61dd8",
+      "txHash": "0x872959d898b29ce3feb01c5c747eb1406325e6b8e5e4644d12978de85f73ff18",
       "blockHeight": 834
     },
     {
@@ -1519,9 +1519,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "4a021b14e067adc30ba5360f0a09506218fcabbca9b3e09e10e9fde66a60c447",
-      "sizeMb": "0.18 MB",
-      "txHash": "0x710168b1fc44bb2ae528c034aee686c4f6a9e79153cbaba364f04961d6c234a5",
+      "sha256": "636789c2596a93cec777644dd113600c5fe85d9e8ebe543f0295b37d4208f5cb",
+      "sizeMb": "0.19 MB",
+      "txHash": "0x2dafddea234e6e3b0df9b943c19823719b06ea9dd92fab88d37d5781a48d4583",
       "blockHeight": 837
     },
     {
@@ -1530,9 +1530,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "805a071a7f3d2c82843c71000e098034ebecd405c0592955e343428d12f38b05",
+      "sha256": "d929b6a8bf7e39a5ddf71d5d7a4ffe58f49e879e9a571bf7066f9795d3d3c97d",
       "sizeMb": "0.10 MB",
-      "txHash": "0x0a5ff4085c2f1ee03d736ceae9b9c06ea07668c394b4434d2847d0d1b5f939d1",
+      "txHash": "0xa77f2d60239ffe088fd36491ca99ad164a1bf6f57f97db335ad2182b6e51f3f6",
       "blockHeight": 838
     },
     {
@@ -1662,9 +1662,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "e89ebd39d00e06efbc4c9416450baec8e1a5ce2c68d98077e3fa6fd41d6a8118",
-      "sizeMb": "0.87 MB",
-      "txHash": "0xe98a514ffd746a90ea7829c48f6c6c408d8021e1fe08eb3cedeeea2a35bdc1f9",
+      "sha256": "38d439c6ae5fbcd35ea1bd256a029844fc80ae3194b06aa14c3c5c78bd772ca2",
+      "sizeMb": "0.99 MB",
+      "txHash": "0xf7912d6e0bd1b1d02a6bbe3c540bef368f052ad39cc017450bc4e76ecbff022f",
       "blockHeight": 850
     },
     {
@@ -1673,9 +1673,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "e790b6362b93ad3cb0b24405bebba53d7d86dab5478c7fc313b4542a2dad100c",
-      "sizeMb": "0.45 MB",
-      "txHash": "0x107f9f13fe36b3f7d384544b3636d33d93a7f367661530f97d4081df3349e9df",
+      "sha256": "306510ef371125efbf6d843063752c0297549b053c6daed815f559c9a6878cd0",
+      "sizeMb": "0.46 MB",
+      "txHash": "0x2282be232013305bbc0c152c2e36e6ded99dfddf2c8c698d551307056ac0a087",
       "blockHeight": 851
     },
     {
@@ -1684,9 +1684,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "a10f8159363088805048e8032305e47f238d34d5b763dc02ed658acded5e80b8",
-      "sizeMb": "0.09 MB",
-      "txHash": "0x1b08ad5dc0a3c54a9f99e8285466db8ebd2c218f7adab3cf22e066b4392ee6d6",
+      "sha256": "98e274a6ee1de939a5e9d1f98f4f4dece93ec1ef4b86f95a207ab86074192e0e",
+      "sizeMb": "0.12 MB",
+      "txHash": "0x522354e9e2020a10fba4d386934b35c56033206303a69cbe5977e02ada9fe08f",
       "blockHeight": 852
     },
     {
@@ -1695,9 +1695,9 @@
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
-      "sha256": "1b6ac3a448b546a74a0f9931af8adad8ef877959721828eb1e0f4e92c11bc769",
+      "sha256": "4830de94856a3a27c7c0192434351165ecc0914251e5604c8b66b59b4f11978a",
       "sizeMb": "0.02 MB",
-      "txHash": "0xe4f49f32d8a1d3c3fdc9bdd793e025a554b533620db4c373030266ceaf084a8d",
+      "txHash": "0xd38d14497db8c56b00ac62c4f0a333cc80680f24b446e46257c7a0554cb7882a",
       "blockHeight": 853
     },
     {
@@ -2098,80 +2098,102 @@
     },
     {
       "index": 190,
+      "filename": "tahafut_al_falasifa_complete_76sections_bilingual_en.epub",
+      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
+      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
+      "channelId": "chan-imam-abuhamidd",
+      "sha256": "0c95603f1f87fe117bec8aa02a856cafbd4a742fe844522e50c7635bfa311848",
+      "sizeMb": "0.45 MB",
+      "txHash": "0x7f9eb7e655e8445d3818b38c6f4fdf19773e12332dc70a4617001c69c0f3a8dd",
+      "blockHeight": 890
+    },
+    {
+      "index": 191,
+      "filename": "tahafut_al_falasifa_complete_76sections_pure_en.epub",
+      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
+      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
+      "channelId": "chan-imam-abuhamidd",
+      "sha256": "80f4de71f85a1ab1e89c81511700884a9d997db784ca070e82bc750114f0bd89",
+      "sizeMb": "0.22 MB",
+      "txHash": "0x89f67dde582e979ceef7a4594224e6b34ce8c6ea00d9d8a1104cf67f3e7f07fa",
+      "blockHeight": 891
+    },
+    {
+      "index": 192,
       "filename": "tahafut_al_falasifa_pure_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "80f4de71f85a1ab1e89c81511700884a9d997db784ca070e82bc750114f0bd89",
       "sizeMb": "0.22 MB",
-      "txHash": "0xd6fc0c9f62e6ab5abbc59bd119be3fff14c85c1eae8253dd4e2edf321fb93eed",
-      "blockHeight": 890
+      "txHash": "0x9fef997a4a748e5a8e7ab9ade26cd55ed45e6a9dff1077c852413afa10e91206",
+      "blockHeight": 892
     },
     {
-      "index": 191,
+      "index": 193,
       "filename": "tahdhib_al_asma_wa_al_lughat_bilingual_lexical_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "0532c1f822ca61da916563065af7a705fe851c9273fab2d108511fa5c656f770",
       "sizeMb": "2.53 MB",
-      "txHash": "0xa5c5dee081df9985bbdcecde17b16cb9dbbb5e9a387c838105d0508942b5fe52",
-      "blockHeight": 891
+      "txHash": "0xbcbc8a5d351c47b38c312dafc36eb6447fbf5f8329df4758a86c1231342c50d7",
+      "blockHeight": 893
     },
     {
-      "index": 192,
+      "index": 194,
       "filename": "tahdhib_al_asma_wa_al_lughat_pure_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "a60196b922998cce58718bc8040c20bb7120654863db0e8208537b20f52fda8f",
       "sizeMb": "0.25 MB",
-      "txHash": "0x3097b5862a845b1c5a33fba406599b09d0f040fbd3e9f4e01eaa955f239e7461",
-      "blockHeight": 892
+      "txHash": "0x02741743abe8695576c70992e727adc14c2d42435a12b0b9edb4bbb2e243e2d2",
+      "blockHeight": 894
     },
     {
-      "index": 193,
+      "index": 195,
       "filename": "tahrir_alfaz_al_tanbih_bilingual_lexical_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "1fd369a1d0a98e1687e7938e8d437ffabbeb1cf78a280dfa5576eb00993f8d94",
       "sizeMb": "0.32 MB",
-      "txHash": "0xd179e50738ea05ce72efe710eb2a46548bdbaea3f1a4f2482d3d7782aedde6db",
-      "blockHeight": 893
+      "txHash": "0x81f8767890c88a78f2bb47e3d4d96b0a7a91921215d4516085fac8d98be8799b",
+      "blockHeight": 895
     },
     {
-      "index": 194,
+      "index": 196,
       "filename": "tahrir_alfaz_al_tanbih_pure_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "3311b6d424c3f9f6e4083629055ed4914a713910f8afa0b4da1e212848550618",
       "sizeMb": "0.05 MB",
-      "txHash": "0xdcba7e52de91e86b6d8454a077df954968573ad8f03e8e55adfafa643187f9a8",
-      "blockHeight": 894
+      "txHash": "0xb7b312d001f173aecfc3880867938da2f95f9c0057c5b3614676219371738841",
+      "blockHeight": 896
     },
     {
-      "index": 195,
+      "index": 197,
       "filename": "takhmis_al_ghanima_bilingual_lexical_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "ae9d4b9bbf711ae494e989bb18c9e14fe01a1594986f405cdc3a7156936e947b",
       "sizeMb": "0.04 MB",
-      "txHash": "0x5c6281a8037708b4d327ab7624b7f04da74c14eb4667d0f4c90952aaec1bb170",
-      "blockHeight": 895
+      "txHash": "0x26b9879411df28d0917603f5db10db75ff9bf3d459b1cd2cf6c52f12aa1e0372",
+      "blockHeight": 897
     },
     {
-      "index": 196,
+      "index": 198,
       "filename": "takhmis_al_ghanima_pure_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "0f291a2d101cd45ecf7823ef7cec4bcca526b567cdf6367e29b8776f4da5bbdc",
       "sizeMb": "0.01 MB",
-      "txHash": "0xf351895e5dc19d6a385e592155be04b4858d31bf6d2b4a419c7944d68512b6ef",
-      "blockHeight": 896
+      "txHash": "0x1f1f6314f7c64fe0d26e3f318c322495a281649b61eafe749f618dd73282254d",
+      "blockHeight": 898
     }
   ]
 }
