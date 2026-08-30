@@ -1157,17 +1157,15 @@ async function loadChannelHistory(channelId) {
   const stream = document.getElementById('messages-stream');
   stream.innerHTML = '';
 
-  // Fetch from server if not cached
-  if (!state.messages.has(channelId)) {
-    try {
-      const res = await fetch(`/api/history/${channelId}`);
-      if (res.ok) {
-        const history = await res.json();
-        state.messages.set(channelId, history);
-      }
-    } catch (e) {
-      console.warn('Could not fetch channel history:', e);
+  // Always fetch freshest channel history from server
+  try {
+    const res = await fetch(`/api/history/${channelId}?t=${Date.now()}`);
+    if (res.ok) {
+      const history = await res.json();
+      state.messages.set(channelId, history);
     }
+  } catch (e) {
+    console.warn('Could not fetch channel history:', e);
   }
 
   const msgs = state.messages.get(channelId) || [];
