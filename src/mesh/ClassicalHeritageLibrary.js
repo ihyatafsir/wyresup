@@ -60,17 +60,25 @@ class ClassicalHeritageLibrary {
       // 3. Imam al-Mawwaq - Sunan al-Muhtadin
       else if (file.startsWith('sunan_al_muhtadin_')) {
         let edition = 'Pure English Scholarly Translation';
-        if (file.includes('bilingual')) edition = 'Bilingual Classical Arabic + Lexical Edition';
-        if (file.includes('oversight')) edition = 'Critical Oversight & Comparative Apparatus Edition';
+        let lang = 'English';
+        if (file.endsWith('_sq.epub')) {
+          edition = 'Botim i Pastër Akademik Shqip (Pure Albanian Edition)';
+          lang = 'Albanian (Shqip)';
+        } else if (file.includes('bilingual')) {
+          edition = 'Bilingual Classical Arabic + Lexical Edition';
+        } else if (file.includes('oversight')) {
+          edition = 'Critical Oversight & Comparative Apparatus Edition';
+        }
 
         catalog.spiritualConduct.push({
           id: file.replace('.epub', ''),
           filename: file,
-          title: 'Sunan al-Muhtadin fi Maqamat al-Din — ' + edition,
+          title: 'Sunan al-Muhtadin fi Maqamat al-Din (' + lang + ') — ' + edition,
           arabicTitle: 'سنن المهتدين في مقامات الدين',
           author: 'Imam Abu Abd Allah al-Mawwaq al-Gharnati (الإمام أبو عبد الله المواق الغرناطي 797–897 AH)',
           category: 'Spiritual Conduct, Jurisprudence & Ethics (السلوك والفقه والأخلاق)',
           edition,
+          language: lang,
           size: sizeStr,
           downloadUrl
         });
