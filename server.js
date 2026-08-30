@@ -714,7 +714,7 @@ function seedImamRaziLibrary() {
 
   // 1. Welcome Message
   gossipMesh.publish(spaceId, channelId, {
-    content: ` **مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِيّ // COMPLETE EPUB TRANSLATIONS LIBRARY**
+    content: `🏛️ **مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِيّ // COMPLETE EPUB TRANSLATIONS LIBRARY**
 
 Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–606 AH / 1149–1209 CE)** translated masterworks. All volumes are available below as standalone EPUB e-books for offline reading and direct P2P download.`
   }, { senderId: 'ibn-manzur@lisan' });
@@ -731,8 +731,8 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: ` **Tafsir al-Kabir (Mafatih al-Ghayb) — Volumes 1 to 32 (Complete)**
-*The monumental commentary on the Holy Quran by Imam Fakhr al-Din al-Razi. Complete 32-volume English translation.*`,
+      content: `📖 **Tafsir al-Kabir (Mafatih al-Ghayb) — Volumes 1 to 32 (Complete)**
+*The monumental commentary on the Holy Quran by Imam Fakhr al-Din al-Razi. Complete 32-volume English translation.* `,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
@@ -749,8 +749,8 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: ` **Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi (The Sublime Quests in Divine Science)**
-*Imam al-Razi's final philosophical and theological magnum opus (Vols 1–9 + Complete Compendium in Pure English & Arabic Lexical Editions).*`,
+      content: `📜 **Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi (The Sublime Quests in Divine Science)**
+*Imam al-Razi's final philosophical and theological magnum opus (Vols 1–9 + Complete Compendium in Pure English & Arabic Lexical Editions).* `,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
@@ -767,8 +767,8 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: `️ **Comparative Heresiography (Firaq) & Usul al-Fiqh**
-*Imam al-Razi's famous treatise on world religions & Islamic sects (I'tiqadat Firaq al-Muslimin wa'l-Mushrikin in 3 translations) along with his magnum opus on legal methodology (Al-Mahsul fi 'Ilm Usul al-Fiqh).*`,
+      content: `⚖️ **Comparative Heresiography (Firaq) & Usul al-Fiqh**
+*Imam al-Razi's famous treatise on world religions & Islamic sects (I'tiqadat Firaq al-Muslimin wa'l-Mushrikin in 3 translations) along with his magnum opus on legal methodology (Al-Mahsul fi 'Ilm Usul al-Fiqh).* `,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
@@ -785,13 +785,12 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: ` **Core Kalam & Philosophical Theology Treatises**
-*Including Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, 'Ismat al-Anbiya', Ma'alim Usul al-Din, and Al-Qada' wa'l-Qadar.*`,
+      content: `💎 **Core Kalam & Philosophical Theology Treatises**
+*Including Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, 'Ismat al-Anbiya', Ma'alim Usul al-Din, and Al-Qada' wa'l-Qadar.* `,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
 }
-
 
 // Seed Imam Abu Hamid al-Ghazali EPUB Library Catalog into #imam-abuhamid channel
 function seedImamGhazaliLibrary() {
@@ -958,6 +957,23 @@ function seedClassicalHeritageLibrary() {
 
     gossipMesh.publish(spaceId, channelId, {
       content: "📜 **Sunan al-Muhtadin fi Maqamat al-Din — Imam al-Mawwaq al-Gharnati (797–897 AH)**\n*Essential classical manual on spiritual states, stations, and orthodox spiritual etiquette (Pure English, Bilingual Lexical & Oversight Critical editions).* ",
+      attachments: atts
+    }, { senderId: "ibn-manzur@lisan" });
+  }
+
+  // 5. Classical Devotional Treasures & Reading Editions
+  if (catalog.classicalTreasures && catalog.classicalTreasures.length > 0) {
+    const atts = catalog.classicalTreasures.map(item => ({
+      name: item.filename,
+      type: "application/epub+zip",
+      size: 600000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, channelId, {
+      content: "💎 **Classical Treasures & Comparative Study Editions**\n*Takhmis al-Ghanima, Bilingual Corpus apparatus editions, and continuous classical study volumes.* ",
       attachments: atts
     }, { senderId: "ibn-manzur@lisan" });
   }

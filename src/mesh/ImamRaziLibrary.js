@@ -12,7 +12,7 @@ class ImamRaziLibrary {
 
     const files = fs.readdirSync(dir).filter(f => f.endsWith('.epub'));
     
-    // Group catalog into rigorous scholarly classifications
+    // Group catalog into rigorous scholarly classifications exclusively for Imam Fakhr al-Din al-Razi
     const catalog = {
       tafsirKabir: [],
       matalib: [],
@@ -26,15 +26,15 @@ class ImamRaziLibrary {
       const sizeStr = (stats.size / (1024 * 1024)).toFixed(2) + ' MB';
       const downloadUrl = '/epubs/' + file;
 
-      // 1. Tafsir al-Kabir (Mafatih al-Ghayb)
+      // 1. Tafsir al-Kabir (Mafatih al-Ghayb) - Volumes 1 to 32
       if (file.startsWith('tafsir_kabir_')) {
         const volMatch = file.match(/vol_(\d+)/);
         const volNum = volMatch ? parseInt(volMatch[1], 10) : 1;
         catalog.tafsirKabir.push({
           id: file.replace('.epub', ''),
           filename: file,
-          title: 'Tafsir al-Kabir (Mafatih al-Ghayb) — Volume ' + volNum,
-          arabicTitle: 'التفسير الكبير (مفاتيح الغيب) — المجلد ' + volNum,
+          title: `Tafsir al-Kabir (Mafatih al-Ghayb) — Volume ${volNum}`,
+          arabicTitle: `التفسير الكبير (مفاتيح الغيب) — المجلد ${volNum}`,
           author: 'Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي)',
           category: 'Tafsir & Quranic Sciences (التفسير وعلوم القرآن)',
           volume: volNum,
@@ -42,7 +42,7 @@ class ImamRaziLibrary {
           downloadUrl
         });
       } 
-      // 2. Al-Matalib al-\'Aliyyah min al-\'Ilm al-Ilahi
+      // 2. Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi
       else if (file.startsWith('al_matalib_')) {
         const volMatch = file.match(/vol_(\d+)/);
         const volNum = volMatch ? parseInt(volMatch[1], 10) : 'Complete';
@@ -50,8 +50,8 @@ class ImamRaziLibrary {
         catalog.matalib.push({
           id: file.replace('.epub', ''),
           filename: file,
-          title: 'Al-Matalib al-\'Aliyyah min al-\'Ilm al-Ilahi ' + (volNum === 'Complete' ? '— Complete Edition' : '— Volume ' + volNum) + ' ' + (isLex ? '(Arabic Lexicon Edition)' : '(Pure English)'),
-          arabicTitle: 'المطالب العالية من العلم الإلهي ' + (volNum === 'Complete' ? '(المجموعة الكاملة)' : '(الجزء ' + volNum + ')'),
+          title: `Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi ${volNum === 'Complete' ? '— Complete Edition' : `— Volume ${volNum}`} ${isLex ? '(Arabic Lexicon Edition)' : '(Pure English)'}`,
+          arabicTitle: `المطالب العالية من العلم الإلهي ${volNum === 'Complete' ? '(المجموعة الكاملة)' : `(الجزء ${volNum})`}`,
           author: 'Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي)',
           category: 'Theology & Metaphysics (العلم الإلهي والميتافيزيقا)',
           volume: volNum,
@@ -59,8 +59,8 @@ class ImamRaziLibrary {
           downloadUrl
         });
       }
-      // 3. Firaq (Sects & Heresiography) & Usul al-Fiqh
-      else if (file.startsWith('itiqadat_') || file.startsWith('al_mahsul_')) {
+      // 3. Firaq (Sects & Heresiography) & Usul al-Fiqh (Al-Mahsul & I'tiqadat)
+      else if (file.startsWith('al_mahsul_') || file.startsWith('itiqadat_')) {
         let title = '';
         let arabicTitle = '';
         let category = 'Comparative Heresiography & Usul al-Fiqh (الفرق وأصول الفقه)';
@@ -90,14 +90,15 @@ class ImamRaziLibrary {
       }
       // 4. Core Kalam & Philosophical Theology Treatises of Imam Razi
       else if (
-        file.startsWith('al_qada') ||
+        file.startsWith('al_qada_') ||
         file.startsWith('qada_') ||
         file.startsWith('asas_') ||
         file.startsWith('lawami_') ||
         file.startsWith('arbain_') ||
         file.startsWith('ismat_') ||
         file.startsWith('macalim_') ||
-        file.startsWith('asrar_')
+        file.startsWith('asrar_') ||
+        file.startsWith('risalah_fi_al_itiqad_')
       ) {
         let title = file.replace('.epub', '').replace(/_/g, ' ');
         let arabicTitle = 'رسائل الإمام الرازي';
@@ -122,7 +123,10 @@ class ImamRaziLibrary {
           arabicTitle = 'معالم أصول الدين';
         } else if (file.startsWith('asrar_')) {
           title = "Asrar al-Tanzil wa Anwar al-Ta'wil";
-          arabicTitle = 'أسرar التنزيل وأنوار التأويل';
+          arabicTitle = 'أسرار التنزيل وأنوار التأويل';
+        } else if (file.startsWith('risalah_fi_al_itiqad_')) {
+          title = "Risalah fi al-I'tiqad (Epistle on Creed)";
+          arabicTitle = 'رسالة في الاعتقاد';
         }
 
         catalog.kalamTreatises.push({
@@ -139,7 +143,7 @@ class ImamRaziLibrary {
     });
 
     // Sort volumes numerically
-    catalog.tafsirKabir.sort((a, b) => a.volume - b.volume);
+    catalog.tafsirKabir.sort((a, b) => (a.volume || 0) - (b.volume || 0));
 
     return catalog;
   }
