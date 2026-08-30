@@ -21,6 +21,7 @@ const YouTubeStreamer = require('./src/mesh/YouTubeStreamer');
 const ImamRaziLibrary = require('./src/mesh/ImamRaziLibrary');
 const ImamGhazaliLibrary = require('./src/mesh/ImamGhazaliLibrary');
 const ImamNawawiLibrary = require('./src/mesh/ImamNawawiLibrary');
+const ClassicalHeritageLibrary = require('./src/mesh/ClassicalHeritageLibrary');
 const { NafaqLisanTunnel, NAFAQ_MAGIC } = require('./src/mesh/NafaqLisanTunnel');
 const ShabahStego = require('./src/mesh/ShabahStego');
 const WyreNetGateway = require('./src/mesh/WyreNetGateway');
@@ -362,6 +363,12 @@ const server = http.createServer((req, res) => {
   if (pathname === '/api/library/nawawi' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(ImamNawawiLibrary.getCatalog()));
+    return;
+  }
+
+  if ((pathname === '/api/library/heritage' || pathname === '/api/library/classical') && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(ClassicalHeritageLibrary.getCatalog()));
     return;
   }
 
@@ -783,24 +790,6 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
-
-  // 6. Classical Spiritual & Prophetic Masterworks ('Irfan & Shama'il)
-  if (catalog.spiritualClassics && catalog.spiritualClassics.length > 0) {
-    const atts = catalog.spiritualClassics.map(item => ({
-      name: item.filename,
-      type: 'application/epub+zip',
-      size: 1800000,
-      data: item.downloadUrl,
-      title: item.title,
-      arabicTitle: item.arabicTitle
-    }));
-
-    gossipMesh.publish(spaceId, channelId, {
-      content: ` **Classical Spiritual & Prophetic Masterworks (Tasawwuf, 'Irfan & Shama'il)**
-*Al-Futuhat al-Makkiyya (Shaykh al-Akbar Ibn 'Arabi — Islamic Metaphysics & Spiritual Illumination) and Al-Shifa bi-Ta'rif Huquq al-Mustafa (Qadi 'Iyad — Prophetic Biography & Shama'il).*`,
-      attachments: atts
-    }, { senderId: 'ibn-manzur@lisan' });
-  }
 }
 
 
@@ -909,10 +898,76 @@ function seedImamNawawiLibrary() {
   }
 }
 
+
+function seedClassicalHeritageLibrary() {
+  const channelId = 'chan-classical-heritage';
+  const spaceId = 'space-public-mesh';
+  const catalog = ClassicalHeritageLibrary.getCatalog();
+
+  gossipMesh.clearChannelHistory(channelId);
+
+  // 1. Welcome Message
+  gossipMesh.publish(spaceId, channelId, {
+    content: "🏛️ **مَكْتَبَة التُّرَاث الإِسْلَامِي وَالعِرْفَان // CLASSICAL ISLAMIC HERITAGE & SPIRITUAL MASTERWORKS**\n\nWelcome to the decentralized classical digital library of timeless Islamic spiritual, metaphysical, and prophetic masterworks. Available below as standalone EPUB e-books for offline reading, scholarly research, and direct P2P mesh distribution."
+  }, { senderId: "ibn-manzur@lisan" });
+
+  // 2. Prophetic Biography & Shama'il: Kitab al-Shifa (Qadi 'Iyad)
+  if (catalog.shamailAndSira && catalog.shamailAndSira.length > 0) {
+    const atts = catalog.shamailAndSira.map(item => ({
+      name: item.filename,
+      type: "application/epub+zip",
+      size: 2000000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, channelId, {
+      content: "✨ **Kitab al-Shifa bi-Ta'rif Huquq al-Mustafa — Qadi 'Iyad al-Yahsubi (476–544 AH)**\n*The classic masterwork on the reverence, virtues, miracles, and rights of the Prophet Muhammad ﷺ (English & Albanian / Shqip editions).* ",
+      attachments: atts
+    }, { senderId: "ibn-manzur@lisan" });
+  }
+
+  // 3. Metaphysics & 'Irfan: Al-Futuhat al-Makkiyya (Ibn 'Arabi)
+  if (catalog.irfanAndMetaphysics && catalog.irfanAndMetaphysics.length > 0) {
+    const atts = catalog.irfanAndMetaphysics.map(item => ({
+      name: item.filename,
+      type: "application/epub+zip",
+      size: 23000000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, channelId, {
+      content: "🌌 **Al-Futuhat al-Makkiyya (The Meccan Revelations) — Shaykh al-Akbar Ibn 'Arabi (560–638 AH)**\n*The monumental compendium of Islamic metaphysics, spiritual cosmology, and divine illumination (Complete English & Albanian / Shqip editions).* ",
+      attachments: atts
+    }, { senderId: "ibn-manzur@lisan" });
+  }
+
+  // 4. Spiritual Conduct & Ethics: Sunan al-Muhtadin (Al-Mawwaq)
+  if (catalog.spiritualConduct && catalog.spiritualConduct.length > 0) {
+    const atts = catalog.spiritualConduct.map(item => ({
+      name: item.filename,
+      type: "application/epub+zip",
+      size: 800000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, channelId, {
+      content: "📜 **Sunan al-Muhtadin fi Maqamat al-Din — Imam al-Mawwaq al-Gharnati (797–897 AH)**\n*Essential classical manual on spiritual states, stations, and orthodox spiritual etiquette (Pure English, Bilingual Lexical & Oversight Critical editions).* ",
+      attachments: atts
+    }, { senderId: "ibn-manzur@lisan" });
+  }
+}
+
 server.listen(PORT, () => {
   seedImamRaziLibrary();
   seedImamGhazaliLibrary();
   seedImamNawawiLibrary();
+  seedClassicalHeritageLibrary();
   console.log();
   console.log();
   console.log();

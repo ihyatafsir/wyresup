@@ -71,6 +71,13 @@ class MajlisManager {
           topic: "Library of Imam Yahya ibn Sharaf al-Nawawi — Complete English EPUB Translations (Al-Arba'in al-Nawawiyyah, Riyad al-Salihin, Al-Tibyan, Kitab al-Adhkar, Minhaj al-Talibin, etc.)"
         },
         {
+          id: 'chan-classical-heritage',
+          name: 'classical-heritage',
+          type: 'text',
+          icon: '#',
+          topic: "Classical Islamic Heritage, 'Irfan & Shama'il Library — Featuring Kitab al-Shifa (Qadi 'Iyad), Al-Futuhat al-Makkiyya (Ibn 'Arabi), and Sunan al-Muhtadin (Al-Mawwaq) in English & Shqip editions."
+        },
+        {
           id: 'chan-voice-lounge',
           name: 'voice-lounge-sawt',
           type: 'voice',

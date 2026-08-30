@@ -84,11 +84,15 @@ async function anchorAllCorpus() {
     } else if (file.startsWith('al_shifa_')) {
       author = "Qadi 'Iyad al-Yahsubi (القاضي عياض)";
       category = "Prophetic Biography & Shama'il";
-      channelId = 'chan-imam-razi';
+      channelId = 'chan-classical-heritage';
     } else if (file.startsWith('al_futuhat_')) {
       author = "Shaykh al-Akbar Ibn 'Arabi (محيي الدين بن عربي)";
       category = "Islamic Metaphysics & Spiritual Illumination";
-      channelId = 'chan-imam-razi';
+      channelId = 'chan-classical-heritage';
+    } else if (file.startsWith('sunan_al_muhtadin_')) {
+      author = "Imam al-Mawwaq al-Gharnati (الإمام المواق الغرناطي)";
+      category = "Spiritual Conduct & Ethics";
+      channelId = 'chan-classical-heritage';
     }
 
     const txHash = '0x' + crypto.createHash('sha256').update(hash + idx + 'wyrenet').digest('hex');
@@ -134,7 +138,7 @@ async function anchorAllCorpus() {
   const manifest = {
     space: {
       spaceId: 'space-public-mesh',
-      channels: ['chan-imam-razi', 'chan-imam-abuhamidd', 'chan-imam-nawawi'],
+      channels: ['chan-imam-razi', 'chan-imam-abuhamidd', 'chan-imam-nawawi', 'chan-classical-heritage'],
       name: 'WyreSup Classical Digital Corpus (مَكْتَبَة التُّرَاث الإِسْلَامِي اللَّامَرْكَزِيَّة)',
       description: 'Sovereign on-chain corpus of Imam Fakhr al-Din al-Razi, Imam Abu Hamid al-Ghazali, and Imam al-Nawawi',
       creatorDid: ADMIN_DID,

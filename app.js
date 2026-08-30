@@ -1020,7 +1020,7 @@ function renderChannelsSidebar() {
     const el = document.createElement('div');
     el.className = `channel-item ${ch.id === state.currentChannelId ? 'active' : ''}`;
     el.innerHTML = `
-      <span class="channel-icon">${ch.icon || (ch.id.startsWith('dm-') ? '🔒' : (ch.type === 'voice' ? '🔊' : '#'))}</span>
+      <span class="channel-icon">${ch.type === 'voice' ? '🔊' : (ch.id.startsWith('dm-') ? '🔒' : '#')}</span>
       <span class="channel-name">${ch.name}</span>
     `;
     el.onclick = () => selectChannel(ch.id);
@@ -1255,19 +1255,24 @@ function appendMessageToDOM(packet) {
         const isTafsir = att.name.startsWith('tafsir_kabir_');
         const isMatalib = att.name.startsWith('al_matalib_');
         const isFiraq = att.name.includes('itiqadat') || att.name.includes('firaq') || att.name.includes('firqa') || att.name.includes('mahsul');
-        const isSpiritual = att.name.startsWith('al_futuhat_') || att.name.startsWith('al_shifa_');
+        const isShifa = att.name.startsWith('al_shifa_');
+        const isFutuhat = att.name.startsWith('al_futuhat_');
+        const isSunan = att.name.startsWith('sunan_al_muhtadin_');
         const isIhya = att.name.startsWith('ihya_ulum_');
-        const isGhazali = isIhya || att.name.startsWith('al_munqidh_') || att.name.startsWith('mishkat_') || att.name.startsWith('bidayat_') || att.name.startsWith('tahafut_') || att.name.startsWith('kimiya_');
-        const isNawawi = att.name.startsWith('al_arbain_') || att.name.startsWith('riyad_') || att.name.startsWith('kitab_al_adhkar_') || att.name.startsWith('al_tibyan_') || att.name.startsWith('minhaj_') || att.name.startsWith('sharh_sahih_');
-        
-        let badgeTag = 'Kalam Masterwork';
-        if (isIhya) badgeTag = "Ihya 'Ulum al-Din";
-        else if (isGhazali) badgeTag = 'Ghazali Masterwork';
-        else if (isNawawi) badgeTag = 'Nawawi Masterwork';
-        else if (isFiraq) badgeTag = 'Firaq & Usul';
-        else if (isSpiritual) badgeTag = "Irfan & Shama'il";
-        else if (isTafsir) badgeTag = 'Tafsir al-Kabir';
+        const isGhazali = isIhya || att.name.startsWith('al_munqidh_') || att.name.startsWith('mishkat_') || att.name.startsWith('bidayat_') || att.name.startsWith('tahafut_') || att.name.startsWith('kimiya_') || att.name.startsWith('al_iqtisad_') || att.name.startsWith('al_mankhul_') || att.name.startsWith('al_maqsad_') || att.name.startsWith('al_mustasfa_');
+        const isNawawi = att.name.startsWith('al_arbaun_') || att.name.startsWith('al_arbain_') || att.name.startsWith('riyad_') || att.name.startsWith('kitab_al_adhkar_') || att.name.startsWith('al_tibyan_') || att.name.startsWith('minhaj_al_talibin_') || att.name.startsWith('sharh_sahih_') || att.name.startsWith('al_majmu_') || att.name.startsWith('adab_al_fatwa_') || att.name.startsWith('al_idah_');
+
+        let badgeTag = 'Classical Masterwork';
+        if (isShifa) badgeTag = "Prophetic Shama'il";
+        else if (isFutuhat) badgeTag = "Metaphysics & 'Irfan";
+        else if (isSunan) badgeTag = "Spiritual Conduct";
+        else if (isIhya) badgeTag = "Ihya 'Ulum al-Din";
+        else if (isGhazali) badgeTag = "Ghazali Masterwork";
+        else if (isNawawi) badgeTag = "Nawawi Masterwork";
+        else if (isTafsir) badgeTag = "Tafsir al-Kabir";
         else if (isMatalib) badgeTag = "Al-Matalib al-'Aliyyah";
+        else if (isFiraq) badgeTag = "Firaq & Usul";
+        else if (att.name.startsWith('asas_') || att.name.startsWith('lawami_') || att.name.startsWith('ismat_') || att.name.startsWith('macalim_') || att.name.startsWith('asrar_') || att.name.startsWith('al_qada_') || att.name.startsWith('qada_')) badgeTag = "Razi Kalam Treatise";
         bodyHtml += `
           <a href="${att.data}" download="${escapeHtml(att.name)}" class="msg-epub-card" title="Click to download ${escapeHtml(cleanName)}">
             <div class="epub-card-header">

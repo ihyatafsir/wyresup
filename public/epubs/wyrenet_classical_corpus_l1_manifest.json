@@ -4,7 +4,8 @@
     "channels": [
       "chan-imam-razi",
       "chan-imam-abuhamidd",
-      "chan-imam-nawawi"
+      "chan-imam-nawawi",
+      "chan-classical-heritage"
     ],
     "name": "WyreSup Classical Digital Corpus (مَكْتَبَة التُّرَاث الإِسْلَامِي اللَّامَرْكَزِيَّة)",
     "description": "Sovereign on-chain corpus of Imam Fakhr al-Din al-Razi, Imam Abu Hamid al-Ghazali, and Imam al-Nawawi",
@@ -15,139 +16,139 @@
   },
   "totalBooks": 198,
   "publisherDid": "did:wyre:0x471c852d254a67f36c129f2386ca21c31840dea4",
-  "anchoredAt": "2026-08-28T18:49:28.534Z",
+  "anchoredAt": "2026-08-30T11:25:24.022Z",
   "books": [
     {
       "index": 1,
       "filename": "adab_al_fatwa_wa_al_mufti_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "82d47c79eda0d0bf10ca8c2edc9f70466c270479c71aa618c93ffe993d656b0d",
       "sizeMb": "0.07 MB",
       "txHash": "0xb98359b7efaa2ec15652d21d974fd835eec1442d48fdbcee44e3a5c1517d913a",
-      "blockHeight": 701
+      "blockHeight": 641
     },
     {
       "index": 2,
       "filename": "adab_al_fatwa_wa_al_mufti_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "1217e97802b0a8f82b7a766e886850da72375b56d877164c9b9593c5bfe66356",
       "sizeMb": "0.02 MB",
       "txHash": "0x8f9fca34b6e71bcc4fb4f54fea41a799e049ba731aa82bef8a86469e34e25ffd",
-      "blockHeight": 702
+      "blockHeight": 642
     },
     {
       "index": 3,
       "filename": "al_arbaun_al_nawawiyya_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "970731d7a19d8b4e17eb7a28d55e29932c9377ced7bb95f4f666ba64e419d57b",
       "sizeMb": "0.09 MB",
       "txHash": "0x7391aac1bafb525f77304871b255390df070d8d955b952e10db70af22ece9b3b",
-      "blockHeight": 703
+      "blockHeight": 643
     },
     {
       "index": 4,
       "filename": "al_arbaun_al_nawawiyya_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "56a8f88f8ee90f770557766707bb317124acc485a33c36e63fa1d1136d63582b",
       "sizeMb": "0.04 MB",
       "txHash": "0x05e95aadae33fd74888d302389c20d312c7e40322927c4a311e291569b1a0f82",
-      "blockHeight": 704
+      "blockHeight": 644
     },
     {
       "index": 5,
       "filename": "al_futuhat_al_makkiyya_en.epub",
-      "author": "Classical Islamic Masterworks",
-      "category": "Sacred Sciences & Classical Heritage",
-      "channelId": "chan-general",
+      "author": "Shaykh al-Akbar Ibn 'Arabi (محيي الدين بن عربي)",
+      "category": "Islamic Metaphysics & Spiritual Illumination",
+      "channelId": "chan-classical-heritage",
       "sha256": "c5fade79dbf44eaab2261430692812fdd5a2995df2c2b43681c597a065b8d4c2",
       "sizeMb": "22.48 MB",
       "txHash": "0x7412fdd863a90ee15507ef1b50ed5d5558f73144a8773bcd463403f27cfdd6ed",
-      "blockHeight": 705
+      "blockHeight": 645
     },
     {
       "index": 6,
       "filename": "al_futuhat_al_makkiyya_sq.epub",
-      "author": "Classical Islamic Masterworks",
-      "category": "Sacred Sciences & Classical Heritage",
-      "channelId": "chan-general",
+      "author": "Shaykh al-Akbar Ibn 'Arabi (محيي الدين بن عربي)",
+      "category": "Islamic Metaphysics & Spiritual Illumination",
+      "channelId": "chan-classical-heritage",
       "sha256": "73361dd1287082839f48c6f8a44f9ad743641894eea0bfe4192845937f677c4f",
       "sizeMb": "4.56 MB",
       "txHash": "0x873a07a275582df850602c2141696b53d07a34cbb481f9de3a172c4eb6b4bfd5",
-      "blockHeight": 706
+      "blockHeight": 646
     },
     {
       "index": 7,
       "filename": "al_idah_fi_manasik_al_hajj_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "c60361f3221827db87478d5647eb2472c45ff543464220b0e5af308e671b9366",
       "sizeMb": "0.20 MB",
       "txHash": "0x5b91c8e5c55275b78705b8bf6befe96aa904825bfd37721e89c2a7e59e7ebd49",
-      "blockHeight": 707
+      "blockHeight": 647
     },
     {
       "index": 8,
       "filename": "al_idah_fi_manasik_al_hajj_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "3a0fc71e32dbf38569a47bb3f5c044d3b99e06d9a0b9c4a861ecbe01309589b2",
       "sizeMb": "0.04 MB",
       "txHash": "0x74ada246caeba120a2519e25496a5537b12db719a1ba496bd74c17b0a91bd4b6",
-      "blockHeight": 708
+      "blockHeight": 648
     },
     {
       "index": 9,
       "filename": "al_ijaz_fi_sharh_sunan_abi_dawud_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "ef75f6191a73818d238a460ab2f51ef0505a05ffaecec864ff75c647e7997365",
       "sizeMb": "0.15 MB",
       "txHash": "0xda6eddcbf0d75fff6f56b15e71d521df77df25f291a095c88162df0c864cb278",
-      "blockHeight": 709
+      "blockHeight": 649
     },
     {
       "index": 10,
       "filename": "al_ijaz_fi_sharh_sunan_abi_dawud_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "b08bfd19906abc6a7f84e4bf0118245fb75c27492c229147b84a4b60d4840388",
       "sizeMb": "0.03 MB",
       "txHash": "0x89529b59e591fa254755fa2b19e66351f785f4ebeecd88d47d6416e2b66e285e",
-      "blockHeight": 710
+      "blockHeight": 650
     },
     {
       "index": 11,
       "filename": "al_iqtisad_fi_al_itiqad_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "4f26346428d109f20cf412e7a6b56d843baeb17774f9c3a46f0100e026eb2305",
       "sizeMb": "0.38 MB",
       "txHash": "0x89d5cbb69fbc4e8b61f9f22dba3d136bec52436219bea87be9c0568d10ab953c",
-      "blockHeight": 711
+      "blockHeight": 651
     },
     {
       "index": 12,
       "filename": "al_iqtisad_fi_al_itiqad_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "bbd542d08d7c062a4b815da90c92a4cb61bfa96036cfff79f3afda8c6e34aaf2",
       "sizeMb": "0.16 MB",
       "txHash": "0xe66e92faa3ba8505cc3056fe8176751faf3999e421a1fb322a2028a3e4b0fbed",
-      "blockHeight": 712
+      "blockHeight": 652
     },
     {
       "index": 13,
@@ -158,95 +159,95 @@
       "sha256": "b45504a03e4314b704dd8bd9092e360eb55403529c588102e4fd576d53232a50",
       "sizeMb": "2.31 MB",
       "txHash": "0xabb49b2e6b8485fc48425dd92a376492162266e0ab1d867ce8714f44f2a96c2a",
-      "blockHeight": 713
+      "blockHeight": 653
     },
     {
       "index": 14,
       "filename": "al_majmu_sharh_al_muhadhdhab_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "fa5973a6dd9d13abd724a613f31a63233226ee9cb19909f9285845e0dc06f546",
       "sizeMb": "18.86 MB",
       "txHash": "0x819983efdd8b9e09db758c50006495b7f5b609848880b2a0610738ae83d7224c",
-      "blockHeight": 714
+      "blockHeight": 654
     },
     {
       "index": 15,
       "filename": "al_majmu_sharh_al_muhadhdhab_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "595977f0a1ce7cbff71ca9a645ac9db745c12bcfdf85c013838793eedcd880a9",
       "sizeMb": "8.18 MB",
       "txHash": "0x71cfe4036ea52c6506319d6ce8010754dbded8efb818bb037a77cf49b0e5a380",
-      "blockHeight": 715
+      "blockHeight": 655
     },
     {
       "index": 16,
       "filename": "al_mankhul_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "c3e943ad0992e92f75b84efbe5f6c8f19fbf61070ef1cfe2d4de961c7600d007",
       "sizeMb": "0.55 MB",
       "txHash": "0x5f2d70a759b4af56e5901bd0589df81ffb47ce8cd4d30011ad42f5d4cdb16713",
-      "blockHeight": 716
+      "blockHeight": 656
     },
     {
       "index": 17,
       "filename": "al_mankhul_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "89cce93a54a89f52928973ba40bf3454fe56378de4212f70934ea46aa82e3684",
       "sizeMb": "0.28 MB",
       "txHash": "0x157efb756fd4c67152d20077f022ea13328c8f65164788f590a0d2ca5daa95fd",
-      "blockHeight": 717
+      "blockHeight": 657
     },
     {
       "index": 18,
       "filename": "al_maqsad_al_asna_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "60c94182c1025ebd3574087fa9c05f5e00a2b0242e9ab8689ce20de102c195bc",
       "sizeMb": "0.31 MB",
       "txHash": "0x627644b54493aea632f0d1b54347a4af8810ef8a5f10bcbc96fe64830d676837",
-      "blockHeight": 718
+      "blockHeight": 658
     },
     {
       "index": 19,
       "filename": "al_maqsad_al_asna_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "094bc7033f5ff2ee9cd33d8be95520539850915b67864d661f3d0c70c75fc4e7",
       "sizeMb": "0.16 MB",
       "txHash": "0xe6aa5f5b5296881c58e41ebab37d47b19b190fdee052f3366414cb453ed5773b",
-      "blockHeight": 719
+      "blockHeight": 659
     },
     {
       "index": 20,
       "filename": "al_masail_al_manthurah_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "53d2ea8b6140c30db8d48386f122139be803b3801b00fad6d6dc2af31a083fc2",
       "sizeMb": "0.20 MB",
       "txHash": "0x74cd8ed20010596598e6e600d6661c0151c41fd5d8da980629e2f510bf6e24be",
-      "blockHeight": 720
+      "blockHeight": 660
     },
     {
       "index": 21,
       "filename": "al_masail_al_manthurah_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "de8ffad1e701892faba249608dcfd3f91b4c31f457e40aa5292958a9ce03749c",
       "sizeMb": "0.03 MB",
       "txHash": "0xdb126e98560ec782a6bf140291bc1b933138929c0b194c845ac10e200dce6e49",
-      "blockHeight": 721
+      "blockHeight": 661
     },
     {
       "index": 22,
@@ -257,7 +258,7 @@
       "sha256": "a2707fcbf8be5105801ad1ca3aaacd42f581a3484ae4357e3349d42f8194f653",
       "sizeMb": "3.62 MB",
       "txHash": "0x8c2aa756b370a78688d5fda33b2829c7d740f00359c487fddb1d01454bfcffe3",
-      "blockHeight": 722
+      "blockHeight": 662
     },
     {
       "index": 23,
@@ -268,7 +269,7 @@
       "sha256": "04380103ffdc38629062b4311fc274246391558623664ccc1dfa5830d94b7c33",
       "sizeMb": "5.47 MB",
       "txHash": "0x53f5892e3f4995c03d69b26e8e3cb2252a6e1ac414a69ecb47f9c3ea502ec566",
-      "blockHeight": 723
+      "blockHeight": 663
     },
     {
       "index": 24,
@@ -279,7 +280,7 @@
       "sha256": "0b593c69fb6877aa97871b7f53626344aac3b63f8bce789b9575b679f054054a",
       "sizeMb": "5.36 MB",
       "txHash": "0x9965acbf3f7deb55116f572b867b7366dd35a061c79ba4592b3b55d9af661b64",
-      "blockHeight": 724
+      "blockHeight": 664
     },
     {
       "index": 25,
@@ -290,7 +291,7 @@
       "sha256": "f2f3b0fff774dd8755242d647655a50865b445a1ff76a54ec36df34968e2ac2d",
       "sizeMb": "0.54 MB",
       "txHash": "0x6094e69f354bd6dd76ddfb93ccc1a09ec223a25f547e644ddc45541a51dc75ca",
-      "blockHeight": 725
+      "blockHeight": 665
     },
     {
       "index": 26,
@@ -301,7 +302,7 @@
       "sha256": "721561507af368f69c883d1c556a0375ecae1251a5f36c72fa2694f3de1cc50c",
       "sizeMb": "0.75 MB",
       "txHash": "0x6322255cc20b4984d91bab9148658373f4334c268b4a9bf33351c9d3f5d04e4a",
-      "blockHeight": 726
+      "blockHeight": 666
     },
     {
       "index": 27,
@@ -312,7 +313,7 @@
       "sha256": "1786330dfb5934db7ffd159c7055f66de403a777cebff1d79a1d46e03004742c",
       "sizeMb": "0.23 MB",
       "txHash": "0x65383d1416ed07ef9d6044062f9a00d3199408154be6afe4393bf95d1c1bbc51",
-      "blockHeight": 727
+      "blockHeight": 667
     },
     {
       "index": 28,
@@ -323,7 +324,7 @@
       "sha256": "f3dbd98b022c64b1ece93317f1a34e0b2c65be648ad74bd54341336cfdc991e2",
       "sizeMb": "0.33 MB",
       "txHash": "0x38883abcdc65e38f6d9be5a8272b06be115e463dba6f136d55b8a2e5bce0c43b",
-      "blockHeight": 728
+      "blockHeight": 668
     },
     {
       "index": 29,
@@ -334,7 +335,7 @@
       "sha256": "51e5596cee880d9d23b01bb87a970d504d15874d987a3f88030b372cfb35deef",
       "sizeMb": "0.49 MB",
       "txHash": "0x006046f69bd392b19ec60704a4e92be3febcf0ec196edae92c081da7e22b70e2",
-      "blockHeight": 729
+      "blockHeight": 669
     },
     {
       "index": 30,
@@ -345,7 +346,7 @@
       "sha256": "36ffeb3ea4e4867cdf6f80fff43389a1a675c1d650f784a0e5e8ce255b491920",
       "sizeMb": "0.72 MB",
       "txHash": "0xa8e22dea27de2c59e7556447d536b453f6d32624a8332afe8f93b3186791e429",
-      "blockHeight": 730
+      "blockHeight": 670
     },
     {
       "index": 31,
@@ -356,7 +357,7 @@
       "sha256": "1c5d3b0ebbda4ff0c9012bbe9713f782a2bb50f3b4dcb6d2fcab0166a7f4c8ee",
       "sizeMb": "0.52 MB",
       "txHash": "0xae55ee860fe49c434d6098b9132c9d937e9620b383074a0f73a628e90810c772",
-      "blockHeight": 731
+      "blockHeight": 671
     },
     {
       "index": 32,
@@ -367,7 +368,7 @@
       "sha256": "c8ec976aac451ce5926a349695a65386d428327dd22b7d7adffc0ea1d93955db",
       "sizeMb": "0.77 MB",
       "txHash": "0x0eb45ee0c0d6e63e3a58d9954404a40ad8c9e6064d74ae5e198da93607ccb8ab",
-      "blockHeight": 732
+      "blockHeight": 672
     },
     {
       "index": 33,
@@ -378,7 +379,7 @@
       "sha256": "e6aab4a322ef9891b8313d79f34ef5a586c817308b90e9779b7949aa337f9776",
       "sizeMb": "0.24 MB",
       "txHash": "0x6fca75c0664218e813e3b1ba41e67526f5dbaefe9ee7fe05c037d7f96b02cda9",
-      "blockHeight": 733
+      "blockHeight": 673
     },
     {
       "index": 34,
@@ -389,7 +390,7 @@
       "sha256": "d2f0bade28f3b2393e2bbda9f8a1f2166ca1c1c12d072c38ab2260cb5bb30658",
       "sizeMb": "0.36 MB",
       "txHash": "0x4eeefc2fd63db9311f31da82c0b385d260eabddab8004b1895bcf7eb80e257a8",
-      "blockHeight": 734
+      "blockHeight": 674
     },
     {
       "index": 35,
@@ -400,7 +401,7 @@
       "sha256": "8fddb29218d3326de8ac7e829433e0c32ec4c2c8105c4e3c28c10ceb55fdb586",
       "sizeMb": "0.28 MB",
       "txHash": "0x08a038c3e728f3f120bbc2608f09b82ac5d58edbae926b3748e9959c33f065a5",
-      "blockHeight": 735
+      "blockHeight": 675
     },
     {
       "index": 36,
@@ -411,7 +412,7 @@
       "sha256": "123c550e6dc23c9e8b700310784876ed615255b5f1f51c64bd5ba2e0213e885f",
       "sizeMb": "0.42 MB",
       "txHash": "0x409a2a8c51354518e5db5552f09c60338e1690c56b6200318ca3aa776fb4c440",
-      "blockHeight": 736
+      "blockHeight": 676
     },
     {
       "index": 37,
@@ -422,7 +423,7 @@
       "sha256": "d62e9bb5d2dcb6753441206a4ba8054f8f85e03c8f0eeb6c4050e92709d6e802",
       "sizeMb": "0.57 MB",
       "txHash": "0x9f8188774e4ecd84c3779fc5e3359a12f21115b0b699e8da6c94cfc7f9d0b4fc",
-      "blockHeight": 737
+      "blockHeight": 677
     },
     {
       "index": 38,
@@ -433,7 +434,7 @@
       "sha256": "119f34cf5804059539bd37cf8f1347c6775c76b6ecfe6ec64bb5a40d1662fe89",
       "sizeMb": "0.85 MB",
       "txHash": "0x8faf56a6616d02621787e7699634e72a510943dbc922478fed49738493290d5b",
-      "blockHeight": 738
+      "blockHeight": 678
     },
     {
       "index": 39,
@@ -444,7 +445,7 @@
       "sha256": "660cd6893d701d9c4a87c19200a22effd622b70d55bea5c2a426d2d6445badee",
       "sizeMb": "0.26 MB",
       "txHash": "0x14b2e2384adf5053864111155aaf13ea30290cd982d0f52c27606d719eefc352",
-      "blockHeight": 739
+      "blockHeight": 679
     },
     {
       "index": 40,
@@ -455,7 +456,7 @@
       "sha256": "a980ddae24efb3b6fac08be8f33198c7b12fcbdba1c292f453e475b447217010",
       "sizeMb": "0.38 MB",
       "txHash": "0x4840b240e0aa99045d013a5ea76157b9899d61a8be0d4cb8678ba59ff89ec72a",
-      "blockHeight": 740
+      "blockHeight": 680
     },
     {
       "index": 41,
@@ -466,7 +467,7 @@
       "sha256": "ec3c92e2c09903dfd55bab3bbc36e74e875c65e1b7d7643f41a9b7d9674e13b5",
       "sizeMb": "0.55 MB",
       "txHash": "0xbad2eeb530c68f2d34efce17d32b01fbb6f265de0b3f2e8197a6f986c0d2d828",
-      "blockHeight": 741
+      "blockHeight": 681
     },
     {
       "index": 42,
@@ -477,7 +478,7 @@
       "sha256": "d330ad24a21e179dfa5d12dfad0612afa0d5d62e26783712da49f7b20ed93618",
       "sizeMb": "0.80 MB",
       "txHash": "0x87e137d819a87dc1a54ce112e721037bcd4ac6cb2fd45ac39a61379e474980ff",
-      "blockHeight": 742
+      "blockHeight": 682
     },
     {
       "index": 43,
@@ -488,7 +489,7 @@
       "sha256": "cc6b132b35d7004b9cf6a03f5366dd3966d9b873907a2a4c6afae511952e4af0",
       "sizeMb": "0.11 MB",
       "txHash": "0xef4fc86fbd31459587253f0806b768b50c42ddcc3c9c97e6e500a86f74b6818e",
-      "blockHeight": 743
+      "blockHeight": 683
     },
     {
       "index": 44,
@@ -499,29 +500,29 @@
       "sha256": "44a36d88d68a053f3580afdc0b601b1fe65efb23e74d6bb7add6ae1cc843186f",
       "sizeMb": "0.06 MB",
       "txHash": "0x75220f175590e8e16b509be7b375e7a21245cf1e042d0246ac83c7d750d742d7",
-      "blockHeight": 744
+      "blockHeight": 684
     },
     {
       "index": 45,
       "filename": "al_mustasfa_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "5fa2f5d41fe404377d2957cdb898114aa1ee685b5213dd836f7c166cc22f37ad",
       "sizeMb": "1.79 MB",
       "txHash": "0x251e75b56ce8df9003a5a1eb53378d09d03a7716c88144998c46f2e0edf8bd81",
-      "blockHeight": 745
+      "blockHeight": 685
     },
     {
       "index": 46,
       "filename": "al_mustasfa_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "d54a644eeafb164c798ce569d1b0db73f26d10e7a95f7430977ad0e23019cf2b",
       "sizeMb": "0.87 MB",
       "txHash": "0x4f06a051f88f5a435fb32c86b4615a7b1bcbcb554e0975f36f36ec3fc18e9e86",
-      "blockHeight": 746
+      "blockHeight": 686
     },
     {
       "index": 47,
@@ -532,7 +533,7 @@
       "sha256": "655400e8cd565ee25f191e193edeec5cb7c00d2da87724f0eb5e78eb6e36f8bf",
       "sizeMb": "0.74 MB",
       "txHash": "0xa1f9351cdf7e007b89e39b0490df754b2c802e72ee54a787c88590d3bbc8bf95",
-      "blockHeight": 747
+      "blockHeight": 687
     },
     {
       "index": 48,
@@ -543,7 +544,7 @@
       "sha256": "0ec923a29bb46ca884f9ecb422f55aeb1c968acf38a9f25295a0f4e4a3ee8f95",
       "sizeMb": "0.37 MB",
       "txHash": "0xcf7b59e4cb1e356edb5f2c4717505615dab5e71a72d565efccb1d870461551ce",
-      "blockHeight": 748
+      "blockHeight": 688
     },
     {
       "index": 49,
@@ -554,95 +555,95 @@
       "sha256": "7bfec1f503bceddc65807bf3179f7208248076f67ff384cc8fbf027b91673687",
       "sizeMb": "0.67 MB",
       "txHash": "0x788a0faee2450436bda27c2001681766e43ee7d03cd3b749418f441bfb8b87bf",
-      "blockHeight": 749
+      "blockHeight": 689
     },
     {
       "index": 50,
       "filename": "al_radd_al_jamil_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "f3f97cf3b75e864df773f3a775db0c90a37082f2aa16bf0f2ea5f6198852325d",
       "sizeMb": "0.14 MB",
       "txHash": "0x8aa8958ed68dfc544ed9f9014aacdf2e58c53997fdfa64aa00010c151aeb3273",
-      "blockHeight": 750
+      "blockHeight": 690
     },
     {
       "index": 51,
       "filename": "al_radd_al_jamil_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "d7083db8eeced68aa21b1f2804311cb4dd09aac5c983ee06405beccabd77b825",
       "sizeMb": "0.06 MB",
       "txHash": "0x12cbb220a1272288405176153d87d01bad9335cfe3f8d0f66e962fabdeada9b0",
-      "blockHeight": 751
+      "blockHeight": 691
     },
     {
       "index": 52,
       "filename": "al_shifa_qadi_iyad_en.epub",
-      "author": "Classical Islamic Masterworks",
-      "category": "Sacred Sciences & Classical Heritage",
-      "channelId": "chan-general",
+      "author": "Qadi 'Iyad al-Yahsubi (القاضي عياض)",
+      "category": "Prophetic Biography & Shama'il",
+      "channelId": "chan-classical-heritage",
       "sha256": "4f8fc69473771b38725b5b9e65791bd89b8e80d89c5d48b7b2482845e8ff4bd3",
       "sizeMb": "2.00 MB",
       "txHash": "0x27bf1739d109158e595d07ad2ddf02bf82ab4c339af0169034e330dbf86b37f3",
-      "blockHeight": 752
+      "blockHeight": 692
     },
     {
       "index": 53,
       "filename": "al_shifa_qadi_iyad_sq.epub",
-      "author": "Classical Islamic Masterworks",
-      "category": "Sacred Sciences & Classical Heritage",
-      "channelId": "chan-general",
+      "author": "Qadi 'Iyad al-Yahsubi (القاضي عياض)",
+      "category": "Prophetic Biography & Shama'il",
+      "channelId": "chan-classical-heritage",
       "sha256": "ff9044cc786f51841c1ffd8e97d104df938f0245efad4f59834a75e0bfc09d3d",
       "sizeMb": "2.05 MB",
       "txHash": "0x011f565e763f62b594b3e61940ef0d717d9fd00d4aa4e1eaf98827097d59dabb",
-      "blockHeight": 753
+      "blockHeight": 693
     },
     {
       "index": 54,
       "filename": "al_taqrib_wa_al_taysir_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "8853e1276fc5dfdc37963ce6d4106b9dc0b5843abcb1928c67b698070d489073",
       "sizeMb": "0.13 MB",
       "txHash": "0x983c5a86b57ec497702e15f209bf6041c4c5f24ca7905dbebe5f8b594940b2b2",
-      "blockHeight": 754
+      "blockHeight": 694
     },
     {
       "index": 55,
       "filename": "al_taqrib_wa_al_taysir_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "2e3ca96ce1a97df9aa59d0dd2bd56a92acfba535fcc25ac25ecc22b033588b55",
       "sizeMb": "0.02 MB",
       "txHash": "0xa2ca500ae7c0008971d84f1f55c2fc13b0b288623890bb4d69b335eb36bb336e",
-      "blockHeight": 755
+      "blockHeight": 695
     },
     {
       "index": 56,
       "filename": "al_tibr_al_masbuk_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "5e4e8d7e611339cc00b0f9d35f025d87bc30ea2d9f0379dea2ad38121c37e4fc",
       "sizeMb": "0.27 MB",
       "txHash": "0x27ab438cdc6a2833f57f4c797447f8ed86b4c79dfb5263b33432f70888f5c328",
-      "blockHeight": 756
+      "blockHeight": 696
     },
     {
       "index": 57,
       "filename": "al_tibr_al_masbuk_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "65c80da38d0a6ae57b0ddf6bac31adde11c2d99e1aee5a2abb00d1f9051de3ef",
       "sizeMb": "0.12 MB",
       "txHash": "0xea5be713c98fff6f4875406aa9a30f3b3f499b9bd376bcbe21acaec586c1b0fb",
-      "blockHeight": 757
+      "blockHeight": 697
     },
     {
       "index": 58,
@@ -653,7 +654,7 @@
       "sha256": "46a1bc54243b0cfa162176a09713594b3e2466277a03a1134adf9fea63e13862",
       "sizeMb": "0.30 MB",
       "txHash": "0x271e2eede7608942cc997aef5a43a8fb511da76242c3a9d6ebd1e2f6f885474f",
-      "blockHeight": 758
+      "blockHeight": 698
     },
     {
       "index": 59,
@@ -664,51 +665,51 @@
       "sha256": "d08258d3578b0faad83954272d449f0ede89e85e3fb7953e16ac259e282246cd",
       "sizeMb": "0.14 MB",
       "txHash": "0x7f739c0c23c7879fcbef0822961ab0cfb65cf5f2c9c5c97996b512bac286842b",
-      "blockHeight": 759
+      "blockHeight": 699
     },
     {
       "index": 60,
       "filename": "al_usul_wa_al_dawabit_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "0c700ec435bf6919492ebc7c793455bf4fcfa232732e80e6c08685314ac9261e",
       "sizeMb": "0.02 MB",
       "txHash": "0xf4432d3599e24f96ef922945fe818d31013cbeb836c9b70dd6699df738079614",
-      "blockHeight": 760
+      "blockHeight": 700
     },
     {
       "index": 61,
       "filename": "al_usul_wa_al_dawabit_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "d4006bbbc3b501dcca272584af55dbe02d3b2ddfaaef55e4e2842e785b9d9b0d",
       "sizeMb": "0.01 MB",
       "txHash": "0x63fec54faa85bdd704ef254d8a0d538d2b898734d0dd9635fd3a96d5e51ed332",
-      "blockHeight": 761
+      "blockHeight": 701
     },
     {
       "index": 62,
       "filename": "al_wasit_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "5e872f8c4f306b5cca4cc6b9faf0b34404d2c50333357f5642a318b059ddc4c2",
       "sizeMb": "3.88 MB",
       "txHash": "0x628a5505a786cefc0e8988264c5bfdc41cc95a144170cb6a688a8306e5fc1f47",
-      "blockHeight": 762
+      "blockHeight": 702
     },
     {
       "index": 63,
       "filename": "al_wasit_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "5506066f0a55791e1fc141baa7a42c5f2a848a6d30d299a61acdb76965803129",
       "sizeMb": "2.05 MB",
       "txHash": "0x8323b41ceedbe8e75a262de6967417580c757a0462c975cb59fdb48f663373ab",
-      "blockHeight": 763
+      "blockHeight": 703
     },
     {
       "index": 64,
@@ -719,7 +720,7 @@
       "sha256": "22d35118ec4ba5035644529cde2b18a3f59ca6f5e6cc966b7b5722806b55b0c0",
       "sizeMb": "1.16 MB",
       "txHash": "0xd80ad18b3e8f1402e2fd64f49695d1025db948f5d1b2d399bc8f142b8a9bc801",
-      "blockHeight": 764
+      "blockHeight": 704
     },
     {
       "index": 65,
@@ -730,7 +731,7 @@
       "sha256": "4a555bbf2bc233edb4b3499e39640aeda4d6ae42d0cf5465fc03217b2db8cad3",
       "sizeMb": "1.33 MB",
       "txHash": "0x503217436ec11ab0612ba39e1954ae5dcf131fc9ce86732c2bc73dc5cb0485a2",
-      "blockHeight": 765
+      "blockHeight": 705
     },
     {
       "index": 66,
@@ -741,7 +742,7 @@
       "sha256": "549fe3e3f1f8a02b4eca204bf79d8b90dbcdde43ceac4dada649afb4e70dc00a",
       "sizeMb": "0.38 MB",
       "txHash": "0x1a4476bca05eb98bd110f7b8ed5d4c0a12036d351bc831be6b00de88cee43ac2",
-      "blockHeight": 766
+      "blockHeight": 706
     },
     {
       "index": 67,
@@ -752,7 +753,7 @@
       "sha256": "cf8f35524586731ec240032b2aef0603f6c939854c5c1c040c79b88da8f5adb8",
       "sizeMb": "0.32 MB",
       "txHash": "0x493a4f5ab2239a28881b978dc7771910ffb4f3dd575f433b681d04c378f34b22",
-      "blockHeight": 767
+      "blockHeight": 707
     },
     {
       "index": 68,
@@ -763,29 +764,29 @@
       "sha256": "3abd05d5e39401980c2632a81d2a5797782eac92f958ce5c7baed673fe093eac",
       "sizeMb": "0.34 MB",
       "txHash": "0x3e02c7da5edff5bfab378d0a6738de4c16f9eea5d7ff44d6531303fe98bbab30",
-      "blockHeight": 768
+      "blockHeight": 708
     },
     {
       "index": 69,
       "filename": "asnaf_al_maghrurin_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "b3465141eac743ce6a62d3615fd1d4e6bc07f38cb3110ad8d0ac24c004e9f689",
       "sizeMb": "0.08 MB",
       "txHash": "0x9ffb2e23608a459b0b23663bf87f9c9359750a64f70f46e447d0e6f51e50c7c3",
-      "blockHeight": 769
+      "blockHeight": 709
     },
     {
       "index": 70,
       "filename": "asnaf_al_maghrurin_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "cb0a1e5747b86c6c82a8d17a6e37dd3b418a10255d9f9de0e840513a68c3b1fa",
       "sizeMb": "0.04 MB",
       "txHash": "0xcd0f5b5d502de89ed54634cdc27bad6a758250625acb0fb726411d2912638766",
-      "blockHeight": 770
+      "blockHeight": 710
     },
     {
       "index": 71,
@@ -796,7 +797,7 @@
       "sha256": "d54ce5617797b8394b706c97bf245846d791b8edd07a19e436aedd0c45e34b52",
       "sizeMb": "0.22 MB",
       "txHash": "0x901d270a36a3d39e0457c1e10465aa169b785095a41e1d52bda7be33c835a56a",
-      "blockHeight": 771
+      "blockHeight": 711
     },
     {
       "index": 72,
@@ -807,7 +808,7 @@
       "sha256": "e94a8fc122d0726d659fee1f5e0785437821896cbbb3a1e7a47ad7297a68436b",
       "sizeMb": "0.19 MB",
       "txHash": "0x95311157c8d4e2faf90dce11db1ec790f7f213626388469d6013d397c4c43803",
-      "blockHeight": 772
+      "blockHeight": 712
     },
     {
       "index": 73,
@@ -818,7 +819,7 @@
       "sha256": "1b91b09a3af2f8da49e702f5aa5be7ced8c574fc641766a5731350c830e09a30",
       "sizeMb": "0.16 MB",
       "txHash": "0x7c999be141710d1091f503cf5bd8784b05b3094a611ad1a10044650fdeb722bc",
-      "blockHeight": 773
+      "blockHeight": 713
     },
     {
       "index": 74,
@@ -829,7 +830,7 @@
       "sha256": "1a5ccc5f807fb020027c348835e8f865bd38d8403d9a3b4d58d4c4445fa2886d",
       "sizeMb": "0.08 MB",
       "txHash": "0x3129a920e97007f13003b727ed790bce6ceba4039ca75adb89f0fd7150db0e69",
-      "blockHeight": 774
+      "blockHeight": 714
     },
     {
       "index": 75,
@@ -840,73 +841,73 @@
       "sha256": "9d3a8bd75fad983bf349882f3480dd1d8fe9e9634f994aa5b4c9b4a1bfcd0267",
       "sizeMb": "0.78 MB",
       "txHash": "0xd9cb695c0823c6449a4f67c6d8af80005aa15e217020968be52e50bd66508299",
-      "blockHeight": 775
+      "blockHeight": 715
     },
     {
       "index": 76,
       "filename": "bustan_al_arifin_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "51a7d15a9eeee183f417bc6e472e1d707169a3245b4bb2333b9d0a62a8fc45dc",
       "sizeMb": "0.21 MB",
       "txHash": "0x82107c86bb3881c9b9227460aedd5f02574b5b7fe79bf335e98f6e097c739db9",
-      "blockHeight": 776
+      "blockHeight": 716
     },
     {
       "index": 77,
       "filename": "bustan_al_arifin_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "5fb018667309c397e7bc1d235e00f8b0f51441111b5b9c418f114ff6e12f8ce1",
       "sizeMb": "0.09 MB",
       "txHash": "0x198345256060250cb251ccf7e93f4ba2178c1c8e07d65f69da8e69933f7f25fb",
-      "blockHeight": 777
+      "blockHeight": 717
     },
     {
       "index": 78,
       "filename": "daqaiq_al_minhaj_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "66d0f2518f459b5854135536a15aa8db3f134950b51bd236e63f5919adbb5d00",
       "sizeMb": "0.05 MB",
       "txHash": "0x965e716c22d1308a6694e311557e5e2a63a97b3f492f782e03fd6ab67e5a9fcc",
-      "blockHeight": 778
+      "blockHeight": 718
     },
     {
       "index": 79,
       "filename": "daqaiq_al_minhaj_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "d6edd8115712d57b3cead5bf4455153c2518f172ea48ee28cbf183a69ebc5ca1",
       "sizeMb": "0.01 MB",
       "txHash": "0x068a61c5adb6c4f7511c6fdd9ceeb2d8b267650ac6e4b2ebcffb0f96e231227c",
-      "blockHeight": 779
+      "blockHeight": 719
     },
     {
       "index": 80,
       "filename": "fadaih_al_batiniyya_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "bb8464aca13901e149389bba395702968ac9f329c36d1064fd2a6074fc0af7b7",
       "sizeMb": "0.44 MB",
       "txHash": "0x069cbb9e5b32041039edb10d0e35b42ba1c531477f858d2ae9e7bf2e968e2ba5",
-      "blockHeight": 780
+      "blockHeight": 720
     },
     {
       "index": 81,
       "filename": "fadaih_al_batiniyya_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "133849fbd2ab99eba7f2e09d527bd84aac434f710ade2c5f41118de429f0f88c",
       "sizeMb": "0.16 MB",
       "txHash": "0x530b3b8a4dcba0a4492ea87468ab10efd4ccd1fcb8a018e8ad17989cebd3aae9",
-      "blockHeight": 781
+      "blockHeight": 721
     },
     {
       "index": 82,
@@ -917,7 +918,7 @@
       "sha256": "bf4d38ffb352cb8a0304a3a077e34b8e47728638aaf6a90371d813023b0cb08e",
       "sizeMb": "0.42 MB",
       "txHash": "0xe5c2e33bf3efa6138df251201c8490ea05fcf48d31493c634a4c98191a2605d2",
-      "blockHeight": 782
+      "blockHeight": 722
     },
     {
       "index": 83,
@@ -928,7 +929,7 @@
       "sha256": "64ab1a136c7035cc855b1550e90b0acf1a213e9eb82064fdcd3b01eac81129c0",
       "sizeMb": "7.90 MB",
       "txHash": "0x68078c8cb923f520ac93bb8a048d31fe086c73386154b7c483c8d38496e14465",
-      "blockHeight": 783
+      "blockHeight": 723
     },
     {
       "index": 84,
@@ -939,7 +940,7 @@
       "sha256": "4a5c8a5cec7de1589e3ec9a30dd6d097d3483d850443c329dd824e4848c34d4f",
       "sizeMb": "3.46 MB",
       "txHash": "0x367633bbaa2c43cfa4bf0947ca00f0cc81f2fbc5ee971e383afd96fc8c1d4810",
-      "blockHeight": 784
+      "blockHeight": 724
     },
     {
       "index": 85,
@@ -950,7 +951,7 @@
       "sha256": "155e022a6d0c9e22390aeac318a255085c16057817e0ca0a06fdd481eff207e5",
       "sizeMb": "0.53 MB",
       "txHash": "0xe725b7bc7cfe388b029caa1612c712e801e410aefb208c5f41dacf3d926a8a4b",
-      "blockHeight": 785
+      "blockHeight": 725
     },
     {
       "index": 86,
@@ -961,7 +962,7 @@
       "sha256": "f2a886002b8fd9dcf1d4149832979328f94e3387163c5a876bfdc16e2543ed8c",
       "sizeMb": "0.64 MB",
       "txHash": "0xc04172f8fb08dcca4d134047b63e98d8d7db7c101bff452e2445c1ad4ad80b0f",
-      "blockHeight": 786
+      "blockHeight": 726
     },
     {
       "index": 87,
@@ -972,7 +973,7 @@
       "sha256": "7a3a168ee59dc4eb218b6d8b11c1c7453c9de1b9e0bebb4933127b46c1d120ec",
       "sizeMb": "0.67 MB",
       "txHash": "0x62dba1407a79b9eab1c1417af3959a11d0c7a1f88f8eacf91cb47ee13ebd2f36",
-      "blockHeight": 787
+      "blockHeight": 727
     },
     {
       "index": 88,
@@ -983,29 +984,29 @@
       "sha256": "3f4ca98a838a9f92dfd06ef036aba76990f5b9891bf57f480ce949127a6a885b",
       "sizeMb": "0.93 MB",
       "txHash": "0xe1c19c8a488919d9a9ea45f972432834eb746216728b5c31ca8ce603f772faa9",
-      "blockHeight": 788
+      "blockHeight": 728
     },
     {
       "index": 89,
       "filename": "irshad_tullab_al_haqaiq_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "0d1b5cf8fbd34a1c6becc15d76210943b637b2104475fe5cdf2c3b7a05585f55",
       "sizeMb": "0.21 MB",
       "txHash": "0x8e369067ff4692a1985f0b85b13f034b89e56995d9dc82264c264e8e4c671747",
-      "blockHeight": 789
+      "blockHeight": 729
     },
     {
       "index": 90,
       "filename": "irshad_tullab_al_haqaiq_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "8128ef89d5726f49e260c8afaed1e6819f5ff479235d04b3cc45498f81455570",
       "sizeMb": "0.04 MB",
       "txHash": "0xa52a4827ff5b9eb2350b5626fb8b6a5dd948ac4424ab9ba292c6fd089269be86",
-      "blockHeight": 790
+      "blockHeight": 730
     },
     {
       "index": 91,
@@ -1016,7 +1017,7 @@
       "sha256": "e165b7b55f64f5c48e22afb7faf1958f6ffce4a70e4edb8f4bee56ccb299d42f",
       "sizeMb": "0.17 MB",
       "txHash": "0xe469a408a748933876d668303584be18c729b5463b48e2d6a9f5ca411d0d50f9",
-      "blockHeight": 791
+      "blockHeight": 731
     },
     {
       "index": 92,
@@ -1027,7 +1028,7 @@
       "sha256": "e165b7b55f64f5c48e22afb7faf1958f6ffce4a70e4edb8f4bee56ccb299d42f",
       "sizeMb": "0.17 MB",
       "txHash": "0xf0b4173a4bbe42aa687ca7579db9fecc5588683d0c49d2d298d0ea6d5fc42b73",
-      "blockHeight": 792
+      "blockHeight": 732
     },
     {
       "index": 93,
@@ -1038,7 +1039,7 @@
       "sha256": "ab90b38dbd9b9bd7ae6ca886eecad8b3d7d606c7db848b505ff4dc3953628b33",
       "sizeMb": "0.21 MB",
       "txHash": "0x532b9be8d5d873945f662bd187b42ca45841b73a0d60d81a55f79aac898e6ec5",
-      "blockHeight": 793
+      "blockHeight": 733
     },
     {
       "index": 94,
@@ -1049,7 +1050,7 @@
       "sha256": "e165b7b55f64f5c48e22afb7faf1958f6ffce4a70e4edb8f4bee56ccb299d42f",
       "sizeMb": "0.17 MB",
       "txHash": "0x1af7ab27ca5fd471c7afe730255253c4c5ea3ffa91e0d0b9d758db43af8a64ca",
-      "blockHeight": 794
+      "blockHeight": 734
     },
     {
       "index": 95,
@@ -1060,7 +1061,7 @@
       "sha256": "a93e02ca69be6c7618b12fc7ba5cdd06a6cc71847d7791719035eddf06c961e8",
       "sizeMb": "0.14 MB",
       "txHash": "0x5c2f57d7d971b882d174e87d42289ca2beacd4afc7f7ca0e059b93ca9ec20694",
-      "blockHeight": 795
+      "blockHeight": 735
     },
     {
       "index": 96,
@@ -1071,7 +1072,7 @@
       "sha256": "e165b7b55f64f5c48e22afb7faf1958f6ffce4a70e4edb8f4bee56ccb299d42f",
       "sizeMb": "0.17 MB",
       "txHash": "0xe43cd6f66f75220d239d6f0a1a2997e7a412b55357ad6ce6f9030d297f879fec",
-      "blockHeight": 796
+      "blockHeight": 736
     },
     {
       "index": 97,
@@ -1082,7 +1083,7 @@
       "sha256": "a93e02ca69be6c7618b12fc7ba5cdd06a6cc71847d7791719035eddf06c961e8",
       "sizeMb": "0.14 MB",
       "txHash": "0x5701daaaf2863f35dec31ca5b1d789c5c5042eb81e62375de1624c903268e0e1",
-      "blockHeight": 797
+      "blockHeight": 737
     },
     {
       "index": 98,
@@ -1093,7 +1094,7 @@
       "sha256": "f59dbef75a3a19fe999ce81778cae1f6847dfe97d4a2eafa0ca400cfdfc32ff2",
       "sizeMb": "0.40 MB",
       "txHash": "0xbe50a5b0d7363010eb724d780c65f4fb480d37dbcab947897e54590df8c27f37",
-      "blockHeight": 798
+      "blockHeight": 738
     },
     {
       "index": 99,
@@ -1104,7 +1105,7 @@
       "sha256": "d7447352fb0a20b745cacc13afd359c32c7dea9310e4bd93d1caf436acc7cc3f",
       "sizeMb": "0.05 MB",
       "txHash": "0x4be5d0e093b5cf98294c44a992918b836096ac414ea1dbef9cfb3c906322a97a",
-      "blockHeight": 799
+      "blockHeight": 739
     },
     {
       "index": 100,
@@ -1115,7 +1116,7 @@
       "sha256": "ea2eb3e5e3874cd847f56ba3cecbbd4abfa50629088896043a7a7662530df36e",
       "sizeMb": "0.03 MB",
       "txHash": "0xdd9a626e4dc85738f358a59998d5e9ae1cfce66afc3e896dc5f69deb89dbff51",
-      "blockHeight": 800
+      "blockHeight": 740
     },
     {
       "index": 101,
@@ -1126,7 +1127,7 @@
       "sha256": "d77ceef6e99f3c8c7b6692ba9688aaa8cad7ff5d53039a554bccfc656ac545f8",
       "sizeMb": "0.13 MB",
       "txHash": "0xe01e0e3b27fb5c50ef94fe50be2c8492e6b7d87d3f085ae84d26dce5a07811cc",
-      "blockHeight": 801
+      "blockHeight": 741
     },
     {
       "index": 102,
@@ -1137,51 +1138,51 @@
       "sha256": "f96160362191e12d6cbf45d129ee9f28649c0d02a341db5684c35a04700ec1fd",
       "sizeMb": "0.12 MB",
       "txHash": "0x36c851a9611e3b8f0dd9fbfcf4bef43d9cd1f0111bad1188d46ea6e6633c21e8",
-      "blockHeight": 802
+      "blockHeight": 742
     },
     {
       "index": 103,
       "filename": "jawahir_al_quran_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "2f3a7b779430a96ec481bb8ea305ef3e3e8b0d9b7b3743e5e6edf74090516524",
       "sizeMb": "0.30 MB",
       "txHash": "0x574b4d616f0018ebbbb07ae61770dc8add3c35b09d87af154744f9e3370f1e56",
-      "blockHeight": 803
+      "blockHeight": 743
     },
     {
       "index": 104,
       "filename": "jawahir_al_quran_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "f0d1469dec116aaa81c167cba3cd1b4667f78470583055cd641f96515f538260",
       "sizeMb": "0.12 MB",
       "txHash": "0xe1d895288b014af42c49fddcd34f56fafa3bf677cf51c803950d8207007e418b",
-      "blockHeight": 804
+      "blockHeight": 744
     },
     {
       "index": 105,
       "filename": "khulasat_al_ahkam_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "38832af5f69fe08e2a8d8f1e22aa3e51ba440598d5352263c8cc2007c93ab891",
       "sizeMb": "0.71 MB",
       "txHash": "0xd6c956e357bd842fd621627ad35a4ad5217ae734e5f03310890ca83250e175c6",
-      "blockHeight": 805
+      "blockHeight": 745
     },
     {
       "index": 106,
       "filename": "khulasat_al_ahkam_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "3506f124b3fda0dd2b460c3c35ce349f83fb41151d270e6030b20b35a782dacc",
       "sizeMb": "0.08 MB",
       "txHash": "0xb817e78a8fff8b78e5b3235f5f2dad0685e2a32f23760d0cf2d3eed1dae2f9f1",
-      "blockHeight": 806
+      "blockHeight": 746
     },
     {
       "index": 107,
@@ -1192,7 +1193,7 @@
       "sha256": "bcb555cbb0f4d155a4b454df03467cb96f36a892f2a3ab7176d0753b6f176888",
       "sizeMb": "0.04 MB",
       "txHash": "0x15bbc810f2b4e40618876ff3f8ad3e91a0dafb60ae4899cf4a2ac668662c3e51",
-      "blockHeight": 807
+      "blockHeight": 747
     },
     {
       "index": 108,
@@ -1203,7 +1204,7 @@
       "sha256": "596f09f004070eecc7c3dc554a47692ea1de412eeb3e9eba6653a04015613134",
       "sizeMb": "0.02 MB",
       "txHash": "0xa085382471226486b8613ac3b170e3ec7b588fdd6f9f104a80ee49c4bbbd9340",
-      "blockHeight": 808
+      "blockHeight": 748
     },
     {
       "index": 109,
@@ -1214,7 +1215,7 @@
       "sha256": "7beb82fb89942a5fe86861e11355246ff88ff95cc83a589f396f2e3b3312a1d3",
       "sizeMb": "1.34 MB",
       "txHash": "0x3eb1737f14e1bf3dc1353510196434a0c0f692ad8de2935149de53fa79294e09",
-      "blockHeight": 809
+      "blockHeight": 749
     },
     {
       "index": 110,
@@ -1225,7 +1226,7 @@
       "sha256": "1f9a45aa5eafbd6d33bb89b3d6f320ae7a2b00324aadac75e6ac71f720263b5e",
       "sizeMb": "0.56 MB",
       "txHash": "0x01b82c27f140f40ac14f7aaa91b4614215701ac77999a7f0b8e41c83951a5952",
-      "blockHeight": 810
+      "blockHeight": 750
     },
     {
       "index": 111,
@@ -1236,7 +1237,7 @@
       "sha256": "348a508a4fa63e00314773f231221b1faa216f57c0d7bdd54b5da3fe0a5f0c7d",
       "sizeMb": "0.75 MB",
       "txHash": "0xe94261ff1b942a188527faa4897ddcbcb197f27fb4e9b56699b2d0e01e5a939f",
-      "blockHeight": 811
+      "blockHeight": 751
     },
     {
       "index": 112,
@@ -1247,7 +1248,7 @@
       "sha256": "5cb8036590782bf4f305a233752c790b18b78a5cfb219059a8cabcbad205ba38",
       "sizeMb": "0.53 MB",
       "txHash": "0x9f687fe9689bb40f5fe3955a75bbf92ae4b82ddbd720f154d2f1e65cc1c0e126",
-      "blockHeight": 812
+      "blockHeight": 752
     },
     {
       "index": 113,
@@ -1258,29 +1259,29 @@
       "sha256": "e4a384afdaf05fa977f4a04518d9db87b0aeeb116148d9e87aa66294d21c21eb",
       "sizeMb": "0.68 MB",
       "txHash": "0x2ea07bb9000a4246505bd70fecf262679fffec225dd0cff3293684fe0e60dada",
-      "blockHeight": 813
+      "blockHeight": 753
     },
     {
       "index": 114,
       "filename": "maarij_al_quds_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "0866cdc45e1ba44fc34bc7bf4c59c111a9994a5487544ad7297d004a6eb2c5f0",
       "sizeMb": "0.35 MB",
       "txHash": "0xe88a57385c0bee6f887838857afdc575258f03c2308d20484a53e52849f05f3f",
-      "blockHeight": 814
+      "blockHeight": 754
     },
     {
       "index": 115,
       "filename": "maarij_al_quds_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "19669b255bd9b004a57cf8cb122723c69d451a33e5a9daa8213d9f15f3d9aafb",
       "sizeMb": "0.16 MB",
       "txHash": "0x8996d35570ae8f6f543ebd76ace39e397ff01c962642aafbec6652d56fb4d0fd",
-      "blockHeight": 815
+      "blockHeight": 755
     },
     {
       "index": 116,
@@ -1291,7 +1292,7 @@
       "sha256": "e8401564527ffa5ffba177515dc9b6ba18f40ba3254bf1879777f508f10551a9",
       "sizeMb": "0.37 MB",
       "txHash": "0x60ddcddac20e30eb11bc675afc9780b4bfdd3bdb5585a35fa5cc9e4d02f21b8b",
-      "blockHeight": 816
+      "blockHeight": 756
     },
     {
       "index": 117,
@@ -1302,7 +1303,7 @@
       "sha256": "b4e16498af4faa9183f3767959fd797cff99da7e0ade776aeb686e1c9a5d9848",
       "sizeMb": "0.17 MB",
       "txHash": "0x70c6e3ccd9b969e9724eb350af1f546420285c11bc7038861e16631709c27a04",
-      "blockHeight": 817
+      "blockHeight": 757
     },
     {
       "index": 118,
@@ -1313,95 +1314,95 @@
       "sha256": "27a850a897b7c4bb0abe82286f697e4dc9b88b8b9254bdf8992c861d517eb01d",
       "sizeMb": "0.33 MB",
       "txHash": "0x606ad4f439819b0e5a2b293efaf3f0bb69fe5acbb34790b654057f95e0e688e7",
-      "blockHeight": 818
+      "blockHeight": 758
     },
     {
       "index": 119,
       "filename": "majmuat_rasail_al_ghazali_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "4955ba5a853b2134f34ff3cc27f59af830224bf8d233041188f030f660daa0b7",
       "sizeMb": "0.39 MB",
       "txHash": "0x21cf63f808fb44a17244053724d15c6acf1151891446348adbe1ee6e2c97a9ba",
-      "blockHeight": 819
+      "blockHeight": 759
     },
     {
       "index": 120,
       "filename": "majmuat_rasail_al_ghazali_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "7e62df956036842628f038b6fd9cd715117d3f1bf56d7e9fe5a8f1cdfb22be50",
       "sizeMb": "0.17 MB",
       "txHash": "0xc7580af053f798ed52978c629ff4782fa10ca68e2823087e764e4887db90a7e5",
-      "blockHeight": 820
+      "blockHeight": 760
     },
     {
       "index": 121,
       "filename": "maqasid_al_falasifah_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "ac2fc7f3cdd4d164d30cb7593f19674f33647f69497981902cd86b80b97e7bef",
       "sizeMb": "0.23 MB",
       "txHash": "0x054375e3a877a0e3eb1e30515b8e0f61849420a976281ac06326a2c619e02d08",
-      "blockHeight": 821
+      "blockHeight": 761
     },
     {
       "index": 122,
       "filename": "maqasid_al_falasifah_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "ca35ee37120edffda89b854a70221de713a30de1211811355a0e7dbadee2b8ca",
       "sizeMb": "0.04 MB",
       "txHash": "0x1d10f6c1ed25c5ac6d493c0b7b13680d24913e65f0b478f987615552ec0cedda",
-      "blockHeight": 822
+      "blockHeight": 762
     },
     {
       "index": 123,
       "filename": "mihakk_al_nazar_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "3a3b708de594638282ed8de7d60cbf3f0fe8925d44a7796657e062c8f0035dda",
       "sizeMb": "0.25 MB",
       "txHash": "0x303c45ef5ca91c62f92c7bed0361920292d5a168c819776d1ddfe799322d94e2",
-      "blockHeight": 823
+      "blockHeight": 763
     },
     {
       "index": 124,
       "filename": "mihakk_al_nazar_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "6f2d69d7053e43e7cc3d4998bec78eb2894b4b07e02704c603120c23e5dfe3b4",
       "sizeMb": "0.11 MB",
       "txHash": "0xacb0952ea36dc05c47b2f4d12234cbdc6b44ed7f81db9f6c28efda858d50df27",
-      "blockHeight": 824
+      "blockHeight": 764
     },
     {
       "index": 125,
       "filename": "minhaj_al_abidin_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "b4a00d9f7c2e80b1f27d8d9df6914aa24f3de068f5ce8114718da344deda4bf5",
       "sizeMb": "0.28 MB",
       "txHash": "0x39570b461dc76e806d0ad8d217de453e55242d239e08d27a00796692fd687dc7",
-      "blockHeight": 825
+      "blockHeight": 765
     },
     {
       "index": 126,
       "filename": "minhaj_al_abidin_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "2b752cbe74548be04d3a4bcbeef48ffab058592add76281b09b40da1f9b738ac",
       "sizeMb": "0.05 MB",
       "txHash": "0xd1d9c93f201ec298b112c97aad57d37822d20830709f35633ba6897db7b21b86",
-      "blockHeight": 826
+      "blockHeight": 766
     },
     {
       "index": 127,
@@ -1412,7 +1413,7 @@
       "sha256": "095f72dedaeedf9d7903a1b6a85c6956d6b895c7486d33a009f10560f6e864fd",
       "sizeMb": "0.98 MB",
       "txHash": "0x8502fe20cf475a9f72b131b78c99815e753e74a0d24e4189e74c1ee8337c2cbd",
-      "blockHeight": 827
+      "blockHeight": 767
     },
     {
       "index": 128,
@@ -1423,7 +1424,7 @@
       "sha256": "be8f7d1ba30c68823f7b0f1439feabb93282a8026e1833a317d8bfb0ee00f632",
       "sizeMb": "0.44 MB",
       "txHash": "0x7c1b287e85585d7f438dc7d0dee1303ce9f33bcc46a73b330873828400aacdd8",
-      "blockHeight": 828
+      "blockHeight": 768
     },
     {
       "index": 129,
@@ -1434,7 +1435,7 @@
       "sha256": "1151bcadd170c5064f0a01d1d2e853dded4cd46a990c3cecc1c3d2f0639440a3",
       "sizeMb": "0.16 MB",
       "txHash": "0x9af379bedb2502bd7acf65bb3c271599ae6fe74c995e4386ae9e9b34bf94d5a5",
-      "blockHeight": 829
+      "blockHeight": 769
     },
     {
       "index": 130,
@@ -1445,51 +1446,51 @@
       "sha256": "88aee9590bdcd528877247d27500914db6271a4cff6a62fd05b5f30d1b62fe3b",
       "sizeMb": "0.08 MB",
       "txHash": "0x1b670b35243ff09ec0654000a5db9e007b8dde6a11ef2b576de9d329fda1f850",
-      "blockHeight": 830
+      "blockHeight": 770
     },
     {
       "index": 131,
       "filename": "miyar_al_ilm_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "da4627968650311c2a5a1367ed6667ae39ac52ed3f0e01dfb62767f1c51df93a",
       "sizeMb": "0.46 MB",
       "txHash": "0xe4571ac52eeda406addc284faafd6802f1ef57de02402b09d096c7353ed2da7a",
-      "blockHeight": 831
+      "blockHeight": 771
     },
     {
       "index": 132,
       "filename": "miyar_al_ilm_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "4386fb432a384931106a0a6a1c34e5867067174b2c53a1edee42d02b5233bedf",
       "sizeMb": "0.22 MB",
       "txHash": "0xcf3a1e7bafab5c3950d4c7f2e106727dab9afba1eac7bfa7ec04cbd1361bf14b",
-      "blockHeight": 832
+      "blockHeight": 772
     },
     {
       "index": 133,
       "filename": "mizan_al_amal_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "48a9a48226abdf44ca2d3f098be15d17ab6235d30b849e6f37b0e3211dc79670",
       "sizeMb": "0.33 MB",
       "txHash": "0x642f7067a1cf08fbb0b7b7ad24b50a8c0878296ddb345306a0c4092bd65791c8",
-      "blockHeight": 833
+      "blockHeight": 773
     },
     {
       "index": 134,
       "filename": "mizan_al_amal_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "0a9ae910a3f496551a7a2cdde242795983f5e27926ecfc0d8023dd696350c774",
       "sizeMb": "0.16 MB",
       "txHash": "0x872959d898b29ce3feb01c5c747eb1406325e6b8e5e4644d12978de85f73ff18",
-      "blockHeight": 834
+      "blockHeight": 774
     },
     {
       "index": 135,
@@ -1500,7 +1501,7 @@
       "sha256": "4e6f698f2cf3324576610933498d4a40573d806c818f1612e23982d98ffd1b3e",
       "sizeMb": "0.61 MB",
       "txHash": "0x315d629d03ae8a49b5c0bffde1d80c55a66c3005e2415e3653cd44b7792cf079",
-      "blockHeight": 835
+      "blockHeight": 775
     },
     {
       "index": 136,
@@ -1511,73 +1512,73 @@
       "sha256": "773a63c03c5459bc039037dcba08406fde39db3a41ef08a3897997e27efde84d",
       "sizeMb": "0.61 MB",
       "txHash": "0x2a298f163b3e31ce1d6d1af6c6d7c69d68d34fe45d28a795661f18946f10e552",
-      "blockHeight": 836
+      "blockHeight": 776
     },
     {
       "index": 137,
       "filename": "qawaid_al_aqaid_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "636789c2596a93cec777644dd113600c5fe85d9e8ebe543f0295b37d4208f5cb",
       "sizeMb": "0.19 MB",
       "txHash": "0x2dafddea234e6e3b0df9b943c19823719b06ea9dd92fab88d37d5781a48d4583",
-      "blockHeight": 837
+      "blockHeight": 777
     },
     {
       "index": 138,
       "filename": "qawaid_al_aqaid_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "d929b6a8bf7e39a5ddf71d5d7a4ffe58f49e879e9a571bf7066f9795d3d3c97d",
       "sizeMb": "0.10 MB",
       "txHash": "0xa77f2d60239ffe088fd36491ca99ad164a1bf6f57f97db335ad2182b6e51f3f6",
-      "blockHeight": 838
+      "blockHeight": 778
     },
     {
       "index": 139,
       "filename": "rawdat_al_talibin_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "fb193ee607048949cd3e93f93677da02a9385e86cabc3bad586d586bb736f8e5",
       "sizeMb": "4.62 MB",
       "txHash": "0x564c5986da077fbf668aedb26f5a19d03bffcd53bc894e53f0d1696527ecf7ec",
-      "blockHeight": 839
+      "blockHeight": 779
     },
     {
       "index": 140,
       "filename": "rawdat_al_talibin_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "a26f5d21280ba5733035cfc073fa8791e62650f68f91f49fac6ada0c09af4554",
       "sizeMb": "0.71 MB",
       "txHash": "0xc67dd4c1935854a7430c53f277fbdda49c2506a28861aa9f686490782deabe64",
-      "blockHeight": 840
+      "blockHeight": 780
     },
     {
       "index": 141,
       "filename": "risalah_fi_al_itiqad_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "0efdc6f0e78d564b121010459db7aa4110d650fe7bd8c4608343fec0dd5586e0",
       "sizeMb": "0.09 MB",
       "txHash": "0x4c60515f45bda6183102e7f35b25b36abb263e42dd5b7d25232663ec4db43688",
-      "blockHeight": 841
+      "blockHeight": 781
     },
     {
       "index": 142,
       "filename": "risalah_fi_al_itiqad_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "ff4e7bcd50570c2dba21ebdcb1a378af6fee8db2391ed45db027564ef1892b0e",
       "sizeMb": "0.02 MB",
       "txHash": "0x258b43d5b88a2e42b2a98a927cd20618e215fbfd07d387b6c7f32f87a8dc9e86",
-      "blockHeight": 842
+      "blockHeight": 782
     },
     {
       "index": 143,
@@ -1588,7 +1589,7 @@
       "sha256": "602b9f4556fc68f766481fe534a5fad51762652be215078bf4201d57ca949970",
       "sizeMb": "1.46 MB",
       "txHash": "0x6d51cb562a2785a5db8873c7d23e55bb8fdee7d84a3c0c7d007673f8928f01da",
-      "blockHeight": 843
+      "blockHeight": 783
     },
     {
       "index": 144,
@@ -1599,7 +1600,7 @@
       "sha256": "bff19ef30546c02b181ee82c8b5641b7003d2aa02395f80263ec98ff2547d233",
       "sizeMb": "0.61 MB",
       "txHash": "0x33e806b4419b1b71e3cf9031e0439b2f006e4e3a6011e18d92035cfb3d124a12",
-      "blockHeight": 844
+      "blockHeight": 784
     },
     {
       "index": 145,
@@ -1610,7 +1611,7 @@
       "sha256": "82cc2b3df1a84746d4fc3f58671d9ab97064572d1cda39087251d6cd5a7609fb",
       "sizeMb": "1.23 MB",
       "txHash": "0x07761727101579448925ea2d3ec2ad431b643f30c7a149092d9a45138409115e",
-      "blockHeight": 845
+      "blockHeight": 785
     },
     {
       "index": 146,
@@ -1621,7 +1622,7 @@
       "sha256": "6ca22eedd9bc2c723ac3b903ddedf53d57693fb23761a01cf7dbf14820cc55e9",
       "sizeMb": "0.26 MB",
       "txHash": "0xf09ceacc2573d38c143e2f01a3879b101e6421f3c8a63f440beee1a8ec0a9caf",
-      "blockHeight": 846
+      "blockHeight": 786
     },
     {
       "index": 147,
@@ -1632,7 +1633,7 @@
       "sha256": "d820ed2bc5d556e3bdc570ac4b70bf4c81602bbcb82dd5001c015af1ddb5c7a6",
       "sizeMb": "0.70 MB",
       "txHash": "0x03e04f96d5725953c5c6d9743eb806b516c5ded23f798e5944aaa7eb29b508fd",
-      "blockHeight": 847
+      "blockHeight": 787
     },
     {
       "index": 148,
@@ -1643,7 +1644,7 @@
       "sha256": "88d903c605e80cb3d7c3ed315ce6c4bdbf3ac829c64d7cf58644b2820615c547",
       "sizeMb": "7.39 MB",
       "txHash": "0x8e56808c7163431724bf09375b941b3bf7e37263ebc99c9ef0e378de537489bc",
-      "blockHeight": 848
+      "blockHeight": 788
     },
     {
       "index": 149,
@@ -1654,84 +1655,84 @@
       "sha256": "c818a5ac05c18308415169fbdaf8cfac532f0615690c0fc27ffd18560619714c",
       "sizeMb": "3.74 MB",
       "txHash": "0xaa74fd752522519f39ef9e6ec7fc720574c0779b0fc0fc8e0e3e790e3dca9528",
-      "blockHeight": 849
+      "blockHeight": 789
     },
     {
       "index": 150,
       "filename": "shifa_al_ghalil_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "38d439c6ae5fbcd35ea1bd256a029844fc80ae3194b06aa14c3c5c78bd772ca2",
       "sizeMb": "0.99 MB",
       "txHash": "0xf7912d6e0bd1b1d02a6bbe3c540bef368f052ad39cc017450bc4e76ecbff022f",
-      "blockHeight": 850
+      "blockHeight": 790
     },
     {
       "index": 151,
       "filename": "shifa_al_ghalil_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "306510ef371125efbf6d843063752c0297549b053c6daed815f559c9a6878cd0",
       "sizeMb": "0.46 MB",
       "txHash": "0x2282be232013305bbc0c152c2e36e6ded99dfddf2c8c698d551307056ac0a087",
-      "blockHeight": 851
+      "blockHeight": 791
     },
     {
       "index": 152,
       "filename": "sirr_al_alamin_bilingual_lexical_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "98e274a6ee1de939a5e9d1f98f4f4dece93ec1ef4b86f95a207ab86074192e0e",
       "sizeMb": "0.12 MB",
       "txHash": "0x522354e9e2020a10fba4d386934b35c56033206303a69cbe5977e02ada9fe08f",
-      "blockHeight": 852
+      "blockHeight": 792
     },
     {
       "index": 153,
       "filename": "sirr_al_alamin_pure_en.epub",
-      "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
-      "category": "Ihya, Tasawwuf, Ethics & Epistemology",
-      "channelId": "chan-imam-abuhamidd",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "4830de94856a3a27c7c0192434351165ecc0914251e5604c8b66b59b4f11978a",
       "sizeMb": "0.02 MB",
       "txHash": "0xd38d14497db8c56b00ac62c4f0a333cc80680f24b446e46257c7a0554cb7882a",
-      "blockHeight": 853
+      "blockHeight": 793
     },
     {
       "index": 154,
       "filename": "sunan_al_muhtadin_bilingual_lexical_en.epub",
-      "author": "Classical Islamic Masterworks",
-      "category": "Sacred Sciences & Classical Heritage",
-      "channelId": "chan-general",
+      "author": "Imam al-Mawwaq al-Gharnati (الإمام المواق الغرناطي)",
+      "category": "Spiritual Conduct & Ethics",
+      "channelId": "chan-classical-heritage",
       "sha256": "2ca8d009b0d0037f64f94db4eacf3ad3a52b6b075b942805c4a50c20e923e1d0",
       "sizeMb": "0.76 MB",
       "txHash": "0xbd68718e756453a3276bb916ebb99389499a01eaeeb2f292e43d962c4e743cb8",
-      "blockHeight": 854
+      "blockHeight": 794
     },
     {
       "index": 155,
       "filename": "sunan_al_muhtadin_oversight_critical_en.epub",
-      "author": "Classical Islamic Masterworks",
-      "category": "Sacred Sciences & Classical Heritage",
-      "channelId": "chan-general",
+      "author": "Imam al-Mawwaq al-Gharnati (الإمام المواق الغرناطي)",
+      "category": "Spiritual Conduct & Ethics",
+      "channelId": "chan-classical-heritage",
       "sha256": "163cec2effa04cd3a05366378d7a9ac92041beb63503e0156a745cbea55e2e54",
       "sizeMb": "1.16 MB",
       "txHash": "0xfca742c80fd70d7fa52e88824f042eeb3aeaed097a153584cd88860481f21728",
-      "blockHeight": 855
+      "blockHeight": 795
     },
     {
       "index": 156,
       "filename": "sunan_al_muhtadin_pure_en.epub",
-      "author": "Classical Islamic Masterworks",
-      "category": "Sacred Sciences & Classical Heritage",
-      "channelId": "chan-general",
+      "author": "Imam al-Mawwaq al-Gharnati (الإمام المواق الغرناطي)",
+      "category": "Spiritual Conduct & Ethics",
+      "channelId": "chan-classical-heritage",
       "sha256": "affbc4ee764290ca6f216802537f501859738ba01b80646259cf7c931a43462a",
       "sizeMb": "0.38 MB",
       "txHash": "0x3abfcfb552d28ea923599d1e47ad9f6f6bc73ea6d3645e7461e93f2934e7447e",
-      "blockHeight": 856
+      "blockHeight": 796
     },
     {
       "index": 157,
@@ -1742,7 +1743,7 @@
       "sha256": "c48958b6503ae7eab68ccacb05663e9e4dcd524467f61b8d30c6bee90afcb88b",
       "sizeMb": "1.43 MB",
       "txHash": "0xe89aeaf1b2121d377f2755d3999cebeab8db40e7ab49e1b45175780a11d9e0cc",
-      "blockHeight": 857
+      "blockHeight": 797
     },
     {
       "index": 158,
@@ -1753,7 +1754,7 @@
       "sha256": "8f5b365ebde5433153a5308a7a7ecde9533ae0fe0682f72e355a48258d81d649",
       "sizeMb": "1.42 MB",
       "txHash": "0x8af15184482abef4e3f45a22dbd6e6a209bb7fcdf2ef553f9990efdd0dd31aac",
-      "blockHeight": 858
+      "blockHeight": 798
     },
     {
       "index": 159,
@@ -1764,7 +1765,7 @@
       "sha256": "b982f40602f2c613ee34b1b0b1952153ff947733573978a2f0fc19cfa2b95784",
       "sizeMb": "1.43 MB",
       "txHash": "0xc5028630e04a2d71e9769da42eb02eb5212f81f120295c586f193405e862c8d7",
-      "blockHeight": 859
+      "blockHeight": 799
     },
     {
       "index": 160,
@@ -1775,7 +1776,7 @@
       "sha256": "d6641261738d10fbd2d29431354e9715380d65146ad031610fc8122779f65c9b",
       "sizeMb": "1.46 MB",
       "txHash": "0x6a8160768bb820f092f6112aec714151c68329bcdd34966159d4345d739971a0",
-      "blockHeight": 860
+      "blockHeight": 800
     },
     {
       "index": 161,
@@ -1786,7 +1787,7 @@
       "sha256": "51703862814c99e223f2cb832ab7cb3e1e194ebb88b90f7b07fb37fba1a569ef",
       "sizeMb": "1.44 MB",
       "txHash": "0xe902923e0c8bb0e4b8527da17d38ec36935b4895ddd3fe78e2985e2c3f33233f",
-      "blockHeight": 861
+      "blockHeight": 801
     },
     {
       "index": 162,
@@ -1797,7 +1798,7 @@
       "sha256": "2ec6e94d1c81e7afe9b51b3ba0abb13e3ab34fe96e4a6cb56a09c7ee4505a1dd",
       "sizeMb": "1.46 MB",
       "txHash": "0xb6a46c688f879b4fd3ea53c6d5bc926a7d64c3193731b78dded369ea659d5420",
-      "blockHeight": 862
+      "blockHeight": 802
     },
     {
       "index": 163,
@@ -1808,7 +1809,7 @@
       "sha256": "f05dd4add9b5140bdae4bdf0655107cfbe4429646b4c9ffcfa16257096b1eae0",
       "sizeMb": "1.43 MB",
       "txHash": "0xfe2d1b4961be7b72906b699325f57dbfcf3f7e0be0e35c4802e01313c49c4518",
-      "blockHeight": 863
+      "blockHeight": 803
     },
     {
       "index": 164,
@@ -1819,7 +1820,7 @@
       "sha256": "871e4c61978243846e173bc642e30b9fe2b57be74bb546c40cafa4f8503d5f9c",
       "sizeMb": "1.44 MB",
       "txHash": "0xe62fc0eb4181b21f01f041f866e2dbaef0b8df18f465516ac7f95d9427e3234d",
-      "blockHeight": 864
+      "blockHeight": 804
     },
     {
       "index": 165,
@@ -1830,7 +1831,7 @@
       "sha256": "65480002076eb066bd0a0960079669bd3abdcf273d4c7975cf37434b8695ceeb",
       "sizeMb": "1.48 MB",
       "txHash": "0xbcd35dabf5f53d043773d9c29e65d18e8b89711da30925c292997765505a5bc6",
-      "blockHeight": 865
+      "blockHeight": 805
     },
     {
       "index": 166,
@@ -1841,7 +1842,7 @@
       "sha256": "164b105c02044fe26972376e4362cd8ca4ae7e7792aa1ce19296a95232c3ece4",
       "sizeMb": "1.45 MB",
       "txHash": "0xbb8bd77c6141481c039759e0c7bbe114e671ff2e7ceec5ef6ac84870992a5fe5",
-      "blockHeight": 866
+      "blockHeight": 806
     },
     {
       "index": 167,
@@ -1852,7 +1853,7 @@
       "sha256": "cb11f6dacf327e836812742eb215461487246e8fd5a2c6c37a5bfd23f13e229e",
       "sizeMb": "1.49 MB",
       "txHash": "0xf4bd0eeaf891fbe43c3f79d831bd71dc5d22b96b10bdf09643d0c9fdec9d2d01",
-      "blockHeight": 867
+      "blockHeight": 807
     },
     {
       "index": 168,
@@ -1863,7 +1864,7 @@
       "sha256": "9e8a9dcd959b15653953ffaf6c29cd245f40a3e03c7d82a22d827788e7845877",
       "sizeMb": "1.47 MB",
       "txHash": "0x1a9e9706e680e35f580708c7ffb8f169d017f3bcbf51e24a90a49b9c3fd448e0",
-      "blockHeight": 868
+      "blockHeight": 808
     },
     {
       "index": 169,
@@ -1874,7 +1875,7 @@
       "sha256": "a46a134b4b810e491211be18869a439e8b61da1d360cdf65852694de8f6f00ea",
       "sizeMb": "1.41 MB",
       "txHash": "0x3be5566fb9bc2f274ca06470980077fd6580c7a2f5e42e15c86d475fbe5dc30f",
-      "blockHeight": 869
+      "blockHeight": 809
     },
     {
       "index": 170,
@@ -1885,7 +1886,7 @@
       "sha256": "ea67cdce98e65bc14e577dda3d41c7fb5db32edee1ece336191ed5481cdc54c0",
       "sizeMb": "1.43 MB",
       "txHash": "0xd438c22e0e31fa9959ca37845e57e0f09b798d926897c0d2686c97d86f172a8e",
-      "blockHeight": 870
+      "blockHeight": 810
     },
     {
       "index": 171,
@@ -1896,7 +1897,7 @@
       "sha256": "10e8358032c3d1cc8ec80f043e731204cce655ed789e0e47148251d8ec8c235f",
       "sizeMb": "1.43 MB",
       "txHash": "0x57b3ec8c9a89cb3b07a995c8382af85f6c243d8ab003c4a3699b7b6afab467ff",
-      "blockHeight": 871
+      "blockHeight": 811
     },
     {
       "index": 172,
@@ -1907,7 +1908,7 @@
       "sha256": "5b0bbe3e6def57460b3da792d347022dc903e585911bd760ae02317fbe20e0a8",
       "sizeMb": "1.43 MB",
       "txHash": "0xa377f1d4495031772a84b7c3bd7fba06da0a1a8d72949280e19216421048ffa6",
-      "blockHeight": 872
+      "blockHeight": 812
     },
     {
       "index": 173,
@@ -1918,7 +1919,7 @@
       "sha256": "fd355532230b28fae59102577861ab571071b70ff3a71532a0c158068a75c981",
       "sizeMb": "1.45 MB",
       "txHash": "0x0d570343a93d7ac26915423757b93e06195ab4c05ea1ea78de0787cb220a335b",
-      "blockHeight": 873
+      "blockHeight": 813
     },
     {
       "index": 174,
@@ -1929,7 +1930,7 @@
       "sha256": "debc0632237bb73476c03fe341edfd55de9561f398933344122471ff160ab30c",
       "sizeMb": "1.44 MB",
       "txHash": "0x0310ef2d0c4ae94d1565f21466d9f4ac0870d8d615eb43b4b4a9ee6fe0a47bef",
-      "blockHeight": 874
+      "blockHeight": 814
     },
     {
       "index": 175,
@@ -1940,7 +1941,7 @@
       "sha256": "9e38322b2e7952684d284d21e4c35432c103ef0c7becf3b0c3f3ef543aa00c72",
       "sizeMb": "1.44 MB",
       "txHash": "0x336e616a39bd569685927e392a1d8736acb27efc523904429a3879704e420c3c",
-      "blockHeight": 875
+      "blockHeight": 815
     },
     {
       "index": 176,
@@ -1951,7 +1952,7 @@
       "sha256": "6a784f20929fdcc9c2866d214225ae89bc3d8b8ef71c652c691dec650010524b",
       "sizeMb": "1.47 MB",
       "txHash": "0x10090d576ec2a50c1993c890c481a7deb426f7fa449e7ec2837e88c7bb6782f9",
-      "blockHeight": 876
+      "blockHeight": 816
     },
     {
       "index": 177,
@@ -1962,7 +1963,7 @@
       "sha256": "ac0803eb0bb3ab9e657b1d91d753e6e7ec6389561f2525e17a8d5b2095ee6c70",
       "sizeMb": "1.48 MB",
       "txHash": "0xb74962eb71ca2b4b46538a385b01a343052bb8a14e85c82dca763ea630f29f77",
-      "blockHeight": 877
+      "blockHeight": 817
     },
     {
       "index": 178,
@@ -1973,7 +1974,7 @@
       "sha256": "e8f1482f6c136dc31710ce4479115f010e27d80b3556dc38232386c3bce4f044",
       "sizeMb": "1.48 MB",
       "txHash": "0xe39836b590927de12c545f52bea5a16a5f2a144290a982521533d384d9bc9490",
-      "blockHeight": 878
+      "blockHeight": 818
     },
     {
       "index": 179,
@@ -1984,7 +1985,7 @@
       "sha256": "4c4e844fb3cca2f391d374c4310187459643628ab74413d331a18f7703d9009d",
       "sizeMb": "1.47 MB",
       "txHash": "0xf51a46f0a967500fb88400a7bc1442c789d1e236ffdaec8199d84734d9aaf464",
-      "blockHeight": 879
+      "blockHeight": 819
     },
     {
       "index": 180,
@@ -1995,7 +1996,7 @@
       "sha256": "a2f5d9f1a3412719292909133c52741fefb09d58a403c277dae3bd43f56ac3ae",
       "sizeMb": "1.48 MB",
       "txHash": "0x6bd8b0d417fa1d3553d7e6c991a4c285431f6a7d576610f628bb0775afb53218",
-      "blockHeight": 880
+      "blockHeight": 820
     },
     {
       "index": 181,
@@ -2006,7 +2007,7 @@
       "sha256": "adb1ac7f34916a9806986d2921a56fb98ef73c0655cae2cc509889e72ee9cc9a",
       "sizeMb": "1.45 MB",
       "txHash": "0x15a6f944c76d8072ebcae950a25b2a62beb0920e5313f60c12f125c979643bb6",
-      "blockHeight": 881
+      "blockHeight": 821
     },
     {
       "index": 182,
@@ -2017,7 +2018,7 @@
       "sha256": "90120c9eebd34cc5ee18ff691100a98da38b42ee931d2ddf224f40797c1d51e5",
       "sizeMb": "1.42 MB",
       "txHash": "0xc5bbc4a6a0250db2a7e48feb958c251b2c3a03a298f68b69d4c5233cd32b7d1e",
-      "blockHeight": 882
+      "blockHeight": 822
     },
     {
       "index": 183,
@@ -2028,7 +2029,7 @@
       "sha256": "d72689528e24b8f1924358d3c21a650a22ec1f479452204947e40b0cf74e3809",
       "sizeMb": "1.45 MB",
       "txHash": "0x1402bc7c5943ccaeee094a3fb3d37b860e524b1fcefc0b4e80a139ba2503c49f",
-      "blockHeight": 883
+      "blockHeight": 823
     },
     {
       "index": 184,
@@ -2039,7 +2040,7 @@
       "sha256": "cf711a80e8e7f4038afb0f27011071b645ee3c6d91557b2d736ebf6ea8c01c49",
       "sizeMb": "1.47 MB",
       "txHash": "0xaad0965596bc841986360fbdd0ceb5d7f46a7a99c50a21c4467eecbe4c3c21ca",
-      "blockHeight": 884
+      "blockHeight": 824
     },
     {
       "index": 185,
@@ -2050,7 +2051,7 @@
       "sha256": "3bd75bc4c6d5f41f79106c8834a7d0ac54368e414d5be9b7662edf073562cc28",
       "sizeMb": "1.49 MB",
       "txHash": "0x2d77e35b6bc346027230959bd64207053f306f16a26f7c5c68e0efe8b25eaa31",
-      "blockHeight": 885
+      "blockHeight": 825
     },
     {
       "index": 186,
@@ -2061,7 +2062,7 @@
       "sha256": "3eff666f45c3d68fa8d94310091cfca935379d5881ec1a5e77d4880c298699e7",
       "sizeMb": "1.46 MB",
       "txHash": "0x2cf154a5329c0c9eb80d1933207b8746f05ad7f8cc5a7e20df6bfd415e0aff09",
-      "blockHeight": 886
+      "blockHeight": 826
     },
     {
       "index": 187,
@@ -2072,7 +2073,7 @@
       "sha256": "d4977fa0dbfd09ed797cc4240cbc5194a664e1716e44dbcd5093ef57387850d2",
       "sizeMb": "1.46 MB",
       "txHash": "0x3d4f02bc3bb2c8c4c5f6238b3afc4b9b6c55ed25799370189b815faf19151148",
-      "blockHeight": 887
+      "blockHeight": 827
     },
     {
       "index": 188,
@@ -2083,7 +2084,7 @@
       "sha256": "6de271a18085789e9de1093ef6fe4044ba621b14c219d431eecdc64c608d3ad4",
       "sizeMb": "1.46 MB",
       "txHash": "0x1e29f96153e148ea873d905653c3f85a1efb88e522f5eed44304b444b2b33abb",
-      "blockHeight": 888
+      "blockHeight": 828
     },
     {
       "index": 189,
@@ -2094,7 +2095,7 @@
       "sha256": "0c95603f1f87fe117bec8aa02a856cafbd4a742fe844522e50c7635bfa311848",
       "sizeMb": "0.45 MB",
       "txHash": "0xa7e0eeea9c42d015504a93cad707f3e8c1dcde68cf16e06b7a717acf5c8d3e4a",
-      "blockHeight": 889
+      "blockHeight": 829
     },
     {
       "index": 190,
@@ -2105,7 +2106,7 @@
       "sha256": "0c95603f1f87fe117bec8aa02a856cafbd4a742fe844522e50c7635bfa311848",
       "sizeMb": "0.45 MB",
       "txHash": "0x7f9eb7e655e8445d3818b38c6f4fdf19773e12332dc70a4617001c69c0f3a8dd",
-      "blockHeight": 890
+      "blockHeight": 830
     },
     {
       "index": 191,
@@ -2116,7 +2117,7 @@
       "sha256": "80f4de71f85a1ab1e89c81511700884a9d997db784ca070e82bc750114f0bd89",
       "sizeMb": "0.22 MB",
       "txHash": "0x89f67dde582e979ceef7a4594224e6b34ce8c6ea00d9d8a1104cf67f3e7f07fa",
-      "blockHeight": 891
+      "blockHeight": 831
     },
     {
       "index": 192,
@@ -2127,73 +2128,73 @@
       "sha256": "80f4de71f85a1ab1e89c81511700884a9d997db784ca070e82bc750114f0bd89",
       "sizeMb": "0.22 MB",
       "txHash": "0x9fef997a4a748e5a8e7ab9ade26cd55ed45e6a9dff1077c852413afa10e91206",
-      "blockHeight": 892
+      "blockHeight": 832
     },
     {
       "index": 193,
       "filename": "tahdhib_al_asma_wa_al_lughat_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "0532c1f822ca61da916563065af7a705fe851c9273fab2d108511fa5c656f770",
       "sizeMb": "2.53 MB",
       "txHash": "0xbcbc8a5d351c47b38c312dafc36eb6447fbf5f8329df4758a86c1231342c50d7",
-      "blockHeight": 893
+      "blockHeight": 833
     },
     {
       "index": 194,
       "filename": "tahdhib_al_asma_wa_al_lughat_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "a60196b922998cce58718bc8040c20bb7120654863db0e8208537b20f52fda8f",
       "sizeMb": "0.25 MB",
       "txHash": "0x02741743abe8695576c70992e727adc14c2d42435a12b0b9edb4bbb2e243e2d2",
-      "blockHeight": 894
+      "blockHeight": 834
     },
     {
       "index": 195,
       "filename": "tahrir_alfaz_al_tanbih_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "1fd369a1d0a98e1687e7938e8d437ffabbeb1cf78a280dfa5576eb00993f8d94",
       "sizeMb": "0.32 MB",
       "txHash": "0x81f8767890c88a78f2bb47e3d4d96b0a7a91921215d4516085fac8d98be8799b",
-      "blockHeight": 895
+      "blockHeight": 835
     },
     {
       "index": 196,
       "filename": "tahrir_alfaz_al_tanbih_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "3311b6d424c3f9f6e4083629055ed4914a713910f8afa0b4da1e212848550618",
       "sizeMb": "0.05 MB",
       "txHash": "0xb7b312d001f173aecfc3880867938da2f95f9c0057c5b3614676219371738841",
-      "blockHeight": 896
+      "blockHeight": 836
     },
     {
       "index": 197,
       "filename": "takhmis_al_ghanima_bilingual_lexical_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "ae9d4b9bbf711ae494e989bb18c9e14fe01a1594986f405cdc3a7156936e947b",
       "sizeMb": "0.04 MB",
       "txHash": "0x26b9879411df28d0917603f5db10db75ff9bf3d459b1cd2cf6c52f12aa1e0372",
-      "blockHeight": 897
+      "blockHeight": 837
     },
     {
       "index": 198,
       "filename": "takhmis_al_ghanima_pure_en.epub",
-      "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
-      "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
-      "channelId": "chan-imam-nawawi",
+      "author": "Classical Islamic Masterworks",
+      "category": "Sacred Sciences & Classical Heritage",
+      "channelId": "chan-general",
       "sha256": "0f291a2d101cd45ecf7823ef7cec4bcca526b567cdf6367e29b8776f4da5bbdc",
       "sizeMb": "0.01 MB",
       "txHash": "0x1f1f6314f7c64fe0d26e3f318c322495a281649b61eafe749f618dd73282254d",
-      "blockHeight": 898
+      "blockHeight": 838
     }
   ]
 }
