@@ -59,13 +59,14 @@ class ClassicalHeritageLibrary {
       }
       // 3. Imam al-Mawwaq - Sunan al-Muhtadin
       else if (file.startsWith('sunan_al_muhtadin_')) {
-        let edition = 'Pure English Scholarly Translation';
-        let lang = 'English';
-        if (file.endsWith('_sq.epub')) {
-          edition = 'Botim i Pastër Akademik Shqip (Pure Albanian Edition)';
-          lang = 'Albanian (Shqip)';
-        } else if (file.includes('bilingual')) {
-          edition = 'Bilingual Classical Arabic + Lexical Edition';
+        let isAlbanian = file.endsWith('_sq.epub');
+        let lang = isAlbanian ? 'Albanian (Shqip)' : 'English';
+        let edition = isAlbanian ? 'Botim i Pastër Akademik Shqip (Pure Albanian Edition)' : 'Pure English Scholarly Translation';
+
+        if (file.includes('bilingual')) {
+          edition = isAlbanian 
+            ? 'Botim Dygjuhësh me Aparat Leksikografik AynEngine (Bilingual Lexical Apparatus Edition)' 
+            : 'Bilingual Classical Arabic + Lexical Edition';
         } else if (file.includes('oversight')) {
           edition = 'Critical Oversight & Comparative Apparatus Edition';
         }
