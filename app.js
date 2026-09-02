@@ -3255,6 +3255,13 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
   const peerId = typeof targetPeer === 'string' ? targetPeer : (targetPeer.peerId || targetPeer.fullId);
   const peerPrefix = peerId.split('@')[0];
 
+  // Self-dial guard (Nizām al-Shaf')
+  if (state.identity && (peerId === state.identity.fullId || (peerPrefix === state.identity.prefix && state.peers.filter(p => p.prefix === peerPrefix).length <= 1))) {
+    console.warn('[Call] Cannot dial self.');
+    appendSystemNotice('⚠️ [Call]: Cannot initiate a call to yourself. Please select another online peer.');
+    return;
+  }
+
   state.activeCall.peer = peerId;
   state.activeCall.peerPrefix = peerPrefix;
   state.activeCall.type = callType;
@@ -4304,5 +4311,6 @@ function renderLisanLexicon(items) {
 window.startYoutubeStreamCall = startYoutubeStreamCall;
 window.openStreamYoutubeModal = openStreamYoutubeModal;
 window.acceptIncomingCall = acceptIncomingCall;
-window.rejectIncomingCall = rejectIncomingCall;
+window.rejectIncomingCall = declineIncomingCall;
+window.declineIncomingCall = declineIncomingCall;
 window.endActiveCall = endActiveCall;

@@ -269,10 +269,20 @@ const LISAN_ROOTS_256 = [
   "روض"
 ];
 
-// Inverted Map for O(1) Fast Decoding
+// Helper: Strip Arabic diacritics, tatweel, alef variants, and non-letter noise
+function normalizeArabicToken(token) {
+  if (!token) return "";
+  return token
+    .replace(/[ً-ٰٟـ]/g, "") // remove tashkeel & tatweel
+    .replace(/[آأإ]/g, "ا")       // normalize alef
+    .replace(/[^\p{L}\p{N}]/gu, "")              // remove ALL punctuation, quotes, guillemets, brackets
+    .trim();
+}
+
+// Inverted Map for O(1) Fast Decoding (keyed by normalized root for total noise immunity)
 const LISAN_ROOT_TO_BYTE = new Map();
 LISAN_ROOTS_256.forEach((root, idx) => {
-  LISAN_ROOT_TO_BYTE.set(root, idx);
+  LISAN_ROOT_TO_BYTE.set(normalizeArabicToken(root), idx);
 });
 
 const ZERO_WIDTH = {
@@ -302,15 +312,6 @@ const EMOJI_CARRIERS = [
   "🌸", "🔥", "🛡️", "📜", "🪐", "⚡", "🔮", "🏔️"
 ];
 
-// Helper: Strip Arabic diacritics and tatweel for robust token matching
-function normalizeArabicToken(token) {
-  if (!token) return "";
-  return token
-    .replace(/[\u064B-\u065F\u0670\u0640]/g, "") // remove tashkeel & tatweel
-    .replace(/[\u0622\u0623\u0625]/g, "ا")       // normalize alef
-    .replace(/[.,:;،؟!\[\]()\"\']/g, "")        // remove punctuation
-    .trim();
-}
 
 class ShabahStego {
   /**
