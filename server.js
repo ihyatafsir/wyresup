@@ -488,12 +488,15 @@ wss.on('connection', (ws, req) => {
   });
 
   ws.on('close', () => {
-    if (clientPeer) {
-      presenceManager.removePeer(clientPeer.peerId);
+    const record = connectedClients.get(ws);
+    if (record) {
+      presenceManager.removePeer(record.peerId);
       connectedClients.delete(ws);
-      gossipMesh.removeNeighbor(clientPeer.peerId);
+      gossipMesh.removeNeighbor(record.peerId);
       broadcastPresenceUpdate();
-      console.log(`[Mesh] Peer disconnected: ${clientPeer.peerId}`);
+      console.log(`[Mesh] Peer disconnected: ${record.peerId}`);
+    } else {
+      connectedClients.delete(ws);
     }
   });
 
@@ -522,6 +525,17 @@ function handleClientMessage(ws, msg) {
         transport: 'ws',
         latency: Math.floor(Math.random() * 10) + 12
       });
+
+      // Symmetrical Pinhole Guardian: Prune duplicate/stale sockets for this peer
+      for (const [existingWs, existingRecord] of connectedClients.entries()) {
+        if (existingWs !== ws && (existingRecord.peerId === peerId || existingRecord.prefix === prefix)) {
+          try {
+            existingWs.terminate();
+          } catch (e) {}
+          connectedClients.delete(existingWs);
+          console.log(`[Mesh] Pruned stale socket for peer: ${peerId}`);
+        }
+      }
 
       connectedClients.set(ws, peerRecord);
 
@@ -643,6 +657,35 @@ function handleClientMessage(ws, msg) {
       }
       if (payload.signalType !== 'NAFAQ_PCM' && payload.signalType !== 'SHAF_HD_FRAME' && payload.signalType !== 'WASAM_PING') {
         console.log(`[CALL_SIGNAL] ${payload.signalType} from ${client.peerId} -> ${targetPeer} (Forwarded to ${forwardedCount} peer socket(s))`);
+      }
+      if (forwardedCount === 0 && (payload.signalType === 'OFFER' || payload.signalType === 'ANSWER')) {
+        ws.send(JSON.stringify({
+          type: 'CALL_SIGNAL',
+          payload: {
+            signalType: 'PEER_UNREACHABLE',
+            targetPeer,
+            reason: `Peer ${targetPeer} is currently offline or unreachable.`
+          }
+        }));
+      }
+      break;
+    }
+
+    case 'KEY_REQUEST': {
+      const { targetPeer, targetPrefix } = payload;
+      const allPeers = presenceManager.getAllPeers();
+      const match = allPeers.find(p => p.peerId === targetPeer || p.prefix === targetPrefix || p.peerId.startsWith(`${targetPrefix}@`));
+      if (match && match.ecdhPubKey) {
+        ws.send(JSON.stringify({
+          type: 'KEY_RESPONSE',
+          payload: {
+            peerId: match.peerId,
+            prefix: match.prefix,
+            ecdhPubKey: match.ecdhPubKey,
+            signPubKey: match.signPubKey
+          }
+        }));
+        console.log(`[Miftah] Responded with on-demand public key for @${match.prefix || match.peerId}`);
       }
       break;
     }

@@ -311,9 +311,18 @@ async function sendEncryptedDm(dmChannelId, rawPayload) {
     };
     handleIncomingGossipPacket(localEchoPacket);
   } else {
-    // STRICT FAIL-CLOSED POLICY (H-001): Never fall back to plaintext for Direct Messages!
-    console.error(`[WyreCrypto Fail-Closed] Cannot deliver DM to @${targetPrefix}: Recipient key unavailable.`);
-    appendSystemNotice(`🔒 [Miftah Security Policy]: Direct Message to @${targetPrefix} was blocked from sending in plaintext. Awaiting recipient public key announcement on the mesh.`);
+    // STRICT FAIL-CLOSED POLICY (H-001) + Active On-Demand Key Discovery (Nizām al-Shaf')
+    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
+        type: 'KEY_REQUEST',
+        payload: {
+          targetPeer: targetPeer.peerId,
+          targetPrefix: targetPrefix
+        }
+      }));
+    }
+    console.error(`[WyreCrypto Fail-Closed] Recipient key unavailable. Requested public key for @${targetPrefix} from mesh.`);
+    appendSystemNotice(`🔒 [Miftah Security Policy]: Requested public key for @${targetPrefix} from the mesh. Please resend message in a moment once key sync completes.`);
   }
 }
 
@@ -809,6 +818,22 @@ function handleServerMessage(msg) {
       renderMembers();
       renderVoiceParticipants();
       break;
+
+    case 'KEY_RESPONSE': {
+      const { peerId, prefix, ecdhPubKey, signPubKey } = payload;
+      if (peerId && ecdhPubKey) {
+        let p = state.peers.find(x => x.peerId === peerId || x.prefix === prefix);
+        if (p) {
+          p.ecdhPubKey = ecdhPubKey;
+          if (signPubKey) p.signPubKey = signPubKey;
+        } else {
+          state.peers.push({ peerId, prefix, ecdhPubKey, signPubKey });
+        }
+        pinPeerKeys(peerId, ecdhPubKey, signPubKey);
+        console.log(`[Miftah] Synchronized public key for @${prefix || peerId}`);
+      }
+      break;
+    }
 
     case 'TYPING_UPDATE':
       if (payload.channelId === state.currentChannelId) {
@@ -2862,7 +2887,16 @@ const RTC_CONFIG = {
   iceServers: [
     { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302', 'stun:stun3.l.google.com:19302', 'stun:stun4.l.google.com:19302'] },
     { urls: ['stun:stun.cloudflare.com:3478'] },
-    { urls: ['stun:stun.services.mozilla.com'] }
+    { urls: ['stun:openrelay.metered.ca:80'] },
+    {
+      urls: [
+        'turn:openrelay.metered.ca:80',
+        'turn:openrelay.metered.ca:443',
+        'turns:openrelay.metered.ca:443?transport=tcp'
+      ],
+      username: 'openrelay',
+      credential: 'openrelay'
+    }
   ],
   iceCandidatePoolSize: 10
 };
@@ -3244,6 +3278,19 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
 
   openModal('modal-active-call');
 
+  // Symmetrical AudioContext & Mobile Autoplay Policy Unlock on direct user gesture
+  const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+  if (!state.audioCtx || state.audioCtx.state === 'closed') {
+    state.audioCtx = new AudioCtxClass();
+  }
+  if (state.audioCtx && state.audioCtx.state === 'suspended') {
+    state.audioCtx.resume().catch(() => {});
+  }
+  const rAudio = document.getElementById('call-remote-audio');
+  if (rAudio) {
+    rAudio.play().catch(() => {});
+  }
+
   try {
     let stream;
     try {
@@ -3459,6 +3506,10 @@ async function handleIncomingCallSignal(payload) {
     }
   } else if (signalType === 'SHAF_HD_FRAME') {
     handleIncomingShafHdFrame(payload);
+  } else if (signalType === 'PEER_UNREACHABLE') {
+    const statusEl = document.getElementById('call-remote-status-text');
+    if (statusEl) statusEl.textContent = payload.reason || 'Peer unreachable';
+    setTimeout(() => endActiveCall(false), 2000);
   } else if (signalType === 'HANGUP' || signalType === 'REJECT') {
     endActiveCall(false);
   } else if (signalType === 'NAFAQ_FRAME') {
