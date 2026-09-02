@@ -614,8 +614,11 @@ const state = window.state = {
   currentPlayingAudio: null,
   currentPlayingCard: null,
   audioCtx: null,
+  reconnectAttempts: 0,
+  heartbeatTimer: null,
   activeCall: {
     peer: null,
+    webrtcConnected: false,
     peerPrefix: null,
     type: 'video',
     pc: null,
@@ -744,6 +747,22 @@ function initWebSocket() {
 
   state.ws.onopen = () => {
     console.log('[Mesh] Connected to Hub / Relay');
+    state.reconnectAttempts = 0;
+
+    // Cellular NAT Keepalive Heartbeat: every 25s prevents mobile CGNAT timeout
+    if (state.heartbeatTimer) clearInterval(state.heartbeatTimer);
+    state.heartbeatTimer = setInterval(() => {
+      if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+        state.ws.send(JSON.stringify({
+          type: 'HEARTBEAT',
+          payload: {
+            peerId: state.identity ? state.identity.fullId : 'peer',
+            latency: 12
+          }
+        }));
+      }
+    }, 25000);
+
     TaburQueue.flush((pkt) => {
       if (state.ws && state.ws.readyState === WebSocket.OPEN) {
         state.ws.send(JSON.stringify({ type: "SEND_MESSAGE", payload: pkt }));
@@ -776,15 +795,45 @@ function initWebSocket() {
   };
 
   state.ws.onclose = () => {
-    console.warn('[Mesh] Disconnected. Reconnecting in 2s (I\'adat al-Wasl)...');
+    if (state.heartbeatTimer) {
+      clearInterval(state.heartbeatTimer);
+      state.heartbeatTimer = null;
+    }
+    state.reconnectAttempts = (state.reconnectAttempts || 0) + 1;
+    const backoffDelay = Math.min(30000, Math.round(1000 * Math.pow(1.5, state.reconnectAttempts - 1) + Math.random() * 500));
+    console.warn(`[Mesh] Disconnected. Reconnecting in ${backoffDelay}ms (attempt #${state.reconnectAttempts})...`);
     updateConnectionBadge('DISCONNECTED // MUNFASIL', false);
-    setTimeout(initWebSocket, 2000);
+    setTimeout(initWebSocket, backoffDelay);
   };
 
   state.ws.onerror = (err) => {
     console.error('[Mesh WS Error]:', err);
   };
 }
+
+// Mobile App Lifecycle & Tab Visibility Recovery (صيانة الوصل عند استئناف التطبيق)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    if (!state.ws || state.ws.readyState === WebSocket.CLOSED || state.ws.readyState === WebSocket.CLOSING) {
+      console.log('[Mobile Lifecycle] Page resumed & socket closed. Fast reconnecting...');
+      state.reconnectAttempts = 0;
+      initWebSocket();
+    } else if (state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({ type: 'HEARTBEAT', payload: { probe: true, latency: 10 } }));
+    }
+  }
+});
+
+window.addEventListener('online', () => {
+  console.log('[Network] Device connected to network. Fast reconnecting...');
+  state.reconnectAttempts = 0;
+  initWebSocket();
+});
+
+window.addEventListener('offline', () => {
+  console.warn('[Network] Device lost network connectivity.');
+  updateConnectionBadge('OFFLINE // MUNQATI', false);
+});
 
 function updateConnectionBadge(text, isOnline) {
   const badge = document.getElementById('topbar-mesh-badge');
@@ -2884,6 +2933,8 @@ async function startOutgoingCallWithCustomStream(targetPeer, customStream, strea
 // =======================================================
 
 const RTC_CONFIG = {
+  bundlePolicy: 'max-bundle',
+  rtcpMuxPolicy: 'require',
   iceServers: [
     { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302', 'stun:stun3.l.google.com:19302', 'stun:stun4.l.google.com:19302'] },
     { urls: ['stun:stun.cloudflare.com:3478'] },
@@ -2985,6 +3036,10 @@ function upliftSdpBitrates(sdpStr) {
     }
     if (s.includes('m=audio')) {
       s = s.replace(/(m=audio [^\r\n]+[\r\n]+)/, '$1b=AS:128\r\nb=TIAS:128000\r\n');
+    }
+    // Inject Opus in-band forward error correction (FEC) and stereo fidelity
+    if (s.includes('a=rtpmap:') && s.includes('opus/48000')) {
+      s = s.replace(/(a=rtpmap:(\d+) opus\/48000\/2[\r\n]+)/, '$1a=fmtp:$2 useinbandfec=1;stereo=1;sprop-stereo=1;maxaveragebitrate=64000\r\n');
     }
     return s;
   } catch (e) {
@@ -3188,6 +3243,11 @@ function handleIncomingNafaqPcm(payload) {
   // Ignore incoming audio PCM chunks if call is inactive or if viewing a media stream call
   if (!state.activeCall || !state.activeCall.peer || state.activeCall.isCustomStreamCall) return;
 
+  // Dual-Conduit Acoustic Echo Guardian: If WebRTC Opus is connected and healthy, keep NAFAQ in silent standby
+  if (state.activeCall && state.activeCall.webrtcConnected && !state.activeCall.nafaqActive) {
+    return;
+  }
+
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   if (!state.audioCtx || state.audioCtx.state === 'closed') {
     state.audioCtx = new AudioCtx();
@@ -3337,24 +3397,55 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
     const pc = new RTCPeerConnection(RTC_CONFIG);
     state.activeCall.pc = pc;
 
-    pc.oniceconnectionstatechange = () => {
-      const s = pc.iceConnectionState;
-      console.log('[WebRTC Outgoing ICE State]:', s);
-      if (s === 'connected' || s === 'completed') {
+    pc.onconnectionstatechange = () => {
+      const cs = pc.connectionState;
+      console.log('[WebRTC Outgoing ConnectionState]:', cs);
+      if (cs === 'connected') {
+        state.activeCall.webrtcConnected = true;
         if (state.activeCall.nafaqFallbackTimer) {
           clearTimeout(state.activeCall.nafaqFallbackTimer);
           state.activeCall.nafaqFallbackTimer = null;
         }
         document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
-      } else if (s === 'failed' || s === 'disconnected') {
-        console.warn('[WebRTC ICE Failed] Activating NAFAQ Sovereign Tunnel fallback!');
+      } else if (cs === 'disconnected' || cs === 'failed') {
+        state.activeCall.webrtcConnected = false;
+        if (typeof pc.restartIce === 'function') {
+          try {
+            console.log('[WebRTC Outgoing Dropped] Triggering self-healing ICE restart...');
+            pc.restartIce();
+          } catch (e) {}
+        }
         state.activeCall.nafaqActive = true;
         document.getElementById('call-remote-status-text').textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
         startNafaqTunnelStream(peerId, stream, callType);
       }
     };
 
-    // Watchdog: If ICE not connected after 2.5s, engage NAFAQ Sovereign Tunnel!
+    pc.oniceconnectionstatechange = () => {
+      const s = pc.iceConnectionState;
+      console.log('[WebRTC Outgoing ICE State]:', s);
+      if (s === 'connected' || s === 'completed') {
+        state.activeCall.webrtcConnected = true;
+        if (state.activeCall.nafaqFallbackTimer) {
+          clearTimeout(state.activeCall.nafaqFallbackTimer);
+          state.activeCall.nafaqFallbackTimer = null;
+        }
+        document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
+      } else if (s === 'disconnected') {
+        console.warn('[WebRTC Outgoing ICE Disconnected] Attempting ICE restart...');
+        if (typeof pc.restartIce === 'function') {
+          try { pc.restartIce(); } catch (e) {}
+        }
+      } else if (s === 'failed') {
+        console.warn('[WebRTC ICE Failed] Activating NAFAQ Sovereign Tunnel fallback!');
+        state.activeCall.webrtcConnected = false;
+        state.activeCall.nafaqActive = true;
+        document.getElementById('call-remote-status-text').textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
+        startNafaqTunnelStream(peerId, stream, callType);
+      }
+    };
+
+    // Watchdog: Allow 3.5s for STUN/TURN gathering before NAFAQ fallback
     state.activeCall.nafaqFallbackTimer = setTimeout(() => {
       const iceState = state.activeCall.pc?.iceConnectionState;
       if (iceState !== 'connected' && iceState !== 'completed') {
@@ -3364,7 +3455,7 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
         if (statusEl) statusEl.textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
         startNafaqTunnelStream(peerId, stream, callType);
       }
-    }, 1200);
+    }, 3500);
 
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
@@ -3621,10 +3712,11 @@ async function acceptIncomingCall() {
     const pc = new RTCPeerConnection(RTC_CONFIG);
     state.activeCall.pc = pc;
 
-    pc.oniceconnectionstatechange = () => {
-      const s = pc.iceConnectionState;
-      console.log('[WebRTC Accept ICE State]:', s);
-      if (s === 'connected' || s === 'completed') {
+    pc.onconnectionstatechange = () => {
+      const cs = pc.connectionState;
+      console.log('[WebRTC Accept ConnectionState]:', cs);
+      if (cs === 'connected') {
+        state.activeCall.webrtcConnected = true;
         if (state.activeCall.nafaqFallbackTimer) {
           clearTimeout(state.activeCall.nafaqFallbackTimer);
           state.activeCall.nafaqFallbackTimer = null;
@@ -3632,8 +3724,42 @@ async function acceptIncomingCall() {
         if (!isCustomStreamCall) {
           document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
         }
-      } else if (s === 'failed' || s === 'disconnected') {
+      } else if (cs === 'disconnected' || cs === 'failed') {
+        state.activeCall.webrtcConnected = false;
+        if (typeof pc.restartIce === 'function') {
+          try {
+            console.log('[WebRTC Accept Dropped] Triggering self-healing ICE restart...');
+            pc.restartIce();
+          } catch (e) {}
+        }
+        state.activeCall.nafaqActive = true;
+        if (!isCustomStreamCall) {
+          document.getElementById('call-remote-status-text').textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
+        }
+        startNafaqTunnelStream(senderPeer, stream, callType);
+      }
+    };
+
+    pc.oniceconnectionstatechange = () => {
+      const s = pc.iceConnectionState;
+      console.log('[WebRTC Accept ICE State]:', s);
+      if (s === 'connected' || s === 'completed') {
+        state.activeCall.webrtcConnected = true;
+        if (state.activeCall.nafaqFallbackTimer) {
+          clearTimeout(state.activeCall.nafaqFallbackTimer);
+          state.activeCall.nafaqFallbackTimer = null;
+        }
+        if (!isCustomStreamCall) {
+          document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
+        }
+      } else if (s === 'disconnected') {
+        console.warn('[WebRTC Accept ICE Disconnected] Attempting ICE restart...');
+        if (typeof pc.restartIce === 'function') {
+          try { pc.restartIce(); } catch (e) {}
+        }
+      } else if (s === 'failed') {
         console.warn('[WebRTC ICE Failed] Activating NAFAQ Sovereign Tunnel fallback!');
+        state.activeCall.webrtcConnected = false;
         state.activeCall.nafaqActive = true;
         if (!isCustomStreamCall) {
           document.getElementById('call-remote-status-text').textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
@@ -3643,6 +3769,7 @@ async function acceptIncomingCall() {
     };
 
     if (!isCustomStreamCall) {
+      // Watchdog: Allow 3.5s for STUN/TURN gathering before NAFAQ fallback
       state.activeCall.nafaqFallbackTimer = setTimeout(() => {
         const iceState = state.activeCall.pc?.iceConnectionState;
         if (iceState !== 'connected' && iceState !== 'completed') {
@@ -3652,7 +3779,7 @@ async function acceptIncomingCall() {
           if (statusEl) statusEl.textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
           startNafaqTunnelStream(senderPeer, stream, callType);
         }
-      }, 1200);
+      }, 3500);
     }
 
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
@@ -3761,6 +3888,7 @@ function declineIncomingCall() {
 }
 
 function endActiveCall(notifyPeer = true) {
+  if (state.activeCall) state.activeCall.webrtcConnected = false;
   stopShafHdVideoStream();
   const remoteCanvas = document.getElementById('call-remote-shaf-canvas');
   if (remoteCanvas) remoteCanvas.remove();

@@ -465,6 +465,8 @@ const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws, req) => {
   let clientPeer = null;
+  ws.isAlive = true;
+  ws.on('pong', () => { ws.isAlive = true; });
 
   ws.on('message', (messageRaw) => {
     //  Check for Nafaq al-Lisan Zero-Copy Binary Shards
@@ -504,6 +506,25 @@ wss.on('connection', (ws, req) => {
     console.error('[WS Socket Error]:', err.message);
   });
 });
+
+// Cellular Carrier Pinhole & Half-Open Socket Sweeper (نبض الشبكة وصيانة الوصل)
+const keepAliveInterval = setInterval(() => {
+  for (const [ws, client] of connectedClients.entries()) {
+    if (ws.isAlive === false) {
+      console.log(`[Mesh Keepalive] Terminating dead half-open socket for: ${client ? client.peerId : "unknown"}`);
+      try { ws.terminate(); } catch (e) {}
+      connectedClients.delete(ws);
+      if (client?.peerId) {
+        presenceManager.removePeer(client.peerId);
+        gossipMesh.removeNeighbor(client.peerId);
+      }
+      broadcastPresenceUpdate();
+      continue;
+    }
+    ws.isAlive = false;
+    try { ws.ping(); } catch (e) {}
+  }
+}, 30000);
 
 function handleClientMessage(ws, msg) {
   const { type, payload } = msg;
@@ -611,6 +632,7 @@ function handleClientMessage(ws, msg) {
     }
 
     case 'HEARTBEAT': {
+      ws.isAlive = true;
       const client = connectedClients.get(ws);
       if (client) {
         presenceManager.updatePeer({ peerId: client.peerId, latency: payload.latency || 15 });
