@@ -71,6 +71,13 @@ class MajlisManager {
           topic: "Library of Imam Yahya ibn Sharaf al-Nawawi — Complete English EPUB Translations (Al-Arba'in al-Nawawiyyah, Riyad al-Salihin, Al-Tibyan, Kitab al-Adhkar, Minhaj al-Talibin, etc.)"
         },
         {
+          id: 'chan-imam-raghib',
+          name: 'imam-raghib-al-isfahani',
+          type: 'text',
+          icon: '#',
+          topic: "Library of Imam al-Raghib al-Isfahani (d. 502 AH) — Complete Classical English & Bilingual Editions (Al-Mufradat fi Gharib al-Quran, Al-Dhari'ah ila Makarim al-Shari'ah, Tafsil al-Nash'atayn, Adab Ikhtilat al-Nas, Jami' al-Tafsir, etc.)"
+        },
+        {
           id: 'chan-classical-heritage',
           name: 'classical-heritage',
           type: 'text',

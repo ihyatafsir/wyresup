@@ -81,6 +81,17 @@ async function anchorAllCorpus() {
       author = 'Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)';
       category = 'Hadith, Adhkar, Quranic Etiquette & Fiqh';
       channelId = 'chan-imam-nawawi';
+    } else if (
+      file.startsWith('al_mufradat_') ||
+      file.startsWith('al_dhariah_') ||
+      file.startsWith('tafsil_') ||
+      file.startsWith('adab_ikhtilat_') ||
+      file.startsWith('jami_al_tafsir_') ||
+      file.startsWith('muhadarat_')
+    ) {
+      author = 'Imam al-Raghib al-Isfahani (أبو القاسم الحسين بن محمد الراغب الأصفهاني 450–502 AH)';
+      category = 'Quranic Semantics, Sacred Ethics & Spiritual Epistemology';
+      channelId = 'chan-imam-raghib';
     } else if (file.startsWith('al_shifa_')) {
       author = "Qadi 'Iyad al-Yahsubi (القاضي عياض)";
       category = "Prophetic Biography & Shama'il";
@@ -138,7 +149,7 @@ async function anchorAllCorpus() {
   const manifest = {
     space: {
       spaceId: 'space-public-mesh',
-      channels: ['chan-imam-razi', 'chan-imam-abuhamidd', 'chan-imam-nawawi', 'chan-classical-heritage'],
+      channels: ['chan-imam-razi', 'chan-imam-abuhamidd', 'chan-imam-nawawi', 'chan-imam-raghib', 'chan-classical-heritage'],
       name: 'WyreSup Classical Digital Corpus (مَكْتَبَة التُّرَاث الإِسْلَامِي اللَّامَرْكَزِيَّة)',
       description: 'Sovereign on-chain corpus of Imam Fakhr al-Din al-Razi, Imam Abu Hamid al-Ghazali, and Imam al-Nawawi',
       creatorDid: ADMIN_DID,

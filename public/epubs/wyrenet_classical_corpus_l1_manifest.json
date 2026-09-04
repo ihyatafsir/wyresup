@@ -5,6 +5,7 @@
       "chan-imam-razi",
       "chan-imam-abuhamidd",
       "chan-imam-nawawi",
+      "chan-imam-raghib",
       "chan-classical-heritage"
     ],
     "name": "WyreSup Classical Digital Corpus (مَكْتَبَة التُّرَاث الإِسْلَامِي اللَّامَرْكَزِيَّة)",
@@ -12,11 +13,11 @@
     "creatorDid": "did:wyre:0x471c852d254a67f36c129f2386ca21c31840dea4",
     "encryption": "ZBAT_THAQB_L1_SEALED",
     "blockchain": "WyreNet Sovereign L1 (Chain ID: 51950)",
-    "totalBooks": 200
+    "totalBooks": 208
   },
-  "totalBooks": 200,
+  "totalBooks": 208,
   "publisherDid": "did:wyre:0x471c852d254a67f36c129f2386ca21c31840dea4",
-  "anchoredAt": "2026-08-30T21:10:10.562Z",
+  "anchoredAt": "2026-09-04T04:08:32.590Z",
   "books": [
     {
       "index": 1,
@@ -42,2181 +43,2269 @@
     },
     {
       "index": 3,
+      "filename": "adab_ikhtilat_al_nas_bilingual_lexical_en.epub",
+      "author": "Imam al-Raghib al-Isfahani (أبو القاسم الحسين بن محمد الراغب الأصفهاني 450–502 AH)",
+      "category": "Quranic Semantics, Sacred Ethics & Spiritual Epistemology",
+      "channelId": "chan-imam-raghib",
+      "sha256": "221624e079b70e0f5dd661ca0e213f3c3c1a529b3bed4970a66453df2de3cfa4",
+      "sizeMb": "0.24 MB",
+      "txHash": "0x8b1ef5ef192075939b5bae034c5853f38cdd895adaf4c5c9277f9fdfa545a1c9",
+      "blockHeight": 643
+    },
+    {
+      "index": 4,
+      "filename": "adab_ikhtilat_al_nas_pure_en.epub",
+      "author": "Imam al-Raghib al-Isfahani (أبو القاسم الحسين بن محمد الراغب الأصفهاني 450–502 AH)",
+      "category": "Quranic Semantics, Sacred Ethics & Spiritual Epistemology",
+      "channelId": "chan-imam-raghib",
+      "sha256": "fe9b1356c580333de013362058644c2a97b5f16c8b0b2bebff0351fbb48e601f",
+      "sizeMb": "0.11 MB",
+      "txHash": "0x469abff00251fd1c52815df0c4f7c380a41b8e5dd6e7f911258453d1d0084215",
+      "blockHeight": 644
+    },
+    {
+      "index": 5,
       "filename": "al_arbaun_al_nawawiyya_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "970731d7a19d8b4e17eb7a28d55e29932c9377ced7bb95f4f666ba64e419d57b",
       "sizeMb": "0.09 MB",
-      "txHash": "0x7391aac1bafb525f77304871b255390df070d8d955b952e10db70af22ece9b3b",
-      "blockHeight": 643
+      "txHash": "0xee708b613d5d2abbce188abe8a10bbd770ba9c537f40a464524616f21d53f454",
+      "blockHeight": 645
     },
     {
-      "index": 4,
+      "index": 6,
       "filename": "al_arbaun_al_nawawiyya_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "56a8f88f8ee90f770557766707bb317124acc485a33c36e63fa1d1136d63582b",
       "sizeMb": "0.04 MB",
-      "txHash": "0x05e95aadae33fd74888d302389c20d312c7e40322927c4a311e291569b1a0f82",
-      "blockHeight": 644
+      "txHash": "0xc7a1cbc4cf6685a66080714a32bfef94e59423a36cecc88ef89f2d2178fcb200",
+      "blockHeight": 646
     },
     {
-      "index": 5,
+      "index": 7,
+      "filename": "al_dhariah_ila_makarim_al_shariah_bilingual_lexical_en.epub",
+      "author": "Imam al-Raghib al-Isfahani (أبو القاسم الحسين بن محمد الراغب الأصفهاني 450–502 AH)",
+      "category": "Quranic Semantics, Sacred Ethics & Spiritual Epistemology",
+      "channelId": "chan-imam-raghib",
+      "sha256": "b252d503ac9cc5456e9349d784b2481bcea8eaaebececa7ff7bba66a27fc7180",
+      "sizeMb": "0.68 MB",
+      "txHash": "0x654d3fbcee6a6bc0cce87e4a5e8cd98bab232ee8863d3159521be6785f560c2f",
+      "blockHeight": 647
+    },
+    {
+      "index": 8,
+      "filename": "al_dhariah_ila_makarim_al_shariah_pure_en.epub",
+      "author": "Imam al-Raghib al-Isfahani (أبو القاسم الحسين بن محمد الراغب الأصفهاني 450–502 AH)",
+      "category": "Quranic Semantics, Sacred Ethics & Spiritual Epistemology",
+      "channelId": "chan-imam-raghib",
+      "sha256": "f1e74a118127013e41ffd32f5702edaf5adb36a5a7839397f2cc072c9e3c8085",
+      "sizeMb": "0.36 MB",
+      "txHash": "0x8b0e1afa4d5bd031f4a7ecd91949486e3bb95343e373e7c671c0b558f70591a9",
+      "blockHeight": 648
+    },
+    {
+      "index": 9,
       "filename": "al_futuhat_al_makkiyya_en.epub",
       "author": "Shaykh al-Akbar Ibn 'Arabi (محيي الدين بن عربي)",
       "category": "Islamic Metaphysics & Spiritual Illumination",
       "channelId": "chan-classical-heritage",
       "sha256": "c5fade79dbf44eaab2261430692812fdd5a2995df2c2b43681c597a065b8d4c2",
       "sizeMb": "22.48 MB",
-      "txHash": "0x7412fdd863a90ee15507ef1b50ed5d5558f73144a8773bcd463403f27cfdd6ed",
-      "blockHeight": 645
+      "txHash": "0x4b73b293d04b0f35fadba4afece9fd15c8a735e3ed6057b12964089c771aba28",
+      "blockHeight": 649
     },
     {
-      "index": 6,
+      "index": 10,
       "filename": "al_futuhat_al_makkiyya_sq.epub",
       "author": "Shaykh al-Akbar Ibn 'Arabi (محيي الدين بن عربي)",
       "category": "Islamic Metaphysics & Spiritual Illumination",
       "channelId": "chan-classical-heritage",
       "sha256": "73361dd1287082839f48c6f8a44f9ad743641894eea0bfe4192845937f677c4f",
       "sizeMb": "4.56 MB",
-      "txHash": "0x873a07a275582df850602c2141696b53d07a34cbb481f9de3a172c4eb6b4bfd5",
-      "blockHeight": 646
+      "txHash": "0x645ebe34573216a3da5951e8f273737ec793261c143dadbebd1d44b1e516d3fe",
+      "blockHeight": 650
     },
     {
-      "index": 7,
+      "index": 11,
       "filename": "al_idah_fi_manasik_al_hajj_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "c60361f3221827db87478d5647eb2472c45ff543464220b0e5af308e671b9366",
       "sizeMb": "0.20 MB",
-      "txHash": "0x5b91c8e5c55275b78705b8bf6befe96aa904825bfd37721e89c2a7e59e7ebd49",
-      "blockHeight": 647
+      "txHash": "0xe88d1cc4c496a7868e8b72e8ccffb3f614ea8f43f616fb7077a10ef7da2a583d",
+      "blockHeight": 651
     },
     {
-      "index": 8,
+      "index": 12,
       "filename": "al_idah_fi_manasik_al_hajj_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "3a0fc71e32dbf38569a47bb3f5c044d3b99e06d9a0b9c4a861ecbe01309589b2",
       "sizeMb": "0.04 MB",
-      "txHash": "0x74ada246caeba120a2519e25496a5537b12db719a1ba496bd74c17b0a91bd4b6",
-      "blockHeight": 648
+      "txHash": "0x2185de5a83c38b1c6cf2f58ead35dd66dcc0f2386cb626802b765fbd3b57fa60",
+      "blockHeight": 652
     },
     {
-      "index": 9,
+      "index": 13,
       "filename": "al_ijaz_fi_sharh_sunan_abi_dawud_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "ef75f6191a73818d238a460ab2f51ef0505a05ffaecec864ff75c647e7997365",
       "sizeMb": "0.15 MB",
-      "txHash": "0xda6eddcbf0d75fff6f56b15e71d521df77df25f291a095c88162df0c864cb278",
-      "blockHeight": 649
+      "txHash": "0x0fc08bfad0a92aaea76a1bd303b414f402f064004e7656cf2726b5a0aa375b3d",
+      "blockHeight": 653
     },
     {
-      "index": 10,
+      "index": 14,
       "filename": "al_ijaz_fi_sharh_sunan_abi_dawud_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "b08bfd19906abc6a7f84e4bf0118245fb75c27492c229147b84a4b60d4840388",
       "sizeMb": "0.03 MB",
-      "txHash": "0x89529b59e591fa254755fa2b19e66351f785f4ebeecd88d47d6416e2b66e285e",
-      "blockHeight": 650
+      "txHash": "0x9bdb0b47a48485872e66e9fb49c2d18393c6f6a364417e47d714fdea2ed8b01b",
+      "blockHeight": 654
     },
     {
-      "index": 11,
+      "index": 15,
       "filename": "al_iqtisad_fi_al_itiqad_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "4f26346428d109f20cf412e7a6b56d843baeb17774f9c3a46f0100e026eb2305",
       "sizeMb": "0.38 MB",
-      "txHash": "0x89d5cbb69fbc4e8b61f9f22dba3d136bec52436219bea87be9c0568d10ab953c",
-      "blockHeight": 651
+      "txHash": "0x20002e9aa28fcfddde7310c1065b2e43489f5db6f204e160b8127d5b14e6184f",
+      "blockHeight": 655
     },
     {
-      "index": 12,
+      "index": 16,
       "filename": "al_iqtisad_fi_al_itiqad_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "bbd542d08d7c062a4b815da90c92a4cb61bfa96036cfff79f3afda8c6e34aaf2",
       "sizeMb": "0.16 MB",
-      "txHash": "0xe66e92faa3ba8505cc3056fe8176751faf3999e421a1fb322a2028a3e4b0fbed",
-      "blockHeight": 652
+      "txHash": "0x12740a0b6a578fee994a12b118a5d1adb18e2e19da335fb98cd87f4231425b95",
+      "blockHeight": 656
     },
     {
-      "index": 13,
+      "index": 17,
       "filename": "al_mahsul_fi_usul_al_fiqh_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "b45504a03e4314b704dd8bd9092e360eb55403529c588102e4fd576d53232a50",
       "sizeMb": "2.31 MB",
-      "txHash": "0xabb49b2e6b8485fc48425dd92a376492162266e0ab1d867ce8714f44f2a96c2a",
-      "blockHeight": 653
+      "txHash": "0xe537c2e10e0e1cf5b3dcc93378deead196bdab94aa132b24fbdff0ca7031b940",
+      "blockHeight": 657
     },
     {
-      "index": 14,
+      "index": 18,
       "filename": "al_majmu_sharh_al_muhadhdhab_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "fa5973a6dd9d13abd724a613f31a63233226ee9cb19909f9285845e0dc06f546",
       "sizeMb": "18.86 MB",
-      "txHash": "0x819983efdd8b9e09db758c50006495b7f5b609848880b2a0610738ae83d7224c",
-      "blockHeight": 654
+      "txHash": "0xf414c775b89a5049b49f8f390b474516ab85c9564a8b3f6ffbd95a736ce3ad97",
+      "blockHeight": 658
     },
     {
-      "index": 15,
+      "index": 19,
       "filename": "al_majmu_sharh_al_muhadhdhab_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "595977f0a1ce7cbff71ca9a645ac9db745c12bcfdf85c013838793eedcd880a9",
       "sizeMb": "8.18 MB",
-      "txHash": "0x71cfe4036ea52c6506319d6ce8010754dbded8efb818bb037a77cf49b0e5a380",
-      "blockHeight": 655
+      "txHash": "0x17d564ab4fa3da94d6b310692e7c87a9e104726a18d87f29c66456469520a147",
+      "blockHeight": 659
     },
     {
-      "index": 16,
+      "index": 20,
       "filename": "al_mankhul_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "c3e943ad0992e92f75b84efbe5f6c8f19fbf61070ef1cfe2d4de961c7600d007",
       "sizeMb": "0.55 MB",
-      "txHash": "0x5f2d70a759b4af56e5901bd0589df81ffb47ce8cd4d30011ad42f5d4cdb16713",
-      "blockHeight": 656
+      "txHash": "0x2016c253fcd04da75ec2274acb052ab1b97fd2a4d74b9a7991a6e4e022462e5e",
+      "blockHeight": 660
     },
     {
-      "index": 17,
+      "index": 21,
       "filename": "al_mankhul_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "89cce93a54a89f52928973ba40bf3454fe56378de4212f70934ea46aa82e3684",
       "sizeMb": "0.28 MB",
-      "txHash": "0x157efb756fd4c67152d20077f022ea13328c8f65164788f590a0d2ca5daa95fd",
-      "blockHeight": 657
+      "txHash": "0xc0e60801c76947abdc0dda1fa13ce7f6059c254949b342d89aee3086bbcbadec",
+      "blockHeight": 661
     },
     {
-      "index": 18,
+      "index": 22,
       "filename": "al_maqsad_al_asna_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "60c94182c1025ebd3574087fa9c05f5e00a2b0242e9ab8689ce20de102c195bc",
       "sizeMb": "0.31 MB",
-      "txHash": "0x627644b54493aea632f0d1b54347a4af8810ef8a5f10bcbc96fe64830d676837",
-      "blockHeight": 658
+      "txHash": "0xcf95e69cb9ef299e2909d1c77a73aa2c7ea74bb514d4c49a14e77801f15c67bf",
+      "blockHeight": 662
     },
     {
-      "index": 19,
+      "index": 23,
       "filename": "al_maqsad_al_asna_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "094bc7033f5ff2ee9cd33d8be95520539850915b67864d661f3d0c70c75fc4e7",
       "sizeMb": "0.16 MB",
-      "txHash": "0xe6aa5f5b5296881c58e41ebab37d47b19b190fdee052f3366414cb453ed5773b",
-      "blockHeight": 659
+      "txHash": "0xe749ec629f74a91c956a5d0066254672dee178140739c55e7121803c337ed51e",
+      "blockHeight": 663
     },
     {
-      "index": 20,
+      "index": 24,
       "filename": "al_masail_al_manthurah_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "53d2ea8b6140c30db8d48386f122139be803b3801b00fad6d6dc2af31a083fc2",
       "sizeMb": "0.20 MB",
-      "txHash": "0x74cd8ed20010596598e6e600d6661c0151c41fd5d8da980629e2f510bf6e24be",
-      "blockHeight": 660
+      "txHash": "0xb3582b3cea86e070817c6f74aa181cae55c99df0975a0eb67d994b54781ab8c6",
+      "blockHeight": 664
     },
     {
-      "index": 21,
+      "index": 25,
       "filename": "al_masail_al_manthurah_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "de8ffad1e701892faba249608dcfd3f91b4c31f457e40aa5292958a9ce03749c",
       "sizeMb": "0.03 MB",
-      "txHash": "0xdb126e98560ec782a6bf140291bc1b933138929c0b194c845ac10e200dce6e49",
-      "blockHeight": 661
+      "txHash": "0xe42a5eac17c77ca3980b129a09b9961515c48211018ed9db4c3d40ffc283597b",
+      "blockHeight": 665
     },
     {
-      "index": 22,
+      "index": 26,
       "filename": "al_matalib_al_aliyah_complete_9_volumes_omnibus_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "a2707fcbf8be5105801ad1ca3aaacd42f581a3484ae4357e3349d42f8194f653",
       "sizeMb": "3.62 MB",
-      "txHash": "0x8c2aa756b370a78688d5fda33b2829c7d740f00359c487fddb1d01454bfcffe3",
-      "blockHeight": 662
+      "txHash": "0xea325f0542c89c7cf48883ef018736c1fc2cdb75320ab1961c2c6b3db988c52b",
+      "blockHeight": 666
     },
     {
-      "index": 23,
+      "index": 27,
       "filename": "al_matalib_al_aliyah_complete_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "04380103ffdc38629062b4311fc274246391558623664ccc1dfa5830d94b7c33",
       "sizeMb": "5.47 MB",
-      "txHash": "0x53f5892e3f4995c03d69b26e8e3cb2252a6e1ac414a69ecb47f9c3ea502ec566",
-      "blockHeight": 663
+      "txHash": "0x62225ba80451e1c52eb23a7c15ddb64fbbc895be545d14f84b12776aa37923fd",
+      "blockHeight": 667
     },
     {
-      "index": 24,
+      "index": 28,
       "filename": "al_matalib_al_aliyah_complete_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "0b593c69fb6877aa97871b7f53626344aac3b63f8bce789b9575b679f054054a",
       "sizeMb": "5.36 MB",
-      "txHash": "0x9965acbf3f7deb55116f572b867b7366dd35a061c79ba4592b3b55d9af661b64",
-      "blockHeight": 664
+      "txHash": "0x6bcd8febadaac906f5aeb478973479c2d1aedf4f8ee8368fae32e195b3f641e6",
+      "blockHeight": 668
     },
     {
-      "index": 25,
+      "index": 29,
       "filename": "al_matalib_al_aliyah_vol_01_v2_pure_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "f2f3b0fff774dd8755242d647655a50865b445a1ff76a54ec36df34968e2ac2d",
       "sizeMb": "0.54 MB",
-      "txHash": "0x6094e69f354bd6dd76ddfb93ccc1a09ec223a25f547e644ddc45541a51dc75ca",
-      "blockHeight": 665
+      "txHash": "0x5662547c0e4760c8095ad026ebfbbc8a69014414723b995f54c6149d9b01ba70",
+      "blockHeight": 669
     },
     {
-      "index": 26,
+      "index": 30,
       "filename": "al_matalib_al_aliyah_vol_01_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "721561507af368f69c883d1c556a0375ecae1251a5f36c72fa2694f3de1cc50c",
       "sizeMb": "0.75 MB",
-      "txHash": "0x6322255cc20b4984d91bab9148658373f4334c268b4a9bf33351c9d3f5d04e4a",
-      "blockHeight": 666
+      "txHash": "0xf214fd89a98960196d64aab4b52355a38cd93bc898a6c2e8a48121e551f7432a",
+      "blockHeight": 670
     },
     {
-      "index": 27,
+      "index": 31,
       "filename": "al_matalib_al_aliyah_vol_02_v2_pure_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "1786330dfb5934db7ffd159c7055f66de403a777cebff1d79a1d46e03004742c",
       "sizeMb": "0.23 MB",
-      "txHash": "0x65383d1416ed07ef9d6044062f9a00d3199408154be6afe4393bf95d1c1bbc51",
-      "blockHeight": 667
+      "txHash": "0xad002159e14acf26b401f5d03b95922c778673502df66c6487f3a30c020bf0e3",
+      "blockHeight": 671
     },
     {
-      "index": 28,
+      "index": 32,
       "filename": "al_matalib_al_aliyah_vol_02_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "f3dbd98b022c64b1ece93317f1a34e0b2c65be648ad74bd54341336cfdc991e2",
       "sizeMb": "0.33 MB",
-      "txHash": "0x38883abcdc65e38f6d9be5a8272b06be115e463dba6f136d55b8a2e5bce0c43b",
-      "blockHeight": 668
+      "txHash": "0x7304145e600f482ced5a990f194f6a4866a12ea11e0f75d91559af1ee73e5635",
+      "blockHeight": 672
     },
     {
-      "index": 29,
+      "index": 33,
       "filename": "al_matalib_al_aliyah_vol_03_v2_pure_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "51e5596cee880d9d23b01bb87a970d504d15874d987a3f88030b372cfb35deef",
       "sizeMb": "0.49 MB",
-      "txHash": "0x006046f69bd392b19ec60704a4e92be3febcf0ec196edae92c081da7e22b70e2",
-      "blockHeight": 669
+      "txHash": "0xf5ae7d71e52a4a0b8273ad49d042087cf07344395d2be0a06ddc2c5c261cc157",
+      "blockHeight": 673
     },
     {
-      "index": 30,
+      "index": 34,
       "filename": "al_matalib_al_aliyah_vol_03_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "36ffeb3ea4e4867cdf6f80fff43389a1a675c1d650f784a0e5e8ce255b491920",
       "sizeMb": "0.72 MB",
-      "txHash": "0xa8e22dea27de2c59e7556447d536b453f6d32624a8332afe8f93b3186791e429",
-      "blockHeight": 670
+      "txHash": "0xe94327a58cb371dc0a01c227776314265069b7b1b4b8e609033ea72048a60e02",
+      "blockHeight": 674
     },
     {
-      "index": 31,
+      "index": 35,
       "filename": "al_matalib_al_aliyah_vol_04_v2_pure_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "1c5d3b0ebbda4ff0c9012bbe9713f782a2bb50f3b4dcb6d2fcab0166a7f4c8ee",
       "sizeMb": "0.52 MB",
-      "txHash": "0xae55ee860fe49c434d6098b9132c9d937e9620b383074a0f73a628e90810c772",
-      "blockHeight": 671
+      "txHash": "0x2b007174ef31d2352906fc7d059353537c1c5b6c36061de69080f8ccb0f66d01",
+      "blockHeight": 675
     },
     {
-      "index": 32,
+      "index": 36,
       "filename": "al_matalib_al_aliyah_vol_04_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "c8ec976aac451ce5926a349695a65386d428327dd22b7d7adffc0ea1d93955db",
       "sizeMb": "0.77 MB",
-      "txHash": "0x0eb45ee0c0d6e63e3a58d9954404a40ad8c9e6064d74ae5e198da93607ccb8ab",
-      "blockHeight": 672
+      "txHash": "0x947eaad7df88a84b835a01cc5ab6a111535c782a4dfbedf14d840820974c99c1",
+      "blockHeight": 676
     },
     {
-      "index": 33,
+      "index": 37,
       "filename": "al_matalib_al_aliyah_vol_05_v2_pure_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "e6aab4a322ef9891b8313d79f34ef5a586c817308b90e9779b7949aa337f9776",
       "sizeMb": "0.24 MB",
-      "txHash": "0x6fca75c0664218e813e3b1ba41e67526f5dbaefe9ee7fe05c037d7f96b02cda9",
-      "blockHeight": 673
+      "txHash": "0xb4aa35b93cf42e1befef38c80a47667c40b69c2975b7276ff3d080fa5f57ce02",
+      "blockHeight": 677
     },
     {
-      "index": 34,
+      "index": 38,
       "filename": "al_matalib_al_aliyah_vol_05_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "d2f0bade28f3b2393e2bbda9f8a1f2166ca1c1c12d072c38ab2260cb5bb30658",
       "sizeMb": "0.36 MB",
-      "txHash": "0x4eeefc2fd63db9311f31da82c0b385d260eabddab8004b1895bcf7eb80e257a8",
-      "blockHeight": 674
+      "txHash": "0xdf458706a0b9c851b06eb293f66c0f803b8adfef7307721182eeb7197b1a806b",
+      "blockHeight": 678
     },
     {
-      "index": 35,
+      "index": 39,
       "filename": "al_matalib_al_aliyah_vol_06_v2_pure_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "8fddb29218d3326de8ac7e829433e0c32ec4c2c8105c4e3c28c10ceb55fdb586",
       "sizeMb": "0.28 MB",
-      "txHash": "0x08a038c3e728f3f120bbc2608f09b82ac5d58edbae926b3748e9959c33f065a5",
-      "blockHeight": 675
+      "txHash": "0x23116f20efe5a7716b839202a18c58fc848d6f1aacbc0d5ee37159c1afb727bd",
+      "blockHeight": 679
     },
     {
-      "index": 36,
+      "index": 40,
       "filename": "al_matalib_al_aliyah_vol_06_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "123c550e6dc23c9e8b700310784876ed615255b5f1f51c64bd5ba2e0213e885f",
       "sizeMb": "0.42 MB",
-      "txHash": "0x409a2a8c51354518e5db5552f09c60338e1690c56b6200318ca3aa776fb4c440",
-      "blockHeight": 676
+      "txHash": "0x25cca590862519cf672543b962ecbb273f102274c3691f5feedb51ea1b13e315",
+      "blockHeight": 680
     },
     {
-      "index": 37,
+      "index": 41,
       "filename": "al_matalib_al_aliyah_vol_07_v2_pure_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "d62e9bb5d2dcb6753441206a4ba8054f8f85e03c8f0eeb6c4050e92709d6e802",
       "sizeMb": "0.57 MB",
-      "txHash": "0x9f8188774e4ecd84c3779fc5e3359a12f21115b0b699e8da6c94cfc7f9d0b4fc",
-      "blockHeight": 677
+      "txHash": "0x25254a5d797fc726d7318634251205367aea5bfbe2d477106141327d898c4033",
+      "blockHeight": 681
     },
     {
-      "index": 38,
+      "index": 42,
       "filename": "al_matalib_al_aliyah_vol_07_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "119f34cf5804059539bd37cf8f1347c6775c76b6ecfe6ec64bb5a40d1662fe89",
       "sizeMb": "0.85 MB",
-      "txHash": "0x8faf56a6616d02621787e7699634e72a510943dbc922478fed49738493290d5b",
-      "blockHeight": 678
+      "txHash": "0xade95dd22456d89e1402b8c8dd6959113f32a2a7ac62563e7f735595b70d85f1",
+      "blockHeight": 682
     },
     {
-      "index": 39,
+      "index": 43,
       "filename": "al_matalib_al_aliyah_vol_08_v2_pure_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "660cd6893d701d9c4a87c19200a22effd622b70d55bea5c2a426d2d6445badee",
       "sizeMb": "0.26 MB",
-      "txHash": "0x14b2e2384adf5053864111155aaf13ea30290cd982d0f52c27606d719eefc352",
-      "blockHeight": 679
+      "txHash": "0xc44c57520dcd51722bb160ba6f2db0aea4404a83d956d5bc9fbafa43df652e4d",
+      "blockHeight": 683
     },
     {
-      "index": 40,
+      "index": 44,
       "filename": "al_matalib_al_aliyah_vol_08_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "a980ddae24efb3b6fac08be8f33198c7b12fcbdba1c292f453e475b447217010",
       "sizeMb": "0.38 MB",
-      "txHash": "0x4840b240e0aa99045d013a5ea76157b9899d61a8be0d4cb8678ba59ff89ec72a",
-      "blockHeight": 680
+      "txHash": "0x24a746cc193fc4d6b08794d9b9810d8d4408a0e32bf8c432c5ec987821410745",
+      "blockHeight": 684
     },
     {
-      "index": 41,
+      "index": 45,
       "filename": "al_matalib_al_aliyah_vol_09_v2_pure_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "ec3c92e2c09903dfd55bab3bbc36e74e875c65e1b7d7643f41a9b7d9674e13b5",
       "sizeMb": "0.55 MB",
-      "txHash": "0xbad2eeb530c68f2d34efce17d32b01fbb6f265de0b3f2e8197a6f986c0d2d828",
-      "blockHeight": 681
+      "txHash": "0xc8ff734dd72ab793633e31f6357ead499a201df3974e7675626f9dc2d7927a6d",
+      "blockHeight": 685
     },
     {
-      "index": 42,
+      "index": 46,
       "filename": "al_matalib_al_aliyah_vol_09_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "d330ad24a21e179dfa5d12dfad0612afa0d5d62e26783712da49f7b20ed93618",
       "sizeMb": "0.80 MB",
-      "txHash": "0x87e137d819a87dc1a54ce112e721037bcd4ac6cb2fd45ac39a61379e474980ff",
-      "blockHeight": 682
+      "txHash": "0xd8b616cde7b6ebe62e90aa9e8692e6d8b9e56d888353568f3f082222086aaedc",
+      "blockHeight": 686
     },
     {
-      "index": 43,
+      "index": 47,
+      "filename": "al_mufradat_fi_gharib_al_quran_bilingual_lexical_en.epub",
+      "author": "Imam al-Raghib al-Isfahani (أبو القاسم الحسين بن محمد الراغب الأصفهاني 450–502 AH)",
+      "category": "Quranic Semantics, Sacred Ethics & Spiritual Epistemology",
+      "channelId": "chan-imam-raghib",
+      "sha256": "e28cd2ed0cd2580d19f681daebfd886afa75340d4c2c87f1c8da768003e0deac",
+      "sizeMb": "2.83 MB",
+      "txHash": "0xef04ef29cd7bfc047b7543df261aae5b4d7058df573e97b0a6ac6d3fab6602da",
+      "blockHeight": 687
+    },
+    {
+      "index": 48,
+      "filename": "al_mufradat_fi_gharib_al_quran_pure_en.epub",
+      "author": "Imam al-Raghib al-Isfahani (أبو القاسم الحسين بن محمد الراغب الأصفهاني 450–502 AH)",
+      "category": "Quranic Semantics, Sacred Ethics & Spiritual Epistemology",
+      "channelId": "chan-imam-raghib",
+      "sha256": "69dec829ef4e280edf40873d3b6e3aeba3112545b2fde288fcb5a942511e84ca",
+      "sizeMb": "1.57 MB",
+      "txHash": "0xe375d693798381ba5fd291f0a3c4f53a53935b44317357e399f0734bd8e6e5fc",
+      "blockHeight": 688
+    },
+    {
+      "index": 49,
       "filename": "al_munqidh_min_al_dalal_bilingual_lexical_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "cc6b132b35d7004b9cf6a03f5366dd3966d9b873907a2a4c6afae511952e4af0",
       "sizeMb": "0.11 MB",
-      "txHash": "0xef4fc86fbd31459587253f0806b768b50c42ddcc3c9c97e6e500a86f74b6818e",
-      "blockHeight": 683
+      "txHash": "0x6fe248d4a6d1640beaa9daa90ad5785c8ff147c8e92cf17f465086ac34eafc05",
+      "blockHeight": 689
     },
     {
-      "index": 44,
+      "index": 50,
       "filename": "al_munqidh_min_al_dalal_pure_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "44a36d88d68a053f3580afdc0b601b1fe65efb23e74d6bb7add6ae1cc843186f",
       "sizeMb": "0.06 MB",
-      "txHash": "0x75220f175590e8e16b509be7b375e7a21245cf1e042d0246ac83c7d750d742d7",
-      "blockHeight": 684
+      "txHash": "0x55d3b819b6eb9625f85a0b2db0ece7a219d57ed1aa4783bd57bb0429a227df2d",
+      "blockHeight": 690
     },
     {
-      "index": 45,
+      "index": 51,
       "filename": "al_mustasfa_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "5fa2f5d41fe404377d2957cdb898114aa1ee685b5213dd836f7c166cc22f37ad",
       "sizeMb": "1.79 MB",
-      "txHash": "0x251e75b56ce8df9003a5a1eb53378d09d03a7716c88144998c46f2e0edf8bd81",
-      "blockHeight": 685
+      "txHash": "0xd4e1a640cb1fc57ca930a41df7da7ff1a3b72d3001216c4e405bf7bed51e70c5",
+      "blockHeight": 691
     },
     {
-      "index": 46,
+      "index": 52,
       "filename": "al_mustasfa_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "d54a644eeafb164c798ce569d1b0db73f26d10e7a95f7430977ad0e23019cf2b",
       "sizeMb": "0.87 MB",
-      "txHash": "0x4f06a051f88f5a435fb32c86b4615a7b1bcbcb554e0975f36f36ec3fc18e9e86",
-      "blockHeight": 686
+      "txHash": "0x37c099efd26f83ef09692e1b1f12b140f93240e996ed4eb09769eeee463f630b",
+      "blockHeight": 692
     },
     {
-      "index": 47,
+      "index": 53,
       "filename": "al_qada_wal_qadar_bilingual_lexical_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "655400e8cd565ee25f191e193edeec5cb7c00d2da87724f0eb5e78eb6e36f8bf",
       "sizeMb": "0.74 MB",
-      "txHash": "0xa1f9351cdf7e007b89e39b0490df754b2c802e72ee54a787c88590d3bbc8bf95",
-      "blockHeight": 687
+      "txHash": "0x0d3c54691fe51f6fd0818575925a2821e00e9b5fa7fc21988eba344d614fa2b6",
+      "blockHeight": 693
     },
     {
-      "index": 48,
+      "index": 54,
       "filename": "al_qada_wal_qadar_pure_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "0ec923a29bb46ca884f9ecb422f55aeb1c968acf38a9f25295a0f4e4a3ee8f95",
       "sizeMb": "0.37 MB",
-      "txHash": "0xcf7b59e4cb1e356edb5f2c4717505615dab5e71a72d565efccb1d870461551ce",
-      "blockHeight": 688
+      "txHash": "0x7b418e78981a5338fbb517adb0ed9403cc902060b01cc49f6f1cf1c9d4288e08",
+      "blockHeight": 694
     },
     {
-      "index": 49,
+      "index": 55,
       "filename": "al_qada_wal_qadar_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "7bfec1f503bceddc65807bf3179f7208248076f67ff384cc8fbf027b91673687",
       "sizeMb": "0.67 MB",
-      "txHash": "0x788a0faee2450436bda27c2001681766e43ee7d03cd3b749418f441bfb8b87bf",
-      "blockHeight": 689
+      "txHash": "0x91946ab07a21626fd907faf622c414c94f1e7d754dd36a1f1985aba50f483401",
+      "blockHeight": 695
     },
     {
-      "index": 50,
+      "index": 56,
       "filename": "al_radd_al_jamil_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "f3f97cf3b75e864df773f3a775db0c90a37082f2aa16bf0f2ea5f6198852325d",
       "sizeMb": "0.14 MB",
-      "txHash": "0x8aa8958ed68dfc544ed9f9014aacdf2e58c53997fdfa64aa00010c151aeb3273",
-      "blockHeight": 690
+      "txHash": "0x84f0acbe28cac62e909501f25f78f75ab8b8c18126aa89c2733fcb9f19d182dc",
+      "blockHeight": 696
     },
     {
-      "index": 51,
+      "index": 57,
       "filename": "al_radd_al_jamil_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "d7083db8eeced68aa21b1f2804311cb4dd09aac5c983ee06405beccabd77b825",
       "sizeMb": "0.06 MB",
-      "txHash": "0x12cbb220a1272288405176153d87d01bad9335cfe3f8d0f66e962fabdeada9b0",
-      "blockHeight": 691
+      "txHash": "0x3db5f173872abe311d54613367a604a3be8a4b7decb108c5e382e94241c95845",
+      "blockHeight": 697
     },
     {
-      "index": 52,
+      "index": 58,
       "filename": "al_shifa_qadi_iyad_en.epub",
       "author": "Qadi 'Iyad al-Yahsubi (القاضي عياض)",
       "category": "Prophetic Biography & Shama'il",
       "channelId": "chan-classical-heritage",
       "sha256": "4f8fc69473771b38725b5b9e65791bd89b8e80d89c5d48b7b2482845e8ff4bd3",
       "sizeMb": "2.00 MB",
-      "txHash": "0x27bf1739d109158e595d07ad2ddf02bf82ab4c339af0169034e330dbf86b37f3",
-      "blockHeight": 692
+      "txHash": "0xe3994291a7f6fdc33cd5b3fdc68ff5feb9d6a275c5a6e3040eadc0e0e21db7d0",
+      "blockHeight": 698
     },
     {
-      "index": 53,
+      "index": 59,
       "filename": "al_shifa_qadi_iyad_sq.epub",
       "author": "Qadi 'Iyad al-Yahsubi (القاضي عياض)",
       "category": "Prophetic Biography & Shama'il",
       "channelId": "chan-classical-heritage",
       "sha256": "ff9044cc786f51841c1ffd8e97d104df938f0245efad4f59834a75e0bfc09d3d",
       "sizeMb": "2.05 MB",
-      "txHash": "0x011f565e763f62b594b3e61940ef0d717d9fd00d4aa4e1eaf98827097d59dabb",
-      "blockHeight": 693
+      "txHash": "0x528f8ad7a10f05181206ea214ecb2332b94a09a65c23080b4c8336738ade02a8",
+      "blockHeight": 699
     },
     {
-      "index": 54,
+      "index": 60,
       "filename": "al_taqrib_wa_al_taysir_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "8853e1276fc5dfdc37963ce6d4106b9dc0b5843abcb1928c67b698070d489073",
       "sizeMb": "0.13 MB",
-      "txHash": "0x983c5a86b57ec497702e15f209bf6041c4c5f24ca7905dbebe5f8b594940b2b2",
-      "blockHeight": 694
+      "txHash": "0xde212aa48e48d9b5e360eb70a1e4e27837eaa2b3ce1ce60da1eb4af97d34f266",
+      "blockHeight": 700
     },
     {
-      "index": 55,
+      "index": 61,
       "filename": "al_taqrib_wa_al_taysir_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "2e3ca96ce1a97df9aa59d0dd2bd56a92acfba535fcc25ac25ecc22b033588b55",
       "sizeMb": "0.02 MB",
-      "txHash": "0xa2ca500ae7c0008971d84f1f55c2fc13b0b288623890bb4d69b335eb36bb336e",
-      "blockHeight": 695
+      "txHash": "0x3432e492e400e1a576cccc68c64f2d3f26a718bfef5586ee720460934a8a0140",
+      "blockHeight": 701
     },
     {
-      "index": 56,
+      "index": 62,
       "filename": "al_tibr_al_masbuk_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "5e4e8d7e611339cc00b0f9d35f025d87bc30ea2d9f0379dea2ad38121c37e4fc",
       "sizeMb": "0.27 MB",
-      "txHash": "0x27ab438cdc6a2833f57f4c797447f8ed86b4c79dfb5263b33432f70888f5c328",
-      "blockHeight": 696
+      "txHash": "0x1723e8005926859c46a0932bd78d45ef6ef5012f865be3f1f8ccd9325861c34a",
+      "blockHeight": 702
     },
     {
-      "index": 57,
+      "index": 63,
       "filename": "al_tibr_al_masbuk_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "65c80da38d0a6ae57b0ddf6bac31adde11c2d99e1aee5a2abb00d1f9051de3ef",
       "sizeMb": "0.12 MB",
-      "txHash": "0xea5be713c98fff6f4875406aa9a30f3b3f499b9bd376bcbe21acaec586c1b0fb",
-      "blockHeight": 697
+      "txHash": "0xdd159d4cac57b6fd3889162cfe698ef76497163373a31d48f98eac5eb68664ba",
+      "blockHeight": 703
     },
     {
-      "index": 58,
+      "index": 64,
       "filename": "al_tibyan_fi_adab_hamalat_al_quran_bilingual_lexical_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "46a1bc54243b0cfa162176a09713594b3e2466277a03a1134adf9fea63e13862",
       "sizeMb": "0.30 MB",
-      "txHash": "0x271e2eede7608942cc997aef5a43a8fb511da76242c3a9d6ebd1e2f6f885474f",
-      "blockHeight": 698
+      "txHash": "0x6e5f926a1ebdce3fc356c1b12db2753f84b090b02999ae2d648cad21a66bd74b",
+      "blockHeight": 704
     },
     {
-      "index": 59,
+      "index": 65,
       "filename": "al_tibyan_fi_adab_hamalat_al_quran_pure_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "d08258d3578b0faad83954272d449f0ede89e85e3fb7953e16ac259e282246cd",
       "sizeMb": "0.14 MB",
-      "txHash": "0x7f739c0c23c7879fcbef0822961ab0cfb65cf5f2c9c5c97996b512bac286842b",
-      "blockHeight": 699
+      "txHash": "0xa37c69b384c8a19bbaacb1552b8afdb1b5806d8374edddeb3e8720f06ea2d22f",
+      "blockHeight": 705
     },
     {
-      "index": 60,
+      "index": 66,
       "filename": "al_usul_wa_al_dawabit_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "0c700ec435bf6919492ebc7c793455bf4fcfa232732e80e6c08685314ac9261e",
       "sizeMb": "0.02 MB",
-      "txHash": "0xf4432d3599e24f96ef922945fe818d31013cbeb836c9b70dd6699df738079614",
-      "blockHeight": 700
+      "txHash": "0xf09084b8863f40c12eea1af5b6c96734b0236921d83953158db01a815986bf6a",
+      "blockHeight": 706
     },
     {
-      "index": 61,
+      "index": 67,
       "filename": "al_usul_wa_al_dawabit_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "d4006bbbc3b501dcca272584af55dbe02d3b2ddfaaef55e4e2842e785b9d9b0d",
       "sizeMb": "0.01 MB",
-      "txHash": "0x63fec54faa85bdd704ef254d8a0d538d2b898734d0dd9635fd3a96d5e51ed332",
-      "blockHeight": 701
+      "txHash": "0xc5f6e20b606a2f3924d7a674626d97ddcd54f931339aecfb1eaf542b44974686",
+      "blockHeight": 707
     },
     {
-      "index": 62,
+      "index": 68,
       "filename": "al_wasit_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "5e872f8c4f306b5cca4cc6b9faf0b34404d2c50333357f5642a318b059ddc4c2",
       "sizeMb": "3.88 MB",
-      "txHash": "0x628a5505a786cefc0e8988264c5bfdc41cc95a144170cb6a688a8306e5fc1f47",
-      "blockHeight": 702
+      "txHash": "0x657dd19a11fa507f6fbca6bec93254de09fddde46bcea92971ace3dd834c67f3",
+      "blockHeight": 708
     },
     {
-      "index": 63,
+      "index": 69,
       "filename": "al_wasit_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "5506066f0a55791e1fc141baa7a42c5f2a848a6d30d299a61acdb76965803129",
       "sizeMb": "2.05 MB",
-      "txHash": "0x8323b41ceedbe8e75a262de6967417580c757a0462c975cb59fdb48f663373ab",
-      "blockHeight": 703
+      "txHash": "0x2593fbee86ee39550c8618854ecc85add57671acce54dc64f664a666899583d7",
+      "blockHeight": 709
     },
     {
-      "index": 64,
+      "index": 70,
       "filename": "arbain_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "22d35118ec4ba5035644529cde2b18a3f59ca6f5e6cc966b7b5722806b55b0c0",
       "sizeMb": "1.16 MB",
-      "txHash": "0xd80ad18b3e8f1402e2fd64f49695d1025db948f5d1b2d399bc8f142b8a9bc801",
-      "blockHeight": 704
+      "txHash": "0xec63e769769600edb5592dc02e3cf8208aa8d19f7340f9156cd6711f3384dffc",
+      "blockHeight": 710
     },
     {
-      "index": 65,
+      "index": 71,
       "filename": "arbain_fi_usul_al_din_v3_ar_lex_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "4a555bbf2bc233edb4b3499e39640aeda4d6ae42d0cf5465fc03217b2db8cad3",
       "sizeMb": "1.33 MB",
-      "txHash": "0x503217436ec11ab0612ba39e1954ae5dcf131fc9ce86732c2bc73dc5cb0485a2",
-      "blockHeight": 705
+      "txHash": "0xe5e86eb04af4fe3c22bbe5578249fedd4ac4fee7e56f1a4ae186f513ce15236d",
+      "blockHeight": 711
     },
     {
-      "index": 66,
+      "index": 72,
       "filename": "asas_al_taqdis_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "549fe3e3f1f8a02b4eca204bf79d8b90dbcdde43ceac4dada649afb4e70dc00a",
       "sizeMb": "0.38 MB",
-      "txHash": "0x1a4476bca05eb98bd110f7b8ed5d4c0a12036d351bc831be6b00de88cee43ac2",
-      "blockHeight": 706
+      "txHash": "0xafe1b751f3f1fe6b1f0217bbeac55e7f66df70e5e5340c2c4aaf9fbd5fe011c4",
+      "blockHeight": 712
     },
     {
-      "index": 67,
+      "index": 73,
       "filename": "asas_taqdis_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "cf8f35524586731ec240032b2aef0603f6c939854c5c1c040c79b88da8f5adb8",
       "sizeMb": "0.32 MB",
-      "txHash": "0x493a4f5ab2239a28881b978dc7771910ffb4f3dd575f433b681d04c378f34b22",
-      "blockHeight": 707
+      "txHash": "0x7a71836a36faee9f800bb8b946d552385f280efc491beeb3c35124969eaef6bf",
+      "blockHeight": 713
     },
     {
-      "index": 68,
+      "index": 74,
       "filename": "asas_v2_guided_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "3abd05d5e39401980c2632a81d2a5797782eac92f958ce5c7baed673fe093eac",
       "sizeMb": "0.34 MB",
-      "txHash": "0x3e02c7da5edff5bfab378d0a6738de4c16f9eea5d7ff44d6531303fe98bbab30",
-      "blockHeight": 708
+      "txHash": "0xd9a20d2f5b3289dfd51a2a431586ba0a0e9861f7e4df6f5eed45ea26d7810c98",
+      "blockHeight": 714
     },
     {
-      "index": 69,
+      "index": 75,
       "filename": "asnaf_al_maghrurin_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "b3465141eac743ce6a62d3615fd1d4e6bc07f38cb3110ad8d0ac24c004e9f689",
       "sizeMb": "0.08 MB",
-      "txHash": "0x9ffb2e23608a459b0b23663bf87f9c9359750a64f70f46e447d0e6f51e50c7c3",
-      "blockHeight": 709
+      "txHash": "0x6cf74afa6e129de512e9c5407dbd3ccd63eb031a5d35485198556ad7388a6710",
+      "blockHeight": 715
     },
     {
-      "index": 70,
+      "index": 76,
       "filename": "asnaf_al_maghrurin_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "cb0a1e5747b86c6c82a8d17a6e37dd3b418a10255d9f9de0e840513a68c3b1fa",
       "sizeMb": "0.04 MB",
-      "txHash": "0xcd0f5b5d502de89ed54634cdc27bad6a758250625acb0fb726411d2912638766",
-      "blockHeight": 710
+      "txHash": "0xc15d1844c00ba895512a265767e2a44d1b37f99064f165419b6adac42777165b",
+      "blockHeight": 716
     },
     {
-      "index": 71,
+      "index": 77,
       "filename": "asrar_al_tanzil_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "d54ce5617797b8394b706c97bf245846d791b8edd07a19e436aedd0c45e34b52",
       "sizeMb": "0.22 MB",
-      "txHash": "0x901d270a36a3d39e0457c1e10465aa169b785095a41e1d52bda7be33c835a56a",
-      "blockHeight": 711
+      "txHash": "0x15d7f5d80f40ea936dd4ef6653623629b96df8b2a48be4c5d59c26fdbfb49e9e",
+      "blockHeight": 717
     },
     {
-      "index": 72,
+      "index": 78,
       "filename": "asrar_tanzil_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "e94a8fc122d0726d659fee1f5e0785437821896cbbb3a1e7a47ad7297a68436b",
       "sizeMb": "0.19 MB",
-      "txHash": "0x95311157c8d4e2faf90dce11db1ec790f7f213626388469d6013d397c4c43803",
-      "blockHeight": 712
+      "txHash": "0xaf8e769394e799a5807bdcf051a86d5c8699d8c02af5da4acdb73756839adc51",
+      "blockHeight": 718
     },
     {
-      "index": 73,
+      "index": 79,
       "filename": "bidayat_al_hidayah_bilingual_lexical_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "1b91b09a3af2f8da49e702f5aa5be7ced8c574fc641766a5731350c830e09a30",
       "sizeMb": "0.16 MB",
-      "txHash": "0x7c999be141710d1091f503cf5bd8784b05b3094a611ad1a10044650fdeb722bc",
-      "blockHeight": 713
+      "txHash": "0xaea38b255bdf28468c06eb8619a35045b47f02f8a41c2d8be5251ab077dc7eb9",
+      "blockHeight": 719
     },
     {
-      "index": 74,
+      "index": 80,
       "filename": "bidayat_al_hidayah_pure_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "1a5ccc5f807fb020027c348835e8f865bd38d8403d9a3b4d58d4c4445fa2886d",
       "sizeMb": "0.08 MB",
-      "txHash": "0x3129a920e97007f13003b727ed790bce6ceba4039ca75adb89f0fd7150db0e69",
-      "blockHeight": 714
+      "txHash": "0xa74aabe7861fd2573257945999f8a26b1aeb8e0473508eb4be9775fe614d74c4",
+      "blockHeight": 720
     },
     {
-      "index": 75,
+      "index": 81,
       "filename": "bilingual_book.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "9d3a8bd75fad983bf349882f3480dd1d8fe9e9634f994aa5b4c9b4a1bfcd0267",
       "sizeMb": "0.78 MB",
-      "txHash": "0xd9cb695c0823c6449a4f67c6d8af80005aa15e217020968be52e50bd66508299",
-      "blockHeight": 715
+      "txHash": "0xc13e8550eeaf6dacb7882ae726e766fd2aad148399b31fe326147eb7000ae6f7",
+      "blockHeight": 721
     },
     {
-      "index": 76,
+      "index": 82,
       "filename": "bustan_al_arifin_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "51a7d15a9eeee183f417bc6e472e1d707169a3245b4bb2333b9d0a62a8fc45dc",
       "sizeMb": "0.21 MB",
-      "txHash": "0x82107c86bb3881c9b9227460aedd5f02574b5b7fe79bf335e98f6e097c739db9",
-      "blockHeight": 716
+      "txHash": "0xe65f21d2ea843fdeb10861d9323031d2928a5f4f74b75045be5ff7cafa92d31a",
+      "blockHeight": 722
     },
     {
-      "index": 77,
+      "index": 83,
       "filename": "bustan_al_arifin_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "5fb018667309c397e7bc1d235e00f8b0f51441111b5b9c418f114ff6e12f8ce1",
       "sizeMb": "0.09 MB",
-      "txHash": "0x198345256060250cb251ccf7e93f4ba2178c1c8e07d65f69da8e69933f7f25fb",
-      "blockHeight": 717
+      "txHash": "0x35ef320b7e2ce00694d78bf9c6005c21fc759f0e6ebf7c4f1b5120266d6f8248",
+      "blockHeight": 723
     },
     {
-      "index": 78,
+      "index": 84,
       "filename": "daqaiq_al_minhaj_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "66d0f2518f459b5854135536a15aa8db3f134950b51bd236e63f5919adbb5d00",
       "sizeMb": "0.05 MB",
-      "txHash": "0x965e716c22d1308a6694e311557e5e2a63a97b3f492f782e03fd6ab67e5a9fcc",
-      "blockHeight": 718
+      "txHash": "0x19924918ebde0d0b5c670babaad811daba6899132107e4c8a98a7faba0d84dfd",
+      "blockHeight": 724
     },
     {
-      "index": 79,
+      "index": 85,
       "filename": "daqaiq_al_minhaj_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "d6edd8115712d57b3cead5bf4455153c2518f172ea48ee28cbf183a69ebc5ca1",
       "sizeMb": "0.01 MB",
-      "txHash": "0x068a61c5adb6c4f7511c6fdd9ceeb2d8b267650ac6e4b2ebcffb0f96e231227c",
-      "blockHeight": 719
+      "txHash": "0x3d3294f6d74ace3d02b53cfadd6bbc5d9eefd921c1ffa2960438e463fc91d602",
+      "blockHeight": 725
     },
     {
-      "index": 80,
+      "index": 86,
       "filename": "fadaih_al_batiniyya_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "bb8464aca13901e149389bba395702968ac9f329c36d1064fd2a6074fc0af7b7",
       "sizeMb": "0.44 MB",
-      "txHash": "0x069cbb9e5b32041039edb10d0e35b42ba1c531477f858d2ae9e7bf2e968e2ba5",
-      "blockHeight": 720
+      "txHash": "0x235e721b6528a6f790b670585bb7e1f80feeff6c28386798bdd11d07aa0074e4",
+      "blockHeight": 726
     },
     {
-      "index": 81,
+      "index": 87,
       "filename": "fadaih_al_batiniyya_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "133849fbd2ab99eba7f2e09d527bd84aac434f710ade2c5f41118de429f0f88c",
       "sizeMb": "0.16 MB",
-      "txHash": "0x530b3b8a4dcba0a4492ea87468ab10efd4ccd1fcb8a018e8ad17989cebd3aae9",
-      "blockHeight": 721
+      "txHash": "0xa99801a3343680c173e8c781d7434d9c1d77a1f80af03738fe139acf7b86b7b7",
+      "blockHeight": 727
     },
     {
-      "index": 82,
+      "index": 88,
       "filename": "footnoteless_book.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "bf4d38ffb352cb8a0304a3a077e34b8e47728638aaf6a90371d813023b0cb08e",
       "sizeMb": "0.42 MB",
-      "txHash": "0xe5c2e33bf3efa6138df251201c8490ea05fcf48d31493c634a4c98191a2605d2",
-      "blockHeight": 722
+      "txHash": "0xb845f34bb2a7a075ff05feae35728bf8806967b0c8d601e0f3044f35741fab48",
+      "blockHeight": 728
     },
     {
-      "index": 83,
+      "index": 89,
       "filename": "ihya_ulum_al_din_bilingual_lexical_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "64ab1a136c7035cc855b1550e90b0acf1a213e9eb82064fdcd3b01eac81129c0",
       "sizeMb": "7.90 MB",
-      "txHash": "0x68078c8cb923f520ac93bb8a048d31fe086c73386154b7c483c8d38496e14465",
-      "blockHeight": 723
+      "txHash": "0xa6e2f359accb050a9d709e856cf271bb7ccbcbe8bc263904bc8a13ec31e28f61",
+      "blockHeight": 729
     },
     {
-      "index": 84,
+      "index": 90,
       "filename": "ihya_ulum_al_din_pure_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "4a5c8a5cec7de1589e3ec9a30dd6d097d3483d850443c329dd824e4848c34d4f",
       "sizeMb": "3.46 MB",
-      "txHash": "0x367633bbaa2c43cfa4bf0947ca00f0cc81f2fbc5ee971e383afd96fc8c1d4810",
-      "blockHeight": 724
+      "txHash": "0x66bb4a5d4bf9226742f7091c1e203b65e311326f70791ea59bdcecf8bad53649",
+      "blockHeight": 730
     },
     {
-      "index": 85,
+      "index": 91,
       "filename": "ihya_ulum_al_din_vol_01_ibadat_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "155e022a6d0c9e22390aeac318a255085c16057817e0ca0a06fdd481eff207e5",
       "sizeMb": "0.53 MB",
-      "txHash": "0xe725b7bc7cfe388b029caa1612c712e801e410aefb208c5f41dacf3d926a8a4b",
-      "blockHeight": 725
+      "txHash": "0xdcf9f544e6954a185417114a09ca8d733dfdaa46a7d2aca89307f25aea3620dc",
+      "blockHeight": 731
     },
     {
-      "index": 86,
+      "index": 92,
       "filename": "ihya_ulum_al_din_vol_02_adat_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "f2a886002b8fd9dcf1d4149832979328f94e3387163c5a876bfdc16e2543ed8c",
       "sizeMb": "0.64 MB",
-      "txHash": "0xc04172f8fb08dcca4d134047b63e98d8d7db7c101bff452e2445c1ad4ad80b0f",
-      "blockHeight": 726
+      "txHash": "0x411596c6aaf30e3b6eb066372a49bc27bd10babb5c55cf5a008418f6a583e286",
+      "blockHeight": 732
     },
     {
-      "index": 87,
+      "index": 93,
       "filename": "ihya_ulum_al_din_vol_03_muhlikat_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "7a3a168ee59dc4eb218b6d8b11c1c7453c9de1b9e0bebb4933127b46c1d120ec",
       "sizeMb": "0.67 MB",
-      "txHash": "0x62dba1407a79b9eab1c1417af3959a11d0c7a1f88f8eacf91cb47ee13ebd2f36",
-      "blockHeight": 727
+      "txHash": "0x47e85f7072983d8ff8187544bac824e7409e6768761750f016d7f4f509b3fd97",
+      "blockHeight": 733
     },
     {
-      "index": 88,
+      "index": 94,
       "filename": "ihya_ulum_al_din_vol_04_munjiyat_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "3f4ca98a838a9f92dfd06ef036aba76990f5b9891bf57f480ce949127a6a885b",
       "sizeMb": "0.93 MB",
-      "txHash": "0xe1c19c8a488919d9a9ea45f972432834eb746216728b5c31ca8ce603f772faa9",
-      "blockHeight": 728
+      "txHash": "0xe5a29a866dbac1d58a9edfead551daf6b642de3d40df933455041c61739daa68",
+      "blockHeight": 734
     },
     {
-      "index": 89,
+      "index": 95,
       "filename": "irshad_tullab_al_haqaiq_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "0d1b5cf8fbd34a1c6becc15d76210943b637b2104475fe5cdf2c3b7a05585f55",
       "sizeMb": "0.21 MB",
-      "txHash": "0x8e369067ff4692a1985f0b85b13f034b89e56995d9dc82264c264e8e4c671747",
-      "blockHeight": 729
+      "txHash": "0x1f2865d205a892170f3d3841bb01a9b3820eb2bd5989411985cb6d4d68160c34",
+      "blockHeight": 735
     },
     {
-      "index": 90,
+      "index": 96,
       "filename": "irshad_tullab_al_haqaiq_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "8128ef89d5726f49e260c8afaed1e6819f5ff479235d04b3cc45498f81455570",
       "sizeMb": "0.04 MB",
-      "txHash": "0xa52a4827ff5b9eb2350b5626fb8b6a5dd948ac4424ab9ba292c6fd089269be86",
-      "blockHeight": 730
+      "txHash": "0xc54c2001a8df0494b7ff74f097224aeb934258c4600a4e996cbf5d98258ad3d1",
+      "blockHeight": 736
     },
     {
-      "index": 91,
+      "index": 97,
       "filename": "ismat_anbiya_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "e165b7b55f64f5c48e22afb7faf1958f6ffce4a70e4edb8f4bee56ccb299d42f",
       "sizeMb": "0.17 MB",
-      "txHash": "0xe469a408a748933876d668303584be18c729b5463b48e2d6a9f5ca411d0d50f9",
-      "blockHeight": 731
+      "txHash": "0x78f8c4cea6519b8dcdda541df04342969ccac62754cf617e237fcef4baae6bba",
+      "blockHeight": 737
     },
     {
-      "index": 92,
+      "index": 98,
       "filename": "ismat_anbiya_v2_guided_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "e165b7b55f64f5c48e22afb7faf1958f6ffce4a70e4edb8f4bee56ccb299d42f",
       "sizeMb": "0.17 MB",
-      "txHash": "0xf0b4173a4bbe42aa687ca7579db9fecc5588683d0c49d2d298d0ea6d5fc42b73",
-      "blockHeight": 732
+      "txHash": "0x25d7b9057d62f558aad7da4e9b96e6de2dc9486c86e1a630ba1fc5365fbe3694",
+      "blockHeight": 738
     },
     {
-      "index": 93,
+      "index": 99,
       "filename": "ismat_anbiya_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "ab90b38dbd9b9bd7ae6ca886eecad8b3d7d606c7db848b505ff4dc3953628b33",
       "sizeMb": "0.21 MB",
-      "txHash": "0x532b9be8d5d873945f662bd187b42ca45841b73a0d60d81a55f79aac898e6ec5",
-      "blockHeight": 733
+      "txHash": "0x98b302acbac1e65233958a7f7657689c581428b358cbb905457daf8941c53025",
+      "blockHeight": 739
     },
     {
-      "index": 94,
+      "index": 100,
       "filename": "ismat_anbiya_v3_guided_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "e165b7b55f64f5c48e22afb7faf1958f6ffce4a70e4edb8f4bee56ccb299d42f",
       "sizeMb": "0.17 MB",
-      "txHash": "0x1af7ab27ca5fd471c7afe730255253c4c5ea3ffa91e0d0b9d758db43af8a64ca",
-      "blockHeight": 734
+      "txHash": "0x16198648c9bad67477a5f33f3fa0c53c3844a0206fdcdea98d25ef28446dd284",
+      "blockHeight": 740
     },
     {
-      "index": 95,
+      "index": 101,
       "filename": "ismat_anbiya_v4_pro_7roots_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "a93e02ca69be6c7618b12fc7ba5cdd06a6cc71847d7791719035eddf06c961e8",
       "sizeMb": "0.14 MB",
-      "txHash": "0x5c2f57d7d971b882d174e87d42289ca2beacd4afc7f7ca0e059b93ca9ec20694",
-      "blockHeight": 735
+      "txHash": "0xb84c703cbf1a9bf90e319c083ad0cc15503bcce185f4fd2da823dcd3b6c4c571",
+      "blockHeight": 741
     },
     {
-      "index": 96,
+      "index": 102,
       "filename": "ismat_anbiya_v5_complete_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "e165b7b55f64f5c48e22afb7faf1958f6ffce4a70e4edb8f4bee56ccb299d42f",
       "sizeMb": "0.17 MB",
-      "txHash": "0xe43cd6f66f75220d239d6f0a1a2997e7a412b55357ad6ce6f9030d297f879fec",
-      "blockHeight": 736
+      "txHash": "0x1d391f8a4af6858fabdb1f69a0e8bb69e293ad68a2ae04591347bc64edc0a888",
+      "blockHeight": 742
     },
     {
-      "index": 97,
+      "index": 103,
       "filename": "ismat_anbiya_v5_zero_truncation_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "a93e02ca69be6c7618b12fc7ba5cdd06a6cc71847d7791719035eddf06c961e8",
       "sizeMb": "0.14 MB",
-      "txHash": "0x5701daaaf2863f35dec31ca5b1d789c5c5042eb81e62375de1624c903268e0e1",
-      "blockHeight": 737
+      "txHash": "0x95ee7c0013764c27a14c956330bff5373841a2b1c116c71d9b0bbd74ac4b5b71",
+      "blockHeight": 743
     },
     {
-      "index": 98,
+      "index": 104,
       "filename": "itiqadat_firaq_al_muslimin.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "f59dbef75a3a19fe999ce81778cae1f6847dfe97d4a2eafa0ca400cfdfc32ff2",
       "sizeMb": "0.40 MB",
-      "txHash": "0xbe50a5b0d7363010eb724d780c65f4fb480d37dbcab947897e54590df8c27f37",
-      "blockHeight": 738
+      "txHash": "0xd6eaf24c68cc16c3154f410d518d777f93cc842a72aa3853f19ebd76ff859d7a",
+      "blockHeight": 744
     },
     {
-      "index": 99,
+      "index": 105,
       "filename": "itiqadat_firaq_al_muslimin_bilingual_lexical_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "d7447352fb0a20b745cacc13afd359c32c7dea9310e4bd93d1caf436acc7cc3f",
       "sizeMb": "0.05 MB",
-      "txHash": "0x4be5d0e093b5cf98294c44a992918b836096ac414ea1dbef9cfb3c906322a97a",
-      "blockHeight": 739
+      "txHash": "0xc5b67e76316d6cbbfedaadc9fd8f7f3eaba06432a84c1a9f570779d2129bbb52",
+      "blockHeight": 745
     },
     {
-      "index": 100,
+      "index": 106,
       "filename": "itiqadat_firaq_al_muslimin_pure_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "ea2eb3e5e3874cd847f56ba3cecbbd4abfa50629088896043a7a7662530df36e",
       "sizeMb": "0.03 MB",
-      "txHash": "0xdd9a626e4dc85738f358a59998d5e9ae1cfce66afc3e896dc5f69deb89dbff51",
-      "blockHeight": 740
+      "txHash": "0x0ea206b528607f60b8457b7bb8482060048d26efab20ec46a5815f7bb06b2ede",
+      "blockHeight": 746
     },
     {
-      "index": 101,
+      "index": 107,
       "filename": "itiqadat_firaq_al_muslimin_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "d77ceef6e99f3c8c7b6692ba9688aaa8cad7ff5d53039a554bccfc656ac545f8",
       "sizeMb": "0.13 MB",
-      "txHash": "0xe01e0e3b27fb5c50ef94fe50be2c8492e6b7d87d3f085ae84d26dce5a07811cc",
-      "blockHeight": 741
+      "txHash": "0x67d5d2183d48a28c27e88a7099ab5aaffec6383569b627da4183065b6fab2c25",
+      "blockHeight": 747
     },
     {
-      "index": 102,
+      "index": 108,
       "filename": "itiqadat_v2_guided_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "f96160362191e12d6cbf45d129ee9f28649c0d02a341db5684c35a04700ec1fd",
       "sizeMb": "0.12 MB",
-      "txHash": "0x36c851a9611e3b8f0dd9fbfcf4bef43d9cd1f0111bad1188d46ea6e6633c21e8",
-      "blockHeight": 742
+      "txHash": "0xb3778d08e39f288977918f4bdc89bb36ce021a24493ed6ffc01556d99c1f6eca",
+      "blockHeight": 748
     },
     {
-      "index": 103,
+      "index": 109,
       "filename": "jawahir_al_quran_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "2f3a7b779430a96ec481bb8ea305ef3e3e8b0d9b7b3743e5e6edf74090516524",
       "sizeMb": "0.30 MB",
-      "txHash": "0x574b4d616f0018ebbbb07ae61770dc8add3c35b09d87af154744f9e3370f1e56",
-      "blockHeight": 743
+      "txHash": "0x83455c1e7480f917b1c36d917f725d6c7f4fd1bb06da02523813b18e64887dfd",
+      "blockHeight": 749
     },
     {
-      "index": 104,
+      "index": 110,
       "filename": "jawahir_al_quran_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "f0d1469dec116aaa81c167cba3cd1b4667f78470583055cd641f96515f538260",
       "sizeMb": "0.12 MB",
-      "txHash": "0xe1d895288b014af42c49fddcd34f56fafa3bf677cf51c803950d8207007e418b",
-      "blockHeight": 744
+      "txHash": "0x19992ce0acff134e7393b055e460b662d1aaaadfc6292b3fc7e3b75e93d8742a",
+      "blockHeight": 750
     },
     {
-      "index": 105,
+      "index": 111,
       "filename": "khulasat_al_ahkam_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "38832af5f69fe08e2a8d8f1e22aa3e51ba440598d5352263c8cc2007c93ab891",
       "sizeMb": "0.71 MB",
-      "txHash": "0xd6c956e357bd842fd621627ad35a4ad5217ae734e5f03310890ca83250e175c6",
-      "blockHeight": 745
+      "txHash": "0x6280bf55de8ceb6a841b03ff3cedb21221b16adf0e0c67c583ae627c312b6561",
+      "blockHeight": 751
     },
     {
-      "index": 106,
+      "index": 112,
       "filename": "khulasat_al_ahkam_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "3506f124b3fda0dd2b460c3c35ce349f83fb41151d270e6030b20b35a782dacc",
       "sizeMb": "0.08 MB",
-      "txHash": "0xb817e78a8fff8b78e5b3235f5f2dad0685e2a32f23760d0cf2d3eed1dae2f9f1",
-      "blockHeight": 746
+      "txHash": "0xdb6e070d45b50d6210e0b24771b8d18eaadf870cc88f9380f82ac469f91f522d",
+      "blockHeight": 752
     },
     {
-      "index": 107,
+      "index": 113,
       "filename": "kimiya_yi_saadat_bilingual_lexical_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "bcb555cbb0f4d155a4b454df03467cb96f36a892f2a3ab7176d0753b6f176888",
       "sizeMb": "0.04 MB",
-      "txHash": "0x15bbc810f2b4e40618876ff3f8ad3e91a0dafb60ae4899cf4a2ac668662c3e51",
-      "blockHeight": 747
+      "txHash": "0x77991b081dbf02c3fb28fc66972bd3780d26e86d0f1a9cd7920d23432ae9eea6",
+      "blockHeight": 753
     },
     {
-      "index": 108,
+      "index": 114,
       "filename": "kimiya_yi_saadat_pure_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "596f09f004070eecc7c3dc554a47692ea1de412eeb3e9eba6653a04015613134",
       "sizeMb": "0.02 MB",
-      "txHash": "0xa085382471226486b8613ac3b170e3ec7b588fdd6f9f104a80ee49c4bbbd9340",
-      "blockHeight": 748
+      "txHash": "0xf877e497c4b94cd5698c65be1f1bbc279b780dcf7b0807abd8442e5cc0c00fbf",
+      "blockHeight": 754
     },
     {
-      "index": 109,
+      "index": 115,
       "filename": "kitab_al_adhkar_bilingual_lexical_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "7beb82fb89942a5fe86861e11355246ff88ff95cc83a589f396f2e3b3312a1d3",
       "sizeMb": "1.34 MB",
-      "txHash": "0x3eb1737f14e1bf3dc1353510196434a0c0f692ad8de2935149de53fa79294e09",
-      "blockHeight": 749
+      "txHash": "0x397842fc47698af615158dbcabf12909180d01bf7fbbb23335f7a349a946bcc4",
+      "blockHeight": 755
     },
     {
-      "index": 110,
+      "index": 116,
       "filename": "kitab_al_adhkar_pure_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "1f9a45aa5eafbd6d33bb89b3d6f320ae7a2b00324aadac75e6ac71f720263b5e",
       "sizeMb": "0.56 MB",
-      "txHash": "0x01b82c27f140f40ac14f7aaa91b4614215701ac77999a7f0b8e41c83951a5952",
-      "blockHeight": 750
+      "txHash": "0x648b1eaa0ff17a55a4dca875b74d96c83e84865fc9bed2edd6a6781ccee2a123",
+      "blockHeight": 756
     },
     {
-      "index": 111,
+      "index": 117,
       "filename": "lawami_al_bayyinat_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "348a508a4fa63e00314773f231221b1faa216f57c0d7bdd54b5da3fe0a5f0c7d",
       "sizeMb": "0.75 MB",
-      "txHash": "0xe94261ff1b942a188527faa4897ddcbcb197f27fb4e9b56699b2d0e01e5a939f",
-      "blockHeight": 751
+      "txHash": "0x2a05fb2f20ef54d488f04f10ea75ff310b0028d0592dfe93695ce51e9215218b",
+      "blockHeight": 757
     },
     {
-      "index": 112,
+      "index": 118,
       "filename": "lawami_bayyinat_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "5cb8036590782bf4f305a233752c790b18b78a5cfb219059a8cabcbad205ba38",
       "sizeMb": "0.53 MB",
-      "txHash": "0x9f687fe9689bb40f5fe3955a75bbf92ae4b82ddbd720f154d2f1e65cc1c0e126",
-      "blockHeight": 752
+      "txHash": "0x651e1a6da1fe98acdda2e68bcd57c051b2ea303d8aaf41b27554995cb5fc0328",
+      "blockHeight": 758
     },
     {
-      "index": 113,
+      "index": 119,
       "filename": "lawami_v2_guided_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "e4a384afdaf05fa977f4a04518d9db87b0aeeb116148d9e87aa66294d21c21eb",
       "sizeMb": "0.68 MB",
-      "txHash": "0x2ea07bb9000a4246505bd70fecf262679fffec225dd0cff3293684fe0e60dada",
-      "blockHeight": 753
+      "txHash": "0x135945d1dda46a7dabc0f1fd4b21c1cf94ba993014f50fd94b0743f8342f0d73",
+      "blockHeight": 759
     },
     {
-      "index": 114,
+      "index": 120,
       "filename": "maarij_al_quds_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "0866cdc45e1ba44fc34bc7bf4c59c111a9994a5487544ad7297d004a6eb2c5f0",
       "sizeMb": "0.35 MB",
-      "txHash": "0xe88a57385c0bee6f887838857afdc575258f03c2308d20484a53e52849f05f3f",
-      "blockHeight": 754
+      "txHash": "0x2fd07f222c5d937ddaf5a3d81c7c9cdcc6f79d4dcf39c1abf5b746fbc633bc8d",
+      "blockHeight": 760
     },
     {
-      "index": 115,
+      "index": 121,
       "filename": "maarij_al_quds_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "19669b255bd9b004a57cf8cb122723c69d451a33e5a9daa8213d9f15f3d9aafb",
       "sizeMb": "0.16 MB",
-      "txHash": "0x8996d35570ae8f6f543ebd76ace39e397ff01c962642aafbec6652d56fb4d0fd",
-      "blockHeight": 755
+      "txHash": "0xdb5067c32f5037371d5ddd8efd3821d5ba9a77c03dcd66988459f0820d5b00ae",
+      "blockHeight": 761
     },
     {
-      "index": 116,
+      "index": 122,
       "filename": "macalim_usul_al_din_v3_ar_lex_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "e8401564527ffa5ffba177515dc9b6ba18f40ba3254bf1879777f508f10551a9",
       "sizeMb": "0.37 MB",
-      "txHash": "0x60ddcddac20e30eb11bc675afc9780b4bfdd3bdb5585a35fa5cc9e4d02f21b8b",
-      "blockHeight": 756
+      "txHash": "0xeb5eae370916c1a1abcf862f9a6617e15692ef860e4e8acd59bca57cc9ac5c21",
+      "blockHeight": 762
     },
     {
-      "index": 117,
+      "index": 123,
       "filename": "macalim_usul_aldin_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "b4e16498af4faa9183f3767959fd797cff99da7e0ade776aeb686e1c9a5d9848",
       "sizeMb": "0.17 MB",
-      "txHash": "0x70c6e3ccd9b969e9724eb350af1f546420285c11bc7038861e16631709c27a04",
-      "blockHeight": 757
+      "txHash": "0x4e9782a9f736e773406ff764acf0d2391bb5ab2474d1f56b2861361907ea7180",
+      "blockHeight": 763
     },
     {
-      "index": 118,
+      "index": 124,
       "filename": "macalim_v2_guided_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "27a850a897b7c4bb0abe82286f697e4dc9b88b8b9254bdf8992c861d517eb01d",
       "sizeMb": "0.33 MB",
-      "txHash": "0x606ad4f439819b0e5a2b293efaf3f0bb69fe5acbb34790b654057f95e0e688e7",
-      "blockHeight": 758
+      "txHash": "0x9c6ca12540eb2b8d43b6f2f035778e79d36f2c169eb308c7c80c575d81e3ebf8",
+      "blockHeight": 764
     },
     {
-      "index": 119,
+      "index": 125,
       "filename": "majmuat_rasail_al_ghazali_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "4955ba5a853b2134f34ff3cc27f59af830224bf8d233041188f030f660daa0b7",
       "sizeMb": "0.39 MB",
-      "txHash": "0x21cf63f808fb44a17244053724d15c6acf1151891446348adbe1ee6e2c97a9ba",
-      "blockHeight": 759
+      "txHash": "0xaa000df5f31e17876c3e272054ce9038372f01a84a09d2176f6e9d8fc7fddfd7",
+      "blockHeight": 765
     },
     {
-      "index": 120,
+      "index": 126,
       "filename": "majmuat_rasail_al_ghazali_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "7e62df956036842628f038b6fd9cd715117d3f1bf56d7e9fe5a8f1cdfb22be50",
       "sizeMb": "0.17 MB",
-      "txHash": "0xc7580af053f798ed52978c629ff4782fa10ca68e2823087e764e4887db90a7e5",
-      "blockHeight": 760
+      "txHash": "0x1ad5eaa9fffb78f38810678f549f5d070025fd07504c66d87f4baad0b5b983fe",
+      "blockHeight": 766
     },
     {
-      "index": 121,
+      "index": 127,
       "filename": "maqasid_al_falasifah_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "ac2fc7f3cdd4d164d30cb7593f19674f33647f69497981902cd86b80b97e7bef",
       "sizeMb": "0.23 MB",
-      "txHash": "0x054375e3a877a0e3eb1e30515b8e0f61849420a976281ac06326a2c619e02d08",
-      "blockHeight": 761
+      "txHash": "0x98a11d498875cde6df39bd3d9da85752763763206ef345f160063d36e946dbb1",
+      "blockHeight": 767
     },
     {
-      "index": 122,
+      "index": 128,
       "filename": "maqasid_al_falasifah_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "ca35ee37120edffda89b854a70221de713a30de1211811355a0e7dbadee2b8ca",
       "sizeMb": "0.04 MB",
-      "txHash": "0x1d10f6c1ed25c5ac6d493c0b7b13680d24913e65f0b478f987615552ec0cedda",
-      "blockHeight": 762
+      "txHash": "0xf6ca8724d8f2cf1750516432bf86559e84e4288ae2a7b6fae2c8bda6f6bc304d",
+      "blockHeight": 768
     },
     {
-      "index": 123,
+      "index": 129,
       "filename": "mihakk_al_nazar_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "3a3b708de594638282ed8de7d60cbf3f0fe8925d44a7796657e062c8f0035dda",
       "sizeMb": "0.25 MB",
-      "txHash": "0x303c45ef5ca91c62f92c7bed0361920292d5a168c819776d1ddfe799322d94e2",
-      "blockHeight": 763
+      "txHash": "0xbe0d71ea4846a935d2604d92a583f27523dd1717bc0ee99c66e4dbe3c514ca46",
+      "blockHeight": 769
     },
     {
-      "index": 124,
+      "index": 130,
       "filename": "mihakk_al_nazar_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "6f2d69d7053e43e7cc3d4998bec78eb2894b4b07e02704c603120c23e5dfe3b4",
       "sizeMb": "0.11 MB",
-      "txHash": "0xacb0952ea36dc05c47b2f4d12234cbdc6b44ed7f81db9f6c28efda858d50df27",
-      "blockHeight": 764
+      "txHash": "0xc6c0e6ea21a21198b9de40472d6ee5c0f8a333302e37b1ed40f84d4bc68abce8",
+      "blockHeight": 770
     },
     {
-      "index": 125,
+      "index": 131,
       "filename": "minhaj_al_abidin_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "b4a00d9f7c2e80b1f27d8d9df6914aa24f3de068f5ce8114718da344deda4bf5",
       "sizeMb": "0.28 MB",
-      "txHash": "0x39570b461dc76e806d0ad8d217de453e55242d239e08d27a00796692fd687dc7",
-      "blockHeight": 765
+      "txHash": "0x433c8e929921fa6daa1e38226b10de52151c1e903c174b114a0fdddf44dcf839",
+      "blockHeight": 771
     },
     {
-      "index": 126,
+      "index": 132,
       "filename": "minhaj_al_abidin_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "2b752cbe74548be04d3a4bcbeef48ffab058592add76281b09b40da1f9b738ac",
       "sizeMb": "0.05 MB",
-      "txHash": "0xd1d9c93f201ec298b112c97aad57d37822d20830709f35633ba6897db7b21b86",
-      "blockHeight": 766
+      "txHash": "0x2b7f89df4c0dc7ae06004cba1fb8493c4719aaa5af3029124a0396b80b20b621",
+      "blockHeight": 772
     },
     {
-      "index": 127,
+      "index": 133,
       "filename": "minhaj_al_talibin_bilingual_lexical_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "095f72dedaeedf9d7903a1b6a85c6956d6b895c7486d33a009f10560f6e864fd",
       "sizeMb": "0.98 MB",
-      "txHash": "0x8502fe20cf475a9f72b131b78c99815e753e74a0d24e4189e74c1ee8337c2cbd",
-      "blockHeight": 767
+      "txHash": "0x7a8e8a177480d8d1f328d782865bc73e8a7a832a5151b7016f80d62a7a2b4f73",
+      "blockHeight": 773
     },
     {
-      "index": 128,
+      "index": 134,
       "filename": "minhaj_al_talibin_pure_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "be8f7d1ba30c68823f7b0f1439feabb93282a8026e1833a317d8bfb0ee00f632",
       "sizeMb": "0.44 MB",
-      "txHash": "0x7c1b287e85585d7f438dc7d0dee1303ce9f33bcc46a73b330873828400aacdd8",
-      "blockHeight": 768
+      "txHash": "0x42b833cd2832f4cbda42c6a9150119b989aa588403b62615cde3791bcbaf585b",
+      "blockHeight": 774
     },
     {
-      "index": 129,
+      "index": 135,
       "filename": "mishkat_al_anwar_bilingual_lexical_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "1151bcadd170c5064f0a01d1d2e853dded4cd46a990c3cecc1c3d2f0639440a3",
       "sizeMb": "0.16 MB",
-      "txHash": "0x9af379bedb2502bd7acf65bb3c271599ae6fe74c995e4386ae9e9b34bf94d5a5",
-      "blockHeight": 769
+      "txHash": "0x0bda6f5719267ffe942edbb38b0aa3ff7db723f57ae3e1f4ccee2873c962514a",
+      "blockHeight": 775
     },
     {
-      "index": 130,
+      "index": 136,
       "filename": "mishkat_al_anwar_pure_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "88aee9590bdcd528877247d27500914db6271a4cff6a62fd05b5f30d1b62fe3b",
       "sizeMb": "0.08 MB",
-      "txHash": "0x1b670b35243ff09ec0654000a5db9e007b8dde6a11ef2b576de9d329fda1f850",
-      "blockHeight": 770
+      "txHash": "0x84b71c182bf483874a1a71ad5ffa204ddde8990f372e786c0471e741b2a2d624",
+      "blockHeight": 776
     },
     {
-      "index": 131,
+      "index": 137,
       "filename": "miyar_al_ilm_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "da4627968650311c2a5a1367ed6667ae39ac52ed3f0e01dfb62767f1c51df93a",
       "sizeMb": "0.46 MB",
-      "txHash": "0xe4571ac52eeda406addc284faafd6802f1ef57de02402b09d096c7353ed2da7a",
-      "blockHeight": 771
+      "txHash": "0x486439bc2128e34742a09d1584819baa1dc343e8f4b1c5465e65b5e19d97c506",
+      "blockHeight": 777
     },
     {
-      "index": 132,
+      "index": 138,
       "filename": "miyar_al_ilm_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "4386fb432a384931106a0a6a1c34e5867067174b2c53a1edee42d02b5233bedf",
       "sizeMb": "0.22 MB",
-      "txHash": "0xcf3a1e7bafab5c3950d4c7f2e106727dab9afba1eac7bfa7ec04cbd1361bf14b",
-      "blockHeight": 772
+      "txHash": "0xc8bac37a3054d2ac4d6c0f668c5affcb25f730fb178d013d00e80067e2379e9b",
+      "blockHeight": 778
     },
     {
-      "index": 133,
+      "index": 139,
       "filename": "mizan_al_amal_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "48a9a48226abdf44ca2d3f098be15d17ab6235d30b849e6f37b0e3211dc79670",
       "sizeMb": "0.33 MB",
-      "txHash": "0x642f7067a1cf08fbb0b7b7ad24b50a8c0878296ddb345306a0c4092bd65791c8",
-      "blockHeight": 773
+      "txHash": "0xaaa722734f7d6aeb257e6dcfd5721c7e9c83df8a732aa90819dd501795461dd1",
+      "blockHeight": 779
     },
     {
-      "index": 134,
+      "index": 140,
       "filename": "mizan_al_amal_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "0a9ae910a3f496551a7a2cdde242795983f5e27926ecfc0d8023dd696350c774",
       "sizeMb": "0.16 MB",
-      "txHash": "0x872959d898b29ce3feb01c5c747eb1406325e6b8e5e4644d12978de85f73ff18",
-      "blockHeight": 774
+      "txHash": "0xa021ad1f5835c2bf619a64e411e305e7c7bab02f86466ac1ce6aa61d37611b7a",
+      "blockHeight": 780
     },
     {
-      "index": 135,
+      "index": 141,
       "filename": "qada_qadar_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "4e6f698f2cf3324576610933498d4a40573d806c818f1612e23982d98ffd1b3e",
       "sizeMb": "0.61 MB",
-      "txHash": "0x315d629d03ae8a49b5c0bffde1d80c55a66c3005e2415e3653cd44b7792cf079",
-      "blockHeight": 775
+      "txHash": "0x1afa1656dd016ba17eb77833658a13c88b25cee4d638a5fed45949b560f2e741",
+      "blockHeight": 781
     },
     {
-      "index": 136,
+      "index": 142,
       "filename": "qada_qadar_v2_guided_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "773a63c03c5459bc039037dcba08406fde39db3a41ef08a3897997e27efde84d",
       "sizeMb": "0.61 MB",
-      "txHash": "0x2a298f163b3e31ce1d6d1af6c6d7c69d68d34fe45d28a795661f18946f10e552",
-      "blockHeight": 776
+      "txHash": "0xee3e65f7e360f01d78683d80043a9212d0162cb18bd84222021c7092489dd643",
+      "blockHeight": 782
     },
     {
-      "index": 137,
+      "index": 143,
       "filename": "qawaid_al_aqaid_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "636789c2596a93cec777644dd113600c5fe85d9e8ebe543f0295b37d4208f5cb",
       "sizeMb": "0.19 MB",
-      "txHash": "0x2dafddea234e6e3b0df9b943c19823719b06ea9dd92fab88d37d5781a48d4583",
-      "blockHeight": 777
+      "txHash": "0x05186e931fb981315fc4276cd54f290060734efaee0ab4c5f2549ad5de2d7b84",
+      "blockHeight": 783
     },
     {
-      "index": 138,
+      "index": 144,
       "filename": "qawaid_al_aqaid_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "d929b6a8bf7e39a5ddf71d5d7a4ffe58f49e879e9a571bf7066f9795d3d3c97d",
       "sizeMb": "0.10 MB",
-      "txHash": "0xa77f2d60239ffe088fd36491ca99ad164a1bf6f57f97db335ad2182b6e51f3f6",
-      "blockHeight": 778
+      "txHash": "0xb6bd805aeb514ceee012f0e2f10892f707b4b1736658a20679994d0cfd5cfbd3",
+      "blockHeight": 784
     },
     {
-      "index": 139,
+      "index": 145,
       "filename": "rawdat_al_talibin_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "fb193ee607048949cd3e93f93677da02a9385e86cabc3bad586d586bb736f8e5",
       "sizeMb": "4.62 MB",
-      "txHash": "0x564c5986da077fbf668aedb26f5a19d03bffcd53bc894e53f0d1696527ecf7ec",
-      "blockHeight": 779
+      "txHash": "0xc59771824b3d24e17face8286f3333c5242421cd16639e4a498b73a4acc26ce3",
+      "blockHeight": 785
     },
     {
-      "index": 140,
+      "index": 146,
       "filename": "rawdat_al_talibin_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "a26f5d21280ba5733035cfc073fa8791e62650f68f91f49fac6ada0c09af4554",
       "sizeMb": "0.71 MB",
-      "txHash": "0xc67dd4c1935854a7430c53f277fbdda49c2506a28861aa9f686490782deabe64",
-      "blockHeight": 780
+      "txHash": "0xefe0d7dfb515e8d6ab34d207bc1eb251e9f27ce8fc7f40906af520f026735b0d",
+      "blockHeight": 786
     },
     {
-      "index": 141,
+      "index": 147,
       "filename": "risalah_fi_al_itiqad_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "0efdc6f0e78d564b121010459db7aa4110d650fe7bd8c4608343fec0dd5586e0",
       "sizeMb": "0.09 MB",
-      "txHash": "0x4c60515f45bda6183102e7f35b25b36abb263e42dd5b7d25232663ec4db43688",
-      "blockHeight": 781
+      "txHash": "0xc3f3f050a56dec3dfe1b51c625ff9879c74f601d26ed8edb7166bc035b419d94",
+      "blockHeight": 787
     },
     {
-      "index": 142,
+      "index": 148,
       "filename": "risalah_fi_al_itiqad_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "ff4e7bcd50570c2dba21ebdcb1a378af6fee8db2391ed45db027564ef1892b0e",
       "sizeMb": "0.02 MB",
-      "txHash": "0x258b43d5b88a2e42b2a98a927cd20618e215fbfd07d387b6c7f32f87a8dc9e86",
-      "blockHeight": 782
+      "txHash": "0xeb56a77bdedfeac8c5fd61f8d850664b970a368b62cb9197f2ffc75f7c5d22ce",
+      "blockHeight": 788
     },
     {
-      "index": 143,
+      "index": 149,
       "filename": "riyad_al_salihin_bilingual_lexical_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "602b9f4556fc68f766481fe534a5fad51762652be215078bf4201d57ca949970",
       "sizeMb": "1.46 MB",
-      "txHash": "0x6d51cb562a2785a5db8873c7d23e55bb8fdee7d84a3c0c7d007673f8928f01da",
-      "blockHeight": 783
+      "txHash": "0x070d73e8f212cd381517014bc6ea87168f0b8d6dc9f33747cb0163381c7ebd09",
+      "blockHeight": 789
     },
     {
-      "index": 144,
+      "index": 150,
       "filename": "riyad_al_salihin_pure_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "bff19ef30546c02b181ee82c8b5641b7003d2aa02395f80263ec98ff2547d233",
       "sizeMb": "0.61 MB",
-      "txHash": "0x33e806b4419b1b71e3cf9031e0439b2f006e4e3a6011e18d92035cfb3d124a12",
-      "blockHeight": 784
+      "txHash": "0x9fa90750b5a441023ab872128855655cd0d409b7290d10568423549a6878944d",
+      "blockHeight": 790
     },
     {
-      "index": 145,
+      "index": 151,
       "filename": "sanan.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
-      "sha256": "82cc2b3df1a84746d4fc3f58671d9ab97064572d1cda39087251d6cd5a7609fb",
-      "sizeMb": "1.23 MB",
-      "txHash": "0x07761727101579448925ea2d3ec2ad431b643f30c7a149092d9a45138409115e",
-      "blockHeight": 785
+      "sha256": "d4a78ae9af9a786376e86b235c538f7cdb7df7f5f5399d81ae85065109ae8c00",
+      "sizeMb": "0.41 MB",
+      "txHash": "0xbcb89d5b140625ea4b3cf757db37aa8bbb903818d7850b93f9249ea63714eb17",
+      "blockHeight": 791
     },
     {
-      "index": 146,
+      "index": 152,
       "filename": "senan2.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
-      "sha256": "6ca22eedd9bc2c723ac3b903ddedf53d57693fb23761a01cf7dbf14820cc55e9",
-      "sizeMb": "0.26 MB",
-      "txHash": "0xf09ceacc2573d38c143e2f01a3879b101e6421f3c8a63f440beee1a8ec0a9caf",
-      "blockHeight": 786
+      "sha256": "d4a78ae9af9a786376e86b235c538f7cdb7df7f5f5399d81ae85065109ae8c00",
+      "sizeMb": "0.41 MB",
+      "txHash": "0x3ea494e85c1275572874e1fb9290287fd4d1d5e8de1ac56a4825772d9ccb50b2",
+      "blockHeight": 792
     },
     {
-      "index": 147,
+      "index": 153,
       "filename": "senanebook.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
-      "sha256": "d820ed2bc5d556e3bdc570ac4b70bf4c81602bbcb82dd5001c015af1ddb5c7a6",
-      "sizeMb": "0.70 MB",
-      "txHash": "0x03e04f96d5725953c5c6d9743eb806b516c5ded23f798e5944aaa7eb29b508fd",
-      "blockHeight": 787
+      "sha256": "d4a78ae9af9a786376e86b235c538f7cdb7df7f5f5399d81ae85065109ae8c00",
+      "sizeMb": "0.41 MB",
+      "txHash": "0x4b0492fbb609259a44da64a4edd346f6bf7e707210f91917e2f84f6455b6d794",
+      "blockHeight": 793
     },
     {
-      "index": 148,
+      "index": 154,
       "filename": "sharh_sahih_muslim_bilingual_lexical_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "88d903c605e80cb3d7c3ed315ce6c4bdbf3ac829c64d7cf58644b2820615c547",
       "sizeMb": "7.39 MB",
-      "txHash": "0x8e56808c7163431724bf09375b941b3bf7e37263ebc99c9ef0e378de537489bc",
-      "blockHeight": 788
+      "txHash": "0x93a6a85778d84f29df1bc57142f7bf4496290658338416ddbb33248051843392",
+      "blockHeight": 794
     },
     {
-      "index": 149,
+      "index": 155,
       "filename": "sharh_sahih_muslim_pure_en.epub",
       "author": "Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي 631–676 AH)",
       "category": "Hadith, Adhkar, Quranic Etiquette & Fiqh",
       "channelId": "chan-imam-nawawi",
       "sha256": "c818a5ac05c18308415169fbdaf8cfac532f0615690c0fc27ffd18560619714c",
       "sizeMb": "3.74 MB",
-      "txHash": "0xaa74fd752522519f39ef9e6ec7fc720574c0779b0fc0fc8e0e3e790e3dca9528",
-      "blockHeight": 789
+      "txHash": "0x14359855cd91f5c08cf011b89a7263e2e00f3d0a424aeffdc3cc932bc8ccdc9f",
+      "blockHeight": 795
     },
     {
-      "index": 150,
+      "index": 156,
       "filename": "shifa_al_ghalil_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "38d439c6ae5fbcd35ea1bd256a029844fc80ae3194b06aa14c3c5c78bd772ca2",
       "sizeMb": "0.99 MB",
-      "txHash": "0xf7912d6e0bd1b1d02a6bbe3c540bef368f052ad39cc017450bc4e76ecbff022f",
-      "blockHeight": 790
+      "txHash": "0x7f657b9d0e0e4f440c311c8062d800a8c8733e6bff27cf400ff324953a19229a",
+      "blockHeight": 796
     },
     {
-      "index": 151,
+      "index": 157,
       "filename": "shifa_al_ghalil_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "306510ef371125efbf6d843063752c0297549b053c6daed815f559c9a6878cd0",
       "sizeMb": "0.46 MB",
-      "txHash": "0x2282be232013305bbc0c152c2e36e6ded99dfddf2c8c698d551307056ac0a087",
-      "blockHeight": 791
+      "txHash": "0x8cd14eba6151ffb68c2ff84a5f9922cc94812cd3947fcb009b88d85229e7aa0c",
+      "blockHeight": 797
     },
     {
-      "index": 152,
+      "index": 158,
       "filename": "sirr_al_alamin_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "98e274a6ee1de939a5e9d1f98f4f4dece93ec1ef4b86f95a207ab86074192e0e",
       "sizeMb": "0.12 MB",
-      "txHash": "0x522354e9e2020a10fba4d386934b35c56033206303a69cbe5977e02ada9fe08f",
-      "blockHeight": 792
+      "txHash": "0x38cb776871acc42eecd0ec7f558e089815f204188b728c7bbb083836ab863ce2",
+      "blockHeight": 798
     },
     {
-      "index": 153,
+      "index": 159,
       "filename": "sirr_al_alamin_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "4830de94856a3a27c7c0192434351165ecc0914251e5604c8b66b59b4f11978a",
       "sizeMb": "0.02 MB",
-      "txHash": "0xd38d14497db8c56b00ac62c4f0a333cc80680f24b446e46257c7a0554cb7882a",
-      "blockHeight": 793
+      "txHash": "0x029cca3bf5196ec2d41b0c50500965c7a686fdfd3b68345a5af5d5144ba96508",
+      "blockHeight": 799
     },
     {
-      "index": 154,
+      "index": 160,
       "filename": "sunan_al_muhtadin_bilingual_lexical_en.epub",
       "author": "Imam al-Mawwaq al-Gharnati (الإمام المواق الغرناطي)",
       "category": "Spiritual Conduct & Ethics",
       "channelId": "chan-classical-heritage",
       "sha256": "2ca8d009b0d0037f64f94db4eacf3ad3a52b6b075b942805c4a50c20e923e1d0",
       "sizeMb": "0.76 MB",
-      "txHash": "0xbd68718e756453a3276bb916ebb99389499a01eaeeb2f292e43d962c4e743cb8",
-      "blockHeight": 794
+      "txHash": "0xbaad8d4622c0aba599e904d17ccb98f059353715b9a49dd8719da6d8cf2d7b0b",
+      "blockHeight": 800
     },
     {
-      "index": 155,
+      "index": 161,
       "filename": "sunan_al_muhtadin_bilingual_lexical_sq.epub",
       "author": "Imam al-Mawwaq al-Gharnati (الإمام المواق الغرناطي)",
       "category": "Spiritual Conduct & Ethics",
       "channelId": "chan-classical-heritage",
       "sha256": "2a723c8467bc93c8602511ae354bb90d7d544fff7610fdb70c739cd8d93adb97",
       "sizeMb": "0.79 MB",
-      "txHash": "0xb424c204055d7fffd66f04163aebe42bac039fcc585038eb25723871c5ce08d3",
-      "blockHeight": 795
+      "txHash": "0x5de413a68388e07df9e0d92ef56c5484e80314a86294db4c5d35d00269c39746",
+      "blockHeight": 801
     },
     {
-      "index": 156,
+      "index": 162,
       "filename": "sunan_al_muhtadin_oversight_critical_en.epub",
       "author": "Imam al-Mawwaq al-Gharnati (الإمام المواق الغرناطي)",
       "category": "Spiritual Conduct & Ethics",
       "channelId": "chan-classical-heritage",
       "sha256": "163cec2effa04cd3a05366378d7a9ac92041beb63503e0156a745cbea55e2e54",
       "sizeMb": "1.16 MB",
-      "txHash": "0x0c9adb9b3f8e64232a15540e3cc622daf1823d3a708dbe56b68435b79ca26312",
-      "blockHeight": 796
+      "txHash": "0xed02d9efbf79c6a0b10268250d043c67eca1f4890575ac05a4752030d72063cd",
+      "blockHeight": 802
     },
     {
-      "index": 157,
+      "index": 163,
       "filename": "sunan_al_muhtadin_pure_en.epub",
       "author": "Imam al-Mawwaq al-Gharnati (الإمام المواق الغرناطي)",
       "category": "Spiritual Conduct & Ethics",
       "channelId": "chan-classical-heritage",
       "sha256": "affbc4ee764290ca6f216802537f501859738ba01b80646259cf7c931a43462a",
       "sizeMb": "0.38 MB",
-      "txHash": "0x76540148c7d5af77ad78f7ffa4f965006d735e612b3b53a1fdb3c02716b05fc1",
-      "blockHeight": 797
+      "txHash": "0xf3329ab6f9e3f40e84c7f585a0c7ee7d377ecfa7853110560c406bf2162725d8",
+      "blockHeight": 803
     },
     {
-      "index": 158,
+      "index": 164,
       "filename": "sunan_al_muhtadin_pure_sq.epub",
       "author": "Imam al-Mawwaq al-Gharnati (الإمام المواق الغرناطي)",
       "category": "Spiritual Conduct & Ethics",
       "channelId": "chan-classical-heritage",
       "sha256": "d4a78ae9af9a786376e86b235c538f7cdb7df7f5f5399d81ae85065109ae8c00",
       "sizeMb": "0.41 MB",
-      "txHash": "0x0947e510d9fe3446b987185eca7f8d258c39067e03bd517954812d5a4e769cec",
-      "blockHeight": 798
+      "txHash": "0x7cdf46dd973a0286d3ae7d55c98ebc1922938efb4a09cd8495315ef4e341405b",
+      "blockHeight": 804
     },
     {
-      "index": 159,
+      "index": 165,
+      "filename": "tafsil_al_nashatayn_bilingual_lexical_en.epub",
+      "author": "Imam al-Raghib al-Isfahani (أبو القاسم الحسين بن محمد الراغب الأصفهاني 450–502 AH)",
+      "category": "Quranic Semantics, Sacred Ethics & Spiritual Epistemology",
+      "channelId": "chan-imam-raghib",
+      "sha256": "e8913a9e019e24e96f582f485715d62e4b84d3e0e7217ad7d03b83c10b8e2d86",
+      "sizeMb": "0.20 MB",
+      "txHash": "0xf8b2c1b4116ed1445c0e1117822df67669932e76fa00827a32554df6c15c8715",
+      "blockHeight": 805
+    },
+    {
+      "index": 166,
+      "filename": "tafsil_al_nashatayn_pure_en.epub",
+      "author": "Imam al-Raghib al-Isfahani (أبو القاسم الحسين بن محمد الراغب الأصفهاني 450–502 AH)",
+      "category": "Quranic Semantics, Sacred Ethics & Spiritual Epistemology",
+      "channelId": "chan-imam-raghib",
+      "sha256": "fbb838b353a4e3a1fc017b7df67c02f71bf26b4a06101cd4093d91ba3a295ebe",
+      "sizeMb": "0.11 MB",
+      "txHash": "0xef3af81d585d801ec7f00e5df9111129a40a850e09a820db13fd524c606a0e48",
+      "blockHeight": 806
+    },
+    {
+      "index": 167,
       "filename": "tafsir_kabir_v2_vol_01_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "c48958b6503ae7eab68ccacb05663e9e4dcd524467f61b8d30c6bee90afcb88b",
       "sizeMb": "1.43 MB",
-      "txHash": "0x824147f7f26c2574060a1921b882e84d4cfe557ea12528e697697a7524d5894b",
-      "blockHeight": 799
+      "txHash": "0xe62459976a4d5f28e9a0376d7dddce5d33153f67277e55de3a4be04b9a8a2907",
+      "blockHeight": 807
     },
     {
-      "index": 160,
+      "index": 168,
       "filename": "tafsir_kabir_v2_vol_02_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "8f5b365ebde5433153a5308a7a7ecde9533ae0fe0682f72e355a48258d81d649",
       "sizeMb": "1.42 MB",
-      "txHash": "0x21a110bb616f84dfdba74706a2cd55317bdea29a61d139c625c1a73958003ca9",
-      "blockHeight": 800
+      "txHash": "0x4eb3e2e4fb690b65137c4d7ea417d6b607bb5e2ce87140fb16f1b40891ecced4",
+      "blockHeight": 808
     },
     {
-      "index": 161,
+      "index": 169,
       "filename": "tafsir_kabir_v2_vol_03_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "b982f40602f2c613ee34b1b0b1952153ff947733573978a2f0fc19cfa2b95784",
       "sizeMb": "1.43 MB",
-      "txHash": "0xf05d7ceefd1ecf37b923b15334483553edbc25ebd16c904ac5ee53a66868259b",
-      "blockHeight": 801
+      "txHash": "0x6d876c4e55892f3c4258f7223e7ba1a4399522f07b0a616360daead53f06382e",
+      "blockHeight": 809
     },
     {
-      "index": 162,
+      "index": 170,
       "filename": "tafsir_kabir_v2_vol_04_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "d6641261738d10fbd2d29431354e9715380d65146ad031610fc8122779f65c9b",
       "sizeMb": "1.46 MB",
-      "txHash": "0x168b5ca17374aa85dca423eaa37963baa0f33a785522be677982c9458309ed7a",
-      "blockHeight": 802
+      "txHash": "0x3d11d80fe5f5a98d65c33a1bcbe5a9443fd9cbc62694ea29e6a4eeb1313e3a4f",
+      "blockHeight": 810
     },
     {
-      "index": 163,
+      "index": 171,
       "filename": "tafsir_kabir_v2_vol_05_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "51703862814c99e223f2cb832ab7cb3e1e194ebb88b90f7b07fb37fba1a569ef",
       "sizeMb": "1.44 MB",
-      "txHash": "0x569ecac08383bbcc0a50c60623b315d857b9fa61ec9e4dd00791e89ca5b0485e",
-      "blockHeight": 803
+      "txHash": "0xd5865a1db252390746c803b8088ca85a97a92eb683f6f3d5c541a1469c98dd90",
+      "blockHeight": 811
     },
     {
-      "index": 164,
+      "index": 172,
       "filename": "tafsir_kabir_v2_vol_06_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "2ec6e94d1c81e7afe9b51b3ba0abb13e3ab34fe96e4a6cb56a09c7ee4505a1dd",
       "sizeMb": "1.46 MB",
-      "txHash": "0xd8d06be6722a975ba8fc1be3fd071a8c9ee0bb27b6e38f19feea4ac68632b182",
-      "blockHeight": 804
+      "txHash": "0xfd91579c5c1e1841ce142ea14b4991cf39587f47296ccb690b8265cc9f111c9e",
+      "blockHeight": 812
     },
     {
-      "index": 165,
+      "index": 173,
       "filename": "tafsir_kabir_v2_vol_07_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "f05dd4add9b5140bdae4bdf0655107cfbe4429646b4c9ffcfa16257096b1eae0",
       "sizeMb": "1.43 MB",
-      "txHash": "0xe44bc95eecf7014915d22b19416149ebe3757cad92f1fe02f92c168830815e62",
-      "blockHeight": 805
+      "txHash": "0x76d7cef36ea464238a4b827ee71f267ab659efd500127d962e487397dd2de152",
+      "blockHeight": 813
     },
     {
-      "index": 166,
+      "index": 174,
       "filename": "tafsir_kabir_v2_vol_08_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "871e4c61978243846e173bc642e30b9fe2b57be74bb546c40cafa4f8503d5f9c",
       "sizeMb": "1.44 MB",
-      "txHash": "0x75748b997f7628f58b3a71050a1ab0516c7d9dbecfacd1ec935e7f861605f1eb",
-      "blockHeight": 806
+      "txHash": "0x092f7f596d6f9fa1b897fae8417c52e8b6227a95210d2e0e2910f137886feb4a",
+      "blockHeight": 814
     },
     {
-      "index": 167,
+      "index": 175,
       "filename": "tafsir_kabir_v2_vol_09_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "65480002076eb066bd0a0960079669bd3abdcf273d4c7975cf37434b8695ceeb",
       "sizeMb": "1.48 MB",
-      "txHash": "0x18f999746098d8a1d6b5c8b09a9b4d9123b74c57bcc41bcf5f0a36fa8805cff2",
-      "blockHeight": 807
+      "txHash": "0xa900a06aff3e43d975cb2d462dcb73c8ed7333f91d36cc9e4949d46cb3994e62",
+      "blockHeight": 815
     },
     {
-      "index": 168,
+      "index": 176,
       "filename": "tafsir_kabir_v2_vol_10_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "164b105c02044fe26972376e4362cd8ca4ae7e7792aa1ce19296a95232c3ece4",
       "sizeMb": "1.45 MB",
-      "txHash": "0x0981cebff30dbc7d5d218ba37de8b8c85c516ae958433aadcbe0d7c6524ccb05",
-      "blockHeight": 808
+      "txHash": "0x3f9a8445399a0d42e50d77b6de7339b2b26d44efa6e100661713a3ebf2758ff9",
+      "blockHeight": 816
     },
     {
-      "index": 169,
+      "index": 177,
       "filename": "tafsir_kabir_v2_vol_11_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "cb11f6dacf327e836812742eb215461487246e8fd5a2c6c37a5bfd23f13e229e",
       "sizeMb": "1.49 MB",
-      "txHash": "0x9278a44a8c3eda2a0765628da4f68e2730bd3ceeb96acb0dc4fc243b641e9276",
-      "blockHeight": 809
+      "txHash": "0x3d1158cb888a16c6bb3f8ea35b29df6dc697d43e628854ee1a8a3653d3703e63",
+      "blockHeight": 817
     },
     {
-      "index": 170,
+      "index": 178,
       "filename": "tafsir_kabir_v2_vol_12_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "9e8a9dcd959b15653953ffaf6c29cd245f40a3e03c7d82a22d827788e7845877",
       "sizeMb": "1.47 MB",
-      "txHash": "0x5bb0f44c8df46bf207452e9650c85ab4ec831a914bf1c4629c1c2d023cb5324e",
-      "blockHeight": 810
+      "txHash": "0x283e6258caf5b1164c08b0062da90d4b8943a7d4a9b8f12ac216f8a190bb0e0c",
+      "blockHeight": 818
     },
     {
-      "index": 171,
+      "index": 179,
       "filename": "tafsir_kabir_v2_vol_13_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "a46a134b4b810e491211be18869a439e8b61da1d360cdf65852694de8f6f00ea",
       "sizeMb": "1.41 MB",
-      "txHash": "0xeb72ea3c40bb6adfc0cb04dce0b4104451a0c161fcc2853887e91c5f19fa0025",
-      "blockHeight": 811
+      "txHash": "0xa00e6f50130ad8dd613d7a699a5f19f663460c457088c858402e0e4b89dde711",
+      "blockHeight": 819
     },
     {
-      "index": 172,
+      "index": 180,
       "filename": "tafsir_kabir_v2_vol_14_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "ea67cdce98e65bc14e577dda3d41c7fb5db32edee1ece336191ed5481cdc54c0",
       "sizeMb": "1.43 MB",
-      "txHash": "0x790af074f40d071c6ab2eca59fe1f0e1a68c802a940c95b8a368d05fef423a4b",
-      "blockHeight": 812
+      "txHash": "0x0b4548877763b0e5a9f0a7c955c914dd3127a623e443c960a81f75daad7f8de4",
+      "blockHeight": 820
     },
     {
-      "index": 173,
+      "index": 181,
       "filename": "tafsir_kabir_v2_vol_15_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "10e8358032c3d1cc8ec80f043e731204cce655ed789e0e47148251d8ec8c235f",
       "sizeMb": "1.43 MB",
-      "txHash": "0x5bcb98c8d0350dd977be3df5f658a28ed2ee43dff170454bbce5d5bbd7f2c2ee",
-      "blockHeight": 813
+      "txHash": "0xf94b50bbb00d14c8a8fd0928e86d91acbb27413aff5dc27c3549f395a2a8eab9",
+      "blockHeight": 821
     },
     {
-      "index": 174,
+      "index": 182,
       "filename": "tafsir_kabir_v2_vol_16_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "5b0bbe3e6def57460b3da792d347022dc903e585911bd760ae02317fbe20e0a8",
       "sizeMb": "1.43 MB",
-      "txHash": "0x6ab119b883ad3b81a2538cbdad6d3416bf73cb06433e253d6b5919c9a370cc2f",
-      "blockHeight": 814
+      "txHash": "0x2d23a76d89aa1593c956dbc89ae387a23bc37a61ebf79c1382d3987abbadc3ee",
+      "blockHeight": 822
     },
     {
-      "index": 175,
+      "index": 183,
       "filename": "tafsir_kabir_v2_vol_17_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "fd355532230b28fae59102577861ab571071b70ff3a71532a0c158068a75c981",
       "sizeMb": "1.45 MB",
-      "txHash": "0xb36423c397426c808a2e800be58c853bf7b72ca4745aa8de7f971db775ce4ebf",
-      "blockHeight": 815
+      "txHash": "0x63c80950c9ce284ab9679fd2ffa132ca1de908b572d868f781da1ba844bfc9d9",
+      "blockHeight": 823
     },
     {
-      "index": 176,
+      "index": 184,
       "filename": "tafsir_kabir_v2_vol_18_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "debc0632237bb73476c03fe341edfd55de9561f398933344122471ff160ab30c",
       "sizeMb": "1.44 MB",
-      "txHash": "0xf35cdfda146b07b82def2306a8fb765857515eb4dce1b52fc861eabf42d1804f",
-      "blockHeight": 816
+      "txHash": "0x702c8457aa87b8702fd8858b5de9f4be373a1a1017a354aa7a13abe54ddca766",
+      "blockHeight": 824
     },
     {
-      "index": 177,
+      "index": 185,
       "filename": "tafsir_kabir_v2_vol_19_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "9e38322b2e7952684d284d21e4c35432c103ef0c7becf3b0c3f3ef543aa00c72",
       "sizeMb": "1.44 MB",
-      "txHash": "0x5ad10bbd548410eb7086725c632593c43b9731ab55006056dd824bce35dad06b",
-      "blockHeight": 817
+      "txHash": "0x3159e6db6a9f07b8d62c373a194f323bddd990166228236e69a45aa38accd2f2",
+      "blockHeight": 825
     },
     {
-      "index": 178,
+      "index": 186,
       "filename": "tafsir_kabir_v2_vol_20_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "6a784f20929fdcc9c2866d214225ae89bc3d8b8ef71c652c691dec650010524b",
       "sizeMb": "1.47 MB",
-      "txHash": "0x62b63db9c100b603ba60c2cc7a043c023cc409fbde45ea7f97799cb28bc2ce29",
-      "blockHeight": 818
+      "txHash": "0x0b63902664bc775e41e9ea3e97a549afa82bc632a84ba00daaebd1f6a35cb10c",
+      "blockHeight": 826
     },
     {
-      "index": 179,
+      "index": 187,
       "filename": "tafsir_kabir_v2_vol_21_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "ac0803eb0bb3ab9e657b1d91d753e6e7ec6389561f2525e17a8d5b2095ee6c70",
       "sizeMb": "1.48 MB",
-      "txHash": "0x7523a82b72f4da016de06e18ed4682c95d2f6170fcb8244568614a7b37c8aefc",
-      "blockHeight": 819
+      "txHash": "0xb5004adc7a6a9806921ec94b0b084434ce24ca721a220c7e30e3c19a7a1c2430",
+      "blockHeight": 827
     },
     {
-      "index": 180,
+      "index": 188,
       "filename": "tafsir_kabir_v2_vol_22_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "e8f1482f6c136dc31710ce4479115f010e27d80b3556dc38232386c3bce4f044",
       "sizeMb": "1.48 MB",
-      "txHash": "0xeef7050eb4a140c534aedcb43b4ae2a7c2db47ba448ebfe9a3c78b04bf2b4019",
-      "blockHeight": 820
+      "txHash": "0x1ecaf137b3f22312a3586e2017de723d8ef334f14e9e531528b44bfa79c6a606",
+      "blockHeight": 828
     },
     {
-      "index": 181,
+      "index": 189,
       "filename": "tafsir_kabir_v2_vol_23_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "4c4e844fb3cca2f391d374c4310187459643628ab74413d331a18f7703d9009d",
       "sizeMb": "1.47 MB",
-      "txHash": "0x23adc9bbdca6716bb0e684739d6e39db567a6a6060eec76db49581bef41f0b91",
-      "blockHeight": 821
+      "txHash": "0x1449a84b56590ec6d983a1d619d50aae4440665df453542ffd968656c7589cd0",
+      "blockHeight": 829
     },
     {
-      "index": 182,
+      "index": 190,
       "filename": "tafsir_kabir_v2_vol_24_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "a2f5d9f1a3412719292909133c52741fefb09d58a403c277dae3bd43f56ac3ae",
       "sizeMb": "1.48 MB",
-      "txHash": "0xc54bbaec746a0775b2fc4ff1a75e82a60cbfebde44a462bbf9f8be02081f9d85",
-      "blockHeight": 822
+      "txHash": "0x79f391c7f7345718482b48e26b796dfc09545fdbf39e80695a5cfd9fee766a7b",
+      "blockHeight": 830
     },
     {
-      "index": 183,
+      "index": 191,
       "filename": "tafsir_kabir_v2_vol_25_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "adb1ac7f34916a9806986d2921a56fb98ef73c0655cae2cc509889e72ee9cc9a",
       "sizeMb": "1.45 MB",
-      "txHash": "0x0f4218f36ca7e34aa0d39d1d15647be2e77c6e37d3c2c718f2fc4adf54006ad1",
-      "blockHeight": 823
+      "txHash": "0x0b1123387bc6cb5da2caf2f26b3470ee14d9f5394b17fb8022628cff18312afe",
+      "blockHeight": 831
     },
     {
-      "index": 184,
+      "index": 192,
       "filename": "tafsir_kabir_v2_vol_26_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "90120c9eebd34cc5ee18ff691100a98da38b42ee931d2ddf224f40797c1d51e5",
       "sizeMb": "1.42 MB",
-      "txHash": "0x33ad47f098fc15ef374b2dbdda6681679b67068ddcf9f6244a0e198e1efdb2dd",
-      "blockHeight": 824
+      "txHash": "0x074c64f7db7b3ecafbe0fea854ec6958884457637b2893ac70487a49bb235f77",
+      "blockHeight": 832
     },
     {
-      "index": 185,
+      "index": 193,
       "filename": "tafsir_kabir_v2_vol_27_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "d72689528e24b8f1924358d3c21a650a22ec1f479452204947e40b0cf74e3809",
       "sizeMb": "1.45 MB",
-      "txHash": "0xf844f7774a8ee3cb35ede62fd6d709b4601c41e5e7d37c8ea0416c0959d7a7f8",
-      "blockHeight": 825
+      "txHash": "0x7779533e663ec4a72b7c9ddf7bbc63b163e7656a8109849d9ea5c164a6eda361",
+      "blockHeight": 833
     },
     {
-      "index": 186,
+      "index": 194,
       "filename": "tafsir_kabir_v2_vol_28_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "cf711a80e8e7f4038afb0f27011071b645ee3c6d91557b2d736ebf6ea8c01c49",
       "sizeMb": "1.47 MB",
-      "txHash": "0x201ba91f4efa279aa93ba9e0f286c1af9b1867fcb58bf42c2e4681301c2c4999",
-      "blockHeight": 826
+      "txHash": "0xc68d9aea354c4da7de92967eed3bc5f2aab3ca7ac46acd2f9ca61c1453108b40",
+      "blockHeight": 834
     },
     {
-      "index": 187,
+      "index": 195,
       "filename": "tafsir_kabir_v2_vol_29_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "3bd75bc4c6d5f41f79106c8834a7d0ac54368e414d5be9b7662edf073562cc28",
       "sizeMb": "1.49 MB",
-      "txHash": "0x432ca9ec95743a5a8013b96c5e625a8a043b17f873094371668814029eafdb0a",
-      "blockHeight": 827
+      "txHash": "0x127993b05bb7b6471f0d4688bc2ab4d7b5e03d7f963af87fbe1bdf1cb5f46906",
+      "blockHeight": 835
     },
     {
-      "index": 188,
+      "index": 196,
       "filename": "tafsir_kabir_v2_vol_30_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "3eff666f45c3d68fa8d94310091cfca935379d5881ec1a5e77d4880c298699e7",
       "sizeMb": "1.46 MB",
-      "txHash": "0xe3f3a21d28ed87a258ef079ccf7f754a0d22c503d9c328e3327733d15bfc3c7c",
-      "blockHeight": 828
+      "txHash": "0x4b32dfca72fe65e825df4bb050e2b6739208ebf2192709680a16dfb1251dc135",
+      "blockHeight": 836
     },
     {
-      "index": 189,
+      "index": 197,
       "filename": "tafsir_kabir_v2_vol_31_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "d4977fa0dbfd09ed797cc4240cbc5194a664e1716e44dbcd5093ef57387850d2",
       "sizeMb": "1.46 MB",
-      "txHash": "0x1f9e7d6c395f77b7501dc8e389273e07b5d80aed55571f63a2a47ba1463b2244",
-      "blockHeight": 829
+      "txHash": "0x3c52b0bc17f641e122d20b61f808b83e25f56b68ed9b0001f8b5894dbb44ae6e",
+      "blockHeight": 837
     },
     {
-      "index": 190,
+      "index": 198,
       "filename": "tafsir_kabir_v2_vol_32_en.epub",
       "author": "Imam Fakhr al-Din al-Razi (الإمام فخر الدين الرازي 544–606 AH)",
       "category": "Tafsir, Philosophical Kalam & Usul al-Fiqh",
       "channelId": "chan-imam-razi",
       "sha256": "6de271a18085789e9de1093ef6fe4044ba621b14c219d431eecdc64c608d3ad4",
       "sizeMb": "1.46 MB",
-      "txHash": "0x9b36b792de501bae8dab2abed0c1a16e556378d4a3a825a4e0b6981ea5e11b4c",
-      "blockHeight": 830
+      "txHash": "0xf21d67206dfdf4555e251f9f0379a9550ecc7592011cdac22a5d19f1c797a4e6",
+      "blockHeight": 838
     },
     {
-      "index": 191,
+      "index": 199,
       "filename": "tahafut_al_falasifa_bilingual_lexical_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "0c95603f1f87fe117bec8aa02a856cafbd4a742fe844522e50c7635bfa311848",
       "sizeMb": "0.45 MB",
-      "txHash": "0x7f30a521f753a9f8bbadf8509cde1d1d03004a1a86e99ea071062cbaecc93283",
-      "blockHeight": 831
+      "txHash": "0x71fb4690c912741f20766865239a7463eeaef88fd68d5c10967dcad35aa11559",
+      "blockHeight": 839
     },
     {
-      "index": 192,
+      "index": 200,
       "filename": "tahafut_al_falasifa_complete_76sections_bilingual_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "0c95603f1f87fe117bec8aa02a856cafbd4a742fe844522e50c7635bfa311848",
       "sizeMb": "0.45 MB",
-      "txHash": "0xb45793d5ac9a967ace0965d2ebc475f24876bb023e6602a584efd95552329faf",
-      "blockHeight": 832
+      "txHash": "0xfbe3bebc8b6e341a2b13a0e1fe4441a70650753fca9fa2acb44057ba75fca8df",
+      "blockHeight": 840
     },
     {
-      "index": 193,
+      "index": 201,
       "filename": "tahafut_al_falasifa_complete_76sections_pure_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "80f4de71f85a1ab1e89c81511700884a9d997db784ca070e82bc750114f0bd89",
       "sizeMb": "0.22 MB",
-      "txHash": "0x542116e7dd200386fd9486aaaa4be6186e905270d09db9286d73439d5a590099",
-      "blockHeight": 833
+      "txHash": "0x6639b72d77e64931b427492ee06ef36a4241e5fa99a46aae401806278b6a916c",
+      "blockHeight": 841
     },
     {
-      "index": 194,
+      "index": 202,
       "filename": "tahafut_al_falasifa_pure_en.epub",
       "author": "Imam Abu Hamid al-Ghazali (حجة الإسلام أبو حامد الغزالي 450–505 AH)",
       "category": "Ihya, Tasawwuf, Ethics & Epistemology",
       "channelId": "chan-imam-abuhamidd",
       "sha256": "80f4de71f85a1ab1e89c81511700884a9d997db784ca070e82bc750114f0bd89",
       "sizeMb": "0.22 MB",
-      "txHash": "0xa69968db45f6857069423ab4411a87bb49fd208d257357b78aad042bb7c6d9c9",
-      "blockHeight": 834
+      "txHash": "0xd35c10fc18387686b25b6fe801dfdd246e53e5210a95e52036d9f3d823f8760b",
+      "blockHeight": 842
     },
     {
-      "index": 195,
+      "index": 203,
       "filename": "tahdhib_al_asma_wa_al_lughat_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "0532c1f822ca61da916563065af7a705fe851c9273fab2d108511fa5c656f770",
       "sizeMb": "2.53 MB",
-      "txHash": "0x7379f63137873908cfc1a10d724819d8a0d61233d94f28e3a2b9d8e901c35bcd",
-      "blockHeight": 835
+      "txHash": "0x69f783a5a751e6c06d3ca1b2a6b88cb5e44eee012c19f8df5a149b7d6fdafd08",
+      "blockHeight": 843
     },
     {
-      "index": 196,
+      "index": 204,
       "filename": "tahdhib_al_asma_wa_al_lughat_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "a60196b922998cce58718bc8040c20bb7120654863db0e8208537b20f52fda8f",
       "sizeMb": "0.25 MB",
-      "txHash": "0x91e67d5855d80f76bc3a05779f47a720063ee43b32f8bbf9a9c78bffc4265270",
-      "blockHeight": 836
+      "txHash": "0x354a70c50eaea67d4cfca025e96b1edeae8cd8e6a18fd6329d2488cf29cf77b2",
+      "blockHeight": 844
     },
     {
-      "index": 197,
+      "index": 205,
       "filename": "tahrir_alfaz_al_tanbih_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "1fd369a1d0a98e1687e7938e8d437ffabbeb1cf78a280dfa5576eb00993f8d94",
       "sizeMb": "0.32 MB",
-      "txHash": "0x366621af993a320e7612504ced5147ab9a1c103e50f03e70b21f1a412ff1cc83",
-      "blockHeight": 837
+      "txHash": "0x9ac884251a97ad30cfbc0ceaffe46da1eaa70b7e165d093187ecdb3f6d77371e",
+      "blockHeight": 845
     },
     {
-      "index": 198,
+      "index": 206,
       "filename": "tahrir_alfaz_al_tanbih_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "3311b6d424c3f9f6e4083629055ed4914a713910f8afa0b4da1e212848550618",
       "sizeMb": "0.05 MB",
-      "txHash": "0x9675f17fd4f8f0007866d62278aef2220f4017e4a306b82607dc17fd08ee7073",
-      "blockHeight": 838
+      "txHash": "0x3d2362ab8eebc9e14ffaf8afb800061c1a19daf71f4ae6ad6dc2ac43c4d4fd61",
+      "blockHeight": 846
     },
     {
-      "index": 199,
+      "index": 207,
       "filename": "takhmis_al_ghanima_bilingual_lexical_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "ae9d4b9bbf711ae494e989bb18c9e14fe01a1594986f405cdc3a7156936e947b",
       "sizeMb": "0.04 MB",
-      "txHash": "0x21d6112dde1a58ffea8883c187f88281e3ff0cafb01249b6de5d8bc74736bb5a",
-      "blockHeight": 839
+      "txHash": "0x32d5176b68e41619c9b19cd20834daeeb136759ac360b8bc0208faf47584f187",
+      "blockHeight": 847
     },
     {
-      "index": 200,
+      "index": 208,
       "filename": "takhmis_al_ghanima_pure_en.epub",
       "author": "Classical Islamic Masterworks",
       "category": "Sacred Sciences & Classical Heritage",
       "channelId": "chan-general",
       "sha256": "0f291a2d101cd45ecf7823ef7cec4bcca526b567cdf6367e29b8776f4da5bbdc",
       "sizeMb": "0.01 MB",
-      "txHash": "0xc8536c57228edcb7adcd6570f6a46846a27528e6f87cfe4f766b39ea77bed7b0",
-      "blockHeight": 840
+      "txHash": "0xaf85864a44a181c1f930ba92ca0875d5e172cdb10663f52c448255c6e77c183d",
+      "blockHeight": 848
     }
   ]
 }
