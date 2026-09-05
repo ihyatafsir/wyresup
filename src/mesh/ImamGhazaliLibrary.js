@@ -8,42 +8,43 @@ class ImamGhazaliLibrary {
 
   static getCatalog() {
     const dir = this.getLibraryDir();
-    if (!fs.existsSync(dir)) return { ihyaVolumes: [], pureEditions: [], bilingualEditions: [] };
+    if (!fs.existsSync(dir)) return { pureEditions: [], bilingualEditions: [], ihyaVolumes: [], legacyArchive: [] };
 
     const files = fs.readdirSync(dir).filter(f => f.endsWith('.epub'));
     
     const catalog = {
-      ihyaVolumes: [],
       pureEditions: [],
-      bilingualEditions: []
+      bilingualEditions: [],
+      ihyaVolumes: [],
+      legacyArchive: []
     };
 
-    // 1. The 4 Monumental Volumes of Ihya 'Ulum al-Din (Full 40 Books)
+    // 1. Pre-v4 Historical 4-Volume Split Drafts of Ihya 'Ulum al-Din
     const ihyaVols = [
       {
         filename: 'ihya_ulum_al_din_vol_01_ibadat_en.epub',
-        title: "Ihya 'Ulum al-Din — Vol 1: Rub' al-'Ibadat (Acts of Devotion, Books 1–10)",
+        title: "Ihya 'Ulum al-Din — Vol 1: Rub' al-'Ibadat (Acts of Devotion, Books 1–10) [Legacy Split Edition]",
         arabicTitle: "إحياء علوم الدين — الجزء الأول: ربع العبادات (الكتب ١ - ١٠)",
         author: 'Imam Abu Hamid al-Ghazali (حجة الإسلام الإمام أبو حامد الغزالي)',
         description: 'Complete unabridged translation of Books 1 through 10 covering Knowledge, Foundations of Faith, Purity, Prayer, Zakat, Fasting, Pilgrimage, Quran Etiquette, Adhkar, and Daily Vigils.'
       },
       {
         filename: 'ihya_ulum_al_din_vol_02_adat_en.epub',
-        title: "Ihya 'Ulum al-Din — Vol 2: Rub' al-'Adat (Norms of Daily Life, Books 11–20)",
+        title: "Ihya 'Ulum al-Din — Vol 2: Rub' al-'Adat (Norms of Daily Life, Books 11–20) [Legacy Split Edition]",
         arabicTitle: "إحياء علوم الدين — الجزء الثاني: ربع العادات (الكتب ١١ - ٢٠)",
         author: 'Imam Abu Hamid al-Ghazali (حجة الإسلام الإمام أبو حامد الغزالي)',
         description: 'Complete unabridged translation of Books 11 through 20 covering Manners of Eating, Marriage, Earning, Halal & Haram, Companionship, Seclusion, Travel, Music & Audition, Enjoining Good, and Prophetic Character.'
       },
       {
         filename: 'ihya_ulum_al_din_vol_03_muhlikat_en.epub',
-        title: "Ihya 'Ulum al-Din — Vol 3: Rub' al-Muhlikat (The Ways to Perdition, Books 21–30)",
+        title: "Ihya 'Ulum al-Din — Vol 3: Rub' al-Muhlikat (The Ways to Perdition, Books 21–30) [Legacy Split Edition]",
         arabicTitle: "إحياء علوم الدين — الجزء الثالث: ربع المهلكات (الكتب ٢١ - ٣٠)",
         author: 'Imam Abu Hamid al-Ghazali (حجة الإسلام الإمام أبو حامد الغزالي)',
         description: 'Complete unabridged translation of Books 21 through 30 covering The Marvels of the Heart, Disciplining the Soul, Evils of the Tongue, Anger & Rancor, Love of the World, Wealth & Greed, Status & Ostentation, Pride & Conceit, and Delusion.'
       },
       {
         filename: 'ihya_ulum_al_din_vol_04_munjiyat_en.epub',
-        title: "Ihya 'Ulum al-Din — Vol 4: Rub' al-Munjiyat (The Ways to Salvation, Books 31–40)",
+        title: "Ihya 'Ulum al-Din — Vol 4: Rub' al-Munjiyat (The Ways to Salvation, Books 31–40) [Legacy Split Edition]",
         arabicTitle: "إحياء علوم الدين — الجزء الرابع: ربع المنجيات (الكتب ٣١ - ٤٠)",
         author: 'Imam Abu Hamid al-Ghazali (حجة الإسلام الإمام أبو حامد الغزالي)',
         description: 'Complete unabridged translation of Books 31 through 40 covering Repentance, Patience & Gratitude, Fear & Hope, Poverty & Asceticism, Divine Unity & Trust, Love & Yearning, Sincerity, Meditation, Contemplation, and Remembrance of Death.'
@@ -54,7 +55,7 @@ class ImamGhazaliLibrary {
       const fullPath = path.join(dir, iv.filename);
       if (fs.existsSync(fullPath)) {
         const stats = fs.statSync(fullPath);
-        catalog.ihyaVolumes.push({
+        const item = {
           id: iv.filename.replace('.epub', ''),
           filename: iv.filename,
           title: iv.title,
@@ -62,13 +63,37 @@ class ImamGhazaliLibrary {
           author: iv.author,
           description: iv.description,
           size: (stats.size / 1024).toFixed(1) + ' KB',
-          downloadUrl: `/epubs/${iv.filename}`
+          downloadUrl: `/epubs/${iv.filename}`,
+          edition: 'v2/v3 Legacy Split'
+        };
+        catalog.ihyaVolumes.push(item);
+        catalog.legacyArchive.push(item);
+      }
+    });
+
+    // 2. Pre-v4 Historical 76-sections drafts
+    ['tahafut_al_falasifa_complete_76sections_pure_en.epub', 'tahafut_al_falasifa_complete_76sections_bilingual_en.epub'].forEach(f => {
+      const fullPath = path.join(dir, f);
+      if (fs.existsSync(fullPath)) {
+        const stats = fs.statSync(fullPath);
+        const isBilingual = f.includes('bilingual');
+        catalog.legacyArchive.push({
+          id: f.replace('.epub', ''),
+          filename: f,
+          title: `Tahafut al-Falasifa (Complete 76 Sections Draft) [${isBilingual ? 'Bilingual Apparatus' : 'Pure English'}]`,
+          arabicTitle: 'تهافت الفلاسفة (مسودة الـ ٧٦ مسألة)',
+          author: 'Imam Abu Hamid al-Ghazali (حجة الإسلام الإمام أبو حامد الغزالي)',
+          description: 'Early pre-v4 complete 76-sections milestone translation draft.',
+          size: (stats.size / 1024).toFixed(1) + ' KB',
+          downloadUrl: `/epubs/${f}`,
+          edition: 'pre-v4 Draft'
         });
       }
     });
 
-    // 2. The 25 Other Classical Masterworks
+    // 3. Official AynEngine AI v4 & v5 Complete Masterworks (Pure & Bilingual)
     const ghazaliTitles = {
+      "ihya_ulum_al_din": { en: "Revival of the Religious Sciences (Ihya 'Ulum al-Din) [Complete 40 Books Masterwork]", ar: "إحياء علوم الدين (الأربعون كتاباً كاملة)" },
       "al_munqidh_min_al_dalal": { en: "Deliverance from Error (Al-Munqidh min al-Dalal)", ar: "المنقذ من الضلال والمفصح عن الأحوال" },
       "tahafut_al_falasifa": { en: "The Incoherence of the Philosophers (Tahafut al-Falasifa)", ar: "تهافت الفلاسفة" },
       "bidayat_al_hidayah": { en: "The Beginning of Guidance (Bidayat al-Hidayah)", ar: "بداية الهداية" },
@@ -97,9 +122,9 @@ class ImamGhazaliLibrary {
     };
 
     files.sort().forEach(file => {
-      // Skip Ihya volume files as they are handled in ihyaVolumes
+      // Exclude split files and 76sections from main catalog
       if (file.startsWith('ihya_ulum_al_din_vol_')) return;
-      if (file === 'ihya_ulum_al_din_pure_en.epub' || file === 'ihya_ulum_al_din_bilingual_lexical_en.epub') return;
+      if (file.includes('76sections')) return;
 
       const fullPath = path.join(dir, file);
       const stats = fs.statSync(fullPath);
@@ -111,6 +136,8 @@ class ImamGhazaliLibrary {
           const isBilingual = file.includes('_bilingual_lexical_en.epub');
           const isPure = file.includes('_pure_en.epub');
 
+          if (!isBilingual && !isPure) continue;
+
           const item = {
             id: file.replace('.epub', ''),
             slug,
@@ -119,7 +146,8 @@ class ImamGhazaliLibrary {
             arabicTitle: info.ar,
             author: 'Imam Abu Hamid al-Ghazali (حجة الإسلام الإمام أبو حامد الغزالي)',
             size: sizeStr,
-            downloadUrl
+            downloadUrl,
+            edition: 'AynEngine v4/v5 Official'
           };
 
           if (isBilingual) {

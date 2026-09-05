@@ -1092,9 +1092,11 @@ function renderChannelsSidebar() {
 
   space.channels.forEach(ch => {
     const el = document.createElement('div');
-    el.className = `channel-item ${ch.id === state.currentChannelId ? 'active' : ''}`;
+    const isSub = ch.isSubChannel || ch.id.endsWith('-archive');
+    el.className = `channel-item ${ch.id === state.currentChannelId ? 'active' : ''} ${isSub ? 'subchannel-item' : ''}`;
+    const icon = ch.type === 'voice' ? '🔊' : (ch.id.startsWith('dm-') ? '🔒' : (isSub ? '└─' : (ch.icon || '#')));
     el.innerHTML = `
-      <span class="channel-icon">${ch.type === 'voice' ? '🔊' : (ch.id.startsWith('dm-') ? '🔒' : '#')}</span>
+      <span class="channel-icon">${icon}</span>
       <span class="channel-name">${ch.name}</span>
     `;
     el.onclick = () => selectChannel(ch.id);

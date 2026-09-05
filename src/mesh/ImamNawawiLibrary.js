@@ -8,13 +8,14 @@ class ImamNawawiLibrary {
 
   static getCatalog() {
     const dir = this.getLibraryDir();
-    if (!fs.existsSync(dir)) return { pureEditions: [], bilingualEditions: [] };
+    if (!fs.existsSync(dir)) return { pureEditions: [], bilingualEditions: [], legacyArchive: [] };
 
     const files = fs.readdirSync(dir).filter(f => f.endsWith('.epub'));
     
     const catalog = {
       pureEditions: [],
-      bilingualEditions: []
+      bilingualEditions: [],
+      legacyArchive: []
     };
 
     const nawawiTitles = {
@@ -48,6 +49,20 @@ class ImamNawawiLibrary {
       const sizeStr = (stats.size / 1024).toFixed(1) + ' KB';
       const downloadUrl = `/epubs/${file}`;
 
+      if (file.startsWith('sanan') || file.startsWith('senan')) {
+        catalog.legacyArchive.push({
+          id: file.replace('.epub', ''),
+          filename: file,
+          title: `Sunan Early Trial Draft [${file}]`,
+          arabicTitle: 'مسودة السنن المبكرة',
+          author: 'Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي)',
+          size: sizeStr,
+          downloadUrl,
+          edition: 'pre-v4 Trial'
+        });
+        return;
+      }
+
       for (const [slug, info] of Object.entries(nawawiTitles)) {
         if (file.startsWith(slug)) {
           const isBilingual = file.includes('_bilingual_lexical_en.epub');
@@ -62,7 +77,8 @@ class ImamNawawiLibrary {
             arabicTitle: info.ar,
             author: 'Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي)',
             size: sizeStr,
-            downloadUrl
+            downloadUrl,
+            edition: 'AynEngine v4/v5 Official'
           };
 
           if (isBilingual) {
