@@ -121,12 +121,12 @@ class GossipMesh extends EventEmitter {
 
   _isProtectedChannel(channelId) {
     if (!channelId) return false;
+    // Only sub-channels are protected; main Imam channels are open for discussion
     return (
       channelId.startsWith('chan-razi-') ||
       channelId.startsWith('chan-ghazali-') ||
       channelId.startsWith('chan-raghib-') ||
-      channelId.includes('-archive') ||
-      ['chan-imam-razi', 'chan-imam-abuhamidd', 'chan-imam-nawawi', 'chan-imam-raghib', 'chan-classical-heritage'].includes(channelId)
+      channelId.includes('-archive')
     );
   }
 

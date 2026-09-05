@@ -542,6 +542,7 @@ const wss = new WebSocketServer({
 
 
 // --- Sovereign Protected Channels Policy ---
+// Only Imam library sub-channels are protected (main portals allow open discussion)
 const PROTECTED_LIBRARY_CHANNELS = new Set([
   'chan-razi-tafsir-matalib',
   'chan-razi-kalam-usul',
@@ -552,12 +553,7 @@ const PROTECTED_LIBRARY_CHANNELS = new Set([
   'chan-imam-abuhamid-archive',
   'chan-imam-nawawi-archive',
   'chan-raghib-lexicon-tafsir',
-  'chan-raghib-akhlaq-adab',
-  'chan-imam-razi',
-  'chan-imam-abuhamidd',
-  'chan-imam-nawawi',
-  'chan-imam-raghib',
-  'chan-classical-heritage'
+  'chan-raghib-akhlaq-adab'
 ]);
 
 function isAuthorizedPublisher(client, ws) {
