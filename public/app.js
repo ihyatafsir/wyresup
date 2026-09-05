@@ -1433,9 +1433,11 @@ function appendMessageToDOM(packet) {
 
   // 1. Voice Note Card
   if (voiceData) {
+    state.sawtRecordings = state.sawtRecordings || new Map();
+    state.sawtRecordings.set(messageId, voiceData);
     bodyHtml += `
       <div class="sawt-audio-card" id="audio-card-${messageId}">
-        <button class="sawt-play-btn" onclick="playSawtAudio('${messageId}', '${voiceData}')">▶</button>
+        <button class="sawt-play-btn" data-msg-id="${escapeHtml(messageId)}">▶</button>
         <div class="sawt-track-wrap">
           <div class="sawt-waveform-bars">
             <div class="sawt-wave-bar"></div><div class="sawt-wave-bar"></div><div class="sawt-wave-bar"></div>
@@ -1466,7 +1468,7 @@ function appendMessageToDOM(packet) {
             <div style="font-size:0.75rem; color:#8e9297;">Tap to start synchronized P2P video call stream</div>
           </div>
         </div>
-        <button class="btn btn-primary" style="padding:6px 14px; font-size:0.8rem; background:linear-gradient(135deg, #00f59b, #00b4d8); color:#000; font-weight:700; border:none; border-radius:6px; cursor:pointer;" onclick="startYoutubeStreamCall('${senderId === state.identity.fullId ? (state.currentChannelId?.startsWith('dm-') ? state.currentChannelId.replace('dm-', '') : 'enver') : senderId}', '${escapeHtml(ytQueryOrUrl)}')">
+        <button class="btn btn-primary btn-launch-call" style="padding:6px 14px; font-size:0.8rem; background:linear-gradient(135deg, #00f59b, #00b4d8); color:#000; font-weight:700; border:none; border-radius:6px; cursor:pointer;" data-peer="${escapeHtml(senderId === state.identity.fullId ? (state.currentChannelId?.startsWith('dm-') ? state.currentChannelId.replace('dm-', '') : 'enver') : senderId)}" data-query="${escapeHtml(ytQueryOrUrl)}">
           ▶️ Launch Call
         </button>
       </div>
@@ -1480,7 +1482,7 @@ function appendMessageToDOM(packet) {
       if (isImg) {
         bodyHtml += `
           <div class="msg-attachment-img-wrap">
-            <img src="${att.data}" alt="${escapeHtml(att.name)}" class="msg-attachment-img" onclick="openImageLightbox('${att.data}')">
+            <img src="${escapeHtml(att.data)}" alt="${escapeHtml(att.name)}" class="msg-attachment-img msg-lightbox-trigger" data-img-src="${escapeHtml(att.data)}" style="cursor:pointer;">
           </div>
         `;
       } else if (att.name && att.name.endsWith('.epub')) {
@@ -1531,21 +1533,21 @@ function appendMessageToDOM(packet) {
       }
     });
   } else if (mediaUrl) {
-    bodyHtml += `<img src="${mediaUrl}" class="msg-attachment-img" onclick="openImageLightbox('${mediaUrl}')">`;
+    bodyHtml += `<img src="${escapeHtml(mediaUrl)}" class="msg-attachment-img msg-lightbox-trigger" data-img-src="${escapeHtml(mediaUrl)}" style="cursor:pointer;">`;
   }
 
   card.innerHTML = `
     <!-- Floating Discord Action Bar -->
     <div class="msg-action-bar">
-      <button class="msg-action-btn" onclick="sendQuickReaction('⚡')" title="React ⚡">⚡</button>
-      <button class="msg-action-btn" onclick="sendQuickReaction('🛡️')" title="React 🛡️">🛡️</button>
-      <button class="msg-action-btn" onclick="sendQuickReaction('👍')" title="React 👍">👍</button>
-      <button class="msg-action-btn" onclick="sendQuickReaction('🔥')" title="React 🔥">🔥</button>
+      <button class="msg-action-btn" data-reaction="⚡" title="React ⚡">⚡</button>
+      <button class="msg-action-btn" data-reaction="🛡️" title="React 🛡️">🛡️</button>
+      <button class="msg-action-btn" data-reaction="👍" title="React 👍">👍</button>
+      <button class="msg-action-btn" data-reaction="🔥" title="React 🔥">🔥</button>
     </div>
 
     <div class="msg-content-wrap">
       <div class="msg-meta">
-        <span class="msg-author ${prefix === 'antigravity' ? 'antigravity' : ''}" onclick="showUserProfileBySenderId('${senderId}')" style="cursor: pointer;" title="View ${prefix}'s profile">${prefix}</span>
+        <span class="msg-author ${prefix === 'antigravity' ? 'antigravity' : ''}" data-sender-id="${escapeHtml(senderId)}" style="cursor: pointer;" title="View ${escapeHtml(prefix)}'s profile">${escapeHtml(prefix)}</span>
         ${isBot ? '<span class="msg-badge">APP</span>' : ''}
         <span class="msg-id">${senderId}</span>
         <span class="msg-badge zbat">🛡️ ZBAT</span>
@@ -1570,8 +1572,14 @@ function formatBytes(bytes, decimals = 1) {
 }
 
 function openImageLightbox(src) {
+  if (!src || typeof src !== 'string') return;
+  const clean = src.trim();
+  if (!clean.startsWith('data:image/') && !clean.startsWith('blob:') && !clean.startsWith('/') && !clean.startsWith('http://') && !clean.startsWith('https://')) {
+    console.warn('[Security] Blocked unsafe lightbox protocol:', clean);
+    return;
+  }
   const img = document.getElementById('lightbox-img');
-  if (img) img.src = src;
+  if (img) img.src = clean;
   openModal('modal-image-lightbox');
 }
 
@@ -1601,8 +1609,13 @@ function scrollToBottom(smooth = false) {
 }
 
 function escapeHtml(text) {
-  if (!text) return '';
-  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  if (text === null || text === undefined) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 // --- 5. Members List Rendering (Hudur) ---
@@ -1636,13 +1649,13 @@ function renderMembers() {
     item.innerHTML = `
       <div class="member-avatar-wrap">
         <div class="member-avatar ${isHadir ? '' : 'offline'}">
-          ${(peer.prefix || 'P').substring(0, 2).toUpperCase()}
+          ${escapeHtml((peer.prefix || 'P').substring(0, 2).toUpperCase())}
         </div>
         <span class="status-indicator ${isHadir ? 'hadir' : 'ghaib'}"></span>
       </div>
       <div class="member-info">
-        <span class="member-name ${isHadir && peer.prefix === 'antigravity' ? 'antigravity' : ''}">${peer.prefix || peer.peerId}</span>
-        <span class="member-sub">${peer.latency || 12}ms · ${isHadir ? 'حَاضِر' : 'غَائِب'}</span>
+        <span class="member-name ${isHadir && peer.prefix === 'antigravity' ? 'antigravity' : ''}">${escapeHtml(peer.prefix || peer.peerId)}</span>
+        <span class="member-sub">${parseInt(peer.latency, 10) || 12}ms · ${isHadir ? 'حَاضِر' : 'غَائِب'}</span>
       </div>
     `;
     item.onclick = (e) => {
@@ -1878,6 +1891,8 @@ async function sendSawtMessage(voiceData) {
 
 // --- 8. Sawt Audio Playback ---
 window.playSawtAudio = function(msgId, voiceData) {
+  const audioData = voiceData || (state.sawtRecordings && state.sawtRecordings.get(msgId));
+  if (!audioData) return;
   const card = document.getElementById(`audio-card-${msgId}`);
   const timeEl = document.getElementById(`time-${msgId}`);
   const btn = card ? card.querySelector('.sawt-play-btn') : null;
@@ -1896,7 +1911,7 @@ window.playSawtAudio = function(msgId, voiceData) {
     }
   }
 
-  const audio = new Audio(voiceData);
+  const audio = new Audio(audioData);
   audio.dataset = { msgId };
   state.currentPlayingAudio = audio;
   state.currentPlayingCard = card;
@@ -2139,6 +2154,44 @@ function removeStagedAttachment(idx) {
 }
 
 function initEventListeners() {
+  // Global event delegation for messages-stream (Prevents inline XSS attack vectors)
+  const streamEl = document.getElementById('messages-stream');
+  if (streamEl && !streamEl._hasDelegatedListener) {
+    streamEl._hasDelegatedListener = true;
+    streamEl.addEventListener('click', (e) => {
+      // 1. Sawt audio playback
+      const sawtBtn = e.target.closest('.sawt-play-btn');
+      if (sawtBtn && sawtBtn.dataset.msgId) {
+        window.playSawtAudio(sawtBtn.dataset.msgId);
+        return;
+      }
+      // 2. Lightbox image trigger
+      const imgTrigger = e.target.closest('.msg-lightbox-trigger');
+      if (imgTrigger && imgTrigger.dataset.imgSrc) {
+        window.openImageLightbox(imgTrigger.dataset.imgSrc);
+        return;
+      }
+      // 3. User profile click
+      const authorSpan = e.target.closest('.msg-author');
+      if (authorSpan && authorSpan.dataset.senderId) {
+        window.showUserProfileBySenderId(authorSpan.dataset.senderId);
+        return;
+      }
+      // 4. VCWYVL video stream call
+      const callBtn = e.target.closest('.btn-launch-call');
+      if (callBtn && callBtn.dataset.peer && callBtn.dataset.query) {
+        window.startYoutubeStreamCall(callBtn.dataset.peer, callBtn.dataset.query);
+        return;
+      }
+      // 5. Quick reactions
+      const reactBtn = e.target.closest('.msg-action-btn');
+      if (reactBtn && reactBtn.dataset.reaction) {
+        window.sendQuickReaction(reactBtn.dataset.reaction);
+        return;
+      }
+    });
+  }
+
   const input = document.getElementById('message-input');
   const sendBtn = document.getElementById('btn-send-message');
 

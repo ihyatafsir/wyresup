@@ -13,6 +13,34 @@ class YouTubeStreamer {
     return dir;
   }
 
+  static enforceCacheQuota(dir, maxBytes = 1024 * 1024 * 1024) {
+    try {
+      if (!fs.existsSync(dir)) return;
+      const files = fs.readdirSync(dir).map(f => {
+        const fp = path.join(dir, f);
+        try {
+          const st = fs.statSync(fp);
+          return { path: fp, size: st.size, mtime: st.mtimeMs };
+        } catch { return null; }
+      }).filter(Boolean);
+
+      let totalSize = files.reduce((acc, f) => acc + f.size, 0);
+      if (totalSize > maxBytes) {
+        files.sort((a, b) => a.mtime - b.mtime);
+        for (const f of files) {
+          try {
+            fs.unlinkSync(f.path);
+            totalSize -= f.size;
+            console.log(`[YouTubeStreamer Quota] Evicted cached video: ${path.basename(f.path)}`);
+            if (totalSize <= maxBytes * 0.75) break;
+          } catch (e) {}
+        }
+      }
+    } catch (err) {
+      console.warn('[YouTubeStreamer] Cache quota check notice:', err.message);
+    }
+  }
+
   static sanitizeInput(input) {
     if (typeof input !== 'string') return '';
     // Strip control characters, null bytes, and limit length
@@ -107,9 +135,14 @@ class YouTubeStreamer {
         if (!['http:', 'https:'].includes(parsed.protocol)) {
           throw new Error('Invalid URL protocol');
         }
+        const hostname = parsed.hostname.toLowerCase();
+        const allowedHosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be', 'music.youtube.com'];
+        if (!allowedHosts.includes(hostname) && !hostname.endsWith('.youtube.com')) {
+          throw new Error('SSRF Protection: Only official YouTube URLs are permitted');
+        }
         targetUrl = parsed.toString();
       } catch (err) {
-        throw new Error('Malformed URL provided');
+        throw new Error(err.message.includes('SSRF Protection') ? err.message : 'Malformed URL provided');
       }
     } else {
       targetUrl = `ytsearch1:${query}`;
@@ -150,6 +183,7 @@ class YouTubeStreamer {
       return { status: 'ready', videoId, title, uploader, duration, thumbnail, streamUrl };
     }
 
+    this.enforceCacheQuota(cacheDir);
     console.log(`[YouTubeStreamer] Securely downloading video: ${videoId}`);
     await execFilePromise('yt-dlp', [
       '-f', '18/best[height<=720][ext=mp4]/best',

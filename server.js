@@ -60,10 +60,44 @@ const MIME_TYPES = {
   '.pdf': 'application/pdf'
 };
 
+// --- Ingress Security Utilities (AynEngine Epistemic Governance) ---
+const ytIpRateLimiter = new Map(); // ip -> { count, windowStart }
+function checkYtRateLimit(req) {
+  const ip = req.headers['cf-connecting-ip'] || (req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0].trim() : '') || req.socket.remoteAddress || '127.0.0.1';
+  const now = Date.now();
+  let entry = ytIpRateLimiter.get(ip);
+  if (!entry || now - entry.windowStart > 60000) {
+    entry = { count: 1, windowStart: now };
+    ytIpRateLimiter.set(ip, entry);
+    return true;
+  }
+  entry.count++;
+  return entry.count <= 5; // Max 5 requests per minute
+}
+
+function isAllowedMutatingOrigin(req) {
+  const origin = (req.headers.origin || '').toLowerCase();
+  const host = (req.headers.host || '').toLowerCase();
+  if (!origin) return true; // Non-browser / local CLI client
+  try {
+    const parsedOrigin = new URL(origin);
+    const originHost = parsedOrigin.host.toLowerCase();
+    return originHost === host || originHost.includes('wyresup.com') || originHost.includes('localhost') || originHost.includes('127.0.0.1');
+  } catch {
+    return false;
+  }
+}
+
 // HTTP Server
 const server = http.createServer((req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
   const pathname = parsedUrl.pathname;
+
+  // Security Headers (Epistemic Defense-in-Depth)
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: https: wss:;");
 
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -73,6 +107,14 @@ const server = http.createServer((req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
     res.end();
+    return;
+  }
+
+  // Cross-Origin State Mutation Guard (CSRF Mitigation)
+  if (['POST', 'DELETE', 'PUT'].includes(req.method) && !isAllowedMutatingOrigin(req)) {
+    console.warn(`[Security Alert] Blocked suspicious cross-origin mutation from ${req.headers.origin} to ${pathname}`);
+    res.writeHead(403, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Permission Denied: Cross-origin state mutation rejected.' }));
     return;
   }
 
@@ -403,6 +445,11 @@ const server = http.createServer((req, res) => {
 
   // --- YouTube Streaming & Watch Party API ---
   if (pathname === '/api/youtube/prepare' && req.method === 'POST') {
+    if (!checkYtRateLimit(req)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Rate limit exceeded: Max 5 YouTube stream preparations per minute.' }));
+      return;
+    }
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', async () => {
@@ -434,10 +481,20 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // --- Static Files ---
-  let filePath = path.join(__dirname, 'public', pathname === '/' ? 'index.html' : pathname);
+  // --- Static Files with Canonical Path Jail ---
+  const publicDir = path.resolve(__dirname, 'public');
+  let relPath = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
   if (pathname === '/wyrenet' || pathname === '/wyrenet/' || pathname === '/wyresup' || pathname === '/wyresup/') {
-    filePath = path.join(__dirname, 'public', 'wyrenet', 'index.html');
+    relPath = path.join('wyrenet', 'index.html');
+  }
+  const filePath = path.resolve(publicDir, relPath);
+
+  // Path Traversal Guard: Reject any path escaping the public root
+  if (!filePath.startsWith(publicDir)) {
+    console.warn(`[Security Alert] Blocked path traversal attempt: ${pathname}`);
+    res.writeHead(403, { 'Content-Type': 'text/plain' });
+    res.end('403 Forbidden: Path traversal detected');
+    return;
   }
   const extname = path.extname(filePath).toLowerCase();
   const contentType = MIME_TYPES[extname] || 'application/octet-stream';
@@ -478,7 +535,10 @@ const server = http.createServer((req, res) => {
 });
 
 // WebSocket Server
-const wss = new WebSocketServer({ server });
+const wss = new WebSocketServer({
+  server,
+  maxPayload: 1024 * 1024 // 1 MB limit (protects against V8 memory exhaustion)
+});
 
 
 // --- Sovereign Protected Channels Policy ---
@@ -528,6 +588,27 @@ wss.on('connection', (ws, req) => {
   ws.on('pong', () => { ws.isAlive = true; });
 
   ws.on('message', (messageRaw) => {
+    // Ingress Sliding-Window Message Rate Limiter (Max 30 msgs/sec per peer)
+    const now = Date.now();
+    if (!ws.rateWindow || now - ws.rateWindow > 1000) {
+      ws.rateWindow = now;
+      ws.msgCount = 1;
+    } else {
+      ws.msgCount = (ws.msgCount || 0) + 1;
+      if (ws.msgCount > 30) {
+        if (ws.msgCount === 31) {
+          console.warn(`[Mesh Flood Guard] Throttling excessive message rate from peer socket`);
+          try {
+            ws.send(JSON.stringify({
+              type: 'SYSTEM_NOTICE',
+              payload: { text: 'Rate limit exceeded: Ingress throttled to 30 messages per second.' }
+            }));
+          } catch {}
+        }
+        return;
+      }
+    }
+
     //  Check for Nafaq al-Lisan Zero-Copy Binary Shards
     const buf = Buffer.isBuffer(messageRaw) ? messageRaw : Buffer.from(messageRaw);
     if (buf.length >= 12 && buf.readUIntBE(0, 3) === NAFAQ_MAGIC) {
@@ -669,6 +750,18 @@ function handleClientMessage(ws, msg) {
       }
 
       if (payload.zahir && payload.batin) {
+        // Authenticity Invariant: senderId in packet must match authenticated socket peerId
+        if (payload.zahir.senderId && payload.zahir.senderId !== client.peerId) {
+          console.warn(`[Mesh Security] Blocked spoofed packet from ${client.peerId} claiming to be ${payload.zahir.senderId}`);
+          ws.send(JSON.stringify({
+            type: 'SYSTEM_NOTICE',
+            payload: {
+              channelId: targetChannel,
+              text: 'Security Violation: Cannot send packet with forged senderId.'
+            }
+          }));
+          return;
+        }
         // Direct pre-wrapped / encrypted ZBAT packet from client (Zero-Knowledge Relay)
         targetChannel = payload.zahir.channelId;
         gossipMesh.receivePacket(payload, client.peerId);
@@ -696,7 +789,12 @@ function handleClientMessage(ws, msg) {
 
     case 'GOSSIP_PACKET': {
       const client = connectedClients.get(ws);
-      if (client && payload) {
+      if (client && payload && payload.zahir) {
+        // Disallow client forwarding origin gossip (hops=0) with a forged senderId
+        if (payload.zahir.hops === 0 && payload.zahir.senderId && payload.zahir.senderId !== client.peerId) {
+          console.warn(`[Mesh Security] Blocked origin gossip spoof: ${payload.zahir.senderId} from ${client.peerId}`);
+          return;
+        }
         gossipMesh.receivePacket(payload, client.peerId);
       }
       break;

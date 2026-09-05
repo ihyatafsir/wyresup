@@ -145,16 +145,16 @@ class GossipMesh extends EventEmitter {
     const { messageId, ttl, channelId, senderId } = packet.zahir;
     const currentHops = (packet.zahir.hops || 0) + 1;
 
-    // 1. Check if already seen
-    if (this.markSeen(messageId)) {
-      this.stats.duplicatesDropped++;
-      return { status: 'duplicate_dropped', messageId };
-    }
-
-    // Protection for sovereign library sub-channels: drop unauthorized broadcasts
+    // Protection for sovereign library sub-channels: drop unauthorized broadcasts FIRST to prevent cache poisoning
     if (this._isProtectedChannel(channelId) && !this._isAuthorizedSender(senderId)) {
       this.stats.unauthorizedDropped = (this.stats.unauthorizedDropped || 0) + 1;
       return { status: 'unauthorized_dropped', messageId };
+    }
+
+    // 1. Check if already seen (only record verified/authorized messages in deduplication cache)
+    if (this.markSeen(messageId)) {
+      this.stats.duplicatesDropped++;
+      return { status: 'duplicate_dropped', messageId };
     }
 
     this.stats.messagesReceived++;
