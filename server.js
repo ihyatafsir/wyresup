@@ -225,7 +225,7 @@ const server = http.createServer((req, res) => {
       try {
         let payload = null;
         if (body && body.trim().length > 0) {
-          try { payload = JSON.parse(body); } catch (e) { payload = null; }
+          try { payload = JSON.parse(body); } catch (parseErr) { console.warn("[Wyrenet RPC] Malformed JSON payload:", parseErr.message); payload = null; }
         }
         const rpcRes = await wyreNetGateway.forwardRpc(payload, req.method);
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -519,7 +519,7 @@ const keepAliveInterval = setInterval(() => {
   for (const [ws, client] of connectedClients.entries()) {
     if (ws.isAlive === false) {
       console.log(`[Mesh Keepalive] Terminating dead half-open socket for: ${client ? client.peerId : "unknown"}`);
-      try { ws.terminate(); } catch (e) {}
+      try { ws.terminate(); } catch (termErr) { console.warn("[Mesh Keepalive] Safe terminate notice:", termErr.message); }
       connectedClients.delete(ws);
       if (client?.peerId) {
         presenceManager.removePeer(client.peerId);
@@ -529,7 +529,7 @@ const keepAliveInterval = setInterval(() => {
       continue;
     }
     ws.isAlive = false;
-    try { ws.ping(); } catch (e) {}
+    try { ws.ping(); } catch (pingErr) { console.warn("[Mesh Keepalive] Safe ping notice:", pingErr.message); }
   }
 }, 30000);
 
@@ -559,7 +559,7 @@ function handleClientMessage(ws, msg) {
         if (existingWs !== ws && (existingRecord.peerId === peerId || existingRecord.prefix === prefix)) {
           try {
             existingWs.terminate();
-          } catch (e) {}
+          } catch (pruneErr) { console.warn("[Mesh] Safe prune notice:", pruneErr.message); }
           connectedClients.delete(existingWs);
           console.log(`[Mesh] Pruned stale socket for peer: ${peerId}`);
         }

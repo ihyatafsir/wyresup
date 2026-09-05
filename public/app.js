@@ -1993,7 +1993,7 @@ function initEventListeners() {
         });
         state.messages.set(chan, []);
         renderMessages();
-      } catch (e) {}
+      } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
       return;
     }
     if (text.startsWith('/vcwyvl ') || text.startsWith('/stream ') || text === '/vcwyvl' || text === '/stream') {
@@ -2420,7 +2420,7 @@ function initEventListeners() {
         const avg = hops.length ? (hops.reduce((a,b)=>a+b, 0)/hops.length).toFixed(1) : '1.0';
         document.getElementById('diag-avg-hops').textContent = avg;
       }
-    } catch(e){}
+    } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     openModal('modal-diagnostics');
   });
 
@@ -2428,7 +2428,7 @@ function initEventListeners() {
   document.getElementById('btn-spawn-bot').addEventListener('click', async () => {
     try {
       await fetch('/api/bots/spawn', { method: 'POST' });
-    } catch (e) {}
+    } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
   });
 
   // Space & Channel Creation Modals
@@ -2562,7 +2562,7 @@ function playTone(freq = 440, duration = 0.2) {
     gain.connect(ctx.destination);
     osc.start();
     osc.stop(ctx.currentTime + duration);
-  } catch(e) {}
+  } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
 }
 
 
@@ -2777,14 +2777,14 @@ async function createYouTubeMediaStream(streamInfo) {
   const anim = setInterval(() => {
     if (!state.activeCall.localStream && !state.activeCall.pc) {
       clearInterval(anim);
-      try { video.pause(); } catch(e){}
+      try { video.pause(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
       return;
     }
 
     if (video.readyState >= 2) {
       try {
         cCtx.drawImage(video, 0, 0, 1280, 720);
-      } catch (e) {}
+      } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
 
       // HUD Top Gradient
       const topGrad = cCtx.createLinearGradient(0, 0, 0, 90);
@@ -2966,7 +2966,7 @@ function attachRemoteStreamToMediaElements(stream, callType) {
 
   // 1. Clean previous WebAudio route if any
   if (state.activeCall.remoteAudioSourceNode) {
-    try { state.activeCall.remoteAudioSourceNode.disconnect(); } catch(e){}
+    try { state.activeCall.remoteAudioSourceNode.disconnect(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     state.activeCall.remoteAudioSourceNode = null;
   }
 
@@ -2990,7 +2990,7 @@ function attachRemoteStreamToMediaElements(stream, callType) {
           const sourceNode = state.audioCtx.createMediaStreamSource(stream);
           sourceNode.connect(state.audioCtx.destination);
           state.activeCall.remoteAudioSourceNode = sourceNode;
-        } catch (err) {}
+        } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
       });
     }
   }
@@ -3119,7 +3119,7 @@ function startShafHdVideoStream(targetPeer, localStream) {
             ts: Date.now()
           }
         }));
-      } catch (e) {}
+      } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     }
   }, 90); // ~11 FPS - ideal balance between motion fluidity and cellular bandwidth stability
 }
@@ -3201,7 +3201,7 @@ function startNafaqPcmStream(targetPeer, localStream) {
       try {
         state.activeCall.nafaqPcmProcessor.disconnect();
         state.activeCall.nafaqPcmSource.disconnect();
-      } catch(e) {}
+      } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     }
 
     const source = state.audioCtx.createMediaStreamSource(localStream);
@@ -3307,9 +3307,7 @@ function handleIncomingNafaqPcm(payload) {
     if (statusEl && !statusEl.textContent.includes('NAFAQ')) {
       statusEl.textContent = '🟢 NAFAQ Sovereign Voice Tunnel Active (صَوْت مُبَاشِر)';
     }
-  } catch (err) {
-    // Jitter skip
-  }
+  } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
 }
 
 function startNafaqTunnelStream(targetPeer, localStream, callType) {
@@ -3452,7 +3450,7 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
           try {
             state.activeCall.nafaqPcmProcessor.disconnect();
             state.activeCall.nafaqPcmSource.disconnect();
-          } catch(e) {}
+          } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
           state.activeCall.nafaqPcmProcessor = null;
           state.activeCall.nafaqPcmSource = null;
         }
@@ -3466,7 +3464,7 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
           try {
             console.log('[WebRTC Outgoing Dropped] Triggering self-healing ICE restart...');
             pc.restartIce();
-          } catch (e) {}
+          } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
         }
         state.activeCall.nafaqActive = true;
         document.getElementById('call-remote-status-text').textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
@@ -3487,7 +3485,7 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
       } else if (s === 'disconnected') {
         console.warn('[WebRTC Outgoing ICE Disconnected] Attempting ICE restart...');
         if (typeof pc.restartIce === 'function') {
-          try { pc.restartIce(); } catch (e) {}
+          try { pc.restartIce(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
         }
       } else if (s === 'failed') {
         console.warn('[WebRTC ICE Failed] Activating NAFAQ Sovereign Tunnel fallback!');
@@ -3754,7 +3752,7 @@ async function acceptIncomingCall() {
           try {
             state.activeCall.nafaqPcmProcessor.disconnect();
             state.activeCall.nafaqPcmSource.disconnect();
-          } catch(e) {}
+          } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
           state.activeCall.nafaqPcmProcessor = null;
           state.activeCall.nafaqPcmSource = null;
         }
@@ -3770,7 +3768,7 @@ async function acceptIncomingCall() {
           try {
             console.log('[WebRTC Accept Dropped] Triggering self-healing ICE restart...');
             pc.restartIce();
-          } catch (e) {}
+          } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
         }
         state.activeCall.nafaqActive = true;
         if (!isCustomStreamCall) {
@@ -3795,7 +3793,7 @@ async function acceptIncomingCall() {
       } else if (s === 'disconnected') {
         console.warn('[WebRTC Accept ICE Disconnected] Attempting ICE restart...');
         if (typeof pc.restartIce === 'function') {
-          try { pc.restartIce(); } catch (e) {}
+          try { pc.restartIce(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
         }
       } else if (s === 'failed') {
         console.warn('[WebRTC ICE Failed] Activating NAFAQ Sovereign Tunnel fallback!');
@@ -3939,27 +3937,27 @@ function endActiveCall(notifyPeer = true) {
     try {
       state.activeCall.activeBufferSource.stop();
       state.activeCall.activeBufferSource.disconnect();
-    } catch(e) {}
+    } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     state.activeCall.activeBufferSource = null;
   }
   if (state.activeCall.nafaqPcmProcessor) {
     try {
       state.activeCall.nafaqPcmProcessor.disconnect();
       state.activeCall.nafaqPcmSource.disconnect();
-    } catch(e) {}
+    } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     state.activeCall.nafaqPcmProcessor = null;
     state.activeCall.nafaqPcmSource = null;
   }
   if (state.activeCall.nafaqSilentSink) {
-    try { state.activeCall.nafaqSilentSink.disconnect(); } catch(e) {}
+    try { state.activeCall.nafaqSilentSink.disconnect(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     state.activeCall.nafaqSilentSink = null;
   }
   if (state.activeCall.remoteAudioSourceNode) {
-    try { state.activeCall.remoteAudioSourceNode.disconnect(); } catch(e) {}
+    try { state.activeCall.remoteAudioSourceNode.disconnect(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     state.activeCall.remoteAudioSourceNode = null;
   }
   if (state.activeCall.nafaqRecorder) {
-    try { state.activeCall.nafaqRecorder.stop(); } catch(e){}
+    try { state.activeCall.nafaqRecorder.stop(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     state.activeCall.nafaqRecorder = null;
   }
   if (state.activeCall.nafaqFallbackTimer) {
@@ -3982,18 +3980,18 @@ function endActiveCall(notifyPeer = true) {
   // Stop all local and remote media tracks
   if (state.activeCall.localStream) {
     state.activeCall.localStream.getTracks().forEach(t => {
-      try { t.stop(); } catch(e){}
+      try { t.stop(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     });
   }
   if (state.activeCall.remoteStream) {
     state.activeCall.remoteStream.getTracks().forEach(t => {
-      try { t.stop(); } catch(e){}
+      try { t.stop(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     });
   }
 
   // Close peer connection
   if (state.activeCall.pc) {
-    try { state.activeCall.pc.close(); } catch(e) {}
+    try { state.activeCall.pc.close(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
   }
 
   if (state.activeCall.syntheticInterval) {
@@ -4011,7 +4009,7 @@ function endActiveCall(notifyPeer = true) {
         el.src = '';
         el.load();
         el.remove();
-      } catch(e){}
+      } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     }
   });
 
@@ -4024,7 +4022,7 @@ function endActiveCall(notifyPeer = true) {
       el.src = '';
       el.srcObject = null;
       el.load();
-    } catch(e){}
+    } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
   });
   const remoteVideo = document.getElementById('call-remote-video');
   if (remoteVideo) remoteVideo.style.display = 'none';
@@ -4040,7 +4038,7 @@ function endActiveCall(notifyPeer = true) {
     try {
       state.activeCall.activeBufferSource.stop();
       state.activeCall.activeBufferSource.disconnect();
-    } catch(e){}
+    } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     state.activeCall.activeBufferSource = null;
   }
 
@@ -4048,7 +4046,7 @@ function endActiveCall(notifyPeer = true) {
   if (state.audioCtx && state.audioCtx.state === 'running') {
     try {
       state.audioCtx.suspend().catch(() => {});
-    } catch(e){}
+    } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
   }
 
   stopCallTimer();
@@ -4188,12 +4186,12 @@ async function requestCallWakeLock() {
     if ('wakeLock' in navigator && !state.activeCall.wakeLock) {
       state.activeCall.wakeLock = await navigator.wakeLock.request('screen');
     }
-  } catch (e) {}
+  } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
 }
 
 function releaseCallWakeLock() {
   if (state.activeCall.wakeLock) {
-    try { state.activeCall.wakeLock.release(); } catch(e) {}
+    try { state.activeCall.wakeLock.release(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     state.activeCall.wakeLock = null;
   }
 }
@@ -4252,7 +4250,7 @@ function startCallTelemetry(targetPeer) {
             }
           }
         });
-      } catch (e) {}
+      } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     }
 
     // 2. Ping-Pong Probe over Conduit (Nafaq / WebSocket)
