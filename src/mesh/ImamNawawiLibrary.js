@@ -12,10 +12,13 @@ class ImamNawawiLibrary {
 
     const files = fs.readdirSync(dir).filter(f => f.endsWith('.epub'));
     
+    // Note: Inception of AynEngine v4 was September 4, 2026.
+    // All 22 works of Imam al-Nawawi were translated on August 27–28, 2026 (AynEngine v3).
+    // Therefore, all existing Nawawi files belong strictly to legacyArchive (< v4).
     const catalog = {
-      pureEditions: [],
-      bilingualEditions: [],
-      legacyArchive: []
+      pureEditions: [],      // Official v4/v5 works (0 currently completed)
+      bilingualEditions: [], // Official v4/v5 works (0 currently completed)
+      legacyArchive: []      // All 22 works from v3 (< v4)
     };
 
     const nawawiTitles = {
@@ -69,7 +72,7 @@ class ImamNawawiLibrary {
           const isPure = file.includes('_pure_en.epub');
           if (!isBilingual && !isPure) continue;
 
-          const item = {
+          catalog.legacyArchive.push({
             id: file.replace('.epub', ''),
             slug,
             filename: file,
@@ -78,14 +81,8 @@ class ImamNawawiLibrary {
             author: 'Imam Yahya ibn Sharaf al-Nawawi (الإمام يحيى بن شرف النووي)',
             size: sizeStr,
             downloadUrl,
-            edition: 'AynEngine v4/v5 Official'
-          };
-
-          if (isBilingual) {
-            catalog.bilingualEditions.push(item);
-          } else if (isPure) {
-            catalog.pureEditions.push(item);
-          }
+            edition: 'AynEngine v3 Legacy Archive (< v4)'
+          });
           break;
         }
       }

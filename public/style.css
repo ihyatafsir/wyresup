@@ -3477,3 +3477,27 @@ html, body {
   margin: 0 !important;
   padding: 0 !important;
 }
+
+/* Channel Expand Caret */
+.channel-expand-caret {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0.7;
+  padding-left: 6px;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+
+.channel-item:hover .channel-expand-caret,
+.channel-item.active .channel-expand-caret {
+  color: var(--matrix-green);
+  opacity: 1;
+}
+
+@keyframes fadeInSub {
+  from { opacity: 0; transform: translateY(-2px); }
+  to { opacity: 0.85; transform: translateY(0); }
+}

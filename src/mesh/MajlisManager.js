@@ -54,55 +54,122 @@ class MajlisManager {
           name: 'imam-razi',
           type: 'text',
           icon: '#',
-          topic: "Sovereign Library of Imam Fakhr al-Din al-Razi — Official AynEngine AI v4 & v5 Complete Masterworks (Tafsir al-Kabir 32-in-1, Al-Matalib Vols 1-9, Asas al-Taqdis, Lawami', etc.)"
+          hasSubChannels: true,
+          topic: "Sovereign Library of Imam Fakhr al-Din al-Razi (544–606 AH) — Complete classical portal. Click to open topical sub-channels (Tafsir, Kalam) and legacy archive."
         },
         {
-          id: 'chan-imam-razi-archive',
-          name: 'razi-archive',
+          id: 'chan-razi-tafsir-matalib',
+          name: 'tafsir-matalib',
           type: 'text',
           icon: '└─',
           isSubChannel: true,
           parentChannelId: 'chan-imam-razi',
-          topic: "Historical & Legacy Archive of Imam Fakhr al-Din al-Razi — Early v2 translations (Tafsir al-Kabir individual Vols 1–32 drafts)."
+          topic: "Tafsir al-Kabir 32-in-1 Unified Masterwork & Al-Matalib al-'Aliyyah Vols 1-9 (Official AynEngine AI v4 Editions)."
+        },
+        {
+          id: 'chan-razi-kalam-usul',
+          name: 'kalam-usul',
+          type: 'text',
+          icon: '└─',
+          isSubChannel: true,
+          parentChannelId: 'chan-imam-razi',
+          topic: "Classical Kalam, Usul al-Fiqh & Heresiography (Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, Al-Mahsul, etc. — Official v4 Editions)."
+        },
+        {
+          id: 'chan-imam-razi-archive',
+          name: 'archive',
+          type: 'text',
+          icon: '└─',
+          isSubChannel: true,
+          parentChannelId: 'chan-imam-razi',
+          topic: "Historical & Legacy Archive of Imam Fakhr al-Din al-Razi — Pre-v4 drafts (< v4) including individual 32-volume split drafts of Tafsir al-Kabir."
         },
         {
           id: 'chan-imam-abuhamidd',
           name: 'imam-abuhamid',
           type: 'text',
           icon: '#',
-          topic: "Sovereign Library of Imam Abu Hamid al-Ghazali — Official AynEngine AI v4 & v5 Complete Translations (Al-Mustasfa, Tahafut al-Falasifa, Al-Iqtisad, etc.)"
+          hasSubChannels: true,
+          topic: "Sovereign Library of Hujjat al-Islam Imam Abu Hamid al-Ghazali (450–505 AH) — Complete classical portal. Click to open topical sub-channels (Kalam, Usul, Suluk) and legacy archive."
         },
         {
-          id: 'chan-imam-abuhamid-archive',
-          name: 'abuhamid-archive',
+          id: 'chan-ghazali-kalam-falsafa',
+          name: 'kalam-falsafa',
           type: 'text',
           icon: '└─',
           isSubChannel: true,
           parentChannelId: 'chan-imam-abuhamidd',
-          topic: "Historical & Legacy Archive of Imam Abu Hamid al-Ghazali — Early drafts (< v4), prior un-harmonized versions, and 4-volume Ihya split editions."
+          topic: "Kalam, Philosophy & Theological Polemics (Tahafut al-Falasifa, Al-Iqtisad fi al-I'tiqad, Maqasid al-Falasifah, Qawaid al-Aqaid, Fadaih al-Batiniyya — Official v4 Editions)."
+        },
+        {
+          id: 'chan-ghazali-usul-mantiq',
+          name: 'usul-mantiq',
+          type: 'text',
+          icon: '└─',
+          isSubChannel: true,
+          parentChannelId: 'chan-imam-abuhamidd',
+          topic: "Legal Theory & Classical Logic (Al-Mustasfa min 'Ilm al-Usul, Al-Mankhul, Shifa al-Ghalil, Mi'yar al-'Ilm, Mihakk al-Nazar — Official v4 Editions)."
+        },
+        {
+          id: 'chan-ghazali-suluk-adab',
+          name: 'suluk-adab',
+          type: 'text',
+          icon: '└─',
+          isSubChannel: true,
+          parentChannelId: 'chan-imam-abuhamidd',
+          topic: "Spiritual Path, Ethics & Divine Wisdom (Al-Munqidh min al-Dalal, Mishkat al-Anwar, Bidayat al-Hidayah, Minhaj al-'Abidin, Mizan al-'Amal, etc. — Official v4 Editions)."
+        },
+        {
+          id: 'chan-imam-abuhamid-archive',
+          name: 'archive',
+          type: 'text',
+          icon: '└─',
+          isSubChannel: true,
+          parentChannelId: 'chan-imam-abuhamidd',
+          topic: "Historical & Legacy Archive of Imam Abu Hamid al-Ghazali — Ihya 'Ulum al-Din (Complete 40 Books v3 single-corpus & 4-volume split drafts) and pre-v4 trials (< v4)."
         },
         {
           id: 'chan-imam-nawawi',
           name: 'imam-nawawi',
           type: 'text',
           icon: '#',
-          topic: "Sovereign Library of Imam Yahya ibn Sharaf al-Nawawi — Official AynEngine AI v4 & v5 Translations (Al-Arba'in, Riyad al-Salihin, Al-Tibyan, Kitab al-Adhkar, Minhaj al-Talibin, etc.)"
+          hasSubChannels: true,
+          topic: "Library of Imam Yahya ibn Sharaf al-Nawawi (631–676 AH) — Official Portal & Pipeline Status. Official v4 & v5 translations are queued; all 22 existing complete translations (< v4) are housed in the dedicated archive sub-channel #archive."
         },
         {
           id: 'chan-imam-nawawi-archive',
-          name: 'nawawi-archive',
+          name: 'archive',
           type: 'text',
           icon: '└─',
           isSubChannel: true,
           parentChannelId: 'chan-imam-nawawi',
-          topic: "Historical & Legacy Archive of Imam Yahya al-Nawawi — Prior translation drafts (< v4) and early split editions."
+          topic: "Complete 22-Volume Legacy Corpus of Imam Yahya al-Nawawi — Translations completed in AynEngine v3 (< v4: Al-Arba'in, Riyad al-Salihin, Al-Tibyan, Kitab al-Adhkar, Minhaj al-Talibin, Sharh Sahih Muslim, Rawdat al-Talibin, etc.)."
         },
         {
           id: 'chan-imam-raghib',
           name: 'imam-raghib-al-isfahani',
           type: 'text',
           icon: '#',
-          topic: "Library of Imam al-Raghib al-Isfahani (d. 502 AH) — Complete Classical English & Bilingual Editions (Al-Mufradat fi Gharib al-Quran, Al-Dhari'ah ila Makarim al-Shari'ah, Tafsil al-Nash'atayn, Adab Ikhtilat al-Nas, Jami' al-Tafsir, etc.)"
+          hasSubChannels: true,
+          topic: "Library of Imam al-Raghib al-Isfahani (d. 502 AH) — Complete Classical English & Bilingual Editions. Click to open topical sub-channels."
+        },
+        {
+          id: 'chan-raghib-lexicon-tafsir',
+          name: 'lexicon-tafsir',
+          type: 'text',
+          icon: '└─',
+          isSubChannel: true,
+          parentChannelId: 'chan-imam-raghib',
+          topic: "Quranic Lexicography & Exegesis (Al-Mufradat fi Gharib al-Quran, Jami' al-Tafsir — Official v4 Editions)."
+        },
+        {
+          id: 'chan-raghib-akhlaq-adab',
+          name: 'akhlaq-adab',
+          type: 'text',
+          icon: '└─',
+          isSubChannel: true,
+          parentChannelId: 'chan-imam-raghib',
+          topic: "Ethical Philosophy & Adab (Al-Dhari'ah ila Makarim al-Shari'ah, Tafsil al-Nash'atayn, Adab Ikhtilat al-Nas, Muhadarat al-Udaba — Official v4 Editions)."
         },
         {
           id: 'chan-classical-heritage',

@@ -601,6 +601,7 @@ const state = window.state = {
   ws: null,
   currentSpaceId: 'space-public-mesh',
   currentChannelId: 'chan-general',
+  expandedImamChannelId: null,
   spaces: [],
   channels: [],
   peers: [],
@@ -1091,15 +1092,46 @@ function renderChannelsSidebar() {
   let hasDMs = false;
 
   space.channels.forEach(ch => {
+    const isSub = ch.isSubChannel || ch.id.endsWith('-archive') || !!ch.parentChannelId;
+    const hasSubs = ch.hasSubChannels || ['chan-imam-razi', 'chan-imam-abuhamidd', 'chan-imam-nawawi', 'chan-imam-raghib'].includes(ch.id);
+
+    // Sub-channels are ONLY seen / opened when their parent Imam channel is expanded!
+    if (isSub) {
+      if (ch.parentChannelId !== state.expandedImamChannelId) {
+        return; // Keep hidden
+      }
+    }
+
     const el = document.createElement('div');
-    const isSub = ch.isSubChannel || ch.id.endsWith('-archive');
-    el.className = `channel-item ${ch.id === state.currentChannelId ? 'active' : ''} ${isSub ? 'subchannel-item' : ''}`;
+    const isExpanded = hasSubs && state.expandedImamChannelId === ch.id;
+
+    el.className = `channel-item ${ch.id === state.currentChannelId ? 'active' : ''} ${isSub ? 'subchannel-item' : ''} ${hasSubs ? 'has-subchannels' : ''}`;
     const icon = ch.type === 'voice' ? '🔊' : (ch.id.startsWith('dm-') ? '🔒' : (isSub ? '└─' : (ch.icon || '#')));
+
+    let caretHtml = '';
+    if (hasSubs) {
+      caretHtml = `<span class="channel-expand-caret" title="Toggle sub-channels">${isExpanded ? '▾' : '▸'}</span>`;
+    }
+
     el.innerHTML = `
       <span class="channel-icon">${icon}</span>
       <span class="channel-name">${ch.name}</span>
+      ${caretHtml}
     `;
-    el.onclick = () => selectChannel(ch.id);
+
+    el.onclick = () => {
+      if (hasSubs) {
+        if (state.expandedImamChannelId === ch.id && state.currentChannelId === ch.id) {
+          // Toggle collapse if clicking on already open and active parent
+          state.expandedImamChannelId = null;
+          renderChannelsSidebar();
+          return;
+        }
+        // Open sub-channels for clicked Imam channel
+        state.expandedImamChannelId = ch.id;
+      }
+      selectChannel(ch.id);
+    };
 
     if (ch.id.startsWith('dm-')) {
       hasDMs = true;
@@ -1115,11 +1147,23 @@ function renderChannelsSidebar() {
     dmCategory.style.display = hasDMs ? 'flex' : 'none';
   }
 }
-
 function selectChannel(channelId) {
   state.currentChannelId = channelId;
   const space = state.spaces.find(s => s.id === state.currentSpaceId);
   let channel = space?.channels.find(c => c.id === channelId);
+
+  // Synchronize expanded Imam channel state:
+  if (channel) {
+    if (channel.isSubChannel && channel.parentChannelId) {
+      // Inside a subchannel: keep parent expanded so siblings remain visible
+      state.expandedImamChannelId = channel.parentChannelId;
+    } else if (channel.hasSubChannels || ['chan-imam-razi', 'chan-imam-abuhamidd', 'chan-imam-nawawi', 'chan-imam-raghib'].includes(channel.id)) {
+      state.expandedImamChannelId = channel.id;
+    } else {
+      // Non-Imam channels: collapse subchannels so they are seen only when clicking on an Imam channel
+      state.expandedImamChannelId = null;
+    }
+  }
 
   // If DM channel not in space array yet, create it dynamically
   if (!channel && channelId.startsWith('dm-')) {

@@ -800,29 +800,29 @@ const BOT_QUOTES = [
 function seedImamRaziLibrary() {
   const spaceId = 'space-public-mesh';
   const mainChannelId = 'chan-imam-razi';
+  const tafsirChannelId = 'chan-razi-tafsir-matalib';
+  const kalamChannelId = 'chan-razi-kalam-usul';
   const archiveChannelId = 'chan-imam-razi-archive';
   const catalog = ImamRaziLibrary.getCatalog();
 
-  // ==========================================
-  // 1. MAIN CHANNEL: ONLY v4 & v5 MASTERWORKS
-  // ==========================================
   gossipMesh.clearChannelHistory(mainChannelId);
+  gossipMesh.clearChannelHistory(tafsirChannelId);
+  gossipMesh.clearChannelHistory(kalamChannelId);
+  gossipMesh.clearChannelHistory(archiveChannelId);
 
-  // 1.1 Welcome Banner
+  // Main Portal Banner
   gossipMesh.publish(spaceId, mainChannelId, {
-    content: `**مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِيّ // OFFICIAL MASTERWORKS (AYNENGINE AI v4 & v5)**
+    content: `**مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِيّ // OFFICIAL MASTERWORKS PORTAL**
 
 Welcome to the sovereign digital library of **Imam Fakhr al-Din al-Razi (544–606 AH / 1149–1209 CE)**.
 
-Featured exclusively on this main channel are the **Official AynEngine AI v4 & v5 Masterworks**:
-• **Tafsir al-Kabir (Mafatih al-Ghayb)**: The complete 32-in-1 unified masterwork editions (Pure English & Bilingual Apparatus).
-• **Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi**: Complete 9 Volumes (Official v4/v5 Pure & Bilingual).
-• **Classical Kalam & Usul Treatises**: Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, Al-Mahsul, Asrar al-Tanzil, 'Ismat al-Anbiya', I'tiqadat Firaq al-Muslimin, Al-Qada wa'l-Qadar, Risalah fi al-I'tiqad, and Jami' al-Tafsir.
-
-*Looking for earlier translation trials (< v4) or the individual 32-volume split drafts of Tafsir al-Kabir? Please navigate to the dedicated sub-channel **#razi-archive**.*`
+Please explore the dedicated sub-channels under this library:
+• **#tafsir-matalib**: Complete 32-in-1 Unified *Tafsir al-Kabir* & Complete 9 Volumes of *Al-Matalib al-'Aliyyah* (Official AynEngine AI v4 Editions).
+• **#kalam-usul**: Classical Kalam, Usul al-Fiqh & Heresiography Treatises (*Asas al-Taqdis*, *Lawami' al-Bayyinat*, *Kitab al-Arba'in*, *Al-Mahsul*, etc. — Official v4 Editions).
+• **#archive**: Historical pre-v4 translation trials (< v4) and the 32 individual split volume drafts of *Tafsir al-Kabir*.`
   }, { senderId: 'ibn-manzur@lisan' });
 
-  // 1.2 Tafsir al-Kabir Unified (32-in-1 Masterwork)
+  // Subchannel: tafsir-matalib
   if (catalog.tafsirKabirUnified && catalog.tafsirKabirUnified.length > 0) {
     const atts = catalog.tafsirKabirUnified.map(item => ({
       name: item.filename,
@@ -833,14 +833,13 @@ Featured exclusively on this main channel are the **Official AynEngine AI v4 & v
       arabicTitle: item.arabicTitle
     }));
 
-    gossipMesh.publish(spaceId, mainChannelId, {
+    gossipMesh.publish(spaceId, tafsirChannelId, {
       content: `**Tafsir al-Kabir (Mafatih al-Ghayb) — Sovereign 32-in-1 Masterwork Editions (v4/v5)**
 *The monumental commentary on the Holy Quran by Imam Fakhr al-Din al-Razi, translated with AynEngine AI classical vocabulary. Complete unified 32-in-1 editions in Pure Scholarly English and Bilingual Quad-Lexical Apparatus.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // 1.3 Al-Matalib al-'Aliyyah (Vols 1-9)
   if (catalog.matalib && catalog.matalib.length > 0) {
     const atts = catalog.matalib.map(item => ({
       name: item.filename,
@@ -851,14 +850,14 @@ Featured exclusively on this main channel are the **Official AynEngine AI v4 & v
       arabicTitle: item.arabicTitle
     }));
 
-    gossipMesh.publish(spaceId, mainChannelId, {
+    gossipMesh.publish(spaceId, tafsirChannelId, {
       content: `**Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi — Volumes 1 to 9 (Official v4/v5 Editions)**
 *The supreme metaphysical and philosophical opus of Imam al-Razi, spanning Cosmology, Divine Attributes, Subatomic Physics, The Rational Soul, and Eschatology (Pure English & Bilingual editions).*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // 1.4 Kalam Treatises & Usul al-Fiqh (v4/v5)
+  // Subchannel: kalam-usul
   if (catalog.kalamTreatises && catalog.kalamTreatises.length > 0) {
     const atts = catalog.kalamTreatises.map(item => ({
       name: item.filename,
@@ -869,24 +868,20 @@ Featured exclusively on this main channel are the **Official AynEngine AI v4 & v
       arabicTitle: item.arabicTitle
     }));
 
-    gossipMesh.publish(spaceId, mainChannelId, {
+    gossipMesh.publish(spaceId, kalamChannelId, {
       content: `**Classical Kalam, Usul al-Fiqh & Heresiography Masterworks (Official v4/v5 Editions)**
 *Definitive translations of Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, Al-Mahsul fi 'Ilm Usul al-Fiqh, Asrar al-Tanzil, 'Ismat al-Anbiya', I'tiqadat Firaq al-Muslimin, Al-Qada' wa'l-Qadar, and Jami' al-Tafsir.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // ==========================================
-  // 2. ARCHIVE SUB-CHANNEL: PRE-v4 DRAFTS (< v4)
-  // ==========================================
-  gossipMesh.clearChannelHistory(archiveChannelId);
-
+  // Subchannel: archive
   gossipMesh.publish(spaceId, archiveChannelId, {
     content: `**أَرْشِيف الإِمَام فَخْر الدِّين الرَّازِيّ // HISTORICAL & LEGACY ARCHIVE (< v4)**
 
 This dedicated sub-channel preserves earlier translation drafts, experimental milestones, and historical split volumes (< v4) of Imam Fakhr al-Din al-Razi's works.
 
-*For the official, unified v4 & v5 masterworks, please visit the main channel **#imam-razi**.*`
+*For official unified v4 & v5 masterworks, please explore the topical sub-channels **#tafsir-matalib** and **#kalam-usul**.*`
   }, { senderId: 'ibn-manzur@lisan' });
 
   if (catalog.legacyArchive && catalog.legacyArchive.length > 0) {
@@ -929,108 +924,118 @@ This dedicated sub-channel preserves earlier translation drafts, experimental mi
   }
 }
 
-// Seed Imam Abu Hamid al-Ghazali EPUB Library Catalog into #imam-abuhamid and #abuhamid-archive
 function seedImamGhazaliLibrary() {
   const spaceId = 'space-public-mesh';
   const mainChannelId = 'chan-imam-abuhamidd';
+  const kalamChannelId = 'chan-ghazali-kalam-falsafa';
+  const usulChannelId = 'chan-ghazali-usul-mantiq';
+  const sulukChannelId = 'chan-ghazali-suluk-adab';
   const archiveChannelId = 'chan-imam-abuhamid-archive';
   const catalog = ImamGhazaliLibrary.getCatalog();
 
-  // ==========================================
-  // 1. MAIN CHANNEL: ONLY v4 & v5 MASTERWORKS
-  // ==========================================
   gossipMesh.clearChannelHistory(mainChannelId);
+  gossipMesh.clearChannelHistory(kalamChannelId);
+  gossipMesh.clearChannelHistory(usulChannelId);
+  gossipMesh.clearChannelHistory(sulukChannelId);
+  gossipMesh.clearChannelHistory(archiveChannelId);
 
-  // 1.1 Welcome Banner
+  // Main Portal Banner
   gossipMesh.publish(spaceId, mainChannelId, {
-    content: `**مَكْتَبَة حُجَّة الإِسْلَام أَبِي حَامِد الغَزَالِي // OFFICIAL MASTERWORKS (AYNENGINE AI v4 & v5)**
+    content: `**مَكْتَبَة حُجَّة الإِسْلَام أَبِي حَامِد الغَزَالِي // OFFICIAL MASTERWORKS PORTAL**
 
 Welcome to the sovereign digital library of **Hujjat al-Islam Imam Abu Hamid al-Ghazali (450–505 AH / 1058–1111 CE)**.
 
-Featured exclusively on this main channel are the **Official AynEngine AI v4 & v5 Masterworks**:
-• **Ihya 'Ulum al-Din**: The Complete 40-Book Masterwork in unified single-volume editions (Pure English & Bilingual Apparatus).
-• **Pure English Scholarly Corpus**: Direct 1st-person authorial translations across 25+ classical treatises.
-• **Bilingual Scholarly Apparatus Corpus**: Classical Arabic text + Quad-Lexical semantic apparatus (Al-Raghib, Asas al-Balaghah, Lisan al-Arab, Sibawayh).
-
-*Looking for earlier translation drafts (< v4) or the 4-volume split files of Ihya 'Ulum al-Din? Please navigate to the dedicated sub-channel **#abuhamid-archive**.*`
+Please explore the dedicated sub-channels under this library:
+• **#kalam-falsafa**: Kalam, Philosophical Critiques & Polemics (*Tahafut al-Falasifa*, *Al-Iqtisad fi al-I'tiqad*, *Maqasid al-Falasifah*, *Qawa'id al-'Aqa'id*, *Fada'ih al-Batiniyya*, *Al-Radd al-Jamil* — Official v4 Editions).
+• **#usul-mantiq**: Legal Theory & Classical Logic (*Al-Mustasfa min 'Ilm al-Usul*, *Al-Mankhul*, *Shifa al-Ghalil*, *Mi'yar al-'Ilm*, *Mihakk al-Nazar* — Official v4 Editions).
+• **#suluk-adab**: Spiritual Path, Ethics & Divine Wisdom (*Al-Munqidh min al-Dalal*, *Mishkat al-Anwar*, *Bidayat al-Hidayah*, *Minhaj al-'Abidin*, *Mizan al-'Amal*, *Al-Maqsad al-Asna*, *Jawahir al-Quran*, *Al-Wasit*, etc. — Official v4/v5 Editions).
+• **#archive**: Historical pre-v4 translation drafts (< v4), including *Ihya 'Ulum al-Din* (40-book single-corpus & 4-volume split drafts) and 76-sections drafts of *Tahafut*.`
   }, { senderId: 'ibn-manzur@lisan' });
 
-  // 1.2 Unified Ihya 'Ulum al-Din (Complete 40 Books)
-  const ihyaUnified = [
-    ...catalog.pureEditions.filter(item => item.slug === 'ihya_ulum_al_din'),
-    ...catalog.bilingualEditions.filter(item => item.slug === 'ihya_ulum_al_din')
-  ];
-  if (ihyaUnified.length > 0) {
-    const atts = ihyaUnified.map(item => ({
+  // Subchannel: kalam-falsafa
+  if (catalog.kalamAndPhilosophy && catalog.kalamAndPhilosophy.length > 0) {
+    const atts = catalog.kalamAndPhilosophy.map(item => ({
       name: item.filename,
       type: 'application/epub+zip',
-      size: item.filename.includes('bilingual') ? 7900000 : 3460000,
+      size: 600000,
       data: item.downloadUrl,
       title: item.title,
       arabicTitle: item.arabicTitle
     }));
 
-    gossipMesh.publish(spaceId, mainChannelId, {
-      content: `**Ihya 'Ulum al-Din (Revival of the Religious Sciences) — Complete 40 Books Masterwork (v4/v5)**
-*The definitive, unabridged 40-book masterwork of Imam al-Ghazali in unified sovereign editions. Available in Pure Scholarly English and Bilingual Apparatus with Quad-Lexical semantic anchors.*`,
+    gossipMesh.publish(spaceId, kalamChannelId, {
+      content: `**Kalam, Philosophy & Polemics Masterworks (Official v4 Editions — ${catalog.kalamAndPhilosophy.length} Volumes)**
+*Definitive authorial translations and quad-lexical apparatus editions of Tahafut al-Falasifa, Al-Iqtisad fi al-I'tiqad, Maqasid al-Falasifah, Qawa'id al-'Aqa'id, Fada'ih al-Batiniyya, and Al-Radd al-Jamil.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // 1.3 Pure English Scholarly Corpus (excluding ihya since featured above)
-  const pureNonIhya = catalog.pureEditions.filter(item => item.slug !== 'ihya_ulum_al_din');
-  if (pureNonIhya.length > 0) {
-    const atts = pureNonIhya.map(item => ({
+  // Subchannel: usul-mantiq
+  if (catalog.usulAndLogic && catalog.usulAndLogic.length > 0) {
+    const atts = catalog.usulAndLogic.map(item => ({
       name: item.filename,
       type: 'application/epub+zip',
-      size: 500000,
+      size: 700000,
       data: item.downloadUrl,
       title: item.title,
       arabicTitle: item.arabicTitle
     }));
 
-    gossipMesh.publish(spaceId, mainChannelId, {
-      content: `**Edition 1: Pure English Scholarly Masterworks (${pureNonIhya.length} Volumes)**
-*Direct, unabridged translations of Al-Munqidh min al-Dalal, Tahafut al-Falasifa, Mishkat al-Anwar, Al-Mustasfa, Bidayat al-Hidayah, Kimiya-yi Sa'adat, Maqasid al-Falasifah, Mizan al-'Amal, Al-Iqtisad, Al-Wasit, and all classical treatises.*`,
+    gossipMesh.publish(spaceId, usulChannelId, {
+      content: `**Legal Theory & Classical Logic Masterworks (Official v4 Editions — ${catalog.usulAndLogic.length} Volumes)**
+*Definitive translations of Al-Mustasfa min 'Ilm al-Usul, Al-Mankhul, Shifa al-Ghalil, Mi'yar al-'Ilm, and Mihakk al-Nazar.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // 1.4 Bilingual Apparatus Corpus (excluding ihya since featured above)
-  const bilNonIhya = catalog.bilingualEditions.filter(item => item.slug !== 'ihya_ulum_al_din');
-  if (bilNonIhya.length > 0) {
-    const atts = bilNonIhya.map(item => ({
+  // Subchannel: suluk-adab
+  if (catalog.sulukAndEthics && catalog.sulukAndEthics.length > 0) {
+    const atts = catalog.sulukAndEthics.map(item => ({
       name: item.filename,
       type: 'application/epub+zip',
-      size: 800000,
+      size: 600000,
       data: item.downloadUrl,
       title: item.title,
       arabicTitle: item.arabicTitle
     }));
 
-    gossipMesh.publish(spaceId, mainChannelId, {
-      content: `**Edition 2: Bilingual Classical Apparatus Corpus (${bilNonIhya.length} Volumes)**
-*Full classical Arabic text with Quad-Lexical semantic anchors (Al-Mufradat, Asas al-Balaghah, Lisan al-Arab, Sibawayh) and aligned English translations for research and scholarly study.*`,
+    gossipMesh.publish(spaceId, sulukChannelId, {
+      content: `**Spiritual Path, Ethics & Divine Wisdom Masterworks (Official v4/v5 Editions — ${catalog.sulukAndEthics.length} Volumes)**
+*Unabridged translations of Al-Munqidh min al-Dalal, Mishkat al-Anwar, Bidayat al-Hidayah, Minhaj al-'Abidin, Mizan al-'Amal, Al-Maqsad al-Asna, Jawahir al-Quran, Ma'arij al-Quds, Asnaf al-Maghrurin, Sirr al-'Alamin, Al-Tibr al-Masbuk, Kimiya-yi Sa'adat, and Al-Wasit.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // ==========================================
-  // 2. ARCHIVE SUB-CHANNEL: PRE-v4 DRAFTS (< v4)
-  // ==========================================
-  gossipMesh.clearChannelHistory(archiveChannelId);
-
+  // Subchannel: archive
   gossipMesh.publish(spaceId, archiveChannelId, {
     content: `**أَرْشِيف حُجَّة الإِسْلَام الغَزَالِي // HISTORICAL & LEGACY ARCHIVE (< v4)**
 
-This dedicated sub-channel preserves earlier translation drafts, split volumes, and historical trials (< v4) of Imam Abu Hamid al-Ghazali's works.
+This dedicated sub-channel preserves earlier translation drafts, split volumes, and historical trials (< v4) of Imam Abu Hamid al-Ghazali's works, including the August 2026 translation of *Ihya 'Ulum al-Din* pending official v4/v5 re-translation.
 
-*For the official, unified v4 & v5 masterworks, please visit the main channel **#imam-abuhamid**.*`
+*For official v4 & v5 masterworks, please explore the topical sub-channels **#kalam-falsafa**, **#usul-mantiq**, and **#suluk-adab**.*`
   }, { senderId: 'ibn-manzur@lisan' });
 
   if (catalog.legacyArchive && catalog.legacyArchive.length > 0) {
+    const ihyaOmnibus = catalog.legacyArchive.filter(item => item.filename.startsWith('ihya_ulum_al_din_pure') || item.filename.startsWith('ihya_ulum_al_din_bilingual'));
     const ihyaSplit = catalog.legacyArchive.filter(item => item.filename.startsWith('ihya_ulum_al_din_vol_'));
-    const otherDrafts = catalog.legacyArchive.filter(item => !item.filename.startsWith('ihya_ulum_al_din_vol_'));
+    const otherDrafts = catalog.legacyArchive.filter(item => !item.filename.startsWith('ihya_ulum_al_din'));
+
+    if (ihyaOmnibus.length > 0) {
+      const atts = ihyaOmnibus.map(item => ({
+        name: item.filename,
+        type: 'application/epub+zip',
+        size: 4000000,
+        data: item.downloadUrl,
+        title: item.title,
+        arabicTitle: item.arabicTitle
+      }));
+
+      gossipMesh.publish(spaceId, archiveChannelId, {
+        content: `**Ihya 'Ulum al-Din — Complete 40 Books Masterwork (v3 Legacy Edition)**
+*The complete single-corpus translation of the 40 books of the Revival of Religious Sciences (Pure & Bilingual Apparatus editions).*`,
+        attachments: atts
+      }, { senderId: 'ibn-manzur@lisan' });
+    }
 
     if (ihyaSplit.length > 0) {
       const atts = ihyaSplit.map(item => ({
@@ -1068,123 +1073,84 @@ This dedicated sub-channel preserves earlier translation drafts, split volumes, 
   }
 }
 
-// Seed Imam Nawawi EPUB Library Catalog into #imam-nawawi and #nawawi-archive
 function seedImamNawawiLibrary() {
   const spaceId = 'space-public-mesh';
   const mainChannelId = 'chan-imam-nawawi';
   const archiveChannelId = 'chan-imam-nawawi-archive';
   const catalog = ImamNawawiLibrary.getCatalog();
 
-  // ==========================================
-  // 1. MAIN CHANNEL: ONLY v4 & v5 MASTERWORKS
-  // ==========================================
   gossipMesh.clearChannelHistory(mainChannelId);
-
-  gossipMesh.publish(spaceId, mainChannelId, {
-    content: `**مَكْتَبَة الإِمَام مُحْيِي الدِّين يَحْيَى بن شَرَف النَّوَوِي // OFFICIAL MASTERWORKS (AYNENGINE AI v4 & v5)**
-
-Welcome to the complete digital classical library of **Imam Abu Zakariyya Yahya ibn Sharaf al-Nawawi (631–676 AH / 1233–1277 CE)**.
-
-All revered Hadith, devotional, and legal masterworks are available below in **Official AynEngine AI v4 & v5 Editions**:
-1. **Pure English Scholarly Editions**: Direct authorial translations.
-2. **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + Quad-Lexical apparatus + English translation.
-
-*Looking for earlier translation drafts (< v4)? Please navigate to the dedicated sub-channel **#nawawi-archive**.*`
-  }, { senderId: 'ibn-manzur@lisan' });
-
-  if (catalog.pureEditions && catalog.pureEditions.length > 0) {
-    const atts = catalog.pureEditions.map(item => ({
-      name: item.filename,
-      type: 'application/epub+zip',
-      size: 500000,
-      data: item.downloadUrl,
-      title: item.title,
-      arabicTitle: item.arabicTitle
-    }));
-
-    gossipMesh.publish(spaceId, mainChannelId, {
-      content: `**Edition 1: Pure English Scholarly Corpus (${catalog.pureEditions.length} Volumes)**
-*The Forty Hadith (Al-Arba'in), Riyad al-Salihin, Al-Tibyan, Kitab al-Adhkar, Minhaj al-Talibin, Sharh Sahih Muslim, Rawdat al-Talibin, and all masterworks.*`,
-      attachments: atts
-    }, { senderId: 'ibn-manzur@lisan' });
-  }
-
-  if (catalog.bilingualEditions && catalog.bilingualEditions.length > 0) {
-    const atts = catalog.bilingualEditions.map(item => ({
-      name: item.filename,
-      type: 'application/epub+zip',
-      size: 800000,
-      data: item.downloadUrl,
-      title: item.title,
-      arabicTitle: item.arabicTitle
-    }));
-
-    gossipMesh.publish(spaceId, mainChannelId, {
-      content: `**Edition 2: Bilingual Scholarly Apparatus Corpus (${catalog.bilingualEditions.length} Volumes)**
-*Full Arabic text with classical Hadith, Fiqh, and Quad-Lexical semantic annotations alongside English translations.*`,
-      attachments: atts
-    }, { senderId: 'ibn-manzur@lisan' });
-  }
-
-  // ==========================================
-  // 2. ARCHIVE SUB-CHANNEL: PRE-v4 DRAFTS (< v4)
-  // ==========================================
   gossipMesh.clearChannelHistory(archiveChannelId);
 
+  // Main Portal Banner: NO EPUB attachments (because none are v4/v5 yet)
+  gossipMesh.publish(spaceId, mainChannelId, {
+    content: `**مَكْتَبَة الإِمَام مُحْيِي الدِّين يَحْيَى بن شَرَف النَّوَوِي // OFFICIAL PORTAL & PIPELINE STATUS**
+
+Welcome to the digital classical library of **Imam Abu Zakariyya Yahya ibn Sharaf al-Nawawi (631–676 AH / 1233–1277 CE)**.
+
+**Translation Pipeline Notice**:
+Official AynEngine AI v4 & v5 re-translations for the complete 22-work Nawawi corpus are queued in active preparation following the completion of *Al-Wasit*.
+
+All 22 existing complete translation editions produced with AynEngine v3 (August 2026) are preserved and available in the dedicated archive sub-channel **#archive** (including *The Forty Hadith*, *Riyad al-Salihin*, *Al-Tibyan*, *Kitab al-Adhkar*, *Minhaj al-Talibin*, *Sharh Sahih Muslim*, *Rawdat al-Talibin*, etc.).
+
+*Please open the sub-channel **#archive** directly below to access the full 22-volume corpus.*`
+  }, { senderId: 'ibn-manzur@lisan' });
+
+  // Subchannel: archive
   gossipMesh.publish(spaceId, archiveChannelId, {
-    content: `**أَرْشِيف الإِمَام النَّوَوِي // HISTORICAL & LEGACY ARCHIVE (< v4)**
+    content: `**أَرْشِيف الإِمَام النَّوَوِي // COMPLETE 22-VOLUME LEGACY CORPUS (< v4)**
 
-This dedicated sub-channel preserves earlier translation drafts and experimental trials (< v4) of Imam Yahya al-Nawawi's works.
+This dedicated sub-channel preserves the complete 22 classical works of Imam Yahya al-Nawawi translated with AynEngine v3 (August 2026).
 
-*For the official, unified v4 & v5 masterworks, please visit the main channel **#imam-nawawi**.*`
+Available below in both Pure English Scholarly editions and Bilingual Lexical Apparatus editions:`
   }, { senderId: 'ibn-manzur@lisan' });
 
   if (catalog.legacyArchive && catalog.legacyArchive.length > 0) {
     const atts = catalog.legacyArchive.map(item => ({
       name: item.filename,
       type: 'application/epub+zip',
-      size: 400000,
-      data: item.downloadUrl,
-      title: item.title,
-      arabicTitle: item.arabicTitle
-    }));
-
-    gossipMesh.publish(spaceId, archiveChannelId, {
-      content: `**Early Translation Trials & Legacy Files (${catalog.legacyArchive.length} Files)**`,
-      attachments: atts
-    }, { senderId: 'ibn-manzur@lisan' });
-  }
-}
-
-function seedImamRaghibLibrary() {
-  const channelId = "chan-imam-raghib";
-  const spaceId = "space-public-mesh";
-  const catalog = ImamRaghibLibrary.getCatalog();
-
-  gossipMesh.clearChannelHistory(channelId);
-
-  gossipMesh.publish(spaceId, channelId, {
-    content: "**Maktabat al-Imam al-Raghib al-Isfahani (d. 502 AH / 1108 CE)**\n\nWelcome to the complete digital classical library of **Imam Abu al-Qasim al-Husayn ibn Muhammad al-Raghib al-Isfahani** (الإمام الراغب الأصفهاني), the supreme classical authority on Quranic lexicography, semantic taxonomy, and ethics.\n\nAll classical masterworks are available below in **Two Distinct Publishing Editions**:\n1. **Pure English Scholarly Editions**: Direct, continuous authorial translations.\n2. **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + 5-Pillar Lexical Apparatus (Al-Mufradat, Asas al-Balaghah, Lisan al-Arab, Kitab al-Ayn, Sibawayh) + English translation."
-  }, { senderId: "ibn-manzur@lisan" });
-
-  if (catalog.pureEditions && catalog.pureEditions.length > 0) {
-    const atts = catalog.pureEditions.map(item => ({
-      name: item.filename,
-      type: "application/epub+zip",
       size: 500000,
       data: item.downloadUrl,
       title: item.title,
       arabicTitle: item.arabicTitle
     }));
 
-    gossipMesh.publish(spaceId, channelId, {
-      content: "**Edition 1: Pure English Scholarly Corpus (" + catalog.pureEditions.length + " Volumes)**\n*Al-Mufradat fi Gharib al-Qur'an, Al-Dhari'ah ila Makarim al-Shari'ah, Tafsil al-Nash'atayn, and Adab Ikhtilat al-Nas.*",
+    gossipMesh.publish(spaceId, archiveChannelId, {
+      content: `**Imam al-Nawawi Complete Classical Corpus (${catalog.legacyArchive.length} EPUB Volumes)**
+*The Forty Hadith (Al-Arba'in), Riyad al-Salihin, Al-Tibyan, Kitab al-Adhkar, Minhaj al-Talibin, Sharh Sahih Muslim, Rawdat al-Talibin, Al-Majmu', Bustan al-'Arifin, Tahdhib al-Asma', and all 22 works.*`,
       attachments: atts
-    }, { senderId: "ibn-manzur@lisan" });
+    }, { senderId: 'ibn-manzur@lisan' });
   }
+}
 
-  if (catalog.bilingualEditions && catalog.bilingualEditions.length > 0) {
-    const atts = catalog.bilingualEditions.map(item => ({
+function seedImamRaghibLibrary() {
+  const spaceId = "space-public-mesh";
+  const mainChannelId = "chan-imam-raghib";
+  const lexiconChannelId = "chan-raghib-lexicon-tafsir";
+  const akhlaqChannelId = "chan-raghib-akhlaq-adab";
+  const catalog = ImamRaghibLibrary.getCatalog();
+
+  gossipMesh.clearChannelHistory(mainChannelId);
+  gossipMesh.clearChannelHistory(lexiconChannelId);
+  gossipMesh.clearChannelHistory(akhlaqChannelId);
+
+  // Main Portal Banner
+  gossipMesh.publish(spaceId, mainChannelId, {
+    content: `**مَكْتَبَة الإِمَام الرَّاغِب الأَصْفَهَانِي // OFFICIAL MASTERWORKS PORTAL**
+
+Welcome to the digital classical library of **Imam Abu al-Qasim al-Husayn ibn Muhammad al-Raghib al-Isfahani (d. 502 AH / 1108 CE)**.
+
+Please explore the dedicated sub-channels under this library:
+• **#lexicon-tafsir**: Quranic Lexicography & Exegesis (*Al-Mufradat fi Gharib al-Qur'an*, *Jami' al-Tafsir* — Official v4 Editions).
+• **#akhlaq-adab**: Ethical Philosophy, States & Literati Dialogues (*Al-Dhari'ah ila Makarim al-Shari'ah*, *Tafsil al-Nash'atayn*, *Adab Ikhtilat al-Nas*, *Muhadarat al-Udaba* — Official v4 Editions).`
+  }, { senderId: "ibn-manzur@lisan" });
+
+  // Subchannel: lexicon-tafsir
+  const lexiconFiles = (catalog.pureEditions.concat(catalog.bilingualEditions)).filter(item => 
+    item.slug === 'al_mufradat_fi_gharib_al_quran' || item.slug === 'jami_al_tafsir'
+  );
+  if (lexiconFiles.length > 0) {
+    const atts = lexiconFiles.map(item => ({
       name: item.filename,
       type: "application/epub+zip",
       size: 800000,
@@ -1193,13 +1159,34 @@ function seedImamRaghibLibrary() {
       arabicTitle: item.arabicTitle
     }));
 
-    gossipMesh.publish(spaceId, channelId, {
-      content: "**Edition 2: Bilingual Scholarly Apparatus Corpus (" + catalog.bilingualEditions.length + " Volumes)**\n*Classical Arabic text aligned with 5-Pillar Lexicographical annotations and rigorous theological apparatus alongside English translations.*",
+    gossipMesh.publish(spaceId, lexiconChannelId, {
+      content: `**Quranic Lexicography & Exegesis Masterworks (Official v4 Editions — ${lexiconFiles.length} Volumes)**
+*Al-Mufradat fi Gharib al-Qur'an (The Landmark Classical Quranic Lexicon) and Jami' al-Tafsir.*`,
+      attachments: atts
+    }, { senderId: "ibn-manzur@lisan" });
+  }
+
+  // Subchannel: akhlaq-adab
+  const akhlaqFiles = (catalog.pureEditions.concat(catalog.bilingualEditions)).filter(item => 
+    item.slug !== 'al_mufradat_fi_gharib_al_quran' && item.slug !== 'jami_al_tafsir'
+  );
+  if (akhlaqFiles.length > 0) {
+    const atts = akhlaqFiles.map(item => ({
+      name: item.filename,
+      type: "application/epub+zip",
+      size: 600000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, akhlaqChannelId, {
+      content: `**Ethical Philosophy & Adab Masterworks (Official v4 Editions — ${akhlaqFiles.length} Volumes)**
+*Al-Dhari'ah ila Makarim al-Shari'ah, Tafsil al-Nash'atayn, Adab Ikhtilat al-Nas, and Muhadarat al-Udaba.*`,
       attachments: atts
     }, { senderId: "ibn-manzur@lisan" });
   }
 }
-
 function seedClassicalHeritageLibrary() {
   const channelId = 'chan-classical-heritage';
   const spaceId = 'space-public-mesh';
