@@ -12,3 +12,10 @@ cloudflared
 *.pem
 public/cached_videos/Med5d01XTt0.mp4
 tunnel_url.txt
+# Security & Credentials Protection
+*.token
+*token*
+*.cert
+cloudflare*
+.cloudflared*
+credentials*.json

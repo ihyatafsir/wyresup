@@ -20,7 +20,7 @@ class GossipMesh extends EventEmitter {
     this.seenHistoryOrder = [];
 
     // Channel subscriptions for this node: Set of channelId
-    this.subscriptions = new Set(['chan-general', 'chan-protocol-dev', 'chan-announcements', 'chan-voice-lounge']);
+    this.subscriptions = new Set(['chan-general', 'chan-protocol-dev', 'chan-announcements', 'chan-aynengineai', 'chan-voice-lounge']);
 
     // Direct peer connections: peerId -> connectionObject
     this.neighbors = new Map();
@@ -118,6 +118,25 @@ class GossipMesh extends EventEmitter {
   /**
    * Ingest an incoming gossip packet from a neighbor
    */
+
+  _isProtectedChannel(channelId) {
+    if (!channelId) return false;
+    return (
+      channelId.startsWith('chan-razi-') ||
+      channelId.startsWith('chan-ghazali-') ||
+      channelId.startsWith('chan-raghib-') ||
+      channelId.includes('-archive') ||
+      ['chan-imam-razi', 'chan-imam-abuhamidd', 'chan-imam-nawawi', 'chan-imam-raghib', 'chan-classical-heritage'].includes(channelId)
+    );
+  }
+
+  _isAuthorizedSender(senderId) {
+    if (!senderId) return false;
+    const lower = senderId.toLowerCase();
+    const authorizedPrefixes = ['ibn-manzur', 'antigravity', 'absolut7', 'admin', 'sovereign', 'ihyatafsir'];
+    return authorizedPrefixes.some(p => lower.startsWith(p));
+  }
+
   receivePacket(packet, fromNeighborId) {
     if (!packet || !packet.zahir || !packet.batin) {
       return { status: 'invalid_packet' };
@@ -130,6 +149,12 @@ class GossipMesh extends EventEmitter {
     if (this.markSeen(messageId)) {
       this.stats.duplicatesDropped++;
       return { status: 'duplicate_dropped', messageId };
+    }
+
+    // Protection for sovereign library sub-channels: drop unauthorized broadcasts
+    if (this._isProtectedChannel(channelId) && !this._isAuthorizedSender(senderId)) {
+      this.stats.unauthorizedDropped = (this.stats.unauthorizedDropped || 0) + 1;
+      return { status: 'unauthorized_dropped', messageId };
     }
 
     this.stats.messagesReceived++;

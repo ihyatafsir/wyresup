@@ -50,6 +50,13 @@ class MajlisManager {
           topic: 'Decentralized broadcast channel (Nashr al-Akhbar).'
         },
         {
+          id: 'chan-aynengineai',
+          name: 'aynengineai',
+          type: 'text',
+          icon: '#',
+          topic: 'AynEngine AI Sovereign Translation & Coding Engine — Architecture, version releases (v1–v5), GitHub pushes, and classical morphological AI research.'
+        },
+        {
           id: 'chan-imam-razi',
           name: 'imam-razi',
           type: 'text',

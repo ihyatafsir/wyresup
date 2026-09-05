@@ -310,6 +310,16 @@ const server = http.createServer((req, res) => {
       try {
         const data = JSON.parse(body || '{}');
         const channelId = data.channelId || 'chan-general';
+        if (PROTECTED_LIBRARY_CHANNELS.has(channelId)) {
+          const isTunnel = Boolean(req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for']);
+          const remoteIp = req.socket.remoteAddress || '';
+          const isLocal = !isTunnel && (remoteIp === '127.0.0.1' || remoteIp === '::ffff:127.0.0.1' || remoteIp === '::1');
+          if (!isLocal) {
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Permission Denied: Protected library channels cannot be wiped remotely.' }));
+            return;
+          }
+        }
         gossipMesh.clearChannelHistory(channelId);
         broadcastSystemEvent('MESSAGES_CLEARED', { channelId });
         console.log(`[Mesh Admin]  Channel ${channelId} history wiped clean.`);
@@ -470,7 +480,49 @@ const server = http.createServer((req, res) => {
 // WebSocket Server
 const wss = new WebSocketServer({ server });
 
+
+// --- Sovereign Protected Channels Policy ---
+const PROTECTED_LIBRARY_CHANNELS = new Set([
+  'chan-razi-tafsir-matalib',
+  'chan-razi-kalam-usul',
+  'chan-imam-razi-archive',
+  'chan-ghazali-kalam-falsafa',
+  'chan-ghazali-usul-mantiq',
+  'chan-ghazali-suluk-adab',
+  'chan-imam-abuhamid-archive',
+  'chan-imam-nawawi-archive',
+  'chan-raghib-lexicon-tafsir',
+  'chan-raghib-akhlaq-adab',
+  'chan-imam-razi',
+  'chan-imam-abuhamidd',
+  'chan-imam-nawawi',
+  'chan-imam-raghib',
+  'chan-classical-heritage'
+]);
+
+function isAuthorizedPublisher(client, ws) {
+  if (!client) return false;
+  const peerId = (client.peerId || '').toLowerCase();
+  const sovereignPrefixes = ['ibn-manzur', 'antigravity', 'absolut7', 'admin', 'sovereign', 'ihyatafsir'];
+  if (sovereignPrefixes.some(p => peerId.startsWith(p))) {
+    return true;
+  }
+  if (client.isSovereignAdmin) {
+    return true;
+  }
+  // Localhost process (not proxied through Cloudflare)
+  if (ws && !ws.isTunnel) {
+    const remoteIp = ws._socket ? (ws._socket.remoteAddress || '') : '';
+    const isLocal = remoteIp === '127.0.0.1' || remoteIp === '::ffff:127.0.0.1' || remoteIp === '::1' || remoteIp === '';
+    if (isLocal && !peerId.startsWith('guest') && !peerId.startsWith('visitor') && !peerId.startsWith('anon')) {
+      return true;
+    }
+  }
+  return false;
+}
+
 wss.on('connection', (ws, req) => {
+  ws.isTunnel = Boolean(req && req.headers && (req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for']));
   let clientPeer = null;
   ws.isAlive = true;
   ws.on('pong', () => { ws.isAlive = true; });
@@ -594,6 +646,27 @@ function handleClientMessage(ws, msg) {
       if (!client) return;
 
       let targetChannel = client.currentChannelId;
+
+      if (payload.zahir && payload.batin) {
+        targetChannel = payload.zahir.channelId;
+      } else {
+        targetChannel = payload.channelId || client.currentChannelId;
+      }
+
+      // Enforce Sovereign Read-Only Protection on Imam Channels:
+      if (PROTECTED_LIBRARY_CHANNELS.has(targetChannel)) {
+        if (!isAuthorizedPublisher(client, ws)) {
+          console.log(`[Mesh Security] Rejected unauthorized post to library channel ${targetChannel} by ${client.peerId}`);
+          ws.send(JSON.stringify({
+            type: 'SYSTEM_NOTICE',
+            payload: {
+              channelId: targetChannel,
+              text: 'Permission Denied: Imam library sub-channels are strictly read-only and reserved for sovereign publishing.'
+            }
+          }));
+          return;
+        }
+      }
 
       if (payload.zahir && payload.batin) {
         // Direct pre-wrapped / encrypted ZBAT packet from client (Zero-Knowledge Relay)
@@ -1268,12 +1341,123 @@ function seedClassicalHeritageLibrary() {
   }
 }
 
+function seedAynEngineChannel() {
+  const spaceId = 'space-public-mesh';
+  const channelId = 'chan-aynengineai';
+
+  gossipMesh.clearChannelHistory(channelId);
+
+  // Message 1: Grand Architectural Presentation
+  gossipMesh.publish(spaceId, channelId, {
+    content: `**AYNENGINE AI // SOVEREIGN CLASSICAL TRANSLATION & CODING ENGINE**
+
+Welcome to **#aynengineai** — the official presentation, architecture showcase, and release tracking channel for **AynEngine AI**.
+
+AynEngine AI is an autonomous, lexicographically-guided cognitive translation and software synthesis framework engineered to translate dense classical Islamic manuscripts and synthesize high-assurance software without semantic drift or cognitive hallucinations.
+
+**Foundational 5-Pillar Classical Architecture:**
+1. **Kitāb al-ʿAyn** (*al-Khalīl ibn Aḥmad al-Farāhīdī*, d. 175 AH) — Phonetic permutation matrix and primary radical consonant mapping.
+2. **Al-Mufradāt fī Gharīb al-Qurʾān** (*al-Rāghib al-Iṣfahānī*, d. 502 AH) — Quranic semantic nuance, metaphysical distinctions, and conceptual clarity.
+3. **Asās al-Balāghah** (*al-Zamakhsharī*, d. 538 AH) — Rhetorical balance, metaphoric extension (*majāz*), and literal (*ḥaqīqah*) boundaries.
+4. **Lisān al-ʿArab** (*Ibn Manẓūr*, d. 711 AH) — Comprehensive classical lexicographical canon comprising 346,000+ entries.
+5. **Al-Kitāb** (*Sībawayh*, d. 180 AH) — Classical syntactic scaffolding, grammatical relations, and inflectional governance.
+
+**Core Standards:**
+• **Zero-Loss Chunking**: Sentence-safe boundary detection with active token continuation to ensure zero semantic omission.
+• **Dual-Edition Compilation**: Autonomous generation of both *Pure Scholarly English* and *Bilingual Lexical Apparatus* editions with interactive footnote glossaries.
+• **EPUB3 & Kindle Omnibus Architecture**: Automated packaging of monolithic multi-volume works into single, self-contained, valid EPUB3 archives.`
+  }, { senderId: 'ibn-manzur@lisan' });
+
+  // Message 2: Complete Version Releases (v1 - v5 + AynCode)
+  gossipMesh.publish(spaceId, channelId, {
+    content: `**AYNENGINE AI // COMPLETE VERSION EVOLUTION & RELEASES**
+
+**v1.0.0 — Two-Stage Lexicographical Engine**
+• Initial dual-pass paradigm: Lexical analysis pass followed by theological synthesis pass.
+• Basic root extraction and dictionary matching for early pilot treatises.
+
+**v2.0.0 — Omnibus Compilation & Bilingual Apparatus Edition**
+• Autonomous Kindle & EPUB3 compilation pipeline.
+• Introduced side-by-side bilingual chapter alignments and Arabic-English lexical glossaries.
+• Successfully compiled early omnibus corpora.
+
+**v3.0.0 — Quad-Lexical Integration & Root Deconstruction**
+• Quad-Lexical Active-RAG engine integrating *Al-Mufradāt*, *Asās al-Balāghah*, *Lisān al-ʿArab*, and *Sibawayh*.
+• Lexical salience scoring and theological stopword filtering.
+
+**v4.0.0 — Zero-Loss Active-RAG Engine & Parallel Processing (Sep 4, 2026)**
+• Implemented sentence-safe chunking and automatic continuation on context limits.
+• Full corpus ingestion and parallel deep translation workers:
+  - Complete classical works of **Imam Fakhr al-Din al-Razi** (Unified 32-in-1 *Tafsir al-Kabir* & 9 Volumes of *Al-Matalib al-'Aliyyah*).
+  - Complete classical works of **Imam al-Raghib al-Isfahani** (*Al-Dhari'ah*, *Tafsil al-Nash'atayn*, *Al-I'tiqadat*, etc.).
+  - GDrive automated backup and continuous synchronization daemon.
+
+**v5.0.0 — Sovereign Morphological Edition (Sep 5, 2026)**
+• Deep Kalām root deconstruction with dynamic morphological radical permuter.
+• High-precision philosophical disambiguation for deep Ash'ari/Shafi'i technical terminology.
+• Active pipeline worker: **Imam Abu Hamid al-Ghazali's monumental *Al-Wasīṭ fī al-Madhhab*** (Section 720+ / 785 completed in real-time).
+
+**AynCode AI — Classical 5-Pillar Guided AI Coding Edition (Sep 5, 2026)**
+• Revolutionary AI code synthesis paradigm mapping software architecture to classical linguistic principles:
+  - *I'rab* (Syntax & Grammar): Static AST validation, strict typing, and runtime boundary verification.
+  - *Balaghah* (Rhetoric & Brevity): Code minimalism, elimination of redundant abstractions.
+  - *Bayan* (Clarity): Absolute readability, zero hallucinated APIs, and zero-loss error handling.
+• CLI tool \`ayncode\` with autonomous auditing, test-driven validation, and headless mesh benchmark testing.`
+  }, { senderId: 'ibn-manzur@lisan' });
+
+  // Message 3: GitHub Repositories & Real-Time Tracking
+  gossipMesh.publish(spaceId, channelId, {
+    content: `**GITHUB REPOSITORIES & REAL-TIME DEVELOPMENT TRACKING**
+
+All core engines and applications are tracked under active version control on GitHub:
+
+• **AynEngine Translate (Core Sovereign Translation Framework)**
+  Repository: https://github.com/ihyatafsir/aynenginetranslate.git
+  Latest Commits:
+  - \`9e374a5\`: feat(v5): upgrade AynEngine to v5.0.0 Sovereign Morphological Edition
+  - \`42e2518\`: feat(coding-engine): implement AynEngine AI Coding Edition (ayncode) guided by 5-Pillar classical lexicas
+  - \`680378e\`: feat(v4.0): parallel translation engine, Razi complete corpus texts, Ghazali & Nawawi workers
+  - \`ee64d97\`: feat(v4.0): implement Zero-Loss Active-RAG engine with auto-continuation
+
+• **AynEngine AI Coding (AynCode Sovereign Software Synthesis)**
+  Repository: https://github.com/ihyatafsir/aynengineaicoding.git
+  Latest Commits:
+  - \`01f0d7d\`: fix(syntax): use node --check for accurate JavaScript AST syntax validation
+  - \`f1447eb\`: feat(v2): expand classical lexicon taxonomy, add offline 5-pillar static auditor
+  - \`7dc50d4\`: feat(initial): initialize AynEngine AI Coding Edition (ayncode)
+
+• **WyreSup Decentralized P2P Mesh (ZBAT, Nafaq, Miftah)**
+  Repository: https://github.com/ihyatafsir/wyresup.git
+  Latest Commits:
+  - \`3824a60\`: feat(sidebar): topic-based subchannels for v4/v5, pre-v4 archive segregation, and click-to-expand accordion navigation
+  - \`eebac7f\`: style(imam): remove emojis from Imam channel topics, banners, and catalog headers
+
+• **Active Background Workers on Sovereign Server:**
+  - \`ghazali_v5_deep_worker.py\` (PID 536063) — *Al-Wasīṭ fī al-Madhhab* (Translating Live)
+  - \`sync_gdrive_daemon.py\` (PID 1274299) — Automated GDrive Remote Sync`
+  }, { senderId: 'ibn-manzur@lisan' });
+
+  // Message 4: Open Discussion Portal
+  gossipMesh.publish(spaceId, channelId, {
+    content: `**DISCUSSION & COLLABORATION FORUM**
+
+This channel (**#aynengineai**) is open for all mesh participants to:
+• Discuss AynEngine AI architecture, prompt synthesis, and RAG retrieval mechanics.
+• Propose classical texts, manuscripts, and commentaries for future ingestion.
+• Inquire about GitHub releases, commit diffs, and integration into local mesh nodes.
+• Share benchmark comparisons and linguistic evaluations.
+
+Feel free to post questions, feedback, or development suggestions below!`
+  }, { senderId: 'ibn-manzur@lisan' });
+}
+
 server.listen(PORT, () => {
   seedImamRaziLibrary();
   seedImamGhazaliLibrary();
   seedImamNawawiLibrary();
   seedImamRaghibLibrary();
   seedClassicalHeritageLibrary();
+  seedAynEngineChannel();
   console.log();
   console.log();
   console.log();

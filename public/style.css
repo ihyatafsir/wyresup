@@ -3501,3 +3501,33 @@ html, body {
   from { opacity: 0; transform: translateY(-2px); }
   to { opacity: 0.85; transform: translateY(0); }
 }
+
+/* Sovereign Library Read-Only Channel Styling */
+.readonly-channel-notice {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  margin-bottom: 8px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 0.76rem;
+  font-family: var(--font-primary, sans-serif);
+  letter-spacing: 0.02em;
+  text-align: center;
+  user-select: none;
+}
+
+.composer-box.composer-readonly {
+  opacity: 0.65;
+  background: rgba(18, 22, 28, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  cursor: not-allowed;
+}
+
+.message-textarea.readonly-mode {
+  cursor: not-allowed;
+  color: var(--text-muted);
+}

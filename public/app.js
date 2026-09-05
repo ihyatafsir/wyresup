@@ -1147,6 +1147,121 @@ function renderChannelsSidebar() {
     dmCategory.style.display = hasDMs ? 'flex' : 'none';
   }
 }
+
+// --- Sovereign Library Write Protection Helpers ---
+function isProtectedLibraryChannel(channelId) {
+  if (!channelId) return false;
+  return (
+    channelId.startsWith('chan-razi-') ||
+    channelId.startsWith('chan-ghazali-') ||
+    channelId.startsWith('chan-raghib-') ||
+    channelId.includes('-archive') ||
+    ['chan-imam-razi', 'chan-imam-abuhamidd', 'chan-imam-nawawi', 'chan-imam-raghib', 'chan-classical-heritage'].includes(channelId)
+  );
+}
+
+function isSovereignPublisher() {
+  const host = window.location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '') {
+    return true; // Localhost / host user is sovereign admin ("we")
+  }
+  if (localStorage.getItem('wyresup_sovereign_publisher') === 'true') {
+    return true;
+  }
+  const prefix = (state.identity?.prefix || '').toLowerCase();
+  const sovereignPrefixes = ['absolut7', 'admin', 'sovereign', 'ihyatafsir', 'ibn-manzur', 'antigravity'];
+  return sovereignPrefixes.includes(prefix);
+}
+
+function updateComposerAccess(channel) {
+  const input = document.getElementById('message-input');
+  const btnSend = document.getElementById('btn-send-message');
+  const btnAttach = document.getElementById('btn-attach-file');
+  const btnRecord = document.getElementById('btn-record-sawt');
+  const composerBox = document.querySelector('.composer-box');
+
+  if (!input || !channel) return;
+
+  const isProtected = isProtectedLibraryChannel(channel.id);
+  const isAuthorized = isSovereignPublisher();
+
+  let noticeEl = document.getElementById('readonly-channel-notice');
+
+  if (isProtected && !isAuthorized) {
+    // Read-only mode for unauthorized public peers
+    input.disabled = true;
+    input.value = '';
+    input.placeholder = "🔒 Read-only library channel. Only sovereign publishers can post.";
+    input.classList.add('readonly-mode');
+
+    if (btnSend) {
+      btnSend.disabled = true;
+      btnSend.style.opacity = '0.3';
+      btnSend.style.pointerEvents = 'none';
+    }
+    if (btnAttach) {
+      btnAttach.style.opacity = '0.3';
+      btnAttach.style.pointerEvents = 'none';
+    }
+    if (btnRecord) {
+      btnRecord.style.opacity = '0.3';
+      btnRecord.style.pointerEvents = 'none';
+    }
+    if (composerBox) {
+      composerBox.classList.add('composer-readonly');
+    }
+
+    if (!noticeEl) {
+      noticeEl = document.createElement('div');
+      noticeEl.id = 'readonly-channel-notice';
+      noticeEl.className = 'readonly-channel-notice';
+      const container = document.querySelector('.chat-input-container');
+      if (container && composerBox) {
+        container.insertBefore(noticeEl, composerBox);
+      }
+    }
+    if (noticeEl) {
+      noticeEl.style.display = 'flex';
+      noticeEl.innerHTML = '<span>🔒 <strong>Sovereign Library Archive:</strong> This channel is read-only. Posts are restricted to authorized publishers.</span>';
+    }
+  } else {
+    // Writable mode for sovereign publisher ("we") or regular channels
+    input.disabled = false;
+    input.classList.remove('readonly-mode');
+
+    const isDM = channel.id.startsWith('dm-');
+    const peerName = isDM ? channel.id.replace('dm-', '') : '';
+
+    if (isProtected && isAuthorized) {
+      input.placeholder = `👑 Sovereign Publisher Mode — Broadcast to #${channel.name}...`;
+    } else if (isDM) {
+      input.placeholder = `Send private encrypted message to @${peerName}...`;
+    } else {
+      input.placeholder = `Broadcast encrypted message to #${channel.name}...`;
+    }
+
+    if (btnSend) {
+      btnSend.disabled = false;
+      btnSend.style.opacity = '1';
+      btnSend.style.pointerEvents = 'auto';
+    }
+    if (btnAttach) {
+      btnAttach.style.opacity = '1';
+      btnAttach.style.pointerEvents = 'auto';
+    }
+    if (btnRecord) {
+      btnRecord.style.opacity = '1';
+      btnRecord.style.pointerEvents = 'auto';
+    }
+    if (composerBox) {
+      composerBox.classList.remove('composer-readonly');
+    }
+    if (noticeEl) {
+      noticeEl.style.display = 'none';
+    }
+  }
+}
+
 function selectChannel(channelId) {
   state.currentChannelId = channelId;
   const space = state.spaces.find(s => s.id === state.currentSpaceId);
@@ -1199,6 +1314,7 @@ function selectChannel(channelId) {
       document.getElementById('hero-icon').textContent = channel.icon || (channel.type === 'voice' ? '🔊' : '#');
     }
 
+    updateComposerAccess(channel);
     const input = document.getElementById('message-input');
     input.placeholder = isDM ? `Send private encrypted message to @${peerName}...` : `Broadcast encrypted message to #${channel.name}...`;
 
@@ -2052,6 +2168,32 @@ function initEventListeners() {
       }
       return;
     }
+        // Sovereign Publisher / Admin toggle command
+    if (text === '/admin' || text === '/publisher') {
+      localStorage.setItem('wyresup_sovereign_publisher', 'true');
+      input.value = '';
+      appendSystemNotice("👑 Sovereign Publisher Mode Activated. Write permissions unlocked on all library channels.");
+      const space = state.spaces.find(s => s.id === state.currentSpaceId);
+      const ch = space?.channels.find(c => c.id === state.currentChannelId);
+      updateComposerAccess(ch);
+      return;
+    }
+    if (text === '/unadmin' || text === '/logout-admin') {
+      localStorage.removeItem('wyresup_sovereign_publisher');
+      input.value = '';
+      appendSystemNotice("🔒 Sovereign Publisher Mode Deactivated.");
+      const space = state.spaces.find(s => s.id === state.currentSpaceId);
+      const ch = space?.channels.find(c => c.id === state.currentChannelId);
+      updateComposerAccess(ch);
+      return;
+    }
+
+    // Client-side guard for protected library channels
+    if (isProtectedLibraryChannel(state.currentChannelId) && !isSovereignPublisher()) {
+      appendSystemNotice("🔒 Permission Denied: Imam library sub-channels are strictly read-only and reserved for sovereign publishing.");
+      return;
+    }
+
     const hasAttachments = state.stagedAttachments.length > 0;
     if (!text && !hasAttachments) return;
 
