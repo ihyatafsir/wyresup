@@ -810,7 +810,7 @@ function seedImamRaziLibrary() {
 
   // 1.1 Welcome Banner
   gossipMesh.publish(spaceId, mainChannelId, {
-    content: `🏛️ **مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِيّ // OFFICIAL MASTERWORKS (AYNENGINE AI v4 & v5)**
+    content: `**مَكْتَبَة الإِمَام فَخْر الدِّين الرَّازِيّ // OFFICIAL MASTERWORKS (AYNENGINE AI v4 & v5)**
 
 Welcome to the sovereign digital library of **Imam Fakhr al-Din al-Razi (544–606 AH / 1149–1209 CE)**.
 
@@ -819,7 +819,7 @@ Featured exclusively on this main channel are the **Official AynEngine AI v4 & v
 • **Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi**: Complete 9 Volumes (Official v4/v5 Pure & Bilingual).
 • **Classical Kalam & Usul Treatises**: Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, Al-Mahsul, Asrar al-Tanzil, 'Ismat al-Anbiya', I'tiqadat Firaq al-Muslimin, Al-Qada wa'l-Qadar, Risalah fi al-I'tiqad, and Jami' al-Tafsir.
 
-📦 *Looking for earlier translation trials (< v4) or the individual 32-volume split drafts of Tafsir al-Kabir? Please navigate to the dedicated sub-channel **#razi-archive**.*`
+*Looking for earlier translation trials (< v4) or the individual 32-volume split drafts of Tafsir al-Kabir? Please navigate to the dedicated sub-channel **#razi-archive**.*`
   }, { senderId: 'ibn-manzur@lisan' });
 
   // 1.2 Tafsir al-Kabir Unified (32-in-1 Masterwork)
@@ -834,7 +834,7 @@ Featured exclusively on this main channel are the **Official AynEngine AI v4 & v
     }));
 
     gossipMesh.publish(spaceId, mainChannelId, {
-      content: `📖 **Tafsir al-Kabir (Mafatih al-Ghayb) — Sovereign 32-in-1 Masterwork Editions (v4/v5)**
+      content: `**Tafsir al-Kabir (Mafatih al-Ghayb) — Sovereign 32-in-1 Masterwork Editions (v4/v5)**
 *The monumental commentary on the Holy Quran by Imam Fakhr al-Din al-Razi, translated with AynEngine AI classical vocabulary. Complete unified 32-in-1 editions in Pure Scholarly English and Bilingual Quad-Lexical Apparatus.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
@@ -852,7 +852,7 @@ Featured exclusively on this main channel are the **Official AynEngine AI v4 & v
     }));
 
     gossipMesh.publish(spaceId, mainChannelId, {
-      content: `📚 **Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi — Volumes 1 to 9 (Official v4/v5 Editions)**
+      content: `**Al-Matalib al-'Aliyyah min al-'Ilm al-Ilahi — Volumes 1 to 9 (Official v4/v5 Editions)**
 *The supreme metaphysical and philosophical opus of Imam al-Razi, spanning Cosmology, Divine Attributes, Subatomic Physics, The Rational Soul, and Eschatology (Pure English & Bilingual editions).*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
@@ -870,7 +870,7 @@ Featured exclusively on this main channel are the **Official AynEngine AI v4 & v
     }));
 
     gossipMesh.publish(spaceId, mainChannelId, {
-      content: `💎 **Classical Kalam, Usul al-Fiqh & Heresiography Masterworks (Official v4/v5 Editions)**
+      content: `**Classical Kalam, Usul al-Fiqh & Heresiography Masterworks (Official v4/v5 Editions)**
 *Definitive translations of Asas al-Taqdis, Lawami' al-Bayyinat, Kitab al-Arba'in, Al-Mahsul fi 'Ilm Usul al-Fiqh, Asrar al-Tanzil, 'Ismat al-Anbiya', I'tiqadat Firaq al-Muslimin, Al-Qada' wa'l-Qadar, and Jami' al-Tafsir.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
@@ -882,7 +882,7 @@ Featured exclusively on this main channel are the **Official AynEngine AI v4 & v
   gossipMesh.clearChannelHistory(archiveChannelId);
 
   gossipMesh.publish(spaceId, archiveChannelId, {
-    content: `📦 **أَرْشِيف الإِمَام فَخْر الدِّين الرَّازِيّ // HISTORICAL & LEGACY ARCHIVE (< v4)**
+    content: `**أَرْشِيف الإِمَام فَخْر الدِّين الرَّازِيّ // HISTORICAL & LEGACY ARCHIVE (< v4)**
 
 This dedicated sub-channel preserves earlier translation drafts, experimental milestones, and historical split volumes (< v4) of Imam Fakhr al-Din al-Razi's works.
 
@@ -904,7 +904,7 @@ This dedicated sub-channel preserves earlier translation drafts, experimental mi
       }));
 
       gossipMesh.publish(spaceId, archiveChannelId, {
-        content: `📜 **Tafsir al-Kabir (Mafatih al-Ghayb) — 32 Individual Volume Split Drafts (v2 Legacy)**
+        content: `**Tafsir al-Kabir (Mafatih al-Ghayb) — 32 Individual Volume Split Drafts (v2 Legacy)**
 *The historical 32-volume split translation drafts of Imam al-Razi's Tafsir.*`,
         attachments: atts
       }, { senderId: 'ibn-manzur@lisan' });
@@ -921,7 +921,7 @@ This dedicated sub-channel preserves earlier translation drafts, experimental mi
       }));
 
       gossipMesh.publish(spaceId, archiveChannelId, {
-        content: `📜 **Al-Matalib & Classical Kalam Treatises — Historical Pre-v4 Drafts (${others.length} Files)**
+        content: `**Al-Matalib & Classical Kalam Treatises — Historical Pre-v4 Drafts (${others.length} Files)**
 *Early translation trials, guided editions, and v2/v3 lexicographical experiments.*`,
         attachments: atts
       }, { senderId: 'ibn-manzur@lisan' });
@@ -943,7 +943,7 @@ function seedImamGhazaliLibrary() {
 
   // 1.1 Welcome Banner
   gossipMesh.publish(spaceId, mainChannelId, {
-    content: `🏛️ **مَكْتَبَة حُجَّة الإِسْلَام أَبِي حَامِد الغَزَالِي // OFFICIAL MASTERWORKS (AYNENGINE AI v4 & v5)**
+    content: `**مَكْتَبَة حُجَّة الإِسْلَام أَبِي حَامِد الغَزَالِي // OFFICIAL MASTERWORKS (AYNENGINE AI v4 & v5)**
 
 Welcome to the sovereign digital library of **Hujjat al-Islam Imam Abu Hamid al-Ghazali (450–505 AH / 1058–1111 CE)**.
 
@@ -952,7 +952,7 @@ Featured exclusively on this main channel are the **Official AynEngine AI v4 & v
 • **Pure English Scholarly Corpus**: Direct 1st-person authorial translations across 25+ classical treatises.
 • **Bilingual Scholarly Apparatus Corpus**: Classical Arabic text + Quad-Lexical semantic apparatus (Al-Raghib, Asas al-Balaghah, Lisan al-Arab, Sibawayh).
 
-📦 *Looking for earlier translation drafts (< v4) or the 4-volume split files of Ihya 'Ulum al-Din? Please navigate to the dedicated sub-channel **#abuhamid-archive**.*`
+*Looking for earlier translation drafts (< v4) or the 4-volume split files of Ihya 'Ulum al-Din? Please navigate to the dedicated sub-channel **#abuhamid-archive**.*`
   }, { senderId: 'ibn-manzur@lisan' });
 
   // 1.2 Unified Ihya 'Ulum al-Din (Complete 40 Books)
@@ -971,7 +971,7 @@ Featured exclusively on this main channel are the **Official AynEngine AI v4 & v
     }));
 
     gossipMesh.publish(spaceId, mainChannelId, {
-      content: `📖 **Ihya 'Ulum al-Din (Revival of the Religious Sciences) — Complete 40 Books Masterwork (v4/v5)**
+      content: `**Ihya 'Ulum al-Din (Revival of the Religious Sciences) — Complete 40 Books Masterwork (v4/v5)**
 *The definitive, unabridged 40-book masterwork of Imam al-Ghazali in unified sovereign editions. Available in Pure Scholarly English and Bilingual Apparatus with Quad-Lexical semantic anchors.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
@@ -990,7 +990,7 @@ Featured exclusively on this main channel are the **Official AynEngine AI v4 & v
     }));
 
     gossipMesh.publish(spaceId, mainChannelId, {
-      content: `📚 **Edition 1: Pure English Scholarly Masterworks (${pureNonIhya.length} Volumes)**
+      content: `**Edition 1: Pure English Scholarly Masterworks (${pureNonIhya.length} Volumes)**
 *Direct, unabridged translations of Al-Munqidh min al-Dalal, Tahafut al-Falasifa, Mishkat al-Anwar, Al-Mustasfa, Bidayat al-Hidayah, Kimiya-yi Sa'adat, Maqasid al-Falasifah, Mizan al-'Amal, Al-Iqtisad, Al-Wasit, and all classical treatises.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
@@ -1009,7 +1009,7 @@ Featured exclusively on this main channel are the **Official AynEngine AI v4 & v
     }));
 
     gossipMesh.publish(spaceId, mainChannelId, {
-      content: `📖 **Edition 2: Bilingual Classical Apparatus Corpus (${bilNonIhya.length} Volumes)**
+      content: `**Edition 2: Bilingual Classical Apparatus Corpus (${bilNonIhya.length} Volumes)**
 *Full classical Arabic text with Quad-Lexical semantic anchors (Al-Mufradat, Asas al-Balaghah, Lisan al-Arab, Sibawayh) and aligned English translations for research and scholarly study.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
@@ -1021,7 +1021,7 @@ Featured exclusively on this main channel are the **Official AynEngine AI v4 & v
   gossipMesh.clearChannelHistory(archiveChannelId);
 
   gossipMesh.publish(spaceId, archiveChannelId, {
-    content: `📦 **أَرْشِيف حُجَّة الإِسْلَام الغَزَالِي // HISTORICAL & LEGACY ARCHIVE (< v4)**
+    content: `**أَرْشِيف حُجَّة الإِسْلَام الغَزَالِي // HISTORICAL & LEGACY ARCHIVE (< v4)**
 
 This dedicated sub-channel preserves earlier translation drafts, split volumes, and historical trials (< v4) of Imam Abu Hamid al-Ghazali's works.
 
@@ -1043,7 +1043,7 @@ This dedicated sub-channel preserves earlier translation drafts, split volumes, 
       }));
 
       gossipMesh.publish(spaceId, archiveChannelId, {
-        content: `📜 **Ihya 'Ulum al-Din — Historical 4-Volume Split Editions (v2/v3 Legacy)**
+        content: `**Ihya 'Ulum al-Din — Historical 4-Volume Split Editions (v2/v3 Legacy)**
 *The early 4-volume quarter split translations: Rub' al-'Ibadat (Vol 1), Rub' al-'Adat (Vol 2), Rub' al-Muhlikat (Vol 3), and Rub' al-Munjiyat (Vol 4).*`,
         attachments: atts
       }, { senderId: 'ibn-manzur@lisan' });
@@ -1060,7 +1060,7 @@ This dedicated sub-channel preserves earlier translation drafts, split volumes, 
       }));
 
       gossipMesh.publish(spaceId, archiveChannelId, {
-        content: `📜 **Tahafut al-Falasifa — Early 76-Sections Translation Drafts (pre-v4)**
+        content: `**Tahafut al-Falasifa — Early 76-Sections Translation Drafts (pre-v4)**
 *Pre-v4 translation milestone drafts of The Incoherence of the Philosophers.*`,
         attachments: atts
       }, { senderId: 'ibn-manzur@lisan' });
@@ -1081,7 +1081,7 @@ function seedImamNawawiLibrary() {
   gossipMesh.clearChannelHistory(mainChannelId);
 
   gossipMesh.publish(spaceId, mainChannelId, {
-    content: `🏛️ **مَكْتَبَة الإِمَام مُحْيِي الدِّين يَحْيَى بن شَرَف النَّوَوِي // OFFICIAL MASTERWORKS (AYNENGINE AI v4 & v5)**
+    content: `**مَكْتَبَة الإِمَام مُحْيِي الدِّين يَحْيَى بن شَرَف النَّوَوِي // OFFICIAL MASTERWORKS (AYNENGINE AI v4 & v5)**
 
 Welcome to the complete digital classical library of **Imam Abu Zakariyya Yahya ibn Sharaf al-Nawawi (631–676 AH / 1233–1277 CE)**.
 
@@ -1089,7 +1089,7 @@ All revered Hadith, devotional, and legal masterworks are available below in **O
 1. **Pure English Scholarly Editions**: Direct authorial translations.
 2. **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + Quad-Lexical apparatus + English translation.
 
-📦 *Looking for earlier translation drafts (< v4)? Please navigate to the dedicated sub-channel **#nawawi-archive**.*`
+*Looking for earlier translation drafts (< v4)? Please navigate to the dedicated sub-channel **#nawawi-archive**.*`
   }, { senderId: 'ibn-manzur@lisan' });
 
   if (catalog.pureEditions && catalog.pureEditions.length > 0) {
@@ -1103,7 +1103,7 @@ All revered Hadith, devotional, and legal masterworks are available below in **O
     }));
 
     gossipMesh.publish(spaceId, mainChannelId, {
-      content: `📚 **Edition 1: Pure English Scholarly Corpus (${catalog.pureEditions.length} Volumes)**
+      content: `**Edition 1: Pure English Scholarly Corpus (${catalog.pureEditions.length} Volumes)**
 *The Forty Hadith (Al-Arba'in), Riyad al-Salihin, Al-Tibyan, Kitab al-Adhkar, Minhaj al-Talibin, Sharh Sahih Muslim, Rawdat al-Talibin, and all masterworks.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
@@ -1120,7 +1120,7 @@ All revered Hadith, devotional, and legal masterworks are available below in **O
     }));
 
     gossipMesh.publish(spaceId, mainChannelId, {
-      content: `📖 **Edition 2: Bilingual Scholarly Apparatus Corpus (${catalog.bilingualEditions.length} Volumes)**
+      content: `**Edition 2: Bilingual Scholarly Apparatus Corpus (${catalog.bilingualEditions.length} Volumes)**
 *Full Arabic text with classical Hadith, Fiqh, and Quad-Lexical semantic annotations alongside English translations.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
@@ -1132,7 +1132,7 @@ All revered Hadith, devotional, and legal masterworks are available below in **O
   gossipMesh.clearChannelHistory(archiveChannelId);
 
   gossipMesh.publish(spaceId, archiveChannelId, {
-    content: `📦 **أَرْشِيف الإِمَام النَّوَوِي // HISTORICAL & LEGACY ARCHIVE (< v4)**
+    content: `**أَرْشِيف الإِمَام النَّوَوِي // HISTORICAL & LEGACY ARCHIVE (< v4)**
 
 This dedicated sub-channel preserves earlier translation drafts and experimental trials (< v4) of Imam Yahya al-Nawawi's works.
 
@@ -1150,7 +1150,7 @@ This dedicated sub-channel preserves earlier translation drafts and experimental
     }));
 
     gossipMesh.publish(spaceId, archiveChannelId, {
-      content: `📜 **Early Translation Trials & Legacy Files (${catalog.legacyArchive.length} Files)**`,
+      content: `**Early Translation Trials & Legacy Files (${catalog.legacyArchive.length} Files)**`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
@@ -1164,7 +1164,7 @@ function seedImamRaghibLibrary() {
   gossipMesh.clearChannelHistory(channelId);
 
   gossipMesh.publish(spaceId, channelId, {
-    content: "📖 **Maktabat al-Imam al-Raghib al-Isfahani (d. 502 AH / 1108 CE)**\n\nWelcome to the complete digital classical library of **Imam Abu al-Qasim al-Husayn ibn Muhammad al-Raghib al-Isfahani** (الإمام الراغب الأصفهاني), the supreme classical authority on Quranic lexicography, semantic taxonomy, and ethics.\n\nAll classical masterworks are available below in **Two Distinct Publishing Editions**:\n1. **Pure English Scholarly Editions**: Direct, continuous authorial translations.\n2. **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + 5-Pillar Lexical Apparatus (Al-Mufradat, Asas al-Balaghah, Lisan al-Arab, Kitab al-Ayn, Sibawayh) + English translation."
+    content: "**Maktabat al-Imam al-Raghib al-Isfahani (d. 502 AH / 1108 CE)**\n\nWelcome to the complete digital classical library of **Imam Abu al-Qasim al-Husayn ibn Muhammad al-Raghib al-Isfahani** (الإمام الراغب الأصفهاني), the supreme classical authority on Quranic lexicography, semantic taxonomy, and ethics.\n\nAll classical masterworks are available below in **Two Distinct Publishing Editions**:\n1. **Pure English Scholarly Editions**: Direct, continuous authorial translations.\n2. **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + 5-Pillar Lexical Apparatus (Al-Mufradat, Asas al-Balaghah, Lisan al-Arab, Kitab al-Ayn, Sibawayh) + English translation."
   }, { senderId: "ibn-manzur@lisan" });
 
   if (catalog.pureEditions && catalog.pureEditions.length > 0) {
@@ -1209,7 +1209,7 @@ function seedClassicalHeritageLibrary() {
 
   // 1. Welcome Message
   gossipMesh.publish(spaceId, channelId, {
-    content: "🏛️ **مَكْتَبَة التُّرَاث الإِسْلَامِي وَالعِرْفَان // CLASSICAL ISLAMIC HERITAGE & SPIRITUAL MASTERWORKS**\n\nWelcome to the decentralized classical digital library of timeless Islamic spiritual, metaphysical, and prophetic masterworks. Available below as standalone EPUB e-books for offline reading, scholarly research, and direct P2P mesh distribution."
+    content: "**مَكْتَبَة التُّرَاث الإِسْلَامِي وَالعِرْفَان // CLASSICAL ISLAMIC HERITAGE & SPIRITUAL MASTERWORKS**\n\nWelcome to the decentralized classical digital library of timeless Islamic spiritual, metaphysical, and prophetic masterworks. Available below as standalone EPUB e-books for offline reading, scholarly research, and direct P2P mesh distribution."
   }, { senderId: "ibn-manzur@lisan" });
 
   // 2. Prophetic Biography & Shama'il: Kitab al-Shifa (Qadi 'Iyad)
@@ -1224,7 +1224,7 @@ function seedClassicalHeritageLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "✨ **Kitab al-Shifa bi-Ta'rif Huquq al-Mustafa — Qadi 'Iyad al-Yahsubi (476–544 AH)**\n*The classic masterwork on the reverence, virtues, miracles, and rights of the Prophet Muhammad ﷺ (English & Albanian / Shqip editions).* ",
+      content: "**Kitab al-Shifa bi-Ta'rif Huquq al-Mustafa — Qadi 'Iyad al-Yahsubi (476–544 AH)**\n*The classic masterwork on the reverence, virtues, miracles, and rights of the Prophet Muhammad ﷺ (English & Albanian / Shqip editions).* ",
       attachments: atts
     }, { senderId: "ibn-manzur@lisan" });
   }
@@ -1241,7 +1241,7 @@ function seedClassicalHeritageLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "🌌 **Al-Futuhat al-Makkiyya (The Meccan Revelations) — Shaykh al-Akbar Ibn 'Arabi (560–638 AH)**\n*The monumental compendium of Islamic metaphysics, spiritual cosmology, and divine illumination (Complete English & Albanian / Shqip editions).* ",
+      content: "**Al-Futuhat al-Makkiyya (The Meccan Revelations) — Shaykh al-Akbar Ibn 'Arabi (560–638 AH)**\n*The monumental compendium of Islamic metaphysics, spiritual cosmology, and divine illumination (Complete English & Albanian / Shqip editions).* ",
       attachments: atts
     }, { senderId: "ibn-manzur@lisan" });
   }
@@ -1258,7 +1258,7 @@ function seedClassicalHeritageLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "📜 **Sunan al-Muhtadin fi Maqamat al-Din — Imam al-Mawwaq al-Gharnati (797–897 AH)**\n*Essential classical manual on spiritual states, stations, and orthodox spiritual etiquette (Pure English, Bilingual Lexical & Oversight Critical editions).* ",
+      content: "**Sunan al-Muhtadin fi Maqamat al-Din — Imam al-Mawwaq al-Gharnati (797–897 AH)**\n*Essential classical manual on spiritual states, stations, and orthodox spiritual etiquette (Pure English, Bilingual Lexical & Oversight Critical editions).* ",
       attachments: atts
     }, { senderId: "ibn-manzur@lisan" });
   }
@@ -1275,7 +1275,7 @@ function seedClassicalHeritageLibrary() {
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: "💎 **Classical Treasures & Comparative Study Editions**\n*Takhmis al-Ghanima, Bilingual Corpus apparatus editions, and continuous classical study volumes.* ",
+      content: "**Classical Treasures & Comparative Study Editions**\n*Takhmis al-Ghanima, Bilingual Corpus apparatus editions, and continuous classical study volumes.* ",
       attachments: atts
     }, { senderId: "ibn-manzur@lisan" });
   }

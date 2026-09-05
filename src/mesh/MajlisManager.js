@@ -54,7 +54,7 @@ class MajlisManager {
           name: 'imam-razi',
           type: 'text',
           icon: '#',
-          topic: "🏛️ Sovereign Library of Imam Fakhr al-Din al-Razi — Official AynEngine AI v4 & v5 Complete Masterworks (Tafsir al-Kabir 32-in-1, Al-Matalib Vols 1-9, Asas al-Taqdis, Lawami', etc.)"
+          topic: "Sovereign Library of Imam Fakhr al-Din al-Razi — Official AynEngine AI v4 & v5 Complete Masterworks (Tafsir al-Kabir 32-in-1, Al-Matalib Vols 1-9, Asas al-Taqdis, Lawami', etc.)"
         },
         {
           id: 'chan-imam-razi-archive',
@@ -63,14 +63,14 @@ class MajlisManager {
           icon: '└─',
           isSubChannel: true,
           parentChannelId: 'chan-imam-razi',
-          topic: "📦 Historical & Legacy Archive of Imam Fakhr al-Din al-Razi — Early v2 translations (Tafsir al-Kabir individual Vols 1–32 drafts)."
+          topic: "Historical & Legacy Archive of Imam Fakhr al-Din al-Razi — Early v2 translations (Tafsir al-Kabir individual Vols 1–32 drafts)."
         },
         {
           id: 'chan-imam-abuhamidd',
           name: 'imam-abuhamid',
           type: 'text',
           icon: '#',
-          topic: "🏛️ Sovereign Library of Imam Abu Hamid al-Ghazali — Official AynEngine AI v4 & v5 Complete Translations (Al-Mustasfa, Tahafut al-Falasifa, Al-Iqtisad, etc.)"
+          topic: "Sovereign Library of Imam Abu Hamid al-Ghazali — Official AynEngine AI v4 & v5 Complete Translations (Al-Mustasfa, Tahafut al-Falasifa, Al-Iqtisad, etc.)"
         },
         {
           id: 'chan-imam-abuhamid-archive',
@@ -79,14 +79,14 @@ class MajlisManager {
           icon: '└─',
           isSubChannel: true,
           parentChannelId: 'chan-imam-abuhamidd',
-          topic: "📦 Historical & Legacy Archive of Imam Abu Hamid al-Ghazali — Early drafts (< v4), prior un-harmonized versions, and 4-volume Ihya split editions."
+          topic: "Historical & Legacy Archive of Imam Abu Hamid al-Ghazali — Early drafts (< v4), prior un-harmonized versions, and 4-volume Ihya split editions."
         },
         {
           id: 'chan-imam-nawawi',
           name: 'imam-nawawi',
           type: 'text',
           icon: '#',
-          topic: "🏛️ Sovereign Library of Imam Yahya ibn Sharaf al-Nawawi — Official AynEngine AI v4 & v5 Translations (Al-Arba'in, Riyad al-Salihin, Al-Tibyan, Kitab al-Adhkar, Minhaj al-Talibin, etc.)"
+          topic: "Sovereign Library of Imam Yahya ibn Sharaf al-Nawawi — Official AynEngine AI v4 & v5 Translations (Al-Arba'in, Riyad al-Salihin, Al-Tibyan, Kitab al-Adhkar, Minhaj al-Talibin, etc.)"
         },
         {
           id: 'chan-imam-nawawi-archive',
@@ -95,7 +95,7 @@ class MajlisManager {
           icon: '└─',
           isSubChannel: true,
           parentChannelId: 'chan-imam-nawawi',
-          topic: "📦 Historical & Legacy Archive of Imam Yahya al-Nawawi — Prior translation drafts (< v4) and early split editions."
+          topic: "Historical & Legacy Archive of Imam Yahya al-Nawawi — Prior translation drafts (< v4) and early split editions."
         },
         {
           id: 'chan-imam-raghib',
