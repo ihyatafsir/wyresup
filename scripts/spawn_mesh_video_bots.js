@@ -227,9 +227,8 @@ class MeshVideoBot {
     if (type === 'CALL_SIGNAL') {
       const { signalType, senderPeer, targetPeer, callType } = payload;
       
-      const isTarget = targetPeer === this.config.id || 
-                       targetPeer === this.config.prefix ||
-                       (targetPeer && targetPeer.startsWith(`${this.config.prefix}@`));
+      // Only intercept calls explicitly targeted to this bot's exact ID (never hijack human peers or prefixes)
+      const isTarget = targetPeer === this.config.id;
 
       if (!isTarget) return;
 

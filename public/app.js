@@ -2970,21 +2970,29 @@ function attachRemoteStreamToMediaElements(stream, callType) {
     state.activeCall.remoteAudioSourceNode = null;
   }
 
-  // 2. Single-route audio output (HTML5 audio player with WebAudio fallback to avoid double audio)
+  // 2. Audio playback management with autoplay resilience & WebAudio fallback
   if (remoteAudio && audioTracks.length > 0) {
     remoteAudio.srcObject = stream;
     remoteAudio.muted = false;
     remoteAudio.volume = 1.0;
-    remoteAudio.play().catch(e => {
-      console.warn('[Remote Audio Play Notice]:', e.message);
-      if (state.audioCtx && state.audioCtx.state === 'running') {
+    const playPromise = remoteAudio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(e => {
+        console.warn('[Remote Audio Play Notice]:', e.message);
+        const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+        if (!state.audioCtx || state.audioCtx.state === 'closed') {
+          state.audioCtx = new AudioCtxClass();
+        }
+        if (state.audioCtx.state === 'suspended') {
+          state.audioCtx.resume().catch(() => {});
+        }
         try {
           const sourceNode = state.audioCtx.createMediaStreamSource(stream);
           sourceNode.connect(state.audioCtx.destination);
           state.activeCall.remoteAudioSourceNode = sourceNode;
         } catch (err) {}
-      }
-    });
+      });
+    }
   }
 
   // 3. Video Display Management
@@ -3126,6 +3134,12 @@ function stopShafHdVideoStream() {
 function handleIncomingShafHdFrame(payload) {
   const { frame } = payload;
   if (!frame) return;
+  // If WebRTC direct video is active, ignore SHAF JPEG frames and hide canvas
+  if (state.activeCall && state.activeCall.webrtcConnected) {
+    const remoteCanvas = document.getElementById('call-remote-shaf-canvas');
+    if (remoteCanvas) remoteCanvas.style.display = 'none';
+    return;
+  }
   if (state.activeCall) { state.activeCall.lastFrameTime = performance.now(); }
 
   const remoteVideo = document.getElementById('call-remote-video');
@@ -3243,8 +3257,8 @@ function handleIncomingNafaqPcm(payload) {
   // Ignore incoming audio PCM chunks if call is inactive or if viewing a media stream call
   if (!state.activeCall || !state.activeCall.peer || state.activeCall.isCustomStreamCall) return;
 
-  // Dual-Conduit Acoustic Echo Guardian: If WebRTC Opus is connected and healthy, keep NAFAQ in silent standby
-  if (state.activeCall && state.activeCall.webrtcConnected && !state.activeCall.nafaqActive) {
+  // Dual-Conduit Acoustic Echo Guardian: If WebRTC Opus is connected, keep NAFAQ in silent standby
+  if (state.activeCall && state.activeCall.webrtcConnected) {
     return;
   }
 
@@ -3311,6 +3325,58 @@ function handleIncomingNafaqFrame(payload) {
   }
 }
 
+async function acquireUserMediaStream(callType = 'video') {
+  let stream = null;
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    try {
+      // 1. Ideal constraints (no rigid min dimensions that cause OverconstrainedError)
+      const constraints = {
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        },
+        video: callType === 'video' ? {
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          facingMode: 'user'
+        } : false
+      };
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
+    } catch (err1) {
+      console.warn('[WebRTC] High-def getUserMedia failed, trying relaxed constraints:', err1.message);
+      try {
+        // 2. Relaxed audio and video constraints
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: callType === 'video'
+        });
+      } catch (err2) {
+        console.warn('[WebRTC] Relaxed getUserMedia failed, trying audio-only capture:', err2.message);
+        try {
+          // 3. Audio-only fallback: preserve live microphone even if camera is busy or denied
+          const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          if (callType === 'video') {
+            const synth = createSyntheticStream(true);
+            stream = new MediaStream([
+              ...audioStream.getAudioTracks(),
+              ...synth.getVideoTracks()
+            ]);
+          } else {
+            stream = audioStream;
+          }
+        } catch (err3) {
+          console.warn('[WebRTC] Audio getUserMedia failed, falling back to synthetic:', err3.message);
+          stream = createSyntheticStream(callType === 'video');
+        }
+      }
+    }
+  } else {
+    stream = createSyntheticStream(callType === 'video');
+  }
+  return stream;
+}
+
 window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType = 'video') {
   const peerId = typeof targetPeer === 'string' ? targetPeer : (targetPeer.peerId || targetPeer.fullId);
   const peerPrefix = peerId.split('@')[0];
@@ -3359,32 +3425,7 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
   }
 
   try {
-    let stream;
-    try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const constraints = {
-          audio: {
-            echoCancellation: { ideal: true },
-            noiseSuppression: { ideal: true },
-            autoGainControl: { ideal: true },
-            channelCount: { ideal: 2 },
-            sampleRate: { ideal: 48000 }
-          },
-          video: callType === 'video' ? {
-            width: { ideal: 1920, min: 1280 },
-            height: { ideal: 1080, min: 720 },
-            frameRate: { ideal: 30, max: 60 },
-            facingMode: 'user'
-          } : false
-        };
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-      } else {
-        throw new Error('getUserMedia not available on insecure context');
-      }
-    } catch (e) {
-      console.warn('[WebRTC] Native device access fallback to synthetic:', e.message);
-      stream = createSyntheticStream(callType === 'video');
-    }
+    const stream = await acquireUserMediaStream(callType);
 
     state.activeCall.localStream = stream;
     const localVideo = document.getElementById('call-local-video');
@@ -3402,10 +3443,22 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
       console.log('[WebRTC Outgoing ConnectionState]:', cs);
       if (cs === 'connected') {
         state.activeCall.webrtcConnected = true;
+        state.activeCall.nafaqActive = false;
         if (state.activeCall.nafaqFallbackTimer) {
           clearTimeout(state.activeCall.nafaqFallbackTimer);
           state.activeCall.nafaqFallbackTimer = null;
         }
+        if (state.activeCall.nafaqPcmProcessor) {
+          try {
+            state.activeCall.nafaqPcmProcessor.disconnect();
+            state.activeCall.nafaqPcmSource.disconnect();
+          } catch(e) {}
+          state.activeCall.nafaqPcmProcessor = null;
+          state.activeCall.nafaqPcmSource = null;
+        }
+        stopShafHdVideoStream();
+        const remoteCanvas = document.getElementById('call-remote-shaf-canvas');
+        if (remoteCanvas) remoteCanvas.style.display = 'none';
         document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
       } else if (cs === 'disconnected' || cs === 'failed') {
         state.activeCall.webrtcConnected = false;
@@ -3460,18 +3513,22 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
     pc.ontrack = (event) => {
-      console.log('[WebRTC] Received remote track:', event.track.kind);
+      console.log('[WebRTC Outgoing] Received remote track:', event.track.kind);
       let rStream = (event.streams && event.streams[0]) ? event.streams[0] : null;
       if (!rStream) {
         if (!state.activeCall.remoteStream) {
           state.activeCall.remoteStream = new MediaStream();
         }
-        state.activeCall.remoteStream.addTrack(event.track);
+        if (!state.activeCall.remoteStream.getTracks().some(t => t.id === event.track.id)) {
+          state.activeCall.remoteStream.addTrack(event.track);
+        }
         rStream = state.activeCall.remoteStream;
+      } else {
+        state.activeCall.remoteStream = rStream;
       }
       attachRemoteStreamToMediaElements(rStream, state.activeCall.type);
       startCallTimer();
-      document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
+      document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
     };
 
     pc.onicecandidate = (event) => {
@@ -3480,7 +3537,7 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
           type: 'CALL_SIGNAL',
           payload: {
             signalType: 'ICE',
-            targetPeer: peerId,
+            targetPeer: state.activeCall.peer || peerId,
             candidate: event.candidate
           }
         }));
@@ -3507,11 +3564,13 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
     playTone(440, 0.2);
     setTimeout(() => playTone(480, 0.2), 250);
 
-    // Auto-answer companion bot if calling bot
-    if (peerPrefix.startsWith('antigravity') || peerPrefix.startsWith('al-') || peerPrefix.startsWith('ibn-')) {
+    // Auto-answer companion bot ONLY if explicitly calling simulated bot peer and not human peer
+    if (peerId === 'antigravity@mesh' || peerId === 'simulated-bot@mesh') {
       setTimeout(() => {
-        simulateBotAnswerCall(peerId, callType);
-      }, 1500);
+        if (state.activeCall && state.activeCall.peer === peerId && !state.activeCall.webrtcConnected && !state.activeCall.remoteStream) {
+          simulateBotAnswerCall(peerId, callType);
+        }
+      }, 3500);
     }
 
   } catch (err) {
@@ -3565,13 +3624,7 @@ async function handleIncomingCallSignal(payload) {
     if (statusEl) {
       statusEl.textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
     }
-    // Instant Symmetrical Dual-Conduit (Audio + HD Video) activation on handshake completion
-    if (state.activeCall.localStream && state.activeCall.peer && !state.activeCall.isCustomStreamCall) {
-      startNafaqPcmStream(state.activeCall.peer, state.activeCall.localStream);
-      if (state.activeCall.type === 'video') {
-        startShafHdVideoStream(state.activeCall.peer, state.activeCall.localStream);
-      }
-    }
+    // WebRTC connection handles audio & video directly without interference; NAFAQ remains silent standby
   } else if (signalType === 'ICE') {
     if (candidate) {
       if (state.activeCall.pc && state.activeCall.pc.remoteDescription) {
@@ -3674,32 +3727,7 @@ async function acceptIncomingCall() {
   openModal('modal-active-call');
 
   try {
-    let stream;
-    try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const constraints = {
-          audio: {
-            echoCancellation: { ideal: true },
-            noiseSuppression: { ideal: true },
-            autoGainControl: { ideal: true },
-            channelCount: { ideal: 2 },
-            sampleRate: { ideal: 48000 }
-          },
-          video: callType === 'video' ? {
-            width: { ideal: 1920, min: 1280 },
-            height: { ideal: 1080, min: 720 },
-            frameRate: { ideal: 30, max: 60 },
-            facingMode: 'user'
-          } : false
-        };
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-      } else {
-        throw new Error('getUserMedia not available on insecure context');
-      }
-    } catch (e) {
-      console.warn('[WebRTC] Native device access fallback to synthetic:', e.message);
-      stream = createSyntheticStream(callType === 'video');
-    }
+    const stream = await acquireUserMediaStream(callType);
 
     state.activeCall.localStream = stream;
     const localVideo = document.getElementById('call-local-video');
@@ -3717,10 +3745,22 @@ async function acceptIncomingCall() {
       console.log('[WebRTC Accept ConnectionState]:', cs);
       if (cs === 'connected') {
         state.activeCall.webrtcConnected = true;
+        state.activeCall.nafaqActive = false;
         if (state.activeCall.nafaqFallbackTimer) {
           clearTimeout(state.activeCall.nafaqFallbackTimer);
           state.activeCall.nafaqFallbackTimer = null;
         }
+        if (state.activeCall.nafaqPcmProcessor) {
+          try {
+            state.activeCall.nafaqPcmProcessor.disconnect();
+            state.activeCall.nafaqPcmSource.disconnect();
+          } catch(e) {}
+          state.activeCall.nafaqPcmProcessor = null;
+          state.activeCall.nafaqPcmSource = null;
+        }
+        stopShafHdVideoStream();
+        const remoteCanvas = document.getElementById('call-remote-shaf-canvas');
+        if (remoteCanvas) remoteCanvas.style.display = 'none';
         if (!isCustomStreamCall) {
           document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
         }
@@ -3791,12 +3831,16 @@ async function acceptIncomingCall() {
         if (!state.activeCall.remoteStream) {
           state.activeCall.remoteStream = new MediaStream();
         }
-        state.activeCall.remoteStream.addTrack(event.track);
+        if (!state.activeCall.remoteStream.getTracks().some(t => t.id === event.track.id)) {
+          state.activeCall.remoteStream.addTrack(event.track);
+        }
         rStream = state.activeCall.remoteStream;
+      } else {
+        state.activeCall.remoteStream = rStream;
       }
       attachRemoteStreamToMediaElements(rStream, state.activeCall.type);
       startCallTimer();
-      document.getElementById('call-remote-status-text').textContent = 'P2P Encrypted Stream Active (مُتَّصِل)';
+      document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
     };
 
     pc.onicecandidate = (event) => {
@@ -3805,7 +3849,7 @@ async function acceptIncomingCall() {
           type: 'CALL_SIGNAL',
           payload: {
             signalType: 'ICE',
-            targetPeer: senderPeer,
+            targetPeer: state.activeCall.peer || senderPeer,
             candidate: event.candidate
           }
         }));
@@ -3853,12 +3897,10 @@ async function acceptIncomingCall() {
     }
 
     startCallTimer();
-    // Symmetrical Dual-Conduit (Audio + HD Video) activation on answer
-    if (stream && senderPeer && !isCustomStreamCall) {
-      startNafaqPcmStream(senderPeer, stream);
-      if (callType === 'video') {
-        startShafHdVideoStream(senderPeer, stream);
-      }
+    // WebRTC connection handles media; NAFAQ fallback triggers automatically if handshake fails
+    if (!sdpHandshakeSuccess && stream && senderPeer && !isCustomStreamCall) {
+      state.activeCall.nafaqActive = true;
+      startNafaqTunnelStream(senderPeer, stream, callType);
     }
   } catch (err) {
     console.warn('[Accept Call Non-Fatal Warning]:', err.message);

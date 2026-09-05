@@ -21,6 +21,7 @@ const YouTubeStreamer = require('./src/mesh/YouTubeStreamer');
 const ImamRaziLibrary = require('./src/mesh/ImamRaziLibrary');
 const ImamGhazaliLibrary = require('./src/mesh/ImamGhazaliLibrary');
 const ImamNawawiLibrary = require('./src/mesh/ImamNawawiLibrary');
+const ImamRaghibLibrary = require('./src/mesh/ImamRaghibLibrary');
 const ClassicalHeritageLibrary = require('./src/mesh/ClassicalHeritageLibrary');
 const { NafaqLisanTunnel, NAFAQ_MAGIC } = require('./src/mesh/NafaqLisanTunnel');
 const ShabahStego = require('./src/mesh/ShabahStego');
@@ -366,6 +367,12 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if ((pathname === '/api/library/raghib' || pathname === '/api/library/isfahani') && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(ImamRaghibLibrary.getCatalog()));
+    return;
+  }
+
   if ((pathname === '/api/library/heritage' || pathname === '/api/library/classical') && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(ClassicalHeritageLibrary.getCatalog()));
@@ -658,24 +665,48 @@ function handleClientMessage(ws, msg) {
       const targetPrefix = targetPeer ? targetPeer.split('@')[0] : '';
       let forwardedCount = 0;
 
+      // 1. Exact peerId match (Pillar 4: Kitāb al-ʿAyn - unambiguous targeting)
+      let matchedSockets = [];
       for (const [targetWs, targetRecord] of connectedClients.entries()) {
-        const clientPrefix = targetRecord.prefix || (targetRecord.peerId ? targetRecord.peerId.split('@')[0] : '');
-        const matches = targetRecord.peerId === targetPeer ||
-                        targetRecord.prefix === targetPeer ||
-                        targetRecord.peerId.startsWith(`${targetPeer}@`) ||
-                        (targetPrefix && clientPrefix && targetPrefix === clientPrefix);
-
-        if (matches && targetWs !== ws && targetWs.readyState === WebSocket.OPEN) {
-          targetWs.send(JSON.stringify({
-            type: 'CALL_SIGNAL',
-            payload: {
-              ...payload,
-              senderPeer: client.peerId,
-              senderPrefix: client.prefix
-            }
-          }));
-          forwardedCount++;
+        if (targetWs === ws || targetWs.readyState !== WebSocket.OPEN) continue;
+        if (targetRecord.peerId === targetPeer) {
+          matchedSockets.push(targetWs);
         }
+      }
+
+      // 2. If no exact peerId match and targetPeer has no '@', match by exact prefix (human clients only, never bots)
+      if (matchedSockets.length === 0 && targetPeer && !targetPeer.includes('@')) {
+        for (const [targetWs, targetRecord] of connectedClients.entries()) {
+          if (targetWs === ws || targetWs.readyState !== WebSocket.OPEN) continue;
+          if (targetRecord.prefix === targetPeer && !targetRecord.peerId.endsWith('@mesh')) {
+            matchedSockets.push(targetWs);
+          }
+        }
+      }
+
+      // 3. Fallback prefix matching: never route human calls to bots (@mesh) unless explicitly targeted
+      if (matchedSockets.length === 0 && targetPrefix) {
+        for (const [targetWs, targetRecord] of connectedClients.entries()) {
+          if (targetWs === ws || targetWs.readyState !== WebSocket.OPEN) continue;
+          const clientPrefix = targetRecord.prefix || (targetRecord.peerId ? targetRecord.peerId.split('@')[0] : '');
+          if (clientPrefix === targetPrefix) {
+            if (targetPeer.endsWith('@mesh') || !targetRecord.peerId.endsWith('@mesh')) {
+              matchedSockets.push(targetWs);
+            }
+          }
+        }
+      }
+
+      for (const targetWs of matchedSockets) {
+        targetWs.send(JSON.stringify({
+          type: 'CALL_SIGNAL',
+          payload: {
+            ...payload,
+            senderPeer: client.peerId,
+            senderPrefix: client.prefix
+          }
+        }));
+        forwardedCount++;
       }
       if (payload.signalType !== 'NAFAQ_PCM' && payload.signalType !== 'SHAF_HD_FRAME' && payload.signalType !== 'WASAM_PING') {
         console.log(`[CALL_SIGNAL] ${payload.signalType} from ${client.peerId} -> ${targetPeer} (Forwarded to ${forwardedCount} peer socket(s))`);
@@ -820,20 +851,38 @@ Welcome to the official digital library of **Imam Fakhr al-Din al-Razi's (544–
     }, { senderId: 'ibn-manzur@lisan' });
   }
 
-  // 4. Firaq (Sects & Heresiography) & Usul al-Fiqh
-  if (catalog.firaqAndFiqh && catalog.firaqAndFiqh.length > 0) {
-    const atts = catalog.firaqAndFiqh.map(item => ({
+  // 4. I'tiqadat Firaq al-Muslimin wa'l-Mushrikin (Comparative Heresiography & World Religions)
+  const itiqadatItems = (catalog.firaqAndFiqh || []).filter(item => item.filename.includes('itiqadat'));
+  if (itiqadatItems.length > 0) {
+    const atts = itiqadatItems.map(item => ({
       name: item.filename,
       type: 'application/epub+zip',
-      size: 800000,
+      size: 100000,
       data: item.downloadUrl,
       title: item.title,
       arabicTitle: item.arabicTitle
     }));
 
     gossipMesh.publish(spaceId, channelId, {
-      content: `⚖️ **Comparative Heresiography (Firaq) & Usul al-Fiqh**
-*Imam al-Razi's famous treatise on world religions & Islamic sects (I'tiqadat Firaq al-Muslimin wa'l-Mushrikin in 3 translations) along with his magnum opus on legal methodology (Al-Mahsul fi 'Ilm Usul al-Fiqh).* `,
+      content: `📌 **Iʿtiqādāt Firaq al-Muslimīn wa-al-Mushrikīn (اعتقادات فرق المسلمين والمشركين)**\n*Imam Fakhr al-Din al-Razi's seminal classical treatise on world religions, theological sects, and Islamic heresiography. Complete translations available in Pure English Scholarly Edition and Bilingual 5-Pillar Apparatus Edition.*`,
+      attachments: atts
+    }, { senderId: 'ibn-manzur@lisan' });
+  }
+
+  // 5. Al-Mahsul fi 'Ilm Usul al-Fiqh (Jurisprudence Opus)
+  const mahsulItems = (catalog.firaqAndFiqh || []).filter(item => item.filename.includes('mahsul'));
+  if (mahsulItems.length > 0) {
+    const atts = mahsulItems.map(item => ({
+      name: item.filename,
+      type: 'application/epub+zip',
+      size: 2000000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, channelId, {
+      content: `⚖️ **Al-Mahsul fi 'Ilm Usul al-Fiqh (المحصول في علم أصول الفقه)**\n*Imam al-Razi's monumental compendium on legal theory and jurisprudence methodology in both Pure English and Bilingual Scholarly Editions.*`,
       attachments: atts
     }, { senderId: 'ibn-manzur@lisan' });
   }
@@ -963,6 +1012,50 @@ function seedImamNawawiLibrary() {
 }
 
 
+function seedImamRaghibLibrary() {
+  const channelId = "chan-imam-raghib";
+  const spaceId = "space-public-mesh";
+  const catalog = ImamRaghibLibrary.getCatalog();
+
+  gossipMesh.clearChannelHistory(channelId);
+
+  gossipMesh.publish(spaceId, channelId, {
+    content: "📖 **Maktabat al-Imam al-Raghib al-Isfahani (d. 502 AH / 1108 CE)**\n\nWelcome to the complete digital classical library of **Imam Abu al-Qasim al-Husayn ibn Muhammad al-Raghib al-Isfahani** (الإمام الراغب الأصفهاني), the supreme classical authority on Quranic lexicography, semantic taxonomy, and ethics.\n\nAll classical masterworks are available below in **Two Distinct Publishing Editions**:\n1. **Pure English Scholarly Editions**: Direct, continuous authorial translations.\n2. **Bilingual Scholarly Apparatus Editions**: Classical Arabic text + 5-Pillar Lexical Apparatus (Al-Mufradat, Asas al-Balaghah, Lisan al-Arab, Kitab al-Ayn, Sibawayh) + English translation."
+  }, { senderId: "ibn-manzur@lisan" });
+
+  if (catalog.pureEditions && catalog.pureEditions.length > 0) {
+    const atts = catalog.pureEditions.map(item => ({
+      name: item.filename,
+      type: "application/epub+zip",
+      size: 500000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, channelId, {
+      content: "**Edition 1: Pure English Scholarly Corpus (" + catalog.pureEditions.length + " Volumes)**\n*Al-Mufradat fi Gharib al-Qur'an, Al-Dhari'ah ila Makarim al-Shari'ah, Tafsil al-Nash'atayn, and Adab Ikhtilat al-Nas.*",
+      attachments: atts
+    }, { senderId: "ibn-manzur@lisan" });
+  }
+
+  if (catalog.bilingualEditions && catalog.bilingualEditions.length > 0) {
+    const atts = catalog.bilingualEditions.map(item => ({
+      name: item.filename,
+      type: "application/epub+zip",
+      size: 800000,
+      data: item.downloadUrl,
+      title: item.title,
+      arabicTitle: item.arabicTitle
+    }));
+
+    gossipMesh.publish(spaceId, channelId, {
+      content: "**Edition 2: Bilingual Scholarly Apparatus Corpus (" + catalog.bilingualEditions.length + " Volumes)**\n*Classical Arabic text aligned with 5-Pillar Lexicographical annotations and rigorous theological apparatus alongside English translations.*",
+      attachments: atts
+    }, { senderId: "ibn-manzur@lisan" });
+  }
+}
+
 function seedClassicalHeritageLibrary() {
   const channelId = 'chan-classical-heritage';
   const spaceId = 'space-public-mesh';
@@ -1048,6 +1141,7 @@ server.listen(PORT, () => {
   seedImamRaziLibrary();
   seedImamGhazaliLibrary();
   seedImamNawawiLibrary();
+  seedImamRaghibLibrary();
   seedClassicalHeritageLibrary();
   console.log();
   console.log();
