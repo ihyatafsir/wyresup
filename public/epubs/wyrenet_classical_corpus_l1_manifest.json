@@ -15,7 +15,7 @@
     "blockchain": "WyreNet Sovereign L1 (Chain ID: 51950)",
     "totalBooks": 244
   },
-  "totalBooks": 244,
+  "totalBooks": 246,
   "publisherDid": "did:wyre:0x471c852d254a67f36c129f2386ca21c31840dea4",
   "anchoredAt": "2026-09-07T15:52:35.491Z",
   "books": [
@@ -125,7 +125,9 @@
       "sha256": "c5fade79dbf44eaab2261430692812fdd5a2995df2c2b43681c597a065b8d4c2",
       "sizeMb": "22.48 MB",
       "txHash": "0x44cb369b6ee15a49680382ac74b31a987e66d5553d7e1899c05996d411fd0fe1",
-      "blockHeight": 859
+      "blockHeight": 859,
+      "size": "22861.8 KB",
+      "engine": "AynEngine AI v5.0.0 Sovereign Edition (DeepSeek Flash 4.1)"
     },
     {
       "index": 10,
@@ -137,7 +139,9 @@
       "sha256": "73361dd1287082839f48c6f8a44f9ad743641894eea0bfe4192845937f677c4f",
       "sizeMb": "4.56 MB",
       "txHash": "0xde5b366ab4ca5fc3c4fc23f451a3df0af11ded03521c236ec5e090a15727d738",
-      "blockHeight": 860
+      "blockHeight": 860,
+      "size": "4646.1 KB",
+      "engine": "AynEngine AI v5.0.0 Sovereign Edition (DeepSeek Flash 4.1)"
     },
     {
       "index": 11,
@@ -713,7 +717,9 @@
       "sha256": "4f8fc69473771b38725b5b9e65791bd89b8e80d89c5d48b7b2482845e8ff4bd3",
       "sizeMb": "2.00 MB",
       "txHash": "0x8b78f06fe58c4f0f9a48f8cf4ced5c5086ff1a0ed2e61c507a301b1f96491648",
-      "blockHeight": 908
+      "blockHeight": 908,
+      "size": "2050.8 KB",
+      "engine": "AynEngine AI v5.0.0 Sovereign Edition (DeepSeek Flash 4.1)"
     },
     {
       "index": 59,
@@ -725,7 +731,9 @@
       "sha256": "ff9044cc786f51841c1ffd8e97d104df938f0245efad4f59834a75e0bfc09d3d",
       "sizeMb": "2.05 MB",
       "txHash": "0xb68ef9fe5570ea6ed1a7814533d406a651c988dad63dea136ae1d448793e32df",
-      "blockHeight": 909
+      "blockHeight": 909,
+      "size": "2102.2 KB",
+      "engine": "AynEngine AI v5.0.0 Sovereign Edition (DeepSeek Flash 4.1)"
     },
     {
       "index": 60,
@@ -2369,7 +2377,9 @@
       "sha256": "2ca8d009b0d0037f64f94db4eacf3ad3a52b6b075b942805c4a50c20e923e1d0",
       "sizeMb": "0.76 MB",
       "txHash": "0xe3190eb0eed959093cfb794bf49027f7de3b8c9a108a1bc6c570a4c63b6d9094",
-      "blockHeight": 1046
+      "blockHeight": 1046,
+      "size": "766.7 KB",
+      "engine": "AynEngine AI v5.0.0 Sovereign Edition (DeepSeek Flash 4.1)"
     },
     {
       "index": 197,
@@ -2381,7 +2391,9 @@
       "sha256": "2a723c8467bc93c8602511ae354bb90d7d544fff7610fdb70c739cd8d93adb97",
       "sizeMb": "0.79 MB",
       "txHash": "0x3cdb0243df1f5b93d710f5c5faba42922275a6e86a8053c6b646954aa4246f5e",
-      "blockHeight": 1047
+      "blockHeight": 1047,
+      "size": "419.0 KB",
+      "engine": "AynEngine AI v5.0.0 Sovereign Edition (DeepSeek Flash 4.1)"
     },
     {
       "index": 198,
@@ -2393,7 +2405,9 @@
       "sha256": "163cec2effa04cd3a05366378d7a9ac92041beb63503e0156a745cbea55e2e54",
       "sizeMb": "1.16 MB",
       "txHash": "0xc43588f4da925cd77cd1be18fc521152d1a0c54f96970621a9927a6606ff418c",
-      "blockHeight": 1048
+      "blockHeight": 1048,
+      "size": "1186.3 KB",
+      "engine": "AynEngine AI v5.0.0 Sovereign Edition (DeepSeek Flash 4.1)"
     },
     {
       "index": 199,
@@ -2405,7 +2419,9 @@
       "sha256": "affbc4ee764290ca6f216802537f501859738ba01b80646259cf7c931a43462a",
       "sizeMb": "0.38 MB",
       "txHash": "0xc3f10eff020535460e795331e689a2fdaa3abe2a30bbb8618b2b2cd4e4e3e298",
-      "blockHeight": 1049
+      "blockHeight": 1049,
+      "size": "389.4 KB",
+      "engine": "AynEngine AI v5.0.0 Sovereign Edition (DeepSeek Flash 4.1)"
     },
     {
       "index": 200,
@@ -2417,7 +2433,9 @@
       "sha256": "7ec27877c1bd6d91472e543ef70cff774e1cb7181a882f9d9ae09be68f20c9c7",
       "sizeMb": "0.41 MB",
       "txHash": "0xaccc79c077676545a75878f534bb386c0e42dffd03d69ffbb9baf41a141bc9e3",
-      "blockHeight": 1050
+      "blockHeight": 1050,
+      "size": "412.4 KB",
+      "engine": "AynEngine AI v5.0.0 Sovereign Edition (DeepSeek Flash 4.1)"
     },
     {
       "index": 201,
@@ -2933,7 +2951,9 @@
       "sha256": "ae9d4b9bbf711ae494e989bb18c9e14fe01a1594986f405cdc3a7156936e947b",
       "sizeMb": "0.04 MB",
       "txHash": "0x8ec26d9e0a1499c81d5dd55578e45cce2a2962357029f76fa2f3066a60ae32d4",
-      "blockHeight": 1093
+      "blockHeight": 1093,
+      "size": "65.8 KB",
+      "engine": "AynEngine AI v5.0.0 Sovereign Edition (DeepSeek Flash 4.1)"
     },
     {
       "index": 244,
@@ -2945,7 +2965,23 @@
       "sha256": "0f291a2d101cd45ecf7823ef7cec4bcca526b567cdf6367e29b8776f4da5bbdc",
       "sizeMb": "0.01 MB",
       "txHash": "0x148d5650fa12ba605609f6b1b29f56ad61f443a58e786f082b4757164332bb5e",
-      "blockHeight": 1094
+      "blockHeight": 1094,
+      "size": "33.1 KB",
+      "engine": "AynEngine AI v5.0.0 Sovereign Edition (DeepSeek Flash 4.1)"
+    },
+    {
+      "filename": "al_shifa_qadi_iyad_bilingual_lexical_en.epub",
+      "title": "Al Shifa Qadi Iyad Bilingual Lexical En",
+      "author": "Classical Heritage",
+      "size": "2065.6 KB",
+      "engine": "AynEngine AI v5.0.0 Sovereign Edition (DeepSeek Flash 4.1)"
+    },
+    {
+      "filename": "al_shifa_qadi_iyad_pure_en.epub",
+      "title": "Al Shifa Qadi Iyad Pure En",
+      "author": "Classical Heritage",
+      "size": "1198.2 KB",
+      "engine": "AynEngine AI v5.0.0 Sovereign Edition (DeepSeek Flash 4.1)"
     }
   ]
 }
