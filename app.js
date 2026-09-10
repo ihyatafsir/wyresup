@@ -2952,6 +2952,29 @@ const RTC_CONFIG = {
   iceCandidatePoolSize: 10
 };
 
+function stopNafaqTunnelStream() {
+  state.activeCall.nafaqActive = false;
+  if (state.activeCall.nafaqFallbackTimer) {
+    clearTimeout(state.activeCall.nafaqFallbackTimer);
+    state.activeCall.nafaqFallbackTimer = null;
+  }
+  if (state.activeCall.nafaqPcmProcessor) {
+    try {
+      state.activeCall.nafaqPcmProcessor.disconnect();
+      state.activeCall.nafaqPcmSource.disconnect();
+    } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
+    state.activeCall.nafaqPcmProcessor = null;
+    state.activeCall.nafaqPcmSource = null;
+  }
+  if (state.activeCall.nafaqSilentSink) {
+    try { state.activeCall.nafaqSilentSink.disconnect(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
+    state.activeCall.nafaqSilentSink = null;
+  }
+  stopShafHdVideoStream();
+  const remoteCanvas = document.getElementById('call-remote-shaf-canvas');
+  if (remoteCanvas) remoteCanvas.style.display = 'none';
+}
+
 function attachRemoteStreamToMediaElements(stream, callType) {
   state.activeCall.remoteStream = stream;
   const remoteVideo = document.getElementById('call-remote-video');
@@ -2966,13 +2989,17 @@ function attachRemoteStreamToMediaElements(stream, callType) {
 
   // 1. Clean previous WebAudio route if any
   if (state.activeCall.remoteAudioSourceNode) {
-    try { state.activeCall.remoteAudioSourceNode.disconnect(); } catch(e){}
+    try { state.activeCall.remoteAudioSourceNode.disconnect(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
     state.activeCall.remoteAudioSourceNode = null;
   }
 
-  // 2. Audio playback management with autoplay resilience & WebAudio fallback
+  // 2. Separate dedicated streams for audio and video sinks to prevent WebKit/Blink track ownership collision
+  const audioOnlyStream = new MediaStream(audioTracks);
+  const videoOnlyStream = new MediaStream(videoTracks);
+
+  // 3. Audio playback management with autoplay resilience & WebAudio fallback
   if (remoteAudio && audioTracks.length > 0) {
-    remoteAudio.srcObject = stream;
+    remoteAudio.srcObject = audioOnlyStream;
     remoteAudio.muted = false;
     remoteAudio.volume = 1.0;
     const playPromise = remoteAudio.play();
@@ -2987,45 +3014,52 @@ function attachRemoteStreamToMediaElements(stream, callType) {
           state.audioCtx.resume().catch(() => {});
         }
         try {
-          const sourceNode = state.audioCtx.createMediaStreamSource(stream);
-          sourceNode.connect(state.audioCtx.destination);
-          state.activeCall.remoteAudioSourceNode = sourceNode;
-        } catch (err) {}
+          if (!state.activeCall.remoteAudioSourceNode) {
+            const sourceNode = state.audioCtx.createMediaStreamSource(audioOnlyStream);
+            sourceNode.connect(state.audioCtx.destination);
+            state.activeCall.remoteAudioSourceNode = sourceNode;
+          }
+        } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
       });
     }
   }
 
-  // 3. Video Display Management
+  // 4. Video Display Management
   if (callType === 'video' && videoTracks.length > 0) {
     if (remoteVideo) {
-      remoteVideo.srcObject = stream;
+      remoteVideo.srcObject = videoOnlyStream;
+      remoteVideo.style.display = 'block';
       remoteVideo.muted = true; // Video element muted to guarantee 100% video autoplay without silencing audio track
       remoteVideo.play().catch(() => {});
       if (fallback) fallback.style.display = 'none';
     }
     if (voicePulse) voicePulse.style.display = 'none';
-  } else {
+  } else if (callType === 'audio') {
     if (remoteVideo) {
       remoteVideo.pause();
       remoteVideo.srcObject = null;
       remoteVideo.muted = true;
+      remoteVideo.style.display = 'none';
     }
     if (fallback) fallback.style.display = 'flex';
     if (voicePulse) voicePulse.style.display = 'flex';
+  } else if (callType === 'video' && videoTracks.length === 0) {
+    // In Unified Plan, audio track often arrives first; keep video placeholder ready without destroying video sink
+    if (fallback) fallback.style.display = 'flex';
+    if (voicePulse) voicePulse.style.display = 'none';
   }
 }
 
 async function drainPendingIceCandidates() {
   if (!state.activeCall.pc || !state.activeCall.pc.remoteDescription) return;
-  if (state.activeCall.pendingIceCandidates && state.activeCall.pendingIceCandidates.length > 0) {
-    const queue = [...state.activeCall.pendingIceCandidates];
-    state.activeCall.pendingIceCandidates = [];
-    for (const cand of queue) {
-      try {
-        await state.activeCall.pc.addIceCandidate(new RTCIceCandidate(cand));
-      } catch (e) {
-        console.warn('[ICE Add Candidate Warning]:', e.message);
-      }
+  if (!state.activeCall.pendingIceCandidates) state.activeCall.pendingIceCandidates = [];
+  while (state.activeCall.pendingIceCandidates.length > 0) {
+    const cand = state.activeCall.pendingIceCandidates.shift();
+    if (!cand) continue;
+    try {
+      await state.activeCall.pc.addIceCandidate(new RTCIceCandidate(cand));
+    } catch (e) {
+      console.warn('[ICE Add Candidate Warning]:', e.message);
     }
   }
 }
@@ -3039,18 +3073,44 @@ function upliftSdpBitrates(sdpStr) {
   if (!sdpStr) return sdpStr;
   try {
     let s = sdpStr;
+    // Strip pre-existing bandwidth lines to avoid duplicate accumulation across renegotiations
+    s = s.replace(/^b=(AS|TIAS):\d+\r?\n/gm, '');
+
     if (s.includes('m=video')) {
       s = s.replace(/(m=video [^\r\n]+[\r\n]+)/, '$1b=AS:3500\r\nb=TIAS:3500000\r\n');
     }
     if (s.includes('m=audio')) {
       s = s.replace(/(m=audio [^\r\n]+[\r\n]+)/, '$1b=AS:128\r\nb=TIAS:128000\r\n');
     }
-    // Inject Opus in-band forward error correction (FEC) and stereo fidelity
-    if (s.includes('a=rtpmap:') && s.includes('opus/48000')) {
-      s = s.replace(/(a=rtpmap:(\d+) opus\/48000\/2[\r\n]+)/, '$1a=fmtp:$2 useinbandfec=1;stereo=1;sprop-stereo=1;maxaveragebitrate=64000\r\n');
+    // Safe Opus fmtp parameter merge: never duplicate a=fmtp lines (RFC 4566 / RFC 8866 compliant)
+    const opusPtMatch = s.match(/a=rtpmap:(\d+) opus\/48000(?:\/2)?/);
+    if (opusPtMatch) {
+      const pt = opusPtMatch[1];
+      const fmtpRe = new RegExp(`^a=fmtp:${pt} (.*)$`, 'm');
+      const existing = s.match(fmtpRe);
+      const desired = 'useinbandfec=1;stereo=1;sprop-stereo=1;maxaveragebitrate=64000';
+      if (existing) {
+        const merged = new Map();
+        existing[1].split(';').forEach(kv => {
+          const [k, v] = kv.split('=');
+          if (k) merged.set(k.trim(), (v || '').trim());
+        });
+        desired.split(';').forEach(kv => {
+          const [k, v] = kv.split('=');
+          if (k) merged.set(k.trim(), (v || '').trim());
+        });
+        const mergedStr = Array.from(merged.entries()).map(([k, v]) => v ? `${k}=${v}` : k).join(';');
+        s = s.replace(fmtpRe, `a=fmtp:${pt} ${mergedStr}`);
+      } else {
+        s = s.replace(
+          new RegExp(`(a=rtpmap:${pt} opus\\/48000(?:\\/2)?[\\r\\n]+)`),
+          `$1a=fmtp:${pt} ${desired}\r\n`
+        );
+      }
     }
     return s;
   } catch (e) {
+    console.warn('[SDP Uplift Non-Fatal Notice]:', e.message);
     return sdpStr;
   }
 }
@@ -3443,22 +3503,7 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
       console.log('[WebRTC Outgoing ConnectionState]:', cs);
       if (cs === 'connected') {
         state.activeCall.webrtcConnected = true;
-        state.activeCall.nafaqActive = false;
-        if (state.activeCall.nafaqFallbackTimer) {
-          clearTimeout(state.activeCall.nafaqFallbackTimer);
-          state.activeCall.nafaqFallbackTimer = null;
-        }
-        if (state.activeCall.nafaqPcmProcessor) {
-          try {
-            state.activeCall.nafaqPcmProcessor.disconnect();
-            state.activeCall.nafaqPcmSource.disconnect();
-          } catch(e) {}
-          state.activeCall.nafaqPcmProcessor = null;
-          state.activeCall.nafaqPcmSource = null;
-        }
-        stopShafHdVideoStream();
-        const remoteCanvas = document.getElementById('call-remote-shaf-canvas');
-        if (remoteCanvas) remoteCanvas.style.display = 'none';
+        stopNafaqTunnelStream();
         document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
       } else if (cs === 'disconnected' || cs === 'failed') {
         state.activeCall.webrtcConnected = false;
@@ -3466,7 +3511,7 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
           try {
             console.log('[WebRTC Outgoing Dropped] Triggering self-healing ICE restart...');
             pc.restartIce();
-          } catch (e) {}
+          } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
         }
         state.activeCall.nafaqActive = true;
         document.getElementById('call-remote-status-text').textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
@@ -3479,15 +3524,12 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
       console.log('[WebRTC Outgoing ICE State]:', s);
       if (s === 'connected' || s === 'completed') {
         state.activeCall.webrtcConnected = true;
-        if (state.activeCall.nafaqFallbackTimer) {
-          clearTimeout(state.activeCall.nafaqFallbackTimer);
-          state.activeCall.nafaqFallbackTimer = null;
-        }
+        stopNafaqTunnelStream();
         document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
       } else if (s === 'disconnected') {
         console.warn('[WebRTC Outgoing ICE Disconnected] Attempting ICE restart...');
         if (typeof pc.restartIce === 'function') {
-          try { pc.restartIce(); } catch (e) {}
+          try { pc.restartIce(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
         }
       } else if (s === 'failed') {
         console.warn('[WebRTC ICE Failed] Activating NAFAQ Sovereign Tunnel fallback!');
@@ -3498,35 +3540,64 @@ window.startOutgoingCall = async function startOutgoingCall(targetPeer, callType
       }
     };
 
-    // Watchdog: Allow 3.5s for STUN/TURN gathering before NAFAQ fallback
-    state.activeCall.nafaqFallbackTimer = setTimeout(() => {
-      const iceState = state.activeCall.pc?.iceConnectionState;
-      if (iceState !== 'connected' && iceState !== 'completed') {
-        console.log('[WebRTC Watchdog] ICE state is', iceState, '— engaging NAFAQ Sovereign Tunneling!');
+    // Adaptive Watchdog: Avoid premature fallback while cellular/STUN checks are still in progress
+    const armNafaqFallbackWatchdog = () => {
+      if (state.activeCall.nafaqFallbackTimer) {
+        clearTimeout(state.activeCall.nafaqFallbackTimer);
+        state.activeCall.nafaqFallbackTimer = null;
+      }
+      state.activeCall.nafaqFallbackTimer = setTimeout(() => {
+        const curPc = state.activeCall.pc;
+        if (!curPc) return;
+        const curIce = curPc.iceConnectionState;
+        const curCs = curPc.connectionState;
+        if (curIce === 'connected' || curIce === 'completed' || curCs === 'connected') return;
+        if (curIce === 'checking' || curIce === 'new' || curCs === 'connecting') {
+          // Keep waiting if ICE candidate checks are active
+          state.activeCall.nafaqFallbackTimer = setTimeout(() => {
+            const reIce = curPc.iceConnectionState;
+            const reCs = curPc.connectionState;
+            if (reIce !== 'connected' && reIce !== 'completed' && reCs !== 'connected') {
+              console.log('[WebRTC Watchdog] Extended timeout reached — engaging NAFAQ Sovereign Tunneling!');
+              state.activeCall.nafaqActive = true;
+              const statusEl = document.getElementById('call-remote-status-text');
+              if (statusEl) statusEl.textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
+              startNafaqTunnelStream(peerId, stream, callType);
+            }
+          }, 6000);
+          return;
+        }
+        console.log('[WebRTC Watchdog] ICE state is', curIce, '— engaging NAFAQ Sovereign Tunneling!');
         state.activeCall.nafaqActive = true;
         const statusEl = document.getElementById('call-remote-status-text');
         if (statusEl) statusEl.textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
         startNafaqTunnelStream(peerId, stream, callType);
-      }
-    }, 3500);
+      }, 8000);
+    };
+    armNafaqFallbackWatchdog();
 
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
     pc.ontrack = (event) => {
-      console.log('[WebRTC Outgoing] Received remote track:', event.track.kind);
-      let rStream = (event.streams && event.streams[0]) ? event.streams[0] : null;
-      if (!rStream) {
-        if (!state.activeCall.remoteStream) {
-          state.activeCall.remoteStream = new MediaStream();
-        }
-        if (!state.activeCall.remoteStream.getTracks().some(t => t.id === event.track.id)) {
-          state.activeCall.remoteStream.addTrack(event.track);
-        }
-        rStream = state.activeCall.remoteStream;
-      } else {
-        state.activeCall.remoteStream = rStream;
+      console.log('[WebRTC Outgoing] Received remote track:', event.track.kind, event.track.id);
+      if (!state.activeCall.remoteStream) {
+        state.activeCall.remoteStream = new MediaStream();
       }
-      attachRemoteStreamToMediaElements(rStream, state.activeCall.type);
+      const canonical = state.activeCall.remoteStream;
+      if (!canonical.getTracks().some(t => t.id === event.track.id)) {
+        canonical.addTrack(event.track);
+      }
+
+      event.track.onended = () => {
+        console.warn('[WebRTC Track Ended]:', event.track.kind);
+        attachRemoteStreamToMediaElements(canonical, state.activeCall.type);
+      };
+      event.track.onunmute = () => {
+        console.log('[WebRTC Track Unmuted]:', event.track.kind);
+        attachRemoteStreamToMediaElements(canonical, state.activeCall.type);
+      };
+
+      attachRemoteStreamToMediaElements(canonical, state.activeCall.type);
       startCallTimer();
       document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
     };
@@ -3627,15 +3698,10 @@ async function handleIncomingCallSignal(payload) {
     // WebRTC connection handles audio & video directly without interference; NAFAQ remains silent standby
   } else if (signalType === 'ICE') {
     if (candidate) {
+      if (!state.activeCall.pendingIceCandidates) state.activeCall.pendingIceCandidates = [];
+      state.activeCall.pendingIceCandidates.push(candidate);
       if (state.activeCall.pc && state.activeCall.pc.remoteDescription) {
-        try {
-          await state.activeCall.pc.addIceCandidate(new RTCIceCandidate(candidate));
-        } catch (e) {
-          console.warn('[ICE error]:', e);
-        }
-      } else {
-        if (!state.activeCall.pendingIceCandidates) state.activeCall.pendingIceCandidates = [];
-        state.activeCall.pendingIceCandidates.push(candidate);
+        drainPendingIceCandidates().catch(e => console.warn('[ICE Drain Error]:', e.message));
       }
     }
   } else if (signalType === 'WASAM_PING') {
@@ -3745,22 +3811,7 @@ async function acceptIncomingCall() {
       console.log('[WebRTC Accept ConnectionState]:', cs);
       if (cs === 'connected') {
         state.activeCall.webrtcConnected = true;
-        state.activeCall.nafaqActive = false;
-        if (state.activeCall.nafaqFallbackTimer) {
-          clearTimeout(state.activeCall.nafaqFallbackTimer);
-          state.activeCall.nafaqFallbackTimer = null;
-        }
-        if (state.activeCall.nafaqPcmProcessor) {
-          try {
-            state.activeCall.nafaqPcmProcessor.disconnect();
-            state.activeCall.nafaqPcmSource.disconnect();
-          } catch(e) {}
-          state.activeCall.nafaqPcmProcessor = null;
-          state.activeCall.nafaqPcmSource = null;
-        }
-        stopShafHdVideoStream();
-        const remoteCanvas = document.getElementById('call-remote-shaf-canvas');
-        if (remoteCanvas) remoteCanvas.style.display = 'none';
+        stopNafaqTunnelStream();
         if (!isCustomStreamCall) {
           document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
         }
@@ -3770,7 +3821,7 @@ async function acceptIncomingCall() {
           try {
             console.log('[WebRTC Accept Dropped] Triggering self-healing ICE restart...');
             pc.restartIce();
-          } catch (e) {}
+          } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
         }
         state.activeCall.nafaqActive = true;
         if (!isCustomStreamCall) {
@@ -3785,17 +3836,14 @@ async function acceptIncomingCall() {
       console.log('[WebRTC Accept ICE State]:', s);
       if (s === 'connected' || s === 'completed') {
         state.activeCall.webrtcConnected = true;
-        if (state.activeCall.nafaqFallbackTimer) {
-          clearTimeout(state.activeCall.nafaqFallbackTimer);
-          state.activeCall.nafaqFallbackTimer = null;
-        }
+        stopNafaqTunnelStream();
         if (!isCustomStreamCall) {
           document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
         }
       } else if (s === 'disconnected') {
         console.warn('[WebRTC Accept ICE Disconnected] Attempting ICE restart...');
         if (typeof pc.restartIce === 'function') {
-          try { pc.restartIce(); } catch (e) {}
+          try { pc.restartIce(); } catch (swallowedErr) { console.warn("[WyreSup Non-Fatal Notice]:", swallowedErr.message); }
         }
       } else if (s === 'failed') {
         console.warn('[WebRTC ICE Failed] Activating NAFAQ Sovereign Tunnel fallback!');
@@ -3809,36 +3857,65 @@ async function acceptIncomingCall() {
     };
 
     if (!isCustomStreamCall) {
-      // Watchdog: Allow 3.5s for STUN/TURN gathering before NAFAQ fallback
-      state.activeCall.nafaqFallbackTimer = setTimeout(() => {
-        const iceState = state.activeCall.pc?.iceConnectionState;
-        if (iceState !== 'connected' && iceState !== 'completed') {
-          console.log('[WebRTC Watchdog] ICE state is', iceState, '— engaging NAFAQ Sovereign Tunneling!');
+      // Adaptive Watchdog: Avoid premature fallback while cellular/STUN checks are still in progress
+      const armNafaqFallbackWatchdog = () => {
+        if (state.activeCall.nafaqFallbackTimer) {
+          clearTimeout(state.activeCall.nafaqFallbackTimer);
+          state.activeCall.nafaqFallbackTimer = null;
+        }
+        state.activeCall.nafaqFallbackTimer = setTimeout(() => {
+          const curPc = state.activeCall.pc;
+          if (!curPc) return;
+          const curIce = curPc.iceConnectionState;
+          const curCs = curPc.connectionState;
+          if (curIce === 'connected' || curIce === 'completed' || curCs === 'connected') return;
+          if (curIce === 'checking' || curIce === 'new' || curCs === 'connecting') {
+            // Keep waiting if ICE candidate checks are active
+            state.activeCall.nafaqFallbackTimer = setTimeout(() => {
+              const reIce = curPc.iceConnectionState;
+              const reCs = curPc.connectionState;
+              if (reIce !== 'connected' && reIce !== 'completed' && reCs !== 'connected') {
+                console.log('[WebRTC Watchdog] Extended timeout reached — engaging NAFAQ Sovereign Tunneling!');
+                state.activeCall.nafaqActive = true;
+                const statusEl = document.getElementById('call-remote-status-text');
+                if (statusEl) statusEl.textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
+                startNafaqTunnelStream(senderPeer, stream, callType);
+              }
+            }, 6000);
+            return;
+          }
+          console.log('[WebRTC Watchdog] ICE state is', curIce, '— engaging NAFAQ Sovereign Tunneling!');
           state.activeCall.nafaqActive = true;
           const statusEl = document.getElementById('call-remote-status-text');
           if (statusEl) statusEl.textContent = '🟢 NAFAQ Sovereign Tunnel Active (نَفَق مُبَاشِر مَحْمِيّ)';
           startNafaqTunnelStream(senderPeer, stream, callType);
-        }
-      }, 3500);
+        }, 8000);
+      };
+      armNafaqFallbackWatchdog();
     }
 
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
     pc.ontrack = (event) => {
-      console.log('[WebRTC Accept] Received remote track:', event.track.kind);
-      let rStream = (event.streams && event.streams[0]) ? event.streams[0] : null;
-      if (!rStream) {
-        if (!state.activeCall.remoteStream) {
-          state.activeCall.remoteStream = new MediaStream();
-        }
-        if (!state.activeCall.remoteStream.getTracks().some(t => t.id === event.track.id)) {
-          state.activeCall.remoteStream.addTrack(event.track);
-        }
-        rStream = state.activeCall.remoteStream;
-      } else {
-        state.activeCall.remoteStream = rStream;
+      console.log('[WebRTC Accept] Received remote track:', event.track.kind, event.track.id);
+      if (!state.activeCall.remoteStream) {
+        state.activeCall.remoteStream = new MediaStream();
       }
-      attachRemoteStreamToMediaElements(rStream, state.activeCall.type);
+      const canonical = state.activeCall.remoteStream;
+      if (!canonical.getTracks().some(t => t.id === event.track.id)) {
+        canonical.addTrack(event.track);
+      }
+
+      event.track.onended = () => {
+        console.warn('[WebRTC Track Ended]:', event.track.kind);
+        attachRemoteStreamToMediaElements(canonical, state.activeCall.type);
+      };
+      event.track.onunmute = () => {
+        console.log('[WebRTC Track Unmuted]:', event.track.kind);
+        attachRemoteStreamToMediaElements(canonical, state.activeCall.type);
+      };
+
+      attachRemoteStreamToMediaElements(canonical, state.activeCall.type);
       startCallTimer();
       document.getElementById('call-remote-status-text').textContent = 'Direct WebRTC P2P Active (مُتَّصِل مُبَاشَرَة)';
     };
