@@ -88,22 +88,24 @@ class ImamGhazaliLibrary {
       }
     });
 
-    // 3. Ihya 'Ulum al-Din 40-Book Complete Omnibus (< v4, August 28, 2026) -> In legacyArchive
+    // 3. Ihya 'Ulum al-Din 40-Book Complete Masterwork (AynEngine AI v5.0.0 Sovereign Morphological Edition, Sept 2026)
     ['ihya_ulum_al_din_pure_en.epub', 'ihya_ulum_al_din_bilingual_lexical_en.epub'].forEach(f => {
       const fullPath = path.join(dir, f);
       if (fs.existsSync(fullPath)) {
         const stats = fs.statSync(fullPath);
         const isBilingual = f.includes('bilingual');
-        catalog.legacyArchive.push({
+        const item = {
           id: f.replace('.epub', ''),
+          slug: 'ihya_ulum_al_din',
           filename: f,
-          title: isBilingual ? "Revival of the Religious Sciences (Ihya 'Ulum al-Din) [Complete 40 Books Masterwork] (Bilingual Apparatus Edition)" : "Revival of the Religious Sciences (Ihya 'Ulum al-Din) [Complete 40 Books Masterwork] (Pure English Edition)",
+          title: isBilingual ? "Revival of the Religious Sciences (Ihya 'Ulum al-Din) — Complete 40 Books (Bilingual Apparatus Edition)" : "Revival of the Religious Sciences (Ihya 'Ulum al-Din) — Complete 40 Books (Pure English Edition)",
           arabicTitle: 'إحياء علوم الدين (الأربعون كتاباً كاملة)',
           author: 'Imam Abu Hamid al-Ghazali (حجة الإسلام الإمام أبو حامد الغزالي)',
           size: (stats.size / 1024).toFixed(1) + ' KB',
           downloadUrl: `/epubs/${f}`,
-          edition: 'AynEngine v3.0 Masterwork (< v4)'
-        });
+          edition: 'AynEngine v5.0.0 Sovereign Morphological Edition (Official)'
+        };
+        catalog.sulukAndEthics.unshift(item);
       }
     });
 

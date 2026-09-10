@@ -639,24 +639,34 @@
           <div class="l1-card">
             <div class="l1-card-header">
               <div class="l1-card-title">
-                <span>Imam Fakhr al-Din al-Razi Sovereign EPUB Library</span>
-                <span class="l1-did-badge verified">84 VOLUMES · L1 SEALED</span>
+                <span>WyreNet Classical Heritage EPUB Library</span>
+                <span class="l1-did-badge verified" id="library-volume-badge">208+ VOLUMES · L1 SEALED</span>
               </div>
               <button class="btn-pill btn-pill-green" onclick="verifyLibraryManifest()">📜 Verify SHA-256 Manifest</button>
             </div>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0; line-height: 1.5;">
-              The complete philosophical, theological, and exegetical corpus of Imam Fakhr al-Din al-Razi (544–606 AH) permanently anchored on WyreNet Sovereign L1.
+              The complete classical Islamic library of Imam Abu Hamid al-Ghazali, Imam Yahya al-Nawawi, Imam Fakhr al-Din al-Razi, and Imam al-Raghib al-Isfahani permanently anchored on WyreNet Sovereign L1.
             </p>
             
             <!-- Search & Filter -->
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <input type="text" id="epub-search-input" class="chat-input" placeholder="🔍 Search manuscripts (Tafsir Kabir, Matalib, Mahsul, Asas al-Taqdis...)" oninput="filterEpubs()" style="flex: 1; min-width: 240px; padding: 10px 14px; border-radius: 12px;">
+              <input type="text" id="epub-search-input" class="chat-input" placeholder="🔍 Search manuscripts (Ihya, Riyad al-Salihin, Tafsir Kabir, Matalib, Adhkar...)" oninput="filterEpubs()" style="flex: 1; min-width: 240px; padding: 10px 14px; border-radius: 12px;">
+              <select id="epub-author-select" class="chat-input" onchange="filterEpubs()" style="width: auto; min-width: 180px; padding: 10px 14px; border-radius: 12px;">
+                <option value="ALL">All Authors (كُلّ الأَئِمَّة)</option>
+                <option value="Ghazali">Imam al-Ghazali (الإمام الغزالي)</option>
+                <option value="Nawawi">Imam al-Nawawi (الإمام النووي)</option>
+                <option value="Razi">Imam al-Razi (الإمام الرازي)</option>
+                <option value="Raghib">Imam al-Raghib (الإمام الراغب)</option>
+                <option value="Heritage">Classical Heritage (التراث والعرفان)</option>
+              </select>
               <select id="epub-category-select" class="chat-input" onchange="filterEpubs()" style="width: auto; min-width: 180px; padding: 10px 14px; border-radius: 12px;">
-                <option value="ALL">All Categories (كُلّ التَّصْنِيفَات)</option>
-                <option value="Tafsir">Tafsir al-Kabir (التَّفْسِير الكَبِير)</option>
-                <option value="Theology">Theological Treatises (عِلْم الكَلَام)</option>
-                <option value="Usul">Usul al-Fiqh (أُصُول الفِقْه)</option>
-                <option value="Philosophy">Philosophy & Metaphysics (الفَلْسَفَة)</option>
+                <option value="ALL">All Disciplines (كُلّ التَّصْنِيفَات)</option>
+                <option value="Ihya">Ihya, Suluk & Ethics (الإحياء والتصوف)</option>
+                <option value="Hadith">Hadith & Adhkar (الحديث والأذكار)</option>
+                <option value="Tafsir">Tafsir & Quranic Studies (التفسير)</option>
+                <option value="Theology">Theology & Kalam (علم الكلام)</option>
+                <option value="Usul">Usul al-Fiqh (أصول الفقه)</option>
+                <option value="Philosophy">Philosophy & Logic (الفلسفة والمنطق)</option>
               </select>
             </div>
 

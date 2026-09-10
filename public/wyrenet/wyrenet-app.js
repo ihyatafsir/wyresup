@@ -1008,13 +1008,18 @@ async function loadEpubs() {
     return;
   }
 
-  container.innerHTML = "<div style='color: var(--text-muted); font-size: 0.88rem; padding: 20px;'>⏳ Loading 84-EPUB Sovereign Manifest...</div>";
+  container.innerHTML = "<div style='color: var(--text-muted); font-size: 0.88rem; padding: 20px;'>⏳ Loading Classical Sovereign Corpus Manifest...</div>";
 
   try {
-    const res = await fetch("/epubs/wyrenet_imam_razi_l1_manifest.json");
+    let res = await fetch("/api/library/manifest");
+    if (!res.ok) {
+      res = await fetch("/epubs/wyrenet_classical_corpus_l1_manifest.json");
+    }
     if (res.ok) {
       const manifest = await res.json();
       cachedEpubs = manifest.books || [];
+      const badge = document.getElementById("library-volume-badge");
+      if (badge) badge.textContent = `${cachedEpubs.length} VOLUMES · L1 SEALED`;
       renderEpubGrid(cachedEpubs);
     } else {
       loadFallbackEpubs();
@@ -1053,6 +1058,13 @@ function renderEpubGrid(books) {
     titleDiv.className = "epub-card-title";
     titleDiv.textContent = b.title || b.filename;
 
+    let authorDiv = null;
+    if (b.author) {
+      authorDiv = document.createElement("div");
+      authorDiv.style.cssText = "font-size: 0.74rem; color: #a0aec0; font-weight: 600;";
+      authorDiv.textContent = b.author;
+    }
+
     const hashDiv = document.createElement("div");
     hashDiv.className = "epub-card-category";
     hashDiv.style.wordBreak = "break-all";
@@ -1071,6 +1083,7 @@ function renderEpubGrid(books) {
 
     card.appendChild(headDiv);
     card.appendChild(titleDiv);
+    if (authorDiv) card.appendChild(authorDiv);
     card.appendChild(hashDiv);
     card.appendChild(footDiv);
     container.appendChild(card);
@@ -1080,11 +1093,31 @@ function renderEpubGrid(books) {
 window.filterEpubs = function() {
   const q = (document.getElementById("epub-search-input")?.value || "").toLowerCase();
   const cat = document.getElementById("epub-category-select")?.value || "ALL";
+  const author = document.getElementById("epub-author-select")?.value || "ALL";
 
   const filtered = cachedEpubs.filter(b => {
-    const matchQ = (b.title || "").toLowerCase().includes(q) || (b.filename || "").toLowerCase().includes(q);
-    const matchCat = (cat === "ALL") || (b.category && b.category.includes(cat));
-    return matchQ && matchCat;
+    const titleMatch = (b.title || "").toLowerCase().includes(q);
+    const fileMatch = (b.filename || "").toLowerCase().includes(q);
+    const authorMatchQ = (b.author || "").toLowerCase().includes(q);
+    const matchQ = !q || titleMatch || fileMatch || authorMatchQ;
+
+    const matchCat = (cat === "ALL") || 
+                     (b.category && b.category.toLowerCase().includes(cat.toLowerCase())) ||
+                     (b.filename && b.filename.toLowerCase().includes(cat.toLowerCase()));
+
+    let matchAuthor = (author === "ALL");
+    if (!matchAuthor) {
+      if (author === "Heritage") {
+        matchAuthor = (b.author && (b.author.includes("Heritage") || b.author.includes("عياض") || b.author.includes("عربي") || b.author.includes("المواق") || b.author.includes("Iyad") || b.author.includes("Arabi") || b.author.includes("Mawwaq"))) ||
+                      (b.category && (b.category.includes("Heritage") || b.category.includes("Prophetic") || b.category.includes("Irfan"))) ||
+                      (b.filename && (b.filename.startsWith("al_shifa_") || b.filename.startsWith("al_futuhat_") || b.filename.startsWith("sunan_") || b.filename.startsWith("takhmis_") || b.filename.startsWith("sanan") || b.filename.startsWith("senan")));
+      } else {
+        matchAuthor = (b.author && b.author.toLowerCase().includes(author.toLowerCase())) ||
+                      (b.filename && b.filename.toLowerCase().includes(author.toLowerCase()));
+      }
+    }
+
+    return matchQ && matchCat && matchAuthor;
   });
   renderEpubGrid(filtered);
 };

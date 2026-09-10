@@ -1115,9 +1115,25 @@ Welcome to the sovereign digital library of **Hujjat al-Islam Imam Abu Hamid al-
 Please explore the dedicated sub-channels under this library:
 • **#kalam-falsafa**: Kalam, Philosophical Critiques & Polemics (*Tahafut al-Falasifa*, *Al-Iqtisad fi al-I'tiqad*, *Maqasid al-Falasifah*, *Qawa'id al-'Aqa'id*, *Fada'ih al-Batiniyya*, *Al-Radd al-Jamil* — Official v4 Editions).
 • **#usul-mantiq**: Legal Theory & Classical Logic (*Al-Mustasfa min 'Ilm al-Usul*, *Al-Mankhul*, *Shifa al-Ghalil*, *Mi'yar al-'Ilm*, *Mihakk al-Nazar* — Official v4 Editions).
-• **#suluk-adab**: Spiritual Path, Ethics & Divine Wisdom (*Al-Munqidh min al-Dalal*, *Mishkat al-Anwar*, *Bidayat al-Hidayah*, *Minhaj al-'Abidin*, *Mizan al-'Amal*, *Al-Maqsad al-Asna*, *Jawahir al-Quran*, *Al-Wasit*, etc. — Official v4/v5 Editions).
-• **#archive**: Historical pre-v4 translation drafts (< v4), including *Ihya 'Ulum al-Din* (40-book single-corpus & 4-volume split drafts) and 76-sections drafts of *Tahafut*.`
+• **#suluk-adab**: Spiritual Path, Ethics & Ihya Masterwork (*Ihya 'Ulum al-Din* Complete 40 Books — Official v5 Sovereign Morphological Edition, *Al-Munqidh*, *Mishkat al-Anwar*, *Al-Wasit*, *Minhaj al-'Abidin*, *Bidayat al-Hidayah*, etc. — Official v5 Editions).
+• **#archive**: Historical pre-v4 translation drafts (< v4), including early 4-volume split drafts of *Ihya* and 76-sections drafts of *Tahafut*.`
   }, { senderId: 'ibn-manzur@lisan' });
+
+  // Featured Crowning Masterwork on Main Ghazali Channel: Ihya 'Ulum al-Din v5
+  const ihyaItems = catalog.sulukAndEthics ? catalog.sulukAndEthics.filter(i => i.slug === 'ihya_ulum_al_din') : [];
+  if (ihyaItems.length > 0) {
+    gossipMesh.publish(spaceId, mainChannelId, {
+      content: `**🌟 FEATURED CROWNING MASTERWORK: IHYA 'ULUM AL-DIN (إِحْيَاء عُلُوم الدِّين)**\n\n*The complete single-corpus translation of all 40 books of the Revival of the Religious Sciences by Hujjat al-Islam Imam Abu Hamid al-Ghazali, translated with the AynEngine AI v5.0.0 Sovereign Morphological Edition (Sept 2026).*\n\nAvailable below in both Pure Scholarly English and Bilingual Lexical Apparatus editions:`,
+      attachments: ihyaItems.map(item => ({
+        name: item.filename,
+        type: 'application/epub+zip',
+        size: 5000000,
+        data: item.downloadUrl,
+        title: item.title,
+        arabicTitle: item.arabicTitle
+      }))
+    }, { senderId: 'ibn-manzur@lisan' });
+  }
 
   // Subchannel: kalam-falsafa
   if (catalog.kalamAndPhilosophy && catalog.kalamAndPhilosophy.length > 0) {
@@ -1177,7 +1193,7 @@ Please explore the dedicated sub-channels under this library:
   gossipMesh.publish(spaceId, archiveChannelId, {
     content: `**أَرْشِيف حُجَّة الإِسْلَام الغَزَالِي // HISTORICAL & LEGACY ARCHIVE (< v4)**
 
-This dedicated sub-channel preserves earlier translation drafts, split volumes, and historical trials (< v4) of Imam Abu Hamid al-Ghazali's works, including the August 2026 translation of *Ihya 'Ulum al-Din* pending official v4/v5 re-translation.
+This dedicated sub-channel preserves earlier translation drafts, split volumes, and historical trials (< v4) of Imam Abu Hamid al-Ghazali's works. (Note: The official v5 40-book masterwork of *Ihya 'Ulum al-Din* is now live in **#suluk-adab** and the Main Portal).
 
 *For official v4 & v5 masterworks, please explore the topical sub-channels **#kalam-falsafa**, **#usul-mantiq**, and **#suluk-adab**.*`
   }, { senderId: 'ibn-manzur@lisan' });
