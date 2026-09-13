@@ -119,6 +119,108 @@ const server = http.createServer((req, res) => {
   }
 
   // --- API Endpoints ---
+  // --- WyreNet Testnet Sovereign Node Endpoint (/node) ---
+  if ((pathname === '/node' || pathname === '/node/' || pathname === '/node/status') && req.method === 'GET') {
+    wyreNetGateway.getStatus().then(status => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        status: 'ONLINE',
+        nodeName: 'WyreNet Sovereign Testnet Node',
+        endpoint: 'https://wyresup.com/node',
+        rpcEndpoint: 'https://wyresup.com/node/rpc',
+        publicRpc: 'https://wyresup.com/api/wyrenet/rpc',
+        faucetEndpoint: 'https://wyresup.com/node/faucet',
+        network: status.network,
+        capacity: '10,000,000 users',
+        serverless: {
+          supported: true,
+          offlineStorage: true,
+          p2pMeshRelay: true
+        },
+        faucet: {
+          defaultAllocation: '10,000,000.0000 WYRE',
+          gasSponsored: true,
+          method: 'POST /node/faucet or POST /api/blockchain/faucet'
+        },
+        timestamp: new Date().toISOString()
+      }, null, 2));
+    }).catch(err => {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    });
+    return;
+  }
+
+  if ((pathname === '/node' || pathname === '/node/') && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        let payload = null;
+        if (body && body.trim().length > 0) {
+          payload = JSON.parse(body);
+        }
+        if (payload && (payload.action === 'faucet' || payload.faucet)) {
+          const address = payload.address || '0x471c852d254a67f36c129f2386ca21c31840dea4';
+          const amount = payload.amount || 10000000;
+          const result = wyreNetGateway.claimFaucet(address, amount);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(result));
+          return;
+        }
+        const rpcRes = await wyreNetGateway.forwardRpc(payload, req.method);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(rpcRes, null, 2));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
+  if (pathname === '/node/rpc' && (req.method === 'POST' || req.method === 'GET')) {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        let payload = null;
+        if (body && body.trim().length > 0) {
+          try { payload = JSON.parse(body); } catch (e) { payload = null; }
+        }
+        const rpcRes = await wyreNetGateway.forwardRpc(payload, req.method);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(rpcRes, null, 2));
+      } catch (err) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error: ' + err.message } }));
+      }
+    });
+    return;
+  }
+
+  if ((pathname === '/node/faucet' || pathname === '/api/blockchain/faucet') && (req.method === 'POST' || req.method === 'GET')) {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        let payload = {};
+        if (body && body.trim().length > 0) {
+          try { payload = JSON.parse(body); } catch (e) { payload = {}; }
+        }
+        const address = payload.address || parsedUrl.searchParams.get('address') || '0x471c852d254a67f36c129f2386ca21c31840dea4';
+        const amount = payload.amount || parsedUrl.searchParams.get('amount') || 10000000;
+        const result = wyreNetGateway.claimFaucet(address, amount);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(result));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
   // --- WyreNet Sovereign L1 Blockchain API ---
   if (pathname === '/api/wyrenet/status' && req.method === 'GET') {
     wyreNetGateway.getStatus().then(status => {

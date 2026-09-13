@@ -32,6 +32,7 @@ class WyreNetGateway {
     this.notarizedLedger = new Map();
     this.didRegistry = new Map();
     this.activeChallenges = new Map();
+    this.customBalances = new Map();
     
     this.lastKnownBlock = 85;
     this.peerCount = 53;
@@ -188,6 +189,31 @@ class WyreNetGateway {
     /**
    * Query Account Balance (WYRE & AVAX)
    */
+  claimFaucet(address, amount = 10000000.0) {
+    if (!address || !address.startsWith('0x')) {
+      address = '0x471c852d254a67f36c129f2386ca21c31840dea4';
+    }
+    const addr = address.toLowerCase();
+    const prev = parseFloat(this.customBalances.get(addr) || '0.0');
+    const addAmt = parseFloat(amount) || 10000000.0;
+    const newBal = (prev + addAmt).toFixed(4);
+    this.customBalances.set(addr, newBal);
+    const crypto = require('crypto');
+    const txHash = '0x' + crypto.randomBytes(32).toString('hex');
+    this.lastKnownBlock += 1;
+    return {
+      status: 'SUCCESS',
+      address: addr,
+      amountIssued: addAmt.toFixed(4) + ' WYRE',
+      balance: newBal,
+      balanceWYRE: newBal,
+      txHash,
+      blockHeight: this.lastKnownBlock,
+      chainId: this.chainId,
+      node: 'wyresup.com/node'
+    };
+  }
+
   async getBalance(address) {
     if (!address || !address.startsWith('0x')) {
       return { error: 'Invalid Ethereum/EVM hex address' };
@@ -195,6 +221,22 @@ class WyreNetGateway {
 
     const addr = address.toLowerCase();
     const isGenesisAdmin = addr === '0x471c852d254a67f36c129f2386ca21c31840dea4';
+
+    if (this.customBalances && this.customBalances.has(addr)) {
+      const bal = this.customBalances.get(addr);
+      const avaxBal = isGenesisAdmin ? '10.0000' : '5.0000';
+      return {
+        address,
+        isGenesisAdmin,
+        balanceWei: (BigInt(Math.floor(parseFloat(bal) * 1e6)) * 1000000000000n).toString(),
+        balanceWYRE: bal,
+        balanceZBAT: bal,
+        balanceAVAX: avaxBal,
+        symbol: 'WYRE',
+        chainId: this.chainId,
+        blockHeight: this.lastKnownBlock
+      };
+    }
 
     // Genesis Admin holds the initial 1,000,000 WYRE genesis supply
     // Other users receive a 100 WYRE testnet onboarding faucet allocation
@@ -406,7 +448,13 @@ class WyreNetGateway {
     }
 
     if (method === 'eth_getBalance') {
-      return { jsonrpc: '2.0', id, result: '0x52b7d2dcc80cd2e4000000' }; // 1,000,000 WYRE
+      const addr = (params && params[0] ? params[0] : '').toLowerCase();
+      if (this.customBalances && this.customBalances.has(addr)) {
+        const bal = parseFloat(this.customBalances.get(addr) || '0');
+        const wei = (BigInt(Math.floor(bal * 1e6)) * 1000000000000n).toString(16);
+        return { jsonrpc: '2.0', id, result: '0x' + wei };
+      }
+      return { jsonrpc: '2.0', id, result: '0x204fce5e3e25026110000000' }; // 10,000,000 WYRE testnet default
     }
 
     if (method === 'eth_getCode') {
